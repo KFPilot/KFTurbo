@@ -87,6 +87,9 @@ static function float GetHeadShotDamMulti(KFPlayerReplicationInfo KFPRI, KFPawn 
 	case class'W_SPSniper_DT' :
 		Multiplier = LerpStat(KFPRI, 1.05f, 1.6f);
 		break;
+	case class'W_NailGun_DT' :	
+		Multiplier = LerpStat(KFPRI, 1.05f, 1.2f);
+		break;
 	case class'W_Magnum44_DT' :
 	case class'W_Dual44_DT' :
 		return LerpStat(KFPRI, 1.05f, 1.45f);

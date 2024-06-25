@@ -120,8 +120,8 @@ static function float GetCostScaling(KFPlayerReplicationInfo KFPRI, class<Pickup
 	case class'W_Chainsaw_Pickup' :
 	case class'W_Crossbuzzsaw_Pickup' :
 
-	case class'ClaymoreSwordPickup' :
-	case class'ScythePickup' :
+	case class'W_Claymore_Pickup' :
+	case class'W_Scythe_Pickup' :
 	case class'MachetePickup' :
 	case class'DwarfAxePickup' :
 		return LerpStat(KFPRI, 0.9f, 0.3f);
@@ -132,15 +132,7 @@ static function float GetCostScaling(KFPlayerReplicationInfo KFPRI, class<Pickup
 
 static function AddDefaultInventory(KFPlayerReplicationInfo KFPRI, Pawn P)
 {
-	switch (KFPRI.ClientVeteranSkillLevel)
-	{
-	case 5:
-		KFHumanPawn(P).CreateInventoryVeterancy(string(class'Machete'), default.StartingWeaponSellPriceLevel5);
-		break;
-	case 6:
-		KFHumanPawn(P).CreateInventoryVeterancy(string(class'W_Axe_Weap'), default.StartingWeaponSellPriceLevel6);
-		break;
-	}
+		KFHumanPawn(P).CreateInventoryVeterancy(string(class'Machete'), default.StartingWeaponSellPriceLevel6);
 }
 
 static function string GetCustomLevelInfo(byte Level)
