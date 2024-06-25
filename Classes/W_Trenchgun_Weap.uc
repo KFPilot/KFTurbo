@@ -1,4 +1,5 @@
-class W_Trenchgun_Weap extends Trenchgun;   
+class W_Trenchgun_Weap extends Trenchgun;
+
 defaultproperties
 {
      Weight=7.000000

@@ -21,6 +21,11 @@ static final function int GetScaledRequirement(byte CurLevel, int InValue)
 	return CurLevel*CurLevel*InValue;
 }
 
+static function class<DamageType> GetMAC10DamageType(KFPlayerReplicationInfo KFPRI)
+{
+	return none; //We no longer use this function anymore, W_MAC10_Fire extends KFFire
+}
+
 //Slight change to how this works:
 //0 - returns this perk's title
 //1 - always returns KFPVeterancyTypes::GetCustomLevelInfo()'s result
