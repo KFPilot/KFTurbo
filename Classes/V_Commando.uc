@@ -163,9 +163,9 @@ static function float AddExtraAmmoFor(KFPlayerReplicationInfo KFPRI, class<Ammun
 
 	switch (AmmoType)
 	{
-	case class'BullpupAmmo' :
 	case class'SCARMK17Ammo' :
 
+	case class'W_Bullpup_Ammo' :
 	case class'W_AK47_Ammo' :
 	case class'W_ThompsonDrum_Ammo' :
 	case class'W_M4203_Ammo_Bullet' :
@@ -249,8 +249,7 @@ static function float GetCostScaling(KFPlayerReplicationInfo KFPRI, class<Pickup
 {
 	switch (Item)
 	{
-	case class 'BullpupPickup':
-
+	case class 'W_Bullpup_Pickup':
 	case class'W_AK47_Pickup' :
 	case class'W_M4203_Pickup' :
 	case class'W_ThompsonDrum_Pickup':

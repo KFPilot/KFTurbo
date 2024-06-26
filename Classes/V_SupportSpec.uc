@@ -126,7 +126,6 @@ static function int AddDamage(KFPlayerReplicationInfo KFPRI, KFMonster Injured, 
 	case class'DamTypeAA12Shotgun' :
 	case class'DamTypeBenelli' :
 	case class'DamTypeKSGShotgun' :
-	case class'DamTypeTrenchgun' :
 	case class'DamTypeSPShotgun' :
 		return float(InDamage) * LerpStat(KFPRI, 1.1f, 1.6f);
 	case class'DamTypeFrag' :
