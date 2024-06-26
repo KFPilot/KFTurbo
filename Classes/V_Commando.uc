@@ -266,7 +266,7 @@ static function float GetCostScaling(KFPlayerReplicationInfo KFPRI, class<Pickup
 
 static function AddDefaultInventory(KFPlayerReplicationInfo KFPRI, Pawn P)
 {
-	KFHumanPawn(P).CreateInventoryVeterancy(string(class'W_AK47_Weap'), default.StartingWeaponSellPriceLevel6);
+	KFHumanPawn(P).CreateInventoryVeterancy(string(class'W_Bullpup_Weap'), default.StartingWeaponSellPriceLevel6);
 }
 
 static function string GetCustomLevelInfo(byte Level)
