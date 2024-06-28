@@ -55,7 +55,7 @@ static function float GetAmmoPickupMod(KFPlayerReplicationInfo KFPRI, KFAmmuniti
 
 static function float AddExtraAmmoFor(KFPlayerReplicationInfo KFPRI, Class<Ammunition> AmmoType)
 {
-	if ((AmmoType == class'FlameAmmo' || AmmoType == class'MAC10Ammo' || AmmoType == class'HuskGunAmmo' || AmmoType == class'TrenchgunAmmo' || AmmoType == class'FlareRevolverAmmo' || AmmoType == class'GoldenFlameAmmo') && KFPRI.ClientVeteranSkillLevel > 0)
+	if ((AmmoType == class'FlameAmmo' || AmmoType == class'MAC10Ammo' || AmmoType == class'HuskGunAmmo' || AmmoType == class'TrenchgunAmmo' || AmmoType == class'W_FlareRevolver_Ammo' || AmmoType == class'GoldenFlameAmmo') && KFPRI.ClientVeteranSkillLevel > 0)
 		return LerpStat(KFPRI, 1.f, 1.6f);
 	return 1.0;
 }
@@ -69,7 +69,7 @@ static function int AddDamage(KFPlayerReplicationInfo KFPRI, KFMonster Injured, 
 		return float(InDamage) * Lerp(KFPRI.ClientVeteranSkillLevel, 1.f, 1.15, true);
 	}
 
-	if (class<DamTypeBurned>(DmgType) != none || class<DamTypeFlamethrower>(DmgType) != none || class<DamTypeHuskGunProjectileImpact>(DmgType) != none || class<DamTypeFlareProjectileImpact>(DmgType) != none)
+	if (class<DamTypeBurned>(DmgType) != none || class<DamTypeFlamethrower>(DmgType) != none || class<DamTypeHuskGunProjectileImpact>(DmgType) != none || class<W_FlareRevolver_Impact_DT>(DmgType) != none)
 	{
 		return float(InDamage) * LerpStat(KFPRI, 1.05f, 1.6f);
 	}
@@ -95,7 +95,7 @@ static function int ExtraRange(KFPlayerReplicationInfo KFPRI)
 
 static function int ReduceDamage(KFPlayerReplicationInfo KFPRI, KFPawn Injured, Pawn Instigator, int InDamage, class<DamageType> DmgType)
 {
-	if (class<DamTypeBurned>(DmgType) != none || class<DamTypeFlamethrower>(DmgType) != none || class<DamTypeHuskGunProjectileImpact>(DmgType) != none || class<DamTypeFlareProjectileImpact>(DmgType) != none)
+	if (class<DamTypeBurned>(DmgType) != none || class<DamTypeFlamethrower>(DmgType) != none || class<DamTypeHuskGunProjectileImpact>(DmgType) != none || class<W_FlareRevolver_Impact_DT>(DmgType) != none)
 	{
 		return float(InDamage) * LerpStat(KFPRI, 0.5f, 0.f);
 	}
@@ -125,8 +125,8 @@ static function float GetCostScaling(KFPlayerReplicationInfo KFPRI, class<Pickup
 	case class'W_MAC10_Pickup' :
 	case class'W_Huskgun_Pickup' :
 	case class'W_Trenchgun_Pickup' :
-	case class'FlareRevolverPickup' :
-	case class'DualFlareRevolverPickup' :
+	case class'W_FlareRevolver_Pickup' :
+	case class'W_DualFlare_Pickup' :
 		return LerpStat(KFPRI, 0.9f, 0.3f);
 	}
 
