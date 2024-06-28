@@ -164,6 +164,7 @@ static function float AddExtraAmmoFor(KFPlayerReplicationInfo KFPRI, class<Ammun
 	switch (AmmoType)
 	{
 	case class'SCARMK17Ammo' :
+	case class'MKb42Ammo' :
 
 	case class'W_Bullpup_Ammo' :
 	case class'W_AK47_Ammo' :
@@ -206,6 +207,7 @@ static function int AddDamage(KFPlayerReplicationInfo KFPRI, KFMonster Injured, 
 	case class'DamTypeSCARMK17AssaultRifle' :
 	case class'DamTypeAK47AssaultRifle' :
 	case class'DamTypeM4AssaultRifle' :
+	case class'DamTypeMKb42AssaultRifle' :
 
 	case class'W_M4203_DT_Bullet' :
 	case class'W_FNFAL_DT' :
@@ -249,7 +251,8 @@ static function float GetCostScaling(KFPlayerReplicationInfo KFPRI, class<Pickup
 {
 	switch (Item)
 	{
-	case class 'W_Bullpup_Pickup':
+	case class'W_MKb42_Pickup':
+	case class'W_Bullpup_Pickup':
 	case class'W_AK47_Pickup' :
 	case class'W_M4203_Pickup' :
 	case class'W_ThompsonDrum_Pickup':
