@@ -2,7 +2,6 @@ class W_MAC10_Fire extends KFFire;
 
 defaultproperties
 {
-
      FireAimedAnim="Fire_Iron"
      RecoilRate=0.010000
      maxVerticalRecoilAngle=150

@@ -16,4 +16,5 @@ function bool DoPounce()
 defaultproperties
 {
      PounceSpeed=360.000000
+     MenuName="Raptor"
 }
