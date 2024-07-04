@@ -5,11 +5,11 @@ defaultproperties
      RecoilRate=0.070000
      maxVerticalRecoilAngle=300
      maxHorizontalRecoilAngle=150
-     FireSoundRef=""
-     StereoFireSoundRef=""
+     //FireSoundRef=""
+     //StereoFireSoundRef=""
      DamageType=Class'KFTurbo.W_L2A3_DT'
-     DamageMin=
-     DamageMax=
+     //DamageMin=
+     //DamageMax=
      Momentum=6500.000000
      bAccuracyBonusForSemiAuto=True
      AmmoClass=Class'KFTurbo.W_L2A3_Ammo'

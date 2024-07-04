@@ -42,5 +42,5 @@ defaultproperties
 
 	ZapDischargeDelay=1.f
 	ZapDischargeRate=0.5f
-	ZappedModifier=0.25f
+	ZappedModifier=0.9f
 }

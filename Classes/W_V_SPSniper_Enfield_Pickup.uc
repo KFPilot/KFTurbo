@@ -4,5 +4,5 @@ defaultproperties
 {
      ItemName="Lee Enfield"
      InventoryType=Class'KFTurbo.W_V_SPSniper_Enfield_Weap'
-     Skins(0)=Combiner''
+//     Skins(0)=Combiner''
 }
