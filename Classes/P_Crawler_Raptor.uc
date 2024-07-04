@@ -15,6 +15,7 @@ function bool DoPounce()
 
 defaultproperties
 {
-     PounceSpeed=360.000000
+     PounceSpeed=1650.000000
      MenuName="Raptor"
+     ControllerClass=Class'KFTurbo.AI_Crawler_Raptor'
 }
