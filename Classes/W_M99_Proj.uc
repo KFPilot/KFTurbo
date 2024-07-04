@@ -23,5 +23,6 @@ simulated function HitWall( vector HitNormal, actor Wall)
 
 defaultproperties
 {
+     HeadShotDamageMult=2.250000
      Damage=490.000000
 }
