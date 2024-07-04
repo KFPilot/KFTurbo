@@ -12,6 +12,7 @@ static simulated function PreCacheMaterials(LevelInfo myLevel)
 
 defaultproperties
 {
+      MeleeDamage=30
      MoanVoice=SoundGroup'KF_EnemiesFinalSnd_CIRCUS.GoreFast.Gorefast_Talk'
      MeleeAttackHitSound=SoundGroup'KF_EnemiesFinalSnd_CIRCUS.GoreFast.Gorefast_HitPlayer'
      JumpSound=SoundGroup'KF_EnemiesFinalSnd_CIRCUS.GoreFast.Gorefast_Jump'
@@ -24,7 +25,7 @@ defaultproperties
      ChallengeSound(1)=SoundGroup'KF_EnemiesFinalSnd_CIRCUS.GoreFast.Gorefast_Challenge'
      ChallengeSound(2)=SoundGroup'KF_EnemiesFinalSnd_CIRCUS.GoreFast.Gorefast_Challenge'
      ChallengeSound(3)=SoundGroup'KF_EnemiesFinalSnd_CIRCUS.GoreFast.Gorefast_Challenge'
-     MenuName="Circus Gorefast"
+     MenuName="Assassin"
      AmbientSound=SoundGroup'KF_EnemiesFinalSnd_CIRCUS.GoreFast.Gorefast_Idle'
      Mesh=SkeletalMesh'KF_Freaks_Trip_CIRCUS.gorefast_CIRCUS'
      Skins(0)=Combiner'KF_Specimens_Trip_CIRCUS_T.gorefast_CIRCUS.gorefast_CIRCUS_CMB'

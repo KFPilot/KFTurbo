@@ -5,6 +5,19 @@ class P_Crawler_SUM extends P_Crawler;
 
 #exec OBJ LOAD FILE=KF_EnemiesFinalSnd_CIRCUS.uax
 
+function bool DoPounce()
+{
+	if ( bZapped || bIsCrouched || bWantsToCrouch || (Physics != PHYS_Walking) || VSize(Location - Controller.Target.Location) > (MeleeRange * 20) )
+		return false;
+
+	Velocity = Normal(Controller.Target.Location-Location)*PounceSpeed;
+	Velocity.Z = JumpZ;
+	SetPhysics(PHYS_Falling);
+	ZombieSpringAnim();
+	bPouncing=true;
+	return true;
+}
+
 static simulated function PreCacheMaterials(LevelInfo myLevel)
 {//should be derived and used.
 	myLevel.AddPrecacheMaterial(Combiner'KF_Specimens_Trip_CIRCUS_T.crawler_CIRCUS.crawler_CIRCUS_CMB');
@@ -12,6 +25,7 @@ static simulated function PreCacheMaterials(LevelInfo myLevel)
 
 defaultproperties
 {
+	 PounceSpeed=360.000000
      MoanVoice=SoundGroup'KF_EnemiesFinalSnd_CIRCUS.Crawler.Crawler_Talk'
      MeleeAttackHitSound=SoundGroup'KF_EnemiesFinalSnd_CIRCUS.Crawler.Crawler_HitPlayer'
      JumpSound=SoundGroup'KF_EnemiesFinalSnd_CIRCUS.Crawler.Crawler_Jump'
@@ -24,7 +38,7 @@ defaultproperties
      ChallengeSound(1)=SoundGroup'KF_EnemiesFinalSnd_CIRCUS.Crawler.Crawler_Acquire'
      ChallengeSound(2)=SoundGroup'KF_EnemiesFinalSnd_CIRCUS.Crawler.Crawler_Acquire'
      ChallengeSound(3)=SoundGroup'KF_EnemiesFinalSnd_CIRCUS.Crawler.Crawler_Acquire'
-     MenuName="Circus Crawler"
+     MenuName="Raptor"
      AmbientSound=SoundGroup'KF_EnemiesFinalSnd_CIRCUS.Crawler.Crawler_Idle'
      Mesh=SkeletalMesh'KF_Freaks_Trip_CIRCUS.crawler_CIRCUS'
      Skins(0)=Combiner'KF_Specimens_Trip_CIRCUS_T.crawler_CIRCUS.crawler_CIRCUS_CMB'
