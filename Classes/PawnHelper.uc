@@ -26,7 +26,7 @@ static final simulated function bool IsPawnBurning(Pawn Pawn)
 
 	if (Monster != None)
 	{
-		return Monster.BurnDown > 0;
+		return Monster.bBurnified;
 	}
 	
 	PlayerPawn = KFPawn(Pawn);

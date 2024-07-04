@@ -4,8 +4,8 @@ class P_FP extends ZombieFleshpound
 
 var PawnHelper.AfflictionData AfflictionData;
 
-var bool bUnstunTimeReady;
-var float UnstunTime;
+var(KFTurbo) bool bUnstunTimeReady;
+var(KFTurbo) float UnstunTime;
 
 var AI_FP ProAI;
 
@@ -18,14 +18,97 @@ simulated function PostBeginPlay()
     class'PawnHelper'.static.InitializePawnHelper(self, AfflictionData);
 }
 
-function TakeDamage(int Damage, Pawn InstigatedBy, Vector HitLocation, Vector Momentum, class<DamageType> DamageType, optional int HitIndex)
+
+function TakeDamage( int Damage, Pawn InstigatedBy, Vector Hitlocation, Vector Momentum, class<DamageType> DamageType, optional int HitIndex)
 {
+	local int BlockSlip, OldHealth;
+	local Vector X,Y,Z, Dir;
+	local bool bIsHeadShot;
+	local float HeadShotCheckScale;
+    local class<KFWeaponDamageType> WeaponDamageType;
+
 	if (Role == ROLE_Authority)
 	{
 		class'PawnHelper'.static.TakeDamage(Damage, InstigatedBy, HitLocation, Momentum, DamageType, HitIndex, AfflictionData);
 	}
 
-	Super.TakeDamage(Damage, InstigatedBy, HitLocation, Momentum, DamageType, HitIndex);
+    if (DamageType == class 'DamTypeVomit')
+	{
+		Damage = 0; // nulled
+        Super(KFMonster).TakeDamage(Damage, InstigatedBy, HitLocation, Momentum, DamageType, HitIndex);
+        return;
+	}
+
+    WeaponDamageType = class<KFWeaponDamageType>(DamageType);
+
+	GetAxes(Rotation, X,Y,Z);
+
+	if( LastDamagedTime<Level.TimeSeconds )
+    {
+		TwoSecondDamageTotal = 0;
+    }
+	
+    LastDamagedTime = Level.TimeSeconds + 2.f;
+	OldHealth = Health;
+
+    if (WeaponDamageType == None || !WeaponDamageType.default.bIsExplosive)
+    {
+        HeadShotCheckScale = 1.0;
+        if( class<DamTypeMelee>(damageType) != none )
+        {
+            HeadShotCheckScale *= 1.25;
+        }
+
+        bIsHeadShot = IsHeadShot(Hitlocation, normal(Momentum), HeadShotCheckScale);
+
+		// Don't reduce the damage so much if its a high headshot damage weapon
+		if( (bIsHeadShot && WeaponDamageType.default.HeadShotDamageMult >= 1.5) || (class<DamTypeCrossbuzzsaw>(DamageType) != None))
+		{
+			Damage *= 0.75;
+		}
+		else if (class<DamTypeM99SniperRifle>(DamageType) != none)
+		{
+			Damage *= 0.525;
+		}
+		else if ( Level.Game.GameDifficulty >= 5.0 && bIsHeadshot && class<DamTypeCrossbow>(DamageType) != none )
+		{
+			Damage *= 0.35; // was 0.3 in Balance Round 1, then 0.4 in Round 2, then 0.3 in Round 3/4, and 0.35 in Round 5
+		}
+		else
+		{
+			Damage *= 0.5;
+		}
+    }
+    else if (WeaponDamageType != None && WeaponDamageType.default.bIsExplosive)
+    {
+        switch(DamageType)
+        {
+            case class'DamTypeFrag':
+            case class'DamTypePipeBomb':
+            case class'DamTypeMedicNade':
+                Damage *= 2.0f;
+                break;
+            default:
+                Damage *= 1.25f;
+                break;
+        }
+    }
+
+	// Shut off his "Device" when dead
+	if (Damage >= Health)
+    {
+		PostNetReceive();
+    }
+
+	Super(KFMonster).TakeDamage(Damage, instigatedBy, hitLocation, momentum, damageType,HitIndex) ;
+
+	TwoSecondDamageTotal += OldHealth - Health; // Corrected issue where only the Base Health is counted toward the FP's Rage in Balance Round 6(second attempt)
+
+	if (!bDecapitated && TwoSecondDamageTotal > RageDamageThreshold && !bChargingPlayer && !bZapped
+        && (!(bCrispified && bBurnified) || bFrustrated))
+    {
+        StartCharging();
+    }
 }
 
 function bool MeleeDamageTarget(int HitDamage, vector PushDirection)
@@ -81,11 +164,7 @@ function PlayDirectionalHit(Vector HitLoc)
     if(class'PawnHelper'.static.ShouldPlayDirectionalHit(self))
         Super.PlayDirectionalHit(HitLoc);
 
-    if(LastStunCount != StunsRemaining)
-    {
-        UnstunTime = Level.TimeSeconds + StunTime;
-        bUnstunTimeReady = true;
-    }
+	bUnstunTimeReady = class'PawnHelper'.static.UpdateStunProperties(self, LastStunCount, UnstunTime, bUnstunTimeReady);
 }
 
 simulated function SetBurningBehavior()
@@ -178,6 +257,14 @@ Ignores StartCharging;
     		NetUpdateTime = Level.TimeSeconds - 1;
 		}
 	}
+
+    function PlayDirectionalHit(Vector HitLoc)
+    {
+        if( !bShotAnim )
+        {
+            Global.PlayDirectionalHit(HitLoc);
+        }
+    }
 
 	function bool MeleeDamageTarget(int hitdamage, vector pushdir)
 	{

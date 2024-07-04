@@ -26,7 +26,7 @@ var array<AfflictionBurnPriorityData> FirePriorityList;
 
 simulated function PreTick(float DeltaTime)
 {
-    if(!OwningMonster.bBurnified && OwningMonster.BurnDown <= 0)
+    if(!OwningMonster.bBurnified)
     {
 		return;
     }
