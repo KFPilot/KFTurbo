@@ -11,7 +11,7 @@ function bool IsInPounceDist(actor PTarget)
     if (Monster != None)
     {
         PreviousMeleeRange = Monster.MeleeRange;
-        Monster.MeleeRange = PreviousMeleeRange * 5.f;
+        Monster.MeleeRange = PreviousMeleeRange * 4.f;
 
         bResult = Super.IsInPounceDist(PTarget);
         

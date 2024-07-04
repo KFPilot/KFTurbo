@@ -1,4 +1,4 @@
-class P_Crawler_Jumper extends P_Crawler DependsOn(PawnHelper);
+class P_Crawler_Jumper extends P_Crawler_SUM DependsOn(PawnHelper);
 
 var float PounceWindupDuration;
 
@@ -37,7 +37,7 @@ ignores AnimEnd, Trigger, Bump, HitWall, RangedAttack;
 
     simulated function PerformPounce()
     {
-        if ( bZapped || bDecapitated || bIsCrouched || bWantsToCrouch || (Physics != PHYS_Walking) || VSize(Location - Controller.Target.Location) > (MeleeRange * 25) )
+        if ( bZapped || bDecapitated || bIsCrouched || bWantsToCrouch || (Physics != PHYS_Walking) || VSize(Location - Controller.Target.Location) > (MeleeRange * 20) )
 		{
             GotoState('');
             return;
@@ -60,7 +60,7 @@ Begin:
 defaultproperties
 {
     PounceWindupDuration=1.f
-    PounceSpeed=1500.f
+    PounceSpeed=1650.f
 
     Begin Object Class=A_Burn Name=BurnAffliction
         BurnDurationModifier=1.f
@@ -77,4 +77,5 @@ defaultproperties
     AfflictionData=(Burn=A_Burn'BurnAffliction',Zap=A_Zap'ZapAffliction',Harpoon=A_Harpoon'HarpoonAffliction')
     
     ControllerClass=class'KFTurbo.AI_Crawler_Jumper'
+    MenuName="Raptor"
 }
