@@ -17,7 +17,6 @@ defaultproperties
      ItemShortName="L2A3"
      //AmmoItemName=""
      AmmoMesh=StaticMesh'KillingFloorStatics.L85Ammo'
-     //CorrespondingPerkIndex=
      //EquipmentCategoryID=
      InventoryType=Class'KFTurbo.W_L2A3_Weap'
      PickupMessage="You got the L2A3 Incendiary"

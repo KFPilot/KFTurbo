@@ -8,10 +8,10 @@ function DoTrace(Vector Start, Rotator Dir)
 defaultproperties
 {
      RecoilRate=0.070000
-     DamageMin=31
-     DamageMax=31
+     DamageMin=28
+     DamageMax=28
      FireRate=0.100000
-     aimerror=30.000000
+     aimerror=38.000000
      Spread=0.008500
      SpreadStyle=SS_Random
 }

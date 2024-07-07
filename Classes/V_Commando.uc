@@ -90,7 +90,7 @@ static function float GetMagCapacityMod(KFPlayerReplicationInfo KFPRI, KFWeapon 
 
 	if (W_FNFAL_Weap(Other) != None)
 	{
-		Multiplier = LerpStat(KFPRI, 1.f, 1.2f);
+		Multiplier = LerpStat(KFPRI, 1.f, 1.67f);
 	}
 
 	GetAdjustedMagCapacityModifier(KFPRI, Other, Multiplier);
