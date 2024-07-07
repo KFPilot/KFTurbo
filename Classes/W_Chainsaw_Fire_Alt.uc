@@ -50,7 +50,7 @@ defaultproperties
     bAwaitingHitTimer = false
     NextHitTimerPop = 0.f
 
-    MeleeDamage = 270
+    MeleeDamage = 540
     DamagedelayMin=0.50
     DamagedelayMax=0.50
 

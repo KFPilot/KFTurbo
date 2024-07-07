@@ -39,7 +39,7 @@ defaultproperties
      
      Weight=6.000000
 
-     // MagCapacity=
+     MagCapacity=20
      // WeaponReloadAnim=""
      // bHasAimingMode=
      // TraderInfoTexture=
@@ -49,7 +49,7 @@ defaultproperties
      FireModeClass(0)=Class'KFTurbo.W_L2A3_Fire'
      FireModeClass(1)=Class'KFMod.NoFire'
      // Description=""
-     // InventoryGroup=
+     InventoryGroup=4
      // GroupOffset=
      PickupClass=Class'KFTurbo.W_L2A3_Pickup'
      //AttachmentClass=Class'KFTurbo.W_L2A3_Attachment'

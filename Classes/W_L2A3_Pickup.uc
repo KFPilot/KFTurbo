@@ -8,7 +8,7 @@ defaultproperties
      cost=1250
 	CorrespondingPerkIndex=5
      AmmoCost=15
-     //BuyClipSize=
+     BuyClipSize=20
      PowerValue=40
      SpeedValue=80
      RangeValue=50

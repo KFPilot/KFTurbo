@@ -8,8 +8,8 @@ defaultproperties
      //FireSoundRef=""
      //StereoFireSoundRef=""
      DamageType=Class'KFTurbo.W_L2A3_DT'
-     //DamageMin=
-     //DamageMax=
+     DamageMin=35
+     DamageMax=35
      Momentum=6500.000000
      bAccuracyBonusForSemiAuto=True
      AmmoClass=Class'KFTurbo.W_L2A3_Ammo'
