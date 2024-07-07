@@ -11,7 +11,7 @@ class W_ThompsonDrum_Weap extends ThompsonDrumSMG;
 
 defaultproperties
 {
-     MagCapacity=67
+     MagCapacity=50
      ReloadRate=4.210000
      ReloadAnimRate=0.900000
      Weight=6.000000

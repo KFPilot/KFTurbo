@@ -79,13 +79,22 @@ static function float GetMagCapacityMod(KFPlayerReplicationInfo KFPRI, KFWeapon 
 
 	Multiplier = 1.f;
 
-	if (Bullpup(Other) != none || AK47AssaultRifle(Other) != none ||
-		SCARMK17AssaultRifle(Other) != none || M4AssaultRifle(Other) != none
-		|| FNFAL_ACOG_AssaultRifle(Other) != none || MKb42AssaultRifle(Other) != none
-		|| ThompsonSMG(Other) != none || ThompsonDrumSMG(Other) != none
-		|| SPThompsonSMG(Other) != none)
+	if (Bullpup(Other) != none || AK47AssaultRifle(Other) != none 
+		|| SCARMK17AssaultRifle(Other) != none || FNFAL_ACOG_AssaultRifle(Other) != none 
+		|| MKb42AssaultRifle(Other) != none
+		|| ThompsonSMG(Other) != none || SPThompsonSMG(Other) != none)
 	{
 		Multiplier = LerpStat(KFPRI, 1.f, 1.25f);
+	}
+
+	if (ThompsonDrumSMG(Other) != None)
+	{
+		Multiplier = LerpStat(KFPRI, 1.f, 1.6f);
+	}
+
+	if (M4AssaultRifle(Other) != None)
+	{
+		Multiplier = LerpStat(KFPRI, 1.f, 1.34f);
 	}
 
 	if (W_FNFAL_Weap(Other) != None)

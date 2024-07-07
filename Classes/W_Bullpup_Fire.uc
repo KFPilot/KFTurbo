@@ -14,4 +14,5 @@ defaultproperties
      aimerror=38.000000
      Spread=0.008500
      SpreadStyle=SS_Random
+     AmmoClass=Class'KFTurbo.W_Bullpup_Ammo'
 }

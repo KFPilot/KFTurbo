@@ -161,7 +161,7 @@ simulated function Timer()
 defaultproperties
 {
      bAwaitingSecondaryStatus=True
-     MagCapacity=27
+     MagCapacity=30
      HudImage=Texture'KillingFloor2HUD.WeaponSelect.M4_203_unselected'
      SelectedHudImage=Texture'KillingFloor2HUD.WeaponSelect.M4_203'
      MeshRef="KFTurbo.M4M203Aimpoint_1st"
