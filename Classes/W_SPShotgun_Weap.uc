@@ -1,4 +1,4 @@
-class W_SPAutoShotgun_Weap extends SPAutoShotgun;
+class W_SPShotgun_Weap extends SPAutoShotgun;
 
 defaultproperties
 {

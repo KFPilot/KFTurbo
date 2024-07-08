@@ -4,5 +4,5 @@ defaultproperties
 {
      Weight=8.000000
      cost=1500
-     InventoryType=Class'KFTurbo.W_SPAutoShotgun_Weap'
+     InventoryType=Class'KFTurbo.W_SPShotgun_Weap'
 }
