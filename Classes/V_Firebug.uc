@@ -55,7 +55,7 @@ static function float GetAmmoPickupMod(KFPlayerReplicationInfo KFPRI, KFAmmuniti
 
 static function float AddExtraAmmoFor(KFPlayerReplicationInfo KFPRI, Class<Ammunition> AmmoType)
 {
-	if ((AmmoType == class'FlameAmmo' || AmmoType == class'MAC10Ammo' || AmmoType == class'HuskGunAmmo' || AmmoType == class'TrenchgunAmmo' || AmmoType == class'W_FlareRevolver_Ammo' || AmmoType == class'GoldenFlameAmmo') && KFPRI.ClientVeteranSkillLevel > 0)
+	if ((AmmoType == class'FlameAmmo' || AmmoType == class'MAC10Ammo' || AmmoType == class'W_Huskgun_Ammo' || AmmoType == class'TrenchgunAmmo' || AmmoType == class'W_FlareRevolver_Ammo' || AmmoType == class'GoldenFlameAmmo') && KFPRI.ClientVeteranSkillLevel > 0)
 		return LerpStat(KFPRI, 1.f, 1.6f);
 	return 1.0;
 }
@@ -132,28 +132,6 @@ static function float GetCostScaling(KFPlayerReplicationInfo KFPRI, class<Pickup
 
 	return 1.0;
 }
-
-static function float GetAmmoCostScaling(KFPlayerReplicationInfo KFPRI, class<Pickup> Item)
-{
-	switch(Item)
-	{
-		case class'W_MAC10_Pickup' :
-		case class'W_Trenchgun_Pickup' :
-		case class'W_Flamethrower_Pick' :
-
-		case class'W_L2A3_Pickup' :
-		case class'W_FlareRevolver_Pickup' :
-		case class'W_DualFlare_Pickup' :
-			return LerpStat(KFPRI, 1.f, 0.7f);
-			break;
-		case class'W_Huskgun_Pickup' :
-			return LerpStat(KFPRI, 0.5f, 0.3f);
-			break;
-	}
-
-	return 1.0;
-}
-
 
 static function AddDefaultInventory(KFPlayerReplicationInfo KFPRI, Pawn P)
 {
