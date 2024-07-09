@@ -137,6 +137,7 @@
 - Spawn with a Bullpup
 - **Weapons**
     - **Bullpup** 
+        - Now penetrates up to 2 zeds with a damage loss of 25% 🆕
         - Weight 6 -> 5 🟢
         - 8% increased damage 🟢
         - 10% tighter spread 🟢
