@@ -118,7 +118,7 @@
         - Headshot bonus damage reduced by 15% 🔻
         - 45% less maximum ammo 🔻
     - **Crossbow**
-        - 50% less maximum ammo
+        - 50% less maximum ammo 🔻
     - **M99 AMR**
         - Now obliterates normal and welded doors 🆕
         - Weight 13 -> 12 🟢
@@ -315,40 +315,40 @@
         - 60% reduced maximum ammo 🔻
     - **Dwarfs Axe**
         - Removed 🚫
-- **Firebug**
-    - Fire grenades now have a new model and bounce more 🆕
-    - Trenchgun now recieves a 15% damage bonus 🟢
-    - Fire DoT mechanics changed [**Burning**](#afflictions) ⚠️
-    - Spawns with a MAC-10 and no armor
-    - **Weapons**
-        - **Flamethrower**
-            - 50% reduced damage 🔻
-            - 10% increased spread 🔻
-        - **MAC10**
-            - Weight 4 -> 3
-            - Headshot bonus damage increased by 18% 🟢
-            - 80% less recoil 🟢
-            - 40% tighter spread 🟢
-            - Firing type is no longer high RoF ⚠️
+### Firebug
+- Fire grenades now have a new model and bounce more 🆕
+- Trenchgun now recieves a 15% damage bonus 🟢
+- Fire DoT mechanics changed [**Burning**](#afflictions) ⚠️
+- Spawns with a MAC-10 and no armor
+- **Weapons**
+    - **Flamethrower**
+        - 50% reduced damage 🔻
+        - 10% increased spread 🔻
+    - **MAC10**
+        - Weight 4 -> 3
+        - Headshot bonus damage increased by 18% 🟢
+        - 80% less recoil 🟢
+        - 40% tighter spread 🟢
+        - Firing type is no longer high RoF ⚠️
 
-            - 45% slower fire rate 🔻
-            - 30% more expensive 🔻
-        - **Flare Revolver**
-            - Has a new alternate fire that shoots a grenade-like flare that's affected by gravity and explodes after 2.5 seconds 🆕
+        - 45% slower fire rate 🔻
+        - 30% more expensive 🔻
+    - **Flare Revolver**
+        - Has a new alternate fire that shoots a grenade-like flare that's affected by gravity and explodes after 2.5 seconds 🆕
 
-            - 25% reduced maximum and starting ammo 🔻
-        - **Trenchgun**
-            - Weight 8 -> 7 🟢
-            - 23% less damage loss after penetrating. 🟢
-            - Headshot bonus damage increased by 16% 🟢
-            - 50% less player pushback on firing 🟢
-            
-            - 20% more expensive 🔻
-        - **L2A3 Incendiary**
-            - New Incendiary assault rifle 🆕
-        - **Husk Cannon**
-            - Weight 8 -> 11 🟢
-            - 25% cheaper 🟢
-            - Chargeup time reduced by 33% 🟢
-            - 100% tighter spread 🟢
-            - 25% more maximum and starting ammo 🟢
+        - 25% reduced maximum and starting ammo 🔻
+    - **Trenchgun**
+        - Weight 8 -> 7 🟢
+        - 23% less damage loss after penetrating. 🟢
+        - Headshot bonus damage increased by 16% 🟢
+        - 50% less player pushback on firing 🟢
+        
+        - 20% more expensive 🔻
+    - **L2A3 Incendiary**
+        - New incendiary assault rifle 🆕
+    - **Husk Cannon**
+        - Weight 8 -> 11 🟢
+        - 25% cheaper 🟢
+        - Chargeup time reduced by 33% 🟢
+        - 100% tighter spread 🟢
+        - 25% more maximum and starting ammo 🟢
