@@ -19,7 +19,8 @@
     - Disables husk cannon and siren scream
 - **Harpooned**
     - Causes zed to panic
-    - Reduces movement speed by 75%
+    - Reduces movement speed by 50%
+    - Reduces scrake movement speed by 75%
 
 ## Perk Changes
 
@@ -326,7 +327,7 @@
         - 50% reduced damage 🔻
         - 10% increased spread 🔻
     - **MAC10**
-        - Weight 4 -> 3
+        - Weight 4 -> 3 🟢
         - Headshot bonus damage increased by 18% 🟢
         - 80% less recoil 🟢
         - 40% tighter spread 🟢
@@ -358,3 +359,22 @@
 ## Zed changes
 
 🚧
+### Crawler
+- Added a new variant: Raptor
+### Gorefast
+- Added a new cosmetic variant: Classy Gorefast
+### Bloat
+- Added a new variant: Fathead
+### Husk
+- No longer fires cannon after dying
+### Siren
+- No longer deals damage after dying
+- Added a new variant: Caroler
+### Scrake
+- Fixed "Slow Rage" state, where the scrake would be stuck with a slow movement speed in his charging animation
+- Now has a 25% damage resistance to Flare Revolver
+- No longer spins in place when stunned
+### Fleshpound
+- Fixed a bug that made the Fleshpound "friendly", preventing it from attacking
+- Fixed various issues with being on fire
+- Damage resistance to M99 reduced from 50% to 47.5%
