@@ -93,9 +93,9 @@
         - Penetration count 10 -> 0 🔻
     - **Handcannon & Dual Handcannon**
         - 27% less recoil 🟢
+        - Damage loss after penetrating reduced by 20%. 🟢
 
         - Penetration count 10 -> 1 🔻
-        - Damage loss after penetrating reduced by 20%. 🔻
     - **44 Magnum**
         - 14% increased damage 🟢
         - 11% tighter spread 🟢
