@@ -347,8 +347,9 @@
     - **L2A3 Incendiary**
         - New incendiary assault rifle 🆕
     - **Husk Cannon**
-        - Weight 8 -> 11 🟢
         - 25% cheaper 🟢
         - Chargeup time reduced by 33% 🟢
         - 100% tighter spread 🟢
         - 25% more maximum and starting ammo 🟢
+        
+        - Weight 8 -> 11 🔻
