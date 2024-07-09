@@ -134,6 +134,7 @@
 - Thompson Drum receives 60% extra magazine size instead of the standard 25% 🟢
 - M4 receives 34% extra magazine size instead of the standard 25% 🟢
 - FN FAL receives 67% extra magazine size instead of the standard 25% 🟢
+- SCARMK17 receives 20% extra magazine size instead of the standard 25% 🔻
 - 25% extra ammo for perk weapons 🟢
 - Spawn with a Bullpup
 - **Weapons**
@@ -187,28 +188,31 @@
         - Removed (probably going to be a skin/variant for the Thompson drum) 🚫
 ### Demolitions
 - 50% more M4 203 grenades 🟢
-- 160% more LAW rockets 🟢
+- M4 203 grenades receive 90% damage bonus instead of the standard 60% 🟢
+- 60% more LAW rockets 🟢
 - 30% faster LAW fire rate 🟢
 - 30% faster LAW reload speed 🟢
-- Spawn with an M4 203
+- Perk weapons receive a 30% discount 🔻
+- Pipe bombs receive a 74% discount 🟦
+- Spawn with an M4 203 ⚠️
 - **Weapons**
     - **M79 Grenade Launcher**
         - Unchanged 🟦
     - **M32 Grenade Launcher**
         - Unchanged 🟦
     - **M4 203**
-    - Replaces the original M4 ⚠️
-    - Uses the scope from the M4 ⚠️
-    - Underbarrel grenade launcher is now loaded manually instead of automatically by pressing alt-fire again ⚠️
-    - Firing type is no longer high RoF ⚠️
-    - 36% cheaper than the M4 203 🟢
-    - 25% less recoil 🟢
-    - 23% increased damage 🟢
+        - Replaces the original M4 ⚠️
+        - Uses the scope from the M4 ⚠️
+        - Underbarrel grenade launcher is now loaded manually instead of automatically by pressing alt-fire again ⚠️
+        - Firing type is no longer high RoF ⚠️
+        - 36% cheaper than the M4 203 🟢
+        - 25% less recoil 🟢
+        - 23% increased damage 🟢
 
-    - Single-shot fire mode removed 🔻
-    - 75% more expensive than the M4 🔻
-    - 17% less maximum grenades 🔻
-    - 28% slower fire rate 🔻
+        - Single-shot fire mode removed 🔻
+        - 75% more expensive than the M4 🔻
+        - 17% less maximum grenades 🔻
+        - 28% slower fire rate 🔻
     - **Orca Bomb Propeller**
         - High speed bounces multiply the damage output of the projectile 🆕
     - **SealSqueal Harpoon Bomber**
@@ -233,6 +237,7 @@
 ### Field Medic
 - Healing grenades now have a new model and bounce more 🆕
 - Magazine capacity bonus on the M7A3 reduced to 50% from 100% 🔻
+- 20% faster movement speed 🔻
 - Receives 20% more ammo for M7A3 🟢
 - **Weapons**
     - **MP7**
@@ -319,7 +324,9 @@
         - Removed 🚫
 ### Firebug
 - Fire grenades now have a new model and bounce more 🆕
-- Trenchgun now recieves a 15% damage bonus 🟢
+- Trenchgun and MAC-10 now receive a 15% damage bonus 🟢
+- Flamethrower and MAC-10 receive a 60% magazine capacity bonus 🟢
+- 60% faster reload speed for perk weapons 🟢
 - Fire DoT mechanics changed [**Burning**](#afflictions) ⚠️
 - Spawns with a MAC-10 and no armor
 - **Weapons**
