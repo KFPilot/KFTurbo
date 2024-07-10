@@ -57,8 +57,8 @@ simulated function HitWall( vector HitNormal, actor Wall )
         else
         {
         TrickBounceCount++;
-        Damage = default.Damage * (((TrickBounceBonusIncrement**TrickBounceCount)*TrickBounceMultiplier) ** float(Min(TrickBounceCount, MaxTrickBounceCount)));
-        } // first bounce: damage*multiplier, second: damage*multiplier*increment, third:damage*multiplier*increment*increment
+        Damage = default.Damage * (((TrickBounceBonusIncrement ** TrickBounceCount)*TrickBounceMultiplier) ** float(Min(TrickBounceCount, MaxTrickBounceCount)));
+        } // first bounce: damage*multiplier, second: damage*multiplier*(multiplier*increment), third:damage*multiplier*(multiplier*increment)*(multiplier*increment*increment)
     }
 
     VNorm = (Velocity dot HitNormal) * HitNormal;
