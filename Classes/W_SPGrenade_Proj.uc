@@ -51,8 +51,8 @@ simulated function HitWall( vector HitNormal, actor Wall )
     if (Speed > default.Speed * 0.33f )
     {
         TrickBounceCount++;
-        currentCoefficient = (TrickBounceBonusCoefficient ** (float(Min(TrickBounceCount-1, MaxTrickBounceCount-1))));
-        Damage = default.Damage * ((currentCoefficient * TrickBounceMultiplier) ** float(Min(TrickBounceCount, MaxTrickBounceCount)));
+        CurrentCoefficient = (TrickBounceBonusCoefficient ** (float(Min(TrickBounceCount-1, MaxTrickBounceCount-1))));
+        Damage = default.Damage * ((CurrentCoefficient * TrickBounceMultiplier) ** float(Min(TrickBounceCount, MaxTrickBounceCount)));
     } 
     // first bounce: damage*multiplier, second: damage*(multiplier*coef)*(multiplier*coef), third:damage*(multiplier*coef*coef)*(multiplier*coef*coef)*(multiplier*coef*coef)
 
