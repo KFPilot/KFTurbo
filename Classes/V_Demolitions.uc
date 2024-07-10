@@ -136,7 +136,7 @@ static function float GetCostScaling(KFPlayerReplicationInfo KFPRI, class<Pickup
 {
 	switch(Item)
 	{
-		case class'W_LAW_Pick':
+		case class'W_LAW_Pickup':
 		case class'W_SealSqueal_Pickup' :
 		case class'W_M79_Pickup' :
 		case class'W_M32_Pickup' :
@@ -157,7 +157,7 @@ static function float GetAmmoCostScaling(KFPlayerReplicationInfo KFPRI, class<Pi
 {
 	switch(Item)
 	{
-		case class'W_LAW_Pick':
+		case class'W_LAW_Pickup':
 		case class'W_SealSqueal_Pickup' :
 		case class'W_M79_Pickup' :
 		case class'W_M32_Pickup' :

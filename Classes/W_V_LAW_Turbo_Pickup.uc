@@ -1,4 +1,4 @@
-class W_V_LAW_Turbo_Pickup extends W_LAW_Pick;
+class W_V_LAW_Turbo_Pickup extends W_LAW_Pickup;
 
 defaultproperties
 {

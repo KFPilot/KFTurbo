@@ -121,7 +121,7 @@ static function float GetCostScaling(KFPlayerReplicationInfo KFPRI, class<Pickup
 {
 	switch (Item)
 	{
-	case class'W_FlameThrower_Pick' :
+	case class'W_FlameThrower_Pickup' :
 	case class'W_MAC10_Pickup' :
 	case class'W_Huskgun_Pickup' :
 	case class'W_Trenchgun_Pickup' :

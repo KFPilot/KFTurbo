@@ -29,5 +29,5 @@ defaultproperties
      ZoomTime=0.175000
      FastZoomOutTime=0.150000
      FireModeClass(0)=Class'KFTurbo.W_LAW_Fire'
-     PickupClass=Class'KFTurbo.W_LAW_Pick'
+     PickupClass=Class'KFTurbo.W_LAW_Pickup'
 }
