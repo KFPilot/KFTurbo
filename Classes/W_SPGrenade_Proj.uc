@@ -4,6 +4,7 @@ var int TrickBounceCount;
 var int MaxTrickBounceCount;
 var float TrickBounceMultiplier;
 var float TrickBounceBonusCoefficient; // by how much it should increase the bounce multiplier after bouncing
+var float CurrentCoefficient;
 
 simulated function ProcessTouch(Actor Other, Vector HitLocation)
 {
@@ -50,7 +51,8 @@ simulated function HitWall( vector HitNormal, actor Wall )
     if (Speed > default.Speed * 0.33f )
     {
         TrickBounceCount++;
-        Damage = default.Damage * (((TrickBounceBonusCoefficient ** (TrickBounceCount-1)) * TrickBounceMultiplier) ** float(Min(TrickBounceCount, MaxTrickBounceCount)));
+        currentCoefficient = (TrickBounceBonusCoefficient ** (float(Min(TrickBounceCount-1, MaxTrickBounceCount-1))));
+        Damage = default.Damage * ((currentCoefficient * TrickBounceMultiplier) ** float(Min(TrickBounceCount, MaxTrickBounceCount)));
     } 
     // first bounce: damage*multiplier, second: damage*(multiplier*coef)*(multiplier*coef), third:damage*(multiplier*coef*coef)*(multiplier*coef*coef)*(multiplier*coef*coef)
 
