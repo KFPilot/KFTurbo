@@ -177,7 +177,7 @@ simulated function Explode(vector HitLocation, vector HitNormal)
 
 	if ( EffectIsRelevant(Location,false) )
 	{
-		Spawn(Class'KFTurbo.FlareGrenadeExplosion',,, HitLocation, rotator(vect(0,0,1)));
+		Spawn(Class'KFTurbo.W_FlareRevolver_NadeExplosion',,, HitLocation, rotator(vect(0,0,1)));
 		Spawn(ExplosionDecal,self,,HitLocation, rotator(-HitNormal));
 	}
 

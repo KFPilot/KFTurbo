@@ -1,4 +1,4 @@
-class FlareGrenadeExplosion extends KFIncendiaryExplosion;
+class W_FlareRevolver_NadeExplosion extends KFIncendiaryExplosion;
 
 defaultproperties
 {
@@ -22,7 +22,7 @@ defaultproperties
          LifetimeRange=(Min=0.201000,Max=0.300100)
          StartVelocityRange=(Z=(Min=50.000000,Max=500.000000))
      End Object
-     Emitters(1)=SpriteEmitter'KFTurbo.FlareGrenadeExplosion.SpriteEmitter2'
+     Emitters(1)=SpriteEmitter'KFTurbo.W_FlareRevolver_NadeExplosion.SpriteEmitter2'
 
      Emitters(2)=None
 
