@@ -79,17 +79,23 @@ static function float GetMagCapacityMod(KFPlayerReplicationInfo KFPRI, KFWeapon 
 
 	Multiplier = 1.f;
 
-	if (Bullpup(Other) != none || AK47AssaultRifle(Other) != none 
-		|| SCARMK17AssaultRifle(Other) != none || FNFAL_ACOG_AssaultRifle(Other) != none 
-		|| MKb42AssaultRifle(Other) != none
-		|| ThompsonSMG(Other) != none || SPThompsonSMG(Other) != none)
+	if (Bullpup(Other) != none 
+		|| AK47AssaultRifle(Other) != none 
+		|| SCARMK17AssaultRifle(Other) != none 
+		|| FNFAL_ACOG_AssaultRifle(Other) != none 
+		|| MKb42AssaultRifle(Other) != none)
 	{
 		Multiplier = LerpStat(KFPRI, 1.f, 1.25f);
 	}
 
-	if (ThompsonDrumSMG(Other) != None)
+	if (ThompsonDrumSMG(Other) != None || SPThompsonSMG(Other) != none)
 	{
 		Multiplier = LerpStat(KFPRI, 1.f, 1.6f);
+	}
+
+	if (ThompsonSMG(Other) != None)
+	{
+		Multiplier = LerpStat(KFPRI, 1.f, 1.2f);
 	}
 
 	if (M4AssaultRifle(Other) != None)
@@ -174,7 +180,7 @@ static function float AddExtraAmmoFor(KFPlayerReplicationInfo KFPRI, class<Ammun
 	{
 	case class'SCARMK17Ammo' :
 	case class'MKb42Ammo' :
-
+	case class'W_ThompsonSMG_Ammo' :
 	case class'W_Bullpup_Ammo' :
 	case class'W_AK47_Ammo' :
 	case class'W_ThompsonDrum_Ammo' :
@@ -222,8 +228,8 @@ static function int AddDamage(KFPlayerReplicationInfo KFPRI, KFMonster Injured, 
 	case class'W_FNFAL_DT' :
 	case class'W_ThompsonDrum_DT' :
 		return float(InDamage) * LerpStat(KFPRI, 1.05f, 1.5f);
-	case class'W_MAC10_DT' :
-		return float(InDamage) * LerpStat(KFPRI, 1.05f, 1.15f);
+	case class'W_ThompsonSMG_DT' : //left this here for future balancing
+		return float(InDamage) * LerpStat(KFPRI, 1.05f, 1.5f);
 	}
 
 	return InDamage;
@@ -267,6 +273,7 @@ static function float GetCostScaling(KFPlayerReplicationInfo KFPRI, class<Pickup
 	case class'W_ThompsonDrum_Pickup':
 	case class'W_FNFAL_Pickup' :
 	case class'W_SCARMK17_Pickup' :
+	case class'W_ThompsonSMG_Pickup' :
 		return LerpStat(KFPRI, 0.9f, 0.3f);
 		break;
 	default:

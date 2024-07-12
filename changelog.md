@@ -135,8 +135,9 @@
 - M4 receives 34% extra magazine size instead of the standard 25% 🟢
 - FN FAL receives 67% extra magazine size instead of the standard 25% 🟢
 - SCARMK17 receives 20% extra magazine size instead of the standard 25% 🔻
+- Thompson SMG receives 20% extra magazine size instead of the standard 25% 🔻
 - 25% extra ammo for perk weapons 🟢
-- Spawn with a Bullpup
+- Spawn with a Bullpup ⚠️
 - **Weapons**
     - **Bullpup** 
         - Now penetrates up to 2 zeds with a damage loss of 25% 🆕
@@ -184,7 +185,18 @@
         - 36% less maximum and starting ammo 🔻
     - **Thompson SMG**
         - New incendiary variant 🆕
-        - WIP 🚧
+        - Ignites enemies  [**Burning**](#afflictions) 🆕
+        - 12% less recoil 🟢
+        - 25% tighter spread 🟢
+        - Firing type is no longer high RoF ⚠️
+
+        - 63% slower fire rate 🔻
+        - Magazine capacity 30 -> 25 🔻
+        - Weight 5 -> 6 🔻
+        - 17% slower reload speed 🔻
+        - 39% more expensive 🔻
+        - 33% less maximum ammo 🔻
+        - 5% reduced damage 🔻
     - **Steampunk Thompson**
         - Removed (probably going to be a skin/variant for the Thompson drum) 🚫
 ### Demolitions
@@ -289,7 +301,7 @@
 - Patriarch can never deal more than 95 damage to the Berserker ⚠️
 - Bloat bile damage reduction 80% -> 60% 🔻
 - 20% siren scream damage reduction 🆕
-- Spawn with a Machete
+- Spawn with a Machete ⚠️
 - **Weapons**
     - **Machete**
         - Unchanged 🟦
@@ -325,11 +337,11 @@
         - Removed 🚫
 ### Firebug
 - Fire grenades now have a new model and bounce more 🆕
-- Trenchgun and MAC-10 now receive a 15% damage bonus 🟢
-- Flamethrower and MAC-10 receive a 60% magazine capacity bonus 🟢
+- Trenchgun, MAC-10 and Thompson SMG now receive a 15% damage bonus 🟢
+- Flamethrower, MAC-10 and Thompson SMG receive a 60% magazine capacity bonus 🟢
 - 60% faster reload speed for perk weapons 🟢
 - Fire DoT mechanics changed [**Burning**](#afflictions) ⚠️
-- Spawns with a MAC-10 and no armor
+- Spawns with a MAC-10 and no armor ⚠️
 - **Weapons**
     - **Flamethrower**
         - 50% reduced damage 🔻
@@ -341,6 +353,7 @@
         - 40% tighter spread 🟢
         - Firing type is no longer high RoF ⚠️
 
+        - 14% reduced damage 🔻
         - 45% slower fire rate 🔻
         - 30% more expensive 🔻
     - **Flare Revolver**
@@ -356,7 +369,18 @@
         - 20% more expensive 🔻
     - **Thompson SMG**
         - New incendiary variant 🆕
-        - WIP 🚧
+        - Ignites enemies  [**Burning**](#afflictions) 🆕
+        - 12% less recoil 🟢
+        - 25% tighter spread 🟢
+        - Firing type is no longer high RoF ⚠️
+
+        - 63% slower fire rate 🔻
+        - Magazine capacity 30 -> 25 🔻
+        - Weight 5 -> 6 🔻
+        - 17% slower reload speed 🔻
+        - 39% more expensive 🔻
+        - 33% less maximum ammo 🔻
+        - 5% reduced damage 🔻
     - **Husk Cannon**
         - 25% cheaper 🟢
         - Chargeup time reduced by 33% 🟢

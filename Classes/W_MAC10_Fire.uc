@@ -14,8 +14,8 @@ defaultproperties
      StereoFireSoundRef="KF_MAC10MPSnd.MAC10_Silenced_FireST"
      NoAmmoSoundRef="KF_AK47Snd.AK47_DryFire"
      DamageType=Class'KFTurbo.W_MAC10_DT'
-     DamageMin=35
-     DamageMax=35
+     DamageMin=30
+     DamageMax=30
      Momentum=6500.000000
      bAccuracyBonusForSemiAuto=True
      bPawnRapidFireAnim=True

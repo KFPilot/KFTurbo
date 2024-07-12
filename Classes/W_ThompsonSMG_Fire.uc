@@ -3,9 +3,9 @@ class W_ThompsonSMG_Fire extends KFFire;
 defaultproperties
 {
      FireAimedAnim="Fire_Iron"
-     RecoilRate=0.070000
-     maxVerticalRecoilAngle=300
-     maxHorizontalRecoilAngle=150
+     RecoilRate=0.080000
+     maxVerticalRecoilAngle=150
+     maxHorizontalRecoilAngle=100
      ShellEjectClass=Class'KFMod.IJCShellEjectThompson'
      ShellEjectBoneName="Shell_eject"
      bRandomPitchFireSound=False
@@ -15,10 +15,10 @@ defaultproperties
      DamageType=Class'KFTurbo.W_ThompsonSMG_DT'
      DamageMin=38
      DamageMax=38
-     Momentum=12500.000000
+     Momentum=7000.000000
      bAccuracyBonusForSemiAuto=True
      FireForce="AssaultRifleFire"
-     FireRate=0.100000
+     FireRate=0.140000
      AmmoClass=Class'KFTurbo.W_ThompsonSMG_Ammo'
      AmmoPerFire=1
      ShakeRotMag=(X=50.000000,Y=50.000000,Z=350.000000)
@@ -29,8 +29,8 @@ defaultproperties
      ShakeOffsetTime=1.250000
      BotRefireRate=0.150000
      FlashEmitterClass=Class'ROEffects.MuzzleFlash1stSTG'
-     aimerror=40.000000
-     Spread=0.010000
+     aimerror=35.000000
+     Spread=0.008000
      SpreadStyle=SS_Random
 
      //RecoilVelocityScale=1.500000
