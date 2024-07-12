@@ -183,7 +183,8 @@
         - 20% reduced damage 🔻
         - 36% less maximum and starting ammo 🔻
     - **Thompson SMG**
-        - Removed 🚫
+        - New incendiary variant 🆕
+        - WIP 🚧
     - **Steampunk Thompson**
         - Removed (probably going to be a skin/variant for the Thompson drum) 🚫
 ### Demolitions
@@ -353,8 +354,9 @@
         - 50% less player pushback on firing 🟢
         
         - 20% more expensive 🔻
-    - **L2A3 Incendiary**
-        - New incendiary assault rifle 🆕
+    - **Thompson SMG**
+        - New incendiary variant 🆕
+        - WIP 🚧
     - **Husk Cannon**
         - 25% cheaper 🟢
         - Chargeup time reduced by 33% 🟢
