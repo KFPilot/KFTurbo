@@ -101,15 +101,29 @@ static function int AddDamage(KFPlayerReplicationInfo KFPRI, KFMonster Injured, 
 	return InDamage;
 }
 
-static function int ReduceDamage(KFPlayerReplicationInfo KFPRI, KFPawn Injured, Pawn Instigator, int InDamage, class<DamageType> DmgType)
+static function int ReduceDamage(KFPlayerReplicationInfo KFPRI, KFPawn Injured, Pawn Instigator, int InDamage, class<DamageType> DamageType)
 {
-	if (class<DamTypeFrag>(DmgType) != none || class<DamTypePipeBomb>(DmgType) != none ||
-		class<DamTypeM79Grenade>(DmgType) != none || class<DamTypeM32Grenade>(DmgType) != none
-		|| class<DamTypeM203Grenade>(DmgType) != none || class<DamTypeRocketImpact>(DmgType) != none
-		|| class<DamTypeSPGrenade>(DmgType) != none || class<DamTypeSealSquealExplosion>(DmgType) != none
-		|| class<DamTypeSeekerSixRocket>(DmgType) != none)
-		return float(InDamage) * LerpStat(KFPRI, 1.f, 0.45f);
-	return InDamage;
+	local class<KFWeaponDamageType> KFWeaponDamageType;
+	local float DamageMultiplier;
+
+	DamageMultiplier = 1.f;
+
+	KFWeaponDamageType = class<KFWeaponDamageType>(DamageType);
+	if (KFWeaponDamageType != None)
+	{
+		if (KFWeaponDamageType.default.bIsExplosive)
+		{
+			DamageMultiplier *= LerpStat(KFPRI, 1.f, 0.45f);
+		}
+
+		//This guy is meant to be used at closer range and can get dangerous.
+		if (class<DamTypeSeekerSixRocket>(DamageType) != none)
+		{
+			DamageMultiplier *= LerpStat(KFPRI, 1.f, 0.75f);
+		}
+	}
+
+	return float(InDamage) * DamageMultiplier;
 }
 
 static function float GetFireSpeedMod(KFPlayerReplicationInfo KFPRI, Weapon Other)
@@ -141,8 +155,8 @@ static function float GetCostScaling(KFPlayerReplicationInfo KFPRI, class<Pickup
 		case class'W_M79_Pickup' :
 		case class'W_M32_Pickup' :
 
-		case class'SPGrenadePickup' :
-		case class'SeekerSixPickup' :
+		case class'W_SPGrenade_Pickup' :
+		case class'W_SeekerSix_Pickup' :
 			return LerpStat(KFPRI, 0.9f, 0.3f);
 			break;
 		case class'W_Pipebomb_Pickup' :
@@ -162,8 +176,8 @@ static function float GetAmmoCostScaling(KFPlayerReplicationInfo KFPRI, class<Pi
 		case class'W_M79_Pickup' :
 		case class'W_M32_Pickup' :
 
-		case class'SPGrenadePickup' :
-		case class'SeekerSixPickup' :
+		case class'W_SPGrenade_Pickup' :
+		case class'W_SeekerSix_Pickup' :
 			return LerpStat(KFPRI, 1.f, 0.7f);
 			break;
 		case class'W_Pipebomb_Pickup' :
