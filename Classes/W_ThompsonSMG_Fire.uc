@@ -17,6 +17,7 @@ defaultproperties
      DamageMax=38
      Momentum=7000.000000
      bAccuracyBonusForSemiAuto=True
+     TransientSoundVolume=1.800000
      FireForce="AssaultRifleFire"
      FireRate=0.140000
      AmmoClass=Class'KFTurbo.W_ThompsonSMG_Ammo'
