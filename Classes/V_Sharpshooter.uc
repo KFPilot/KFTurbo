@@ -144,7 +144,7 @@ static function float GetReloadSpeedModifier(KFPlayerReplicationInfo KFPRI, KFWe
 
 	if(Magnum44Pistol(Other) != None || Dual44Magnum(Other) != None)
 	{
-		return LerpStat(KFPRI, 1.f, 1.25f);
+		return LerpStat(KFPRI, 1.f, 1.4f);
 	}
 
 	if (Winchester(Other) != None

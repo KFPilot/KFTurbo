@@ -5,4 +5,7 @@ defaultproperties
      FireAnimRate=1.250000
      FireRate=0.600000
      ProjectileClass=Class'KFTurbo.W_SealSqueal_Proj'
+     Spread=0.005000
+     aimerror=10.000000
+     SpreadStyle=SS_None
 }

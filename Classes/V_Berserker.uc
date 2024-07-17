@@ -94,7 +94,7 @@ static function int ReduceDamage(KFPlayerReplicationInfo KFPRI, KFPawn Injured, 
 			break;
 	}
 
-	InDamage = float(InDamage) * LerpStat(KFPRI, 1.f, 0.95f);
+	InDamage = float(InDamage) * LerpStat(KFPRI, 1.f, 0.90f);
 
 	if (ZombieBoss(Instigator) != None)
 	{

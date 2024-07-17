@@ -8,6 +8,8 @@ function DoTrace(Vector Start, Rotator Dir)
 defaultproperties
 {
      RecoilRate=0.070000
+     maxVerticalRecoilAngle=200
+     maxHorizontalRecoilAngle=175
      DamageMin=28
      DamageMax=28
      FireRate=0.100000
