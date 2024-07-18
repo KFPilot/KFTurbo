@@ -95,57 +95,61 @@ defaultproperties
     bIsHighDifficulty = true
 
     // Wave 1
-    // Squads: 0, 1, 2, 6, 7, 8, 10, 11, 12
+    // Squads: 0-5
     // Wave 2-7
-    // Squads: 2, 5, 6, 7, 9, 10, 11, 12, 13
+    // Squads: 6-11
     // Wave 8-9
-    // Squads: 1, 2, 3, 4, 8, 14, 15, 16, 17, 18
+    // Squads: 12-17
     // Wave 10
-    // Squads: 1, 2, 3, 4, 8, 14, 15, 16, 17, 18, 19, 20
+    // Squads: 18-22
 
-    LongWaves(0)=(WaveMask=7614,WaveMaxMonsters=35,WaveDifficulty=2.000000)
-    LongWaves(1)=(WaveMask=16091,WaveMaxMonsters=35,WaveDifficulty=2.000000)
-    LongWaves(2)=(WaveMask=16091,WaveMaxMonsters=40,WaveDifficulty=2.000000)
-    LongWaves(3)=(WaveMask=16091,WaveMaxMonsters=40,WaveDifficulty=2.000000)
-    LongWaves(4)=(WaveMask=16091,WaveMaxMonsters=45,WaveDifficulty=2.000000)
-    LongWaves(5)=(WaveMask=16091,WaveMaxMonsters=45,WaveDifficulty=2.000000)
-    LongWaves(6)=(WaveMask=16091,WaveMaxMonsters=50,WaveDifficulty=2.000000)
-    LongWaves(7)=(WaveMask=508180,WaveMaxMonsters=50,WaveDifficulty=2.000000)
-    LongWaves(8)=(WaveMask=508180,WaveMaxMonsters=55,WaveDifficulty=2.000000)
-    LongWaves(9)=(WaveMask=2081042,WaveMaxMonsters=60,WaveDifficulty=2.000000)
+    LongWaves(0)=(WaveMask=63,WaveMaxMonsters=35,WaveDifficulty=2.000000)
+    LongWaves(1)=(WaveMask=4032,WaveMaxMonsters=35,WaveDifficulty=2.000000)
+    LongWaves(2)=(WaveMask=4032,WaveMaxMonsters=40,WaveDifficulty=2.000000)
+    LongWaves(3)=(WaveMask=4032,WaveMaxMonsters=40,WaveDifficulty=2.000000)
+    LongWaves(4)=(WaveMask=4032,WaveMaxMonsters=45,WaveDifficulty=2.000000)
+    LongWaves(5)=(WaveMask=4032,WaveMaxMonsters=45,WaveDifficulty=2.000000)
+    LongWaves(6)=(WaveMask=4032,WaveMaxMonsters=50,WaveDifficulty=2.000000)
+    LongWaves(7)=(WaveMask=258048,WaveMaxMonsters=50,WaveDifficulty=2.000000)
+    LongWaves(8)=(WaveMask=258042,WaveMaxMonsters=55,WaveDifficulty=2.000000)
+    LongWaves(9)=(WaveMask=16515072,WaveMaxMonsters=60,WaveDifficulty=2.000000)
 
     MonsterCollection = Class'KFTurbo.MC_DEF'
-    StandardMonsterSquads(0) = "2B2I"
-    StandardMonsterSquads(1) = "3A2B2C"
-    StandardMonsterSquads(2) = "1A3C2H"
-    StandardMonsterSquads(3) = "4A4C1H1G"
-    StandardMonsterSquads(4) = "3A1B2D1G1H"
-    StandardMonsterSquads(5) = "3A"
-    StandardMonsterSquads(6) = "2A1E"
-    StandardMonsterSquads(7) = "2A3C1E"
-    StandardMonsterSquads(8) = "2B3D1G1H"
-    StandardMonsterSquads(9) = "4A1C"
-    StandardMonsterSquads(10) = "4A"
-    StandardMonsterSquads(11) = "4D"
-    StandardMonsterSquads(12) = "2G"
-    StandardMonsterSquads(13) = "2E"
-    StandardMonsterSquads(14) = "2I3H4B"
-    StandardMonsterSquads(15) = "2F"
-    StandardMonsterSquads(16) = "3F"
-    StandardMonsterSquads(17) = "3H"
-    StandardMonsterSquads(18) = "2I"
-    StandardMonsterSquads(19) = "2F2H"
-    StandardMonsterSquads(20) = "2E2I"
+    StandardMonsterSquads(0) = "4A4B4C"
+    StandardMonsterSquads(1) = "2G4D1H"
+    StandardMonsterSquads(2) = "2A2B2C1E"
+    StandardMonsterSquads(3) = "2A2B2C1I"
+    StandardMonsterSquads(4) = "4D1H1I1G"
+    StandardMonsterSquads(5) = "2A5C2D2G"
+    StandardMonsterSquads(6) = "4A4B4C"
+    StandardMonsterSquads(7) = "1C2D2H1I1E1F"
+    StandardMonsterSquads(8) = "2A2B2C2I1I"
+    StandardMonsterSquads(9) = "1D1H1I1G2E1F"
+    StandardMonsterSquads(10) = "4D1H2I2G"
+    StandardMonsterSquads(11) = "2A2D1H1I1E2F"
+    StandardMonsterSquads(12) = "4A4B4C"
+    StandardMonsterSquads(13) = "1C2D2H1I1E2F"
+    StandardMonsterSquads(14) = "2A2B2C2I2I"
+    StandardMonsterSquads(15) = "1D1H1I1G2E1F"
+    StandardMonsterSquads(16) = "2B4D1H2I1G"
+    StandardMonsterSquads(17) = "2A2D1H1I2E3F"
+    StandardMonsterSquads(18) = "4A4B4C"
+    StandardMonsterSquads(19) = "1C2D2H1I2E1F"
+    StandardMonsterSquads(20) = "2A2B2C2I2I1F"
+    StandardMonsterSquads(21) = "1D1H1I1G2E2F"
+    StandardMonsterSquads(22) = "2B4D2H2I1G"
+    StandardMonsterSquads(23) = "2A2D2H1I2E3F"
 
-    LongSpecialSquads(4)=(ZedClass=("KFTurbo.P_Crawler_STA","KFTurbo.P_Gorefast_XMA","KFTurbo.P_Stalker_STA","KFTurbo.P_SC_HAL"),NumZeds=(2,2,1,1))
-    LongSpecialSquads(6)=(ZedClass=("KFTurbo.P_FP_HAL"),NumZeds=(1))
-    LongSpecialSquads(7)=(ZedClass=("KFTurbo.P_Bloat_STA","KFTurbo.P_Siren_STA","KFTurbo.P_FP_STA"),NumZeds=(1,1,1))
-    LongSpecialSquads(8)=(ZedClass=("KFTurbo.P_Bloat_STA","KFTurbo.P_Siren_STA","KFTurbo.P_SC_STA","KFTurbo.P_FP_STA"),NumZeds=(1,2,1,1))
-    LongSpecialSquads(9)=(ZedClass=("KFTurbo.P_Bloat_STA","KFTurbo.P_Siren_STA","KFTurbo.P_SC_STA","KFTurbo.P_FP_STA"),NumZeds=(1,2,1,2))
+    // Not using those for now
+    // LongSpecialSquads(4)=(ZedClass=("KFTurbo.P_Crawler_STA","KFTurbo.P_Gorefast_XMA","KFTurbo.P_Stalker_STA"),NumZeds=(2,2,1))
+    // LongSpecialSquads(6)=(ZedClass=("KFTurbo.P_FP_HAL"),NumZeds=(1))
+    // LongSpecialSquads(7)=(ZedClass=("KFTurbo.P_Bloat_STA","KFTurbo.P_Siren_STA","KFTurbo.P_FP_STA"),NumZeds=(1,1,1))
+    // LongSpecialSquads(8)=(ZedClass=("KFTurbo.P_Bloat_STA","KFTurbo.P_Siren_STA","KFTurbo.P_SC_STA","KFTurbo.P_FP_STA"),NumZeds=(1,1,1,1))
+    // LongSpecialSquads(9)=(ZedClass=("KFTurbo.P_Bloat_STA","KFTurbo.P_Siren_STA","KFTurbo.P_SC_STA","KFTurbo.P_FP_STA"),NumZeds=(1,1,1,1))
 
-    FinalSquads(0)=(ZedClass=("KFTurbo.P_Siren_HAL"),NumZeds=(4))
-    FinalSquads(1)=(ZedClass=("KFTurbo.P_SC_HAL","KFTurbo.P_Crawler_STA"),NumZeds=(3,1))
-    FinalSquads(2)=(ZedClass=("KFTurbo.P_Siren_XMA","KFTurbo.P_Stalker_STA","KFTurbo.P_FP_HAL"),NumZeds=(3,1,1))
+    FinalSquads(0)=(ZedClass=("KFTurbo.P_Crawler_HAL","KFTurbo.P_Clot_STA","KFTurbo.P_Siren_HAL"),NumZeds=(3,3,1))
+    FinalSquads(1)=(ZedClass=("KFTurbo.P_SC_HAL","KFTurbo.P_Crawler_STA","KFTurbo.P_Clot_STA","KFTurbo.P_Husk_STA"),NumZeds=(1,3,3,1))
+    FinalSquads(2)=(ZedClass=("KFTurbo.P_Siren_XMA","KFTurbo.P_Stalker_STA","KFTurbo.P_FP_HAL","KFTurbo.P_SC_HAL","KFTurbo.P_Clot_STA","KFTurbo.P_Bloat_HAL"),NumZeds=(1,3,1,1,3,1))
 
     SpecialEventMonsterCollections(0) = Class'KFTurbo.MC_DEF'
     SpecialEventMonsterCollections(1) = Class'KFTurbo.MC_SUM'
