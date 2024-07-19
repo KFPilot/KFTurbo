@@ -154,7 +154,7 @@ static function float GetCostScaling(KFPlayerReplicationInfo KFPRI, class<Pickup
 		case class'W_SealSqueal_Pickup' :
 		case class'W_M79_Pickup' :
 		case class'W_M32_Pickup' :
-
+		case class'W_M4203_Pickup' :
 		case class'W_SPGrenade_Pickup' :
 		case class'W_SeekerSix_Pickup' :
 			return LerpStat(KFPRI, 0.9f, 0.3f);
