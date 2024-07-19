@@ -6,5 +6,5 @@ defaultproperties
      maxVerticalRecoilAngle=1250
      maxHorizontalRecoilAngle=750
      AmmoClass=Class'KFTurbo.W_Benelli_Ammo'
-     ProjectileClass=Class'KFTurbo.W_Benelli_Bullet'
+     ProjectileClass=Class'KFTurbo.W_Benelli_Proj'
 }

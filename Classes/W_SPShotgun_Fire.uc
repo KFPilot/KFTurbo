@@ -23,6 +23,6 @@ defaultproperties
      FireAnimRate=1.272727
      FireRate=0.275000
      AmmoClass=Class'KFTurbo.W_SPShotgun_Ammo'
-     ProjectileClass=Class'KFTurbo.W_SPShotgun_Bullet'
+     ProjectileClass=Class'KFTurbo.W_SPShotgun_Proj'
      Spread=2500.000000
 }

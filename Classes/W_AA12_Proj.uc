@@ -1,4 +1,4 @@
-class W_AA12_Bullet extends AA12Bullet;
+class W_AA12_Proj extends AA12Bullet;
 
 defaultproperties
 {

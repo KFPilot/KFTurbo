@@ -1,4 +1,4 @@
-class W_Benelli_Bullet extends BenelliBullet;
+class W_Benelli_Proj extends BenelliBullet;
 
 defaultproperties
 {

@@ -1,4 +1,4 @@
-class W_SPShotgun_Bullet extends SPShotgunBullet;
+class W_SPShotgun_Proj extends SPShotgunBullet;
 
 var array<Pawn> HitPawnList;
 

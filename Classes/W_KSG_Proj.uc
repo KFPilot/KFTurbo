@@ -1,4 +1,4 @@
-class W_KSG_Bullet extends KSGBullet;
+class W_KSG_Proj extends KSGBullet;
 
 defaultproperties
 {
