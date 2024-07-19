@@ -16,6 +16,6 @@ defaultproperties
      MeleeRange=40.000000
      GroundSpeed=250.000000
      WaterSpeed=200.000000
-     Health=70
+     Health=80
      MenuName="Wraith"
 }
