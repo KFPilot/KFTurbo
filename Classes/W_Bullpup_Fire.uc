@@ -13,8 +13,8 @@ defaultproperties
      DamageMin=28
      DamageMax=28
      FireRate=0.100000
-     aimerror=38.000000
-     Spread=0.008500
-     SpreadStyle=SS_Random
+     aimerror=1.000000
+     Spread=0.005000
+     SpreadStyle=SS_None
      AmmoClass=Class'KFTurbo.W_Bullpup_Ammo'
 }
