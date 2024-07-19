@@ -107,7 +107,7 @@ defaultproperties
     MonsterClasses(1)=(MClassName="KFTurbo.P_Crawler_STA",Mid="B")
     MonsterClasses(2)=(MClassName="KFTurbo.P_GoreFast_STA",Mid="C")
     MonsterClasses(3)=(MClassName="KFTurbo.P_Stalker_STA",Mid="D")
-    MonsterClasses(4)=(MClassName="KFTurbo.P_Scrakerake_STA",Mid="E")
+    MonsterClasses(4)=(MClassName="KFTurbo.P_Scrake_STA",Mid="E")
     MonsterClasses(5)=(MClassName="KFTurbo.P_Fleshpound_STA",Mid="F")
     MonsterClasses(6)=(MClassName="KFTurbo.P_Bloat_STA",Mid="G")
     MonsterClasses(7)=(MClassName="KFTurbo.P_Siren_STA",Mid="H")
