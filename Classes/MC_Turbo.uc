@@ -25,6 +25,7 @@ enum EMonster
      Gorefast_Assassin,
      Bloat_Fathead,
      Siren_Caroler,
+     Stalker_Wraith,
 };
 
 defaultproperties
@@ -53,6 +54,7 @@ defaultproperties
      MonsterClasses(15)=(MClassName="KFTurbo.P_Gorefast_Assassin",Mid="P")
      MonsterClasses(16)=(MClassName="KFTurbo.P_Bloat_Fathead",Mid="Q")
      MonsterClasses(17)=(MClassName="KFTurbo.P_Siren_Caroler",Mid="R")
+     MonsterClasses(18)=(MClassName="KFTurbo.P_Stalker_Wraith",Mid="R")
 
 
      //Clear all these lists out - they won't be used anyways.

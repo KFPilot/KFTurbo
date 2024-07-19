@@ -91,4 +91,5 @@ defaultproperties
     ReplacementList(2)=(TargetParentClass=class'P_Crawler',ReplacementClass=class'P_Crawler_Jumper',ChanceToReplace=0.1f)
     ReplacementList(3)=(TargetParentClass=class'P_Bloat',ReplacementClass=class'P_Bloat_Fathead',ChanceToReplace=0.1f)
     ReplacementList(4)=(TargetParentClass=class'P_Siren',ReplacementClass=class'P_Siren_Caroler',ChanceToReplace=0.1f)
+    ReplacementList(5)=(TargetParentClass=class'P_Stalker',ReplacementClass=class'P_Stalker_Wraith',ChanceToReplace=0.1f)
 }
