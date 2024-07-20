@@ -14,6 +14,6 @@ simulated function bool PutDown()
 defaultproperties
 {
      FireModeClass(0)=Class'KFTurbo.W_FlareRevolver_Fire'
-     FireModeClass(1)=Class'KFMod.NoFire'
+     FireModeClass(1)=Class'KFTurbo.W_FlareRevolver_Fire_Alt'
      PickupClass=Class'KFTurbo.W_FlareRevolver_Pickup'
 }
