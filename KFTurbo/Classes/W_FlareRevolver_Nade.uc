@@ -4,7 +4,6 @@ class W_FlareRevolver_Nade extends M79GrenadeProjectile;
 var     Emitter     FlameTrail;
 var     class<Emitter> FlameTrailEmitterClass;
 var     class<Emitter> ExplosionEmitterClass;
-var     class<Emitter> SecExplosionEmitterClass;
 
 var		string	AmbientSoundRef;
 
@@ -180,7 +179,6 @@ simulated function Explode(vector HitLocation, vector HitNormal)
 	if ( EffectIsRelevant(Location,false) )
 	{
 		Spawn(ExplosionEmitterClass,,, HitLocation, rotator(vect(0,0,1)));
-		Spawn(SecExplosionEmitterClass,,, HitLocation, rotator(vect(0,0,1)));
 		Spawn(ExplosionDecal,self,,HitLocation, rotator(-HitNormal));
 	}
 
@@ -227,9 +225,8 @@ defaultproperties
      OffsetTime=2.000000
      Damage=40.000000
      DamageRadius=210.000000
-     FlameTrailEmitterClass=Class'KFMod.FlareRevolverTrail'
-     ExplosionEmitterClass=Class'KFTurbo.W_FlareRevolver_FireEmitter'
-     SecExplosionEmitterClass=Class'KFTurbo.W_FlareRevolver_NadeEmitter'
+     FlameTrailEmitterClass=Class'KFTurbo.W_FlareRevolver_NadeTrailEmitter';
+     ExplosionEmitterClass=Class'KFTurbo.W_FlareRevolver_NadeEmitter'
      ExplosionDecal=Class'KFMod.FlameThrowerBurnMark_Large'
      MyDamageType=Class'KFMod.DamTypeFlameNade'
      ArmDistSquared=25000000.000000 // 2 seconds of flight time
