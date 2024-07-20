@@ -74,6 +74,8 @@ simulated function PostBeginPlay()
 
 simulated function HitWall(vector HitNormal, actor Wall)
 {
+	UpdateDefaultStaticMesh(none);
+    
     if (Instigator != none)
     {
         OrigLoc = Instigator.Location;
@@ -232,7 +234,7 @@ defaultproperties
      ArmDistSquared=25000000.000000 // 2 seconds of flight time
      ImpactDamageType=Class'KFMod.DamTypeM79GrenadeImpact'
      ImpactDamage=2
-     StaticMeshRef=None
+     StaticMeshRef="EffectsSM.Ger_Tracer"
      ExplosionSoundRef="KF_IJC_HalloweenSnd.KF_FlarePistol_Projectile_Hit"
      AmbientSoundRef="KF_IJC_HalloweenSnd.KF_FlarePistol_Projectile_Loop"
      AmbientVolumeScale=1.500000
