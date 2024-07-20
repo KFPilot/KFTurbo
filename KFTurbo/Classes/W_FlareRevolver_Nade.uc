@@ -143,6 +143,7 @@ simulated function ProcessTouch(Actor Other, Vector HitLocation)
 	{
 	   Explode(HitLocation,Normal(HitLocation-Other.Location));
 	}
+	UpdateDefaultStaticMesh(none);
 }
 
 simulated function Timer()
@@ -197,6 +198,7 @@ simulated function Explode(vector HitLocation, vector HitNormal)
 simulated function Landed( vector HitNormal )
 {
 	SetPhysics(PHYS_None);
+	UpdateDefaultStaticMesh(none);
 
 	if( !bDud )
 	{
