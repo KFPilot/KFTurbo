@@ -74,8 +74,6 @@ simulated function PostBeginPlay()
 
 simulated function HitWall(vector HitNormal, actor Wall)
 {
-	UpdateDefaultStaticMesh(none);
-    
     if (Instigator != none)
     {
         OrigLoc = Instigator.Location;
@@ -143,7 +141,6 @@ simulated function ProcessTouch(Actor Other, Vector HitLocation)
 	{
 	   Explode(HitLocation,Normal(HitLocation-Other.Location));
 	}
-	UpdateDefaultStaticMesh(none);
 }
 
 simulated function Timer()
@@ -198,7 +195,6 @@ simulated function Explode(vector HitLocation, vector HitNormal)
 simulated function Landed( vector HitNormal )
 {
 	SetPhysics(PHYS_None);
-	UpdateDefaultStaticMesh(none);
 
 	if( !bDud )
 	{
@@ -236,7 +232,7 @@ defaultproperties
      ArmDistSquared=25000000.000000 // 2 seconds of flight time
      ImpactDamageType=Class'KFMod.DamTypeM79GrenadeImpact'
      ImpactDamage=2
-     StaticMeshRef="EffectsSM.Ger_Tracer"
+     StaticMeshRef="kf_generic_sm.12Guage_Shell"
      ExplosionSoundRef="KF_IJC_HalloweenSnd.KF_FlarePistol_Projectile_Hit"
      AmbientSoundRef="KF_IJC_HalloweenSnd.KF_FlarePistol_Projectile_Loop"
      AmbientVolumeScale=1.500000
