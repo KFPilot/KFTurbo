@@ -228,8 +228,8 @@ defaultproperties
      Damage=40.000000
      DamageRadius=210.000000
      FlameTrailEmitterClass=Class'KFMod.FlareRevolverTrail'
-     ExplosionEmitterClass=Class'KFMod.FlameImpact_Medium'
-     SecExplosionEmitterClass=Class'KFMod.FlareRevolverImpact'
+     ExplosionEmitterClass=Class'KFTurbo.W_FlareRevolver_FireEmitter'
+     SecExplosionEmitterClass=Class'KFTurbo.W_FlareRevolver_NadeEmitter'
      MyDamageType=Class'KFMod.DamTypeFlameNade'
      ArmDistSquared=25000000.000000 // 2 seconds of flight time
      ImpactDamageType=Class'KFMod.DamTypeM79GrenadeImpact'
