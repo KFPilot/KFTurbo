@@ -225,14 +225,14 @@ defaultproperties
      OffsetTime=2.000000
      Damage=40.000000
      DamageRadius=210.000000
-     FlameTrailEmitterClass=Class'KFTurbo.W_FlareRevolver_NadeTrailEmitter';
+     FlameTrailEmitterClass=Class'KFMod.FlareRevolverTrail'
      ExplosionEmitterClass=Class'KFTurbo.W_FlareRevolver_NadeEmitter'
      ExplosionDecal=Class'KFMod.FlameThrowerBurnMark_Large'
      MyDamageType=Class'KFMod.DamTypeFlameNade'
      ArmDistSquared=25000000.000000 // 2 seconds of flight time
      ImpactDamageType=Class'KFMod.DamTypeM79GrenadeImpact'
      ImpactDamage=2
-     StaticMeshRef="EffectsSM.Ger_Tracer"
+     StaticMeshRef=None
      ExplosionSoundRef="KF_IJC_HalloweenSnd.KF_FlarePistol_Projectile_Hit"
      AmbientSoundRef="KF_IJC_HalloweenSnd.KF_FlarePistol_Projectile_Loop"
      AmbientVolumeScale=1.500000
