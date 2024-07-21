@@ -155,10 +155,19 @@ exec function MarkActor()
 function AttemptMarkActor(vector Start, vector End, Actor TargetActor)
 {
 	local TurboPlayerReplicationInfo TPRI;
+	local Pickup FoundPickup;
 
 	if (TargetActor == None || TargetActor.bWorldGeometry)
 	{
-		return;
+		foreach CollidingActors(class'Pickup', FoundPickup, 30.f, End)
+			break;
+
+		if (FoundPickup == None)
+		{
+			return;
+		}
+
+		TargetActor = FoundPickup;
 	}
 	
     if (Pawn(TargetActor.Base) != None)
@@ -191,7 +200,6 @@ function AttemptMarkActor(vector Start, vector End, Actor TargetActor)
 function ServerMarkActor(vector Start, vector End, Actor TargetActor, TurboPlayerReplicationInfo.EMarkColor Color)
 {
 	local TurboPlayerReplicationInfo TPRI;
-	log ("Received ServerMarkActor"@TargetActor@Color);
 	
 	if (NextMarkTime > Level.TimeSeconds)
 	{

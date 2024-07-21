@@ -26,7 +26,7 @@ const TurboVariantID = "TURBO"; //KFTurbo sticker skins.
 const VMVariantID = "VM"; //VM sticker skins.
 const WLVariantID = "WEST"; //Westlondon sticker skins.
 const CyberVariantID = "CYB"; //Cyber Weapon skins.
-const SteamPunkVariantID = "STP"; //Steampunk weapon skins.
+const SteampunkVariantID = "STP"; //Steampunk weapon skins.
 
 //Special variants - accessible to specific players.
 const RetartVariantID = "RET";

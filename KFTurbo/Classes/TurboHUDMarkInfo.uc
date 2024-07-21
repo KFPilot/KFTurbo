@@ -40,6 +40,13 @@ simulated function Tick(float DeltaTime)
 
 	for (Index = Level.GRI.PRIArray.Length - 1; Index >= 0; Index--)
 	{
+		PRI = Level.GRI.PRIArray[Index];
+		if (PRI == None)
+		{
+			continue;
+		}
+
+		bFoundData = false;
 		for (MarkInfoIndex = MarkInfoDataList.Length - 1; MarkInfoIndex >= 0; MarkInfoIndex--)
 		{
 			if (MarkInfoDataList[MarkInfoIndex].PRI == PRI)
@@ -50,13 +57,6 @@ simulated function Tick(float DeltaTime)
 		}
 
 		if (bFoundData)
-		{
-			continue;
-		}
-
-		PRI = Level.GRI.PRIArray[Index];
-
-		if (PRI == None || PRI.bOnlySpectator || PRI.bIsSpectator )
 		{
 			continue;
 		}
@@ -76,12 +76,12 @@ simulated function Tick(float DeltaTime)
 
 static final simulated function bool ShouldDrawMarkInfo(vector CameraPosition, vector CameraDirection, out MarkInfoData MarkInfo)
 {
-	if (MarkInfo.PRI == None || MarkInfo.TPRI == None || MarkInfo.TPRI.MarkDisplayString == "")
+	if (MarkInfo.PRI == None || MarkInfo.TPRI == None || MarkInfo.TPRI.MarkActorClass == None || MarkInfo.TPRI.MarkDisplayString == "")
 	{
 		return false;
 	}
 
-	if ((Normal((MarkInfo.TPRI.MarkInfo.Location + (vect(0,0,1.f) * MarkInfo.TPRI.WorldZOffset)) - CameraPosition) Dot CameraDirection) < 0.f )
+	if ((Normal((MarkInfo.TPRI.GetMarkLocation() + (vect(0,0,1.f) * MarkInfo.TPRI.WorldZOffset)) - CameraPosition) Dot CameraDirection) < 0.f )
 	{
 		return false;
 	}
@@ -92,6 +92,7 @@ static final simulated function bool ShouldDrawMarkInfo(vector CameraPosition, v
 simulated function Render(Canvas C)
 {
 	local int Index;
+	local float OpacityScale;
 	local vector CamPos, ViewDir, ScreenPos;
 	local rotator CamRot;
 
@@ -101,6 +102,16 @@ simulated function Render(Canvas C)
 	}
 
 	Super.Render(C);
+
+	OpacityScale = 1.f;
+
+	if (KFPHUD.PawnOwner != None && KFWeapon(KFPHUD.PawnOwner.Weapon) != None)
+	{
+		if (KFWeapon(KFPHUD.PawnOwner.Weapon).bAimingRifle)
+		{
+			OpacityScale *= 0.5f;
+		}
+	}
 
 	// Grab our View Direction
 	C.GetCameraLocation(CamPos,CamRot);
@@ -113,31 +124,35 @@ simulated function Render(Canvas C)
 			continue;
 		}
 
-		ScreenPos = C.WorldToScreen(MarkInfoDataList[Index].TPRI.MarkInfo.Location + (vect(0,0,1.f) * MarkInfoDataList[Index].TPRI.WorldZOffset));
+		ScreenPos = C.WorldToScreen(MarkInfoDataList[Index].TPRI.GetMarkLocation() + (vect(0,0,1.f) * MarkInfoDataList[Index].TPRI.WorldZOffset));
 		
 		if( ScreenPos.X >= 0 && ScreenPos.Y >= 0 && ScreenPos.X <= C.ClipX && ScreenPos.Y <= C.ClipY )
 		{
-			DrawMarkInfo(C, MarkInfoDataList[Index], ScreenPos.X, ScreenPos.Y);
+			DrawMarkInfo(C, MarkInfoDataList[Index], ScreenPos.X, ScreenPos.Y, OpacityScale);
 		}
 	}
 }
 
-function DrawMarkInfo(Canvas C, out MarkInfoData MarkInfo, float ScreenLocX, float ScreenLocY)
+function DrawMarkInfo(Canvas C, out MarkInfoData MarkInfo, float ScreenLocX, float ScreenLocY, float OpacityScale)
 {
 	local float XL, YL, TempX, TempY;
-	local float Dist;
+	local float PlayerDistance, Dist;
+	local string DistanceString;
 	local byte BeaconAlpha;
+	local float BeaconScale;
 	local float OldZ;
 	local Color DrawColor;
 
-	Dist = vsize(MarkInfo.TPRI.MarkInfo.Location - KFPHUD.PlayerOwner.CalcViewLocation);
+	Dist = vsize(MarkInfo.TPRI.GetMarkLocation() - KFPHUD.PlayerOwner.CalcViewLocation);
+	PlayerDistance = Dist;
 	Dist -= KFPHUD.HealthBarFullVisDist * 2.f;
-	Dist = FClamp(Dist, 0, (KFPHUD.HealthBarCutoffDist * 2.f) - (KFPHUD.HealthBarFullVisDist * 2.f));
+	Dist = FClamp(Dist, 0.f, (KFPHUD.HealthBarCutoffDist * 2.f) - (KFPHUD.HealthBarFullVisDist * 2.f));
 	Dist = Dist / ((KFPHUD.HealthBarCutoffDist * 2.f) - (KFPHUD.HealthBarFullVisDist * 2.f));
-	BeaconAlpha = byte((1.f - Dist) * 255.f);
 	//BeaconAlpha = byte(255.f * FMin(PlayerInfo.VisibilityFade * 2.f, 1.f));
+	BeaconScale = Lerp(PlayerDistance / ((KFPHUD.HealthBarCutoffDist * 2.f) - (KFPHUD.HealthBarFullVisDist * 2.f)), 4.f, 8.f);
+	BeaconAlpha = byte(FMax(1.f - Dist, 0.66f) * OpacityScale * 255.f);
 
-	if ( BeaconAlpha == 0 || MarkInfo.TPRI.MarkDisplayString == "")
+	if ( MarkInfo.TPRI.MarkDisplayString == "")
 	{
 		return;
 	}
@@ -148,11 +163,33 @@ function DrawMarkInfo(Canvas C, out MarkInfoData MarkInfo, float ScreenLocX, flo
 
 	DrawColor = MarkInfo.TPRI.GetMarkerColor(MarkInfo.TPRI.MarkerColor);
 
-	C.Font = KFPHUD.GetConsoleFont(C);
+	C.Font = KFPHUD.LoadFontStatic(Min(8,BeaconScale));
+
+	C.FontScaleX = 1.f;
+	C.FontScaleY = 1.f;
+
+	DistanceString = int(PlayerDistance / 50.f)$"m";
+	
+	//Draw distance.
+	C.TextSize(DistanceString, XL, YL);
+	TempX = ScreenLocX - (XL * 0.5);
+	TempY = ScreenLocY - (YL * 1.f);
+
+	C.SetPos(TempX + 1.f, TempY + 1.f);
+	C.DrawColor = KFPHUD.BlackColor;
+	C.DrawColor.A = (float(BeaconAlpha) * 0.5f);
+	C.DrawTextClipped(DistanceString, false);
+
+	C.DrawColor = DrawColor;
+	C.DrawColor.A = BeaconAlpha;
+	C.SetPos(TempX, TempY);
+	C.DrawTextClipped(DistanceString, false);
+
+	//Draw mark name.
 	C.TextSize(MarkInfo.TPRI.MarkDisplayString, XL, YL);
 
 	TempX = ScreenLocX - (XL * 0.5);
-	TempY = ScreenLocY - (YL * 1.f);
+	TempY = TempY - (YL * 0.75f);
 	TempX = int(TempX);
 	TempY = int(TempY);
 
@@ -166,17 +203,20 @@ function DrawMarkInfo(Canvas C, out MarkInfoData MarkInfo, float ScreenLocX, flo
 	C.SetPos(TempX, TempY);
 	C.DrawTextClipped(MarkInfo.TPRI.MarkDisplayString, false);
 
-	C.FontScaleX = 0.75f;
-	C.FontScaleY = 0.75f;
-
+	//Draw mark instigator.
 	C.TextSize(MarkInfo.PRI.PlayerName, XL, YL);
 
-	C.SetPos((ScreenLocX - (XL * 0.5f)) + 1.f, (TempY - (YL)) + 1.f);
+	TempX = ScreenLocX - (XL * 0.5);
+	TempY = TempY - (YL * 0.75f);
+	TempX = int(TempX);
+	TempY = int(TempY);
+
+	C.SetPos(TempX + 1.f, TempY + 1.f);
 	C.DrawColor = KFPHUD.BlackColor;
 	C.DrawColor.A = (float(BeaconAlpha) * 0.5f);
 	C.DrawTextClipped(MarkInfo.PRI.PlayerName, false);
 
-	C.SetPos(ScreenLocX - (XL * 0.5f), TempY - (YL));
+	C.SetPos(TempX, TempY);
 	C.DrawColor = DrawColor;
 	C.DrawColor.A = BeaconAlpha;
 	C.DrawTextClipped(MarkInfo.PRI.PlayerName, false);

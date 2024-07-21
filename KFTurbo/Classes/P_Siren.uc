@@ -201,6 +201,16 @@ simulated function SpawnTwoShots()
     }
 }
 
+simulated function HurtRadius( float DamageAmount, float DamageRadius, class<DamageType> DamageType, float Momentum, vector HitLocation )
+{
+    //HurtRadius uses instigator??? Update this so Sirens correctly disintegrate projectiles.
+    local Pawn PreviousInstigator;
+    PreviousInstigator = Instigator;
+    Instigator = Self;
+    Super.HurtRadius(DamageAmount, DamageRadius, DamageType, Momentum, HitLocation);
+    Instigator = PreviousInstigator;
+}
+
 State ZombieDying
 {
 ignores AnimEnd, Trigger, Bump, HitWall, HeadVolumeChange, PhysicsVolumeChange, Falling, BreathTimer, Died, RangedAttack, SpawnTwoShots;
