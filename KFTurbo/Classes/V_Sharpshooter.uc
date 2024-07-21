@@ -214,4 +214,5 @@ defaultproperties
      StartingWeaponSellPriceLevel5=255.000000
      StartingWeaponSellPriceLevel6=255.000000
      OnHUDGoldIcon=Texture'KFTurbo.Perks.Sharp_D'
+	 SRLevelEffects(6)="2.4x Bonus headshot multiplier for Perk Weapons|1.5x Bonus headshot multiplier for Off-Perk Weapons|60% faster reload with Perk Weapons|75% less recoil with Perk Weapons|70% discount on Pistols, M14 and S.P. Musket|30% faster firing rate on single-shot Perk Weapons|Spawn with a Lever Action Rifle"
 }

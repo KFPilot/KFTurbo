@@ -155,4 +155,6 @@ defaultproperties
      StartingWeaponSellPriceLevel5=255.000000
      StartingWeaponSellPriceLevel6=255.000000
      OnHUDGoldIcon=Texture'KFTurbo.Perks.Firebug_D'
+	 SRLevelEffects(6)="60% extra damage with Flamethrower and Husk Gun|15% extra damage with MAC10, Trenchgun and Thompson Incendiary|60% faster reload speed with Perk Weapons|60% larger magazine for Flamethrower, MAC-10 and Thompson Incendiary|60% more ammo for with Perk Weapons|100% resistance to fire|100% extra Flamethrower range|Grenades set enemies on fire|70% discount on Perk Weapons|Spawn with a MAC-10"
+     Requirements(0)="Deal %x damage with weapons that cause Burning."
 }

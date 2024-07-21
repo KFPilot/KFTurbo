@@ -298,4 +298,6 @@ defaultproperties
      StartingWeaponSellPriceLevel5=255.000000
      StartingWeaponSellPriceLevel6=255.000000
      OnHUDGoldIcon=Texture'KFTurbo.Perks.Commando_D'
+	 SRLevelEffects(6)="50% more damage with Assault/Battle Rifles|40% less recoil with Assault/Battle Rifles and SMGs|25% - 60% larger magazines for Assault/Battle Rifles|25% more maximum ammo for Assault/Battle Rifles|35% faster reload with all weapons|70% discount on Assault/Battle Rifles|Spawn with an AK47|Can see cloaked Stalkers from 32m|Can see enemy health from 16m|Up to 4 Zed-Time Extensions"
+
 }

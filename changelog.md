@@ -2,6 +2,7 @@
 
 ## General Changes
 - **Removed level-based perk bonuses**: All perks now receive the Level 6 bonuses regardless of player level.
+- **Added a Ping system**: Players can now ping enemies or pickups (default: X) to create a little text for their teammates.
 - **TBA**: insert changes here🚧
 
 ## Afflictions
@@ -302,6 +303,7 @@
 - Stun grenades cannot be disintegrated by siren screams 🟢
 - Melee movement speed bonus 30% -> 20% 🔻
 - Damage resistance 40% -> 10% 🔻
+- Melee swing speed 25% -> 15% 🔻
 - Patriarch can never deal more than 95 damage to the Berserker ⚠️
 - Bloat bile damage reduction 80% -> 60% 🔻
 - 20% siren scream damage reduction 🆕
@@ -401,12 +403,14 @@
 - Added a new variant: Raptor
 ### Gorefast
 - Added a new cosmetic variant: Classy Gorefast
+- Added a new variant: Assassin
 ### Bloat
 - Added a new variant: Fathead
 ### Husk
 - No longer fires cannon after dying
 ### Siren
 - No longer deals damage after dying
+- Now able to destroy high-speed projectiles
 - Added a new variant: Caroler
 ### Scrake
 - Fixed "Slow Rage" state, where the scrake would be stuck with a slow movement speed in his charging animation

@@ -156,4 +156,5 @@ static function string GetCustomLevelInfo(byte Level)
 defaultproperties
 {
      OnHUDGoldIcon=Texture'KFTurbo.Perks.Support_D'
+	 SRLevelEffects(6)="60% more damage with Shotguns|90% better Shotgun penetration|30% extra shotgun ammo|50% more damage with Grenades|120% increase in grenade capacity|60% increased carry weight|150% faster welding/unwelding|70% discount on Shotguns|Spawn with a Shotgun"
 }

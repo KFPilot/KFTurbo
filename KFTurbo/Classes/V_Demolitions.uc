@@ -204,4 +204,5 @@ defaultproperties
      StartingWeaponSellPriceLevel5=255.000000
      StartingWeaponSellPriceLevel6=255.000000
      OnHUDGoldIcon=Texture'KFTurbo.Perks.Demolitions_D'
+	 SRLevelEffects(6)="60% extra Explosives damage|55% resistance to Explosives|50% increased capacity for M4 203 Grenades and LAW Rockets|30% faster firing rate with LAW|30% faster reload speed with LAW|120% increase in grenade capacity|Can carry 8 Pipe Bombs|30% discount on Explosives|74% discount on Pipe Bombs|Spawn with an M4 203 Rifle and Pipe Bomb"
 }
