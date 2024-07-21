@@ -63,7 +63,7 @@ defaultproperties
           MaxMonsters=55
           TotalMonsters=55
           RegularSequenceSize=6
-          BeatSize=2
+          BeatSize=1 //Start beat size at 1 for late game because TurboPlusWaveLateGame makes beat squads stronger. 
 	End Object
 	WaveList(7)=TurboMonsterCollectionWave'KFTurbo.TurboMonsterCollectionImpl.Wave8'
      
@@ -71,7 +71,7 @@ defaultproperties
           MaxMonsters=55
           TotalMonsters=55
           RegularSequenceSize=6
-          BeatSize=3
+          BeatSize=1
 	End Object
 	WaveList(8)=TurboMonsterCollectionWave'KFTurbo.TurboMonsterCollectionImpl.Wave9'
      
@@ -79,7 +79,7 @@ defaultproperties
           MaxMonsters=60
           TotalMonsters=60
           RegularSequenceSize=6
-          BeatSize=3
+          BeatSize=2
 	End Object
 	WaveList(9)=TurboMonsterCollectionWave'KFTurbo.TurboMonsterCollectionImpl.Wave10'
 }

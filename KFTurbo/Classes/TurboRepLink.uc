@@ -31,7 +31,7 @@ Begin:
         Stop;
     }
 
-    Sleep(0.5f);
+    Sleep(1.f);
 
     while (OwningController == None)
     {

@@ -1,4 +1,4 @@
-class TurboRandomizetHelper extends Actor;
+class TurboRandomizetHelper extends Info;
 
 function PostBeginPlay()
 {

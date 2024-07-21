@@ -73,7 +73,7 @@ function PlayDirectionalHit(Vector HitLoc)
 
     LastStunCount = StunsRemaining;
 
-    if(class'PawnHelper'.static.ShouldPlayDirectionalHit(self, AfflictionData))
+    if(class'PawnHelper'.static.ShouldPlayHit(self, AfflictionData))
         Super.PlayDirectionalHit(HitLoc);
 
     if(LastStunCount != StunsRemaining)

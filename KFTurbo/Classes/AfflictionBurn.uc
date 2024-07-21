@@ -28,7 +28,7 @@ var array<AfflictionBurnPriorityData> FirePriorityList;
 //Damage modifier
 var float BurnMonsterDamageModifier;
 
-var bool bBlockPlayDirectionalHit;
+var bool bBlockPlayHit;
 var Pawn LastBurnDamageInstigator;
 var class<DamageType> LastBurnDamageType;
 

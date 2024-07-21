@@ -18,19 +18,38 @@ simulated function PostBeginPlay()
     class'PawnHelper'.static.InitializePawnHelper(self, AfflictionData);
 }
 
+function TryEnterRunningState()
+{
+    if (bShotAnim || bDecapitated)
+    {
+        return;
+    }
+
+    if ( Level.Game.GameDifficulty < 5.0 )
+    {
+        if ( float(Health)/HealthMax < 0.5 )
+        {
+            GoToState('RunningState');
+        }
+    }
+    else
+    {
+        if ( float(Health)/HealthMax < 0.75 )
+        {
+            GoToState('RunningState');
+        }
+    }
+}
+
 function TakeDamage(int Damage, Pawn InstigatedBy, Vector HitLocation, Vector Momentum, class<DamageType> DamageType, optional int HitIndex)
 {
 	if (Role == ROLE_Authority)
 	{
 		class'PawnHelper'.static.TakeDamage(Damage, InstigatedBy, HitLocation, Momentum, DamageType, HitIndex, AfflictionData);
 
-        if ( Level.Game.GameDifficulty >= 5.0  && (class<DamTypeFlareProjectileImpact>(damageType) != none) )
+        if ( Level.Game.GameDifficulty >= 5.0  && (class<DamTypeFlareProjectileImpact>(damageType) != none || class<DamTypeFlareRevolver>(damageType) != none) )
         {
-            Damage *= 0.75; // flare impact damage reduction
-        }
-        if ( Level.Game.GameDifficulty >= 5.0  && (class<DamTypeFlareRevolver>(damageType) != none) )
-        {
-            Damage *= 0.75; // flare explosion damage reduction
+            Damage *= 0.75;
         }
 	}
 
@@ -60,6 +79,11 @@ simulated function Tick(float DeltaTime)
 
     class'PawnHelper'.static.TickAfflictionData(DeltaTime, self, AfflictionData);
 
+    TickStunTime();
+}
+
+simulated function TickStunTime()
+{
     if(bSTUNNED && bUnstunTimeReady && UnstunTime < Level.TimeSeconds)
     {
         bSTUNNED = false;
@@ -69,7 +93,28 @@ simulated function Tick(float DeltaTime)
         {
             GotoState('SawingLoop');
         }
+        else
+        {
+            TryEnterRunningState();
+        }
     }
+}
+
+simulated function AnimEnd(int Channel)
+{
+    local name  Sequence;
+	local float Frame, Rate;
+    
+	GetAnimParams(0, Sequence, Frame, Rate);
+
+    Super.AnimEnd(Channel);
+
+    if (Sequence != 'KnockDown')
+    {
+        return;
+    }
+
+    TryEnterRunningState();
 }
 
 simulated function PostNetReceive()
@@ -102,13 +147,39 @@ simulated function float GetOriginalGroundSpeed()
     return Super.GetOriginalGroundSpeed() * class'PawnHelper'.static.GetSpeedMultiplier(AfflictionData);
 }
 
+function PlayTakeHit(vector HitLocation, int Damage, class<DamageType> DamageType)
+{
+	if( Level.TimeSeconds - LastPainAnim < MinTimeBetweenPainAnims )
+    {
+		return;
+    }
+
+    if (class'PawnHelper'.static.ShouldPlayHit(Self, AfflictionData))
+    {
+        if((Level.Game.GameDifficulty < 5.0 || StunsRemaining != 0) && Damage >= 150)
+        {
+            PlayDirectionalHit(HitLocation);
+        }
+
+        LastPainAnim = Level.TimeSeconds;
+    }
+
+	if( Level.TimeSeconds - LastPainSound < MinTimeBetweenPainSounds )
+		return;
+
+	LastPainSound = Level.TimeSeconds;
+	PlaySound(HitSound[0], SLOT_Pain,1.25,,400);
+}
+
 function PlayDirectionalHit(Vector HitLoc)
 {
     local int LastStunCount;
     LastStunCount = StunsRemaining;
 
-    if(!bUnstunTimeReady && class'PawnHelper'.static.ShouldPlayDirectionalHit(self, AfflictionData))
+    if(!bUnstunTimeReady)
+    {
         Super.PlayDirectionalHit(HitLoc);
+    }
 
 	bUnstunTimeReady = class'PawnHelper'.static.UpdateStunProperties(self, LastStunCount, UnstunTime, bUnstunTimeReady);
 }
@@ -125,7 +196,17 @@ simulated function UnSetBurningBehavior()
 {
     class'PawnHelper'.static.UnSetBurningBehavior(self, AfflictionData);
 
-    GoToState('');
+    if (!IsInState('SawingLoop'))
+    {
+        if (CanAttack(Controller.Enemy))
+        {
+            GoToState('SawingLoop');
+        }
+        else
+        {
+            TryEnterRunningState();
+        }
+    }
 
     if( Level.NetMode != NM_DedicatedServer )
         PostNetReceive();    
@@ -166,9 +247,6 @@ State SawingLoop
 
 simulated function SetZappedBehavior()
 {
-    if(ProAI != None && ProAI.bForcedRage)
-        return;
-
     class'PawnHelper'.static.SetZappedBehavior(self, AfflictionData);
 }
 
@@ -180,6 +258,14 @@ simulated function UnSetZappedBehavior()
 
 state RunningState
 {
+    simulated function Tick(float DeltaTime)
+    {
+        Global.Tick(DeltaTime);
+
+        //Keep reminding us how fast we're supposed to be. For some reason we forget to.
+        SetGroundSpeed(GetOriginalGroundSpeed());
+    }
+
     simulated function SetBurningBehavior()
     {
 		Global.SetBurningBehavior();
@@ -200,6 +286,11 @@ state RunningState
 		Global.UnSetZappedBehavior();
     }
 
+    simulated function float GetOriginalGroundSpeed()
+    {
+        return Global.GetOriginalGroundSpeed() * 3.5f;
+    }
+
 	function BeginState()
 	{
 		if(bZapped)
@@ -208,7 +299,7 @@ state RunningState
         }
         else
         {
-    		SetGroundSpeed(OriginalGroundSpeed * 3.5);
+    		SetGroundSpeed(GetOriginalGroundSpeed());
     		bCharging = true;
     		if( Level.NetMode!=NM_DedicatedServer )
     			PostNetReceive();

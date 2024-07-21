@@ -87,12 +87,26 @@ function InitializeRepLinkSettings()
 
 function bool CheckReplacement(Actor Other, out byte bSuperRelevant)
 {
+	if (KFPlayerReplicationInfo(Other) != None)
+	{
+		AddTurboPlayerReplicationInfo(KFPlayerReplicationInfo(Other));
+	}
+
 	if (KFRandomItemSpawn(Other) != None)
 	{
 		UpdateRandomItemPickup(KFRandomItemSpawn(Other));
 	}
 
 	return true;
+}
+
+function AddTurboPlayerReplicationInfo(KFPlayerReplicationInfo PlayerReplicationInfo)
+{
+	local TurboPlayerReplicationInfo TurboPRI;
+	TurboPRI = Spawn(class'TurboPlayerReplicationInfo', PlayerReplicationInfo.Owner);
+	TurboPRI.NextReplicationInfo = PlayerReplicationInfo.CustomReplicationInfo;
+	TurboPRI.OwningReplicationInfo = PlayerReplicationInfo;
+	PlayerReplicationInfo.CustomReplicationInfo = TurboPRI;
 }
 
 function UpdateRandomItemPickup(KFRandomItemSpawn PickupSpawner)
@@ -157,7 +171,7 @@ simulated function String GetHumanReadableName()
 
 defaultproperties
 {
-	bDebugClientPerkRepLink = true
+	bDebugClientPerkRepLink=false
 	bAddToServerPackages=True
 	GroupName="KF-KFTurbo"
 	FriendlyName="Killing Floor Turbo"

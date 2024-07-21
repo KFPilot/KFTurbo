@@ -260,25 +260,25 @@ static final function bool UpdateStunProperties(KFMonster KFM, float LastStunCou
 	return bUnstunTimeReady;
 }
 
-static final function BlockPlayDirectionalHit(out AfflictionData AD)
+static final function BlockPlayHit(out AfflictionData AD)
 {
 	if (AD.Burn != None)
 	{
-		AD.Burn.bBlockPlayDirectionalHit = true;
+		AD.Burn.bBlockPlayHit = true;
 	}
 }
 
-static final function UnblockPlayDirectionalHit(out AfflictionData AD)
+static final function UnblockPlayHit(out AfflictionData AD)
 {
 	if (AD.Burn != None)
 	{
-		AD.Burn.bBlockPlayDirectionalHit = false;
+		AD.Burn.bBlockPlayHit = false;
 	}
 }
 
-static final function bool ShouldPlayDirectionalHit(KFMonster KFM, AfflictionData AD)
+static final function bool ShouldPlayHit(KFMonster KFM, AfflictionData AD)
 {
-	if (AD.Burn != None && AD.Burn.bBlockPlayDirectionalHit)
+	if (AD.Burn != None && AD.Burn.bBlockPlayHit)
 	{
 		return false;
 	}
@@ -347,9 +347,9 @@ static final function TakeFireDamage(KFMonster Monster, int Damage, Pawn Instiga
 		Instigator = AD.Burn.LastBurnDamageInstigator;
 	}
 
-   	BlockPlayDirectionalHit(AD);
+   	BlockPlayHit(AD);
 	Monster.TakeDamage(Damage, Instigator, vect(0,0,0), vect(0,0,0), Monster.FireDamageClass);
-   	UnblockPlayDirectionalHit(AD);
+   	UnblockPlayHit(AD);
 
 	if ( Monster.BurnDown > 0 )
 	{

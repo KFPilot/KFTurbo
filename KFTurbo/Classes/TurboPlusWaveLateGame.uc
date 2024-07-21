@@ -2,15 +2,14 @@ class TurboPlusWaveLateGame extends TurboPlusWaveMidGame;
 
 defaultproperties
 {
-     MaxMonsters=32
-     TotalMonsters=32
-     WaveDifficulty=1.f
+     MaxMonsters=55
+     TotalMonsters=55
+     WaveDifficulty=3.f
 
      RegularSequenceSize=6
      MinMixInSquadCount=3
      MaxMixInSquadCount=4
-     BeatSize=2
-
+     BeatSize=1
 
 	Begin Object Class=TurboMonsterCollectionSquad Name=LateGameSquad5
           Squad(0)=(Monster=Bloat,Count=2)
@@ -35,8 +34,14 @@ defaultproperties
 	End Object
 	MixInSquad(3)=TurboMonsterCollectionSquad'KFTurbo.TurboPlusWaveLateGame.LateGameBeatSquad3'
 
+     //Override single FP beat spawn with 3.
 	Begin Object Class=TurboMonsterCollectionSquad Name=LateGameBeatSquad0
           Squad(0)=(Monster=Fleshpound,Count=3)
 	End Object
-	BeatSquad(2)=TurboMonsterCollectionSquad'KFTurbo.TurboPlusWaveLateGame.LateGameBeatSquad0'
+	BeatSquad(0)=TurboMonsterCollectionSquad'KFTurbo.TurboPlusWaveLateGame.LateGameBeatSquad0' 
+
+	Begin Object Class=TurboMonsterCollectionSquad Name=LateGameBeatSquad1
+          Squad(0)=(Monster=Fleshpound,Count=4)
+	End Object
+	BeatSquad(3)=TurboMonsterCollectionSquad'KFTurbo.TurboPlusWaveLateGame.LateGameBeatSquad1'
 }

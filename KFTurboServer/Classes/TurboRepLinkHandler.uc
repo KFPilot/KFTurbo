@@ -1,4 +1,4 @@
-class TurboRepLinkHandler extends Actor;
+class TurboRepLinkHandler extends Info;
 
 var KFTurboMut KFTurboMutator;
 var array<ServerStStats> PendingReplicationLinkList;
@@ -11,7 +11,7 @@ event PostBeginPlay()
 function OnServerStatsAdded(ServerStStats Stats)
 {
     PendingReplicationLinkList[PendingReplicationLinkList.Length] = Stats;
-    SetTimer(0.5f, false);
+    SetTimer(0.01f, false);
 }
 
 function Timer()

@@ -8,10 +8,15 @@ var float EndGameHUDAnimationProgress;
 
 var class<TurboHUDOverlay> PlayerInfoHUDClass;
 var TurboHUDOverlay PlayerInfoHUD;
+
 var class<TurboHUDOverlay> WaveInfoHUDClass;
 var TurboHUDOverlay WaveInfoHUD;
+
 var class<TurboHUDOverlay> PlayerHealthHUDClass;
 var TurboHUDOverlay PlayerHealthHUD;
+
+var class<TurboHUDOverlay> MarkInfoHUDClass;
+var TurboHUDOverlay MarkInfoHUD;
 
 simulated function PostBeginPlay()
 {
@@ -32,6 +37,11 @@ simulated function PostBeginPlay()
 		PlayerHealthHUDClass = class'TurboHUDPlayerHealth';
 	}
 
+	if (MarkInfoHUDClass == None)
+	{
+		MarkInfoHUDClass = class'TurboHUDMarkInfo';
+	}
+
 	PlayerInfoHUD = Spawn(PlayerInfoHUDClass, Self);
 	PlayerInfoHUD.Initialize(Self);
 	
@@ -40,6 +50,9 @@ simulated function PostBeginPlay()
 
 	PlayerHealthHUD = Spawn(PlayerHealthHUDClass, Self);
 	PlayerHealthHUD.Initialize(Self);
+
+	MarkInfoHUD = Spawn(MarkInfoHUDClass, Self);
+	MarkInfoHUD.Initialize(Self);
 }
 
 simulated function Tick(float DeltaTime)
@@ -105,6 +118,11 @@ simulated function DrawGameHud(Canvas C)
 	if ( bShowTargeting )
 	{
 		DrawTargeting(C);
+	}
+
+	if (MarkInfoHUD != None)
+	{
+		MarkInfoHUD.Render(C);
 	}
 
 	if (PlayerInfoHUD != None)
