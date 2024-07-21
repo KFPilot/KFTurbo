@@ -75,7 +75,7 @@ static final function bool IsGenericCyberSkin(class<Pickup> PickupClass)
 	return InStr(Caps(PickupClass), "_CYBER_") != -1;
 }
 
-static final function bool IsGenericSteamPunkSkin(class<Pickup> PickupClass)
+static final function bool IsGenericSteampunkSkin(class<Pickup> PickupClass)
 {
 	return InStr(Caps(PickupClass), "_STP_") != -1;
 }
