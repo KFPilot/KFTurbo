@@ -6,6 +6,9 @@ var PawnHelper.AfflictionData AfflictionData;
 var array<Material> CloakedSkinList;
 var Sound HelpMeSound;
 
+var float LastCommandoSpotTime;
+var float CommandoSpotDuration;
+
 simulated function PostBeginPlay()
 {
     Super.PostBeginPlay();
@@ -54,15 +57,21 @@ simulated function Tick(float DeltaTime)
     class'PawnHelper'.static.TickAfflictionData(DeltaTime, self, AfflictionData);
 }
 
+simulated function SpotBoss()
+{
+	LastCommandoSpotTime = Level.TimeSeconds;
+}
+
 //We do our own cloak check. Setting LastCheckTimes means ZombieBoss:Tick will never perform its cloak behaviour.
 simulated function TickCloak(float DeltaTime)
 {
-    local KFHumanPawn HumanPawn;
+    local bool bNewSpotted;
 
-    if (Level.NetMode == NM_DedicatedServer)
-    {
-        return;
-    }
+    if( Level.NetMode == NM_DedicatedServer )
+	{
+		bSpotted = bCloaked && (LastCommandoSpotTime + CommandoSpotDuration > Level.TimeSeconds);
+		return;
+	}
 
     if (!bCloaked || Level.TimeSeconds < LastCheckTimes)
     {
@@ -71,27 +80,17 @@ simulated function TickCloak(float DeltaTime)
 
     LastCheckTimes = Level.TimeSeconds + 0.25f;
 
-    //Ignore visibility, if any pawns around him are capable of showing stalkers, they are using V_Commando as a perk.
-    foreach CollidingActors(Class'KFHumanPawn', HumanPawn, 1600.f, Location)
+    bNewSpotted = bCloaked && LastCommandoSpotTime + CommandoSpotDuration > Level.TimeSeconds;
+
+    if (bNewSpotted != bSpotted)
     {
-        if( HumanPawn.Health <= 0 || !HumanPawn.ShowStalkers() )
+        bSpotted = bNewSpotted;
+        
+        if (!bSpotted)
         {
-            continue;
+            bUnlit = false;
         }
 
-        if( !bSpotted )
-        {
-            bSpotted = True;
-            CloakBoss();
-        }
-        
-        return;
-    }
-    
-    if( bSpotted )
-    {
-        bSpotted = False;
-        bUnlit = false;
         CloakBoss();
     }
 }
@@ -240,6 +239,8 @@ function float NumPlayersHeadHealthModifer()
 
 defaultproperties
 {
+    CommandoSpotDuration=2.f;
+
     //NOTE: Affliction move speed modifiers are not used by the boss. They exist, but are not used.
     Begin Object Class=AfflictionBurn Name=BurnAffliction
     End Object

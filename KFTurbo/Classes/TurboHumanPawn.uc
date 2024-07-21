@@ -15,8 +15,28 @@ simulated function Tick(float DeltaTime)
 	Super.Tick(DeltaTime);
 
 	UpdateHealthHealingTo();
+
+	if (ShowStalkers())
+	{
+		SpotCloakedMonsters();
+	}
 }
 
+simulated function SpotCloakedMonsters()
+{
+	local P_Stalker Stalker;
+	local P_ZombieBoss Boss;
+
+	foreach CollidingActors(class'P_Stalker', Stalker, 1600.f)
+	{
+		Stalker.SpotStalker();
+	}
+
+	foreach CollidingActors(class'P_ZombieBoss', Boss, 1600.f)
+	{
+		Boss.SpotBoss();
+	}
+}
 
 function bool CanBuyNow()
 {

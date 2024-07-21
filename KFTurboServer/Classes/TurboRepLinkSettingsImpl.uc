@@ -265,6 +265,11 @@ function SetupVariantWeaponEntry(out VariantWeapon Entry)
         Entry.VariantID = CyberVariantID;
         Entry.ItemStatus = 0;
     }
+    else if (IsGenericSteamPunkSkin(Entry.VariantClass))
+    {
+        Entry.VariantID = SteampunkVariantID;
+        Entry.ItemStatus = 0;
+    }
 }
 
 function bool AssignSpecialVariantID(out VariantWeapon Entry)
@@ -301,6 +306,8 @@ defaultproperties
         VariantIDList(4)="VM"
         VariantIDList(5)="WEST"
         VariantIDList(6)="CYB"
+        VariantIDList(7)="STP"
+
     End Object
     GroupList(0)=TurboRepLinkSettingsGroup'KFTurboServer.TurboRepLinkSettingsImpl.RepLinkDefaultGroup'
 

@@ -8,6 +8,9 @@ var PawnHelper.AfflictionData AfflictionData;
 var bool bUnstunTimeReady;
 var float UnstunTime;
 
+var float LastCommandoSpotTime;
+var float CommandoSpotDuration;
+
 simulated function PostBeginPlay()
 {
     Super.PostBeginPlay();
@@ -150,30 +153,34 @@ simulated function Timer()
     }
 }
 
+simulated function SpotStalker()
+{
+	LastCommandoSpotTime = Level.TimeSeconds;
+}
+
 //Fixing up Stalker material issues;
 simulated function TickCloak(float DeltaTime)
 {
-    if( Level.NetMode==NM_DedicatedServer )
-		return; // Servers aren't intrested in this info.
+    if( Level.NetMode == NM_DedicatedServer )
+	{
+		bSpotted = bCloaked && (LastCommandoSpotTime + CommandoSpotDuration > Level.TimeSeconds);
+		if (!bCloaked && Level.TimeSeconds - LastUncloakTime > 1.2 )
+		{
+			CloakStalker();
+		}
+		return;
+	}
 
     if( bZapped )
     {
-        // Make sure we check if we need to be cloaked as soon as the zap wears off
-        NextCheckTime = Level.TimeSeconds;
+        NextCheckTime = Level.TimeSeconds + 0.5;
+		return;
     }
-	else if( Level.TimeSeconds > NextCheckTime && Health > 0 )
+
+	if( Level.TimeSeconds > NextCheckTime && Health > 0 )
 	{
 		NextCheckTime = Level.TimeSeconds + 0.5;
-
-		if( LocalKFHumanPawn != none && LocalKFHumanPawn.Health > 0 && LocalKFHumanPawn.ShowStalkers() &&
-			VSizeSquared(Location - LocalKFHumanPawn.Location) < LocalKFHumanPawn.GetStalkerViewDistanceMulti() * 640000.0 ) // 640000 = 800 Units
-		{
-			bSpotted = True;
-		}
-		else
-		{
-			bSpotted = false;
-		}
+		bSpotted = bCloaked && (LastCommandoSpotTime + CommandoSpotDuration > Level.TimeSeconds);
 
 		if ( !bSpotted && !bCloaked && Skins[0] != DefaultSkin[0] )
 		{
@@ -314,6 +321,7 @@ simulated function UnCloakStalker()
 
 defaultproperties
 {
+	CommandoSpotDuration=2.f
 
     Begin Object Class=AfflictionBurn Name=BurnAffliction
         BurnDurationModifier=1.f

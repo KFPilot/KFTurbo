@@ -40,6 +40,13 @@ simulated function Tick(float DeltaTime)
 
 	for (Index = Level.GRI.PRIArray.Length - 1; Index >= 0; Index--)
 	{
+		PRI = Level.GRI.PRIArray[Index];
+		if (PRI == None)
+		{
+			continue;
+		}
+
+		bFoundData = false;
 		for (MarkInfoIndex = MarkInfoDataList.Length - 1; MarkInfoIndex >= 0; MarkInfoIndex--)
 		{
 			if (MarkInfoDataList[MarkInfoIndex].PRI == PRI)
@@ -50,13 +57,6 @@ simulated function Tick(float DeltaTime)
 		}
 
 		if (bFoundData)
-		{
-			continue;
-		}
-
-		PRI = Level.GRI.PRIArray[Index];
-
-		if (PRI == None || PRI.bOnlySpectator || PRI.bIsSpectator )
 		{
 			continue;
 		}
@@ -76,12 +76,12 @@ simulated function Tick(float DeltaTime)
 
 static final simulated function bool ShouldDrawMarkInfo(vector CameraPosition, vector CameraDirection, out MarkInfoData MarkInfo)
 {
-	if (MarkInfo.PRI == None || MarkInfo.TPRI == None || MarkInfo.TPRI.MarkInfo.ActorClass == None || MarkInfo.TPRI.MarkDisplayString == "")
+	if (MarkInfo.PRI == None || MarkInfo.TPRI == None || MarkInfo.TPRI.MarkActorClass == None || MarkInfo.TPRI.MarkDisplayString == "")
 	{
 		return false;
 	}
 
-	if ((Normal((MarkInfo.TPRI.MarkInfo.Location + (vect(0,0,1.f) * MarkInfo.TPRI.WorldZOffset)) - CameraPosition) Dot CameraDirection) < 0.f )
+	if ((Normal((MarkInfo.TPRI.GetMarkLocation() + (vect(0,0,1.f) * MarkInfo.TPRI.WorldZOffset)) - CameraPosition) Dot CameraDirection) < 0.f )
 	{
 		return false;
 	}
@@ -124,7 +124,7 @@ simulated function Render(Canvas C)
 			continue;
 		}
 
-		ScreenPos = C.WorldToScreen(MarkInfoDataList[Index].TPRI.MarkInfo.Location + (vect(0,0,1.f) * MarkInfoDataList[Index].TPRI.WorldZOffset));
+		ScreenPos = C.WorldToScreen(MarkInfoDataList[Index].TPRI.GetMarkLocation() + (vect(0,0,1.f) * MarkInfoDataList[Index].TPRI.WorldZOffset));
 		
 		if( ScreenPos.X >= 0 && ScreenPos.Y >= 0 && ScreenPos.X <= C.ClipX && ScreenPos.Y <= C.ClipY )
 		{
@@ -143,7 +143,7 @@ function DrawMarkInfo(Canvas C, out MarkInfoData MarkInfo, float ScreenLocX, flo
 	local float OldZ;
 	local Color DrawColor;
 
-	Dist = vsize(MarkInfo.TPRI.MarkInfo.Location - KFPHUD.PlayerOwner.CalcViewLocation);
+	Dist = vsize(MarkInfo.TPRI.GetMarkLocation() - KFPHUD.PlayerOwner.CalcViewLocation);
 	PlayerDistance = Dist;
 	Dist -= KFPHUD.HealthBarFullVisDist * 2.f;
 	Dist = FClamp(Dist, 0.f, (KFPHUD.HealthBarCutoffDist * 2.f) - (KFPHUD.HealthBarFullVisDist * 2.f));
