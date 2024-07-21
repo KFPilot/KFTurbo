@@ -2,6 +2,9 @@
 
 ## General Changes
 - **Removed level-based perk bonuses**: All perks now receive the Level 6 bonuses regardless of player level.
+- **Reworked trader menu**: Now you can select skins directly when you choose the weapon.
+- **Added custom weapon stickers**: You can access these in the skin selector in the trader menu.
+
 - **Added a Ping system**: Players can now ping enemies or pickups (default: X) to create a little text for their teammates.
 - **TBA**: insert changes here🚧
 
@@ -201,7 +204,7 @@
         - 33% less maximum ammo 🔻
         - 5% reduced damage 🔻
     - **Steampunk Thompson**
-        - Removed (probably going to be a skin/variant for the Thompson drum) 🚫
+        - Now a cosmetic variant for the Thompson Drum ⚠️
 ### Demolitions
 - 50% more M4 203 grenades 🟢
 - M4 203 grenades receive 90% damage bonus instead of the standard 60% 🟢
@@ -406,11 +409,13 @@
 - Added a new variant: Assassin
 ### Bloat
 - Added a new variant: Fathead
+### Stalker
+- Fixed inconsistent cloaking state on dedicated servers.
 ### Husk
 - No longer fires cannon after dying
 ### Siren
 - No longer deals damage after dying
-- Now able to destroy high-speed projectiles
+- Now able to destroy high-speed projectiles on dedicated servers.
 - Added a new variant: Caroler
 ### Scrake
 - Fixed "Slow Rage" state, where the scrake would be stuck with a slow movement speed in his charging animation
