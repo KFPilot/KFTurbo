@@ -1,3 +1,17 @@
+
+//-------------------------------------------------------------------------------
+// Wraith Stalker - WIP
+// to test the behavior go to 
+// https://www.desmos.com/calculator/zji10eiyip
+//-------------------------------------------------------------------------------
+
+//-------------------------------------------------------------------------------
+// TODO: Allow Shotguns to deal *some* damage (add a delay before teleporting)
+// TODO: Test it on Dedicated servers
+// MAYBE: Make it so the only way they uncloak is by teleporting
+// MAYBE: Allow teleportation while spotted by commando - probably not
+//-------------------------------------------------------------------------------
+
 class P_Stalker_Wraith extends P_Stalker_XMA;
 
 var float CloakDelay;
