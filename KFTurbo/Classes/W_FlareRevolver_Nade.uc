@@ -245,7 +245,7 @@ defaultproperties
      LightRadius=6.000000
      LightCone=16
      bDynamicLight=True
-     DrawScale=1.000000
+     DrawScale=4.000000
      AmbientGlow=180
      bUnlit=True
 }
