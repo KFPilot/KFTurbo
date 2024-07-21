@@ -306,7 +306,7 @@ defaultproperties
         VariantIDList(4)="VM"
         VariantIDList(5)="WEST"
         VariantIDList(6)="CYB"
-        VariantIDList(6)="STP"
+        VariantIDList(7)="STP"
 
     End Object
     GroupList(0)=TurboRepLinkSettingsGroup'KFTurboServer.TurboRepLinkSettingsImpl.RepLinkDefaultGroup'
