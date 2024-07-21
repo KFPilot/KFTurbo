@@ -1,8 +1,9 @@
-class W_V_ThompsonDrum_SP_Weap extends W_ThompsonDrum_Weap;
+class W_V_ThompsonDrum_STP_Weap extends W_ThompsonDrum_Weap;
 
 defaultproperties
 {
-    PickupClass=Class'KFTurbo.W_V_ThompsonDrum_SP_Pickup'
+    FireModeClass(0)=Class'KFTurbo.W_V_ThompsonDrum_STP_Fire'
+    PickupClass=Class'KFTurbo.W_V_ThompsonDrum_STP_Pickup'
     WeaponReloadAnim="Reload_IJC_spThompson_Drum"
     TraderInfoTexture=Texture'KF_IJC_HUD.Trader_Weapon_Icons.Trader_SteamPunk_Tommygun'
     MeshRef="KF_IJC_Summer_Weps1.Steampunk_Thompson"

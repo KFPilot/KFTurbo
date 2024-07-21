@@ -25,7 +25,8 @@ const CamoVariantID = "CAMO"; //Camo skins.
 const TurboVariantID = "TURBO"; //KFTurbo sticker skins.
 const VMVariantID = "VM"; //VM sticker skins.
 const WLVariantID = "WEST"; //Westlondon sticker skins.
-const CyberVariantID = "CYB"; //Westlondon sticker skins.
+const CyberVariantID = "CYB"; //Cyber weapon skins.
+const SteamPunkVariantID = "STP"; //Steampunk weapon skins.
 
 //Special variants - accessible to specific players.
 const RetartVariantID = "RET";
@@ -74,6 +75,11 @@ static final function bool IsGenericCyberSkin(class<Pickup> PickupClass)
 	return InStr(Caps(PickupClass), "_CYBER_") != -1;
 }
 
+static final function bool IsGenericSteamPunkSkin(class<Pickup> PickupClass)
+{
+	return InStr(Caps(PickupClass), "_STP_") != -1;
+}
+
 defaultproperties
 {
     //Default group that gives all players access to a set weapon skins.
@@ -87,6 +93,8 @@ defaultproperties
         VariantIDList(4)="VM"
         VariantIDList(5)="WEST"
         VariantIDList(6)="CYB"
+        VariantIDList(7)="STP"
+
     End Object
     GroupList(0)=TurboRepLinkSettingsGroup'KFTurbo.TurboRepLinkSettings.RepLinkDefaultGroup'
 
