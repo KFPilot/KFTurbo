@@ -232,7 +232,7 @@ defaultproperties
      ArmDistSquared=25000000.000000 // 2 seconds of flight time
      ImpactDamageType=Class'KFMod.DamTypeM79GrenadeImpact'
      ImpactDamage=2
-     StaticMeshRef="kf_generic_sm.12Guage_Shell"
+     StaticMeshRef="kf_generic_sm.40mm_Warhead" //"kf_generic_sm.12Guage_Shell", with drawscale 4, if we can get the texture in
      ExplosionSoundRef="KF_IJC_HalloweenSnd.KF_FlarePistol_Projectile_Hit"
      AmbientSoundRef="KF_IJC_HalloweenSnd.KF_FlarePistol_Projectile_Loop"
      AmbientVolumeScale=1.500000
@@ -245,7 +245,7 @@ defaultproperties
      LightRadius=6.000000
      LightCone=16
      bDynamicLight=True
-     DrawScale=4.000000
+     DrawScale=1.850000
      AmbientGlow=180
-     bUnlit=True
+     bUnlit=False
 }
