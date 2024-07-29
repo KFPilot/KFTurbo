@@ -14,18 +14,21 @@ defaultproperties
 	Begin Object Class=TurboMonsterCollectionSquad Name=MidGameSquad0
           Squad(0)=(Monster=Bloat,Count=3)
           Squad(1)=(Monster=Clot,Count=2)
+          Squad(2)=(Monster=Stalker,Count=2)
 	End Object
 	RegularSquad(6)=TurboMonsterCollectionSquad'KFTurbo.TurboPlusWaveMidGame.MidGameSquad0'
 
 	Begin Object Class=TurboMonsterCollectionSquad Name=MidGameSquad1
           Squad(0)=(Monster=Husk,Count=2)
           Squad(1)=(Monster=Crawler,Count=3)
+          Squad(2)=(Monster=Siren,Count=1)
 	End Object
 	RegularSquad(7)=TurboMonsterCollectionSquad'KFTurbo.TurboPlusWaveMidGame.MidGameSquad1'
 
 	Begin Object Class=TurboMonsterCollectionSquad Name=MidGameSquad2
-          Squad(0)=(Monster=Siren,Count=3)
-          Squad(1)=(Monster=Stalker,Count=2)
+          Squad(0)=(Monster=Gorefast,Count=2)
+          Squad(1)=(Monster=Clot,Count=2)
+          Squad(2)=(Monster=Siren,Count=2)
 	End Object
 	RegularSquad(8)=TurboMonsterCollectionSquad'KFTurbo.TurboPlusWaveMidGame.MidGameSquad2'
 
