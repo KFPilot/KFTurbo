@@ -1,4 +1,4 @@
-class W_FlareRevolver_Eredys_Nade extends W_FlareRevolver_Nade;
+class W_FlareRevolver_EreDys_Nade extends W_FlareRevolver_Nade;
 
 defaultproperties
 {
