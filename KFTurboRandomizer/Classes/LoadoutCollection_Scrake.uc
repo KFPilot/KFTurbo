@@ -67,6 +67,8 @@ defaultproperties
     Begin Object Class=KFTurboRandomizerLoadout Name=ScrakeLoadout9
         Perk=class'V_Berserker'
         WeaponList(0)=class'KFTurbo.W_Claymore_Weap'
+        bKnife = false
+        bSingle = false
     End Object
 
     Begin Object Class=KFTurboRandomizerLoadout Name=ScrakeLoadout10
@@ -252,8 +254,28 @@ defaultproperties
         WeaponList(2)=class'KFTurbo.W_SCARMK17_Weap'
     End Object
 
+    Begin Object Class=KFTurboRandomizerLoadout Name=ScrakeLoadout37
+        Perk=class'V_SupportSpec'
+        WeaponList(0)=class'KFTurbo.W_SPShotgun_Weap'
+        WeaponList(1)=class'KFTurbo.W_NailGun_Weap'
+        WeaponList(2)=class'KFTurbo.W_Magnum44_Weap'
+        WeaponList(3)=class'KFMod.Machete'
+    End Object
+
+    Begin Object Class=KFTurboRandomizerLoadout Name=ScrakeLoadout38
+        Perk=class'V_SupportSpec'
+        WeaponList(0)=class'KFTurbo.W_SPShotgun_Weap'
+        WeaponList(1)=class'KFTurbo.W_AA12_Weap'
+    End Object
+
+    Begin Object Class=KFTurboRandomizerLoadout Name=ScrakeLoadout39
+        Perk=class'V_SupportSpec'
+        WeaponList(0)=class'KFTurbo.W_M14_Weap'
+        WeaponList(1)=class'KFTurbo.W_BoomStick_Weap'
+    End Object
+
     // Loadout tally - PLEASE INCREMENT IF YOU ADD LOADOUTS
-    // Scrake: Medic: 2 | Firebug: 4 | Berserker: 6 | Demo: 2 | Commando: 4 | Support: 7 | Sharp: 12 
+    // Scrake: Medic: 2 | Firebug: 4 | Berserker: 6 | Demo: 2 | Commando: 4 | Support: 10 | Sharp: 12 
 
     LoadoutList(0)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Scrake.ScrakeLoadout0'
     LoadoutList(1)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Scrake.ScrakeLoadout1'
@@ -292,5 +314,7 @@ defaultproperties
     LoadoutList(34)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Scrake.ScrakeLoadout34'
     LoadoutList(35)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Scrake.ScrakeLoadout35'
     LoadoutList(36)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Scrake.ScrakeLoadout36'
-
+    LoadoutList(37)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Scrake.ScrakeLoadout37'
+    LoadoutList(38)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Scrake.ScrakeLoadout38'
+    LoadoutList(39)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Scrake.ScrakeLoadout39'
 }
