@@ -4,30 +4,32 @@ defaultproperties
 {
     Begin Object Class=KFTurboRandomizerLoadout Name=EarlyWaveLoadout0
         Perk=class'V_Firebug'
-        WeaponList(0)=class'KFturbo.W_Flamethrower_Weap'
+        WeaponList(0)=class'KFTurbo.W_Flamethrower_Weap'
     End Object
 
     Begin Object Class=KFTurboRandomizerLoadout Name=EarlyWaveLoadout1
         Perk=class'V_Firebug'
-        WeaponList(0)=class'KFturbo.W_DualFlare_Weap'
-        WeaponList(1)=class'KFturbo.W_MAC10_Weap'
+        WeaponList(0)=class'KFTurbo.W_DualFlare_Weap'
+        WeaponList(1)=class'KFTurbo.W_MAC10_Weap'
     End Object
 
     Begin Object Class=KFTurboRandomizerLoadout Name=EarlyWaveLoadout2
         Perk=class'V_Berserker'
-        WeaponList(0)=class'KFturbo.W_Katana_Weap'
+        WeaponList(0)=class'KFTurbo.W_Katana_Weap'
+        WeaponList(1)=class'KFTurboRandomizer.W_Katana_Weap_A'
+        bSingle = false
     End Object
 
     Begin Object Class=KFTurboRandomizerLoadout Name=EarlyWaveLoadout3
         Perk=class'V_Berserker'
-        WeaponList(0)=class'KFturbo.W_Scythe_Weap'
-        WeaponList(1)=class'KFturbo.W_MK23_Weap'
+        WeaponList(0)=class'KFTurbo.W_Scythe_Weap'
+        WeaponList(1)=class'KFTurbo.W_MK23_Weap'
     End Object
 
     Begin Object Class=KFTurboRandomizerLoadout Name=EarlyWaveLoadout4
         Perk=class'V_Demolitions'
-        WeaponList(0)=class'KFturbo.W_SPGrenade_Weap'
-        WeaponList(1)=class'KFturbo.W_M79_Weap'
+        WeaponList(0)=class'KFTurbo.W_SPGrenade_Weap'
+        WeaponList(1)=class'KFTurbo.W_M79_Weap'
     End Object
 
     Begin Object Class=KFTurboRandomizerLoadout Name=EarlyWaveLoadout5
@@ -78,9 +80,25 @@ defaultproperties
         WeaponList(1)=class'KFTurbo.W_MK23_Weap'
     End Object
 
+    Begin Object Class=KFTurboRandomizerLoadout Name=EarlyWaveLoadout13
+        Perk=class'V_Firebug'
+        WeaponList(0)=class'KFTurboRandomizer.W_FlareRevolver_EreDys_Weap'
+        WeaponList(1)=class'KFTurbo.W_FlareRevolver_Weap'
+    End Object
+
+    Begin Object Class=KFTurboRandomizerLoadout Name=EarlyWaveLoadout14
+        Perk=class'V_SupportSpec'
+        WeaponList(0)=class'KFTurbo.W_Shotgun_Weap'
+        WeaponList(1)=class'KFTurbo.W_MK23_Weap'
+    End Object
+
+    Begin Object Class=KFTurboRandomizerLoadout Name=EarlyWaveLoadout15
+        Perk=class'V_Commando'
+        WeaponList(0)=class'KFTurbo.W_SCARMK17_Weap'
+    End Object
 
     // Loadout tally - PLEASE INCREMENT IF YOU ADD LOADOUTS
-    // Early Wave: Medic: 0 | Firebug: 2 | Berserker: 2 | Demo: 2 | Commando: 2 | Support: 2 | Sharp: 3
+    // Early Wave: Medic: 0 | Firebug: 3 | Berserker: 2 | Demo: 2 | Commando: 3 | Support: 3 | Sharp: 3
 
     LoadoutList(0)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_EarlyWave.EarlyWaveLoadout0'
     LoadoutList(1)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_EarlyWave.EarlyWaveLoadout1'
@@ -95,5 +113,8 @@ defaultproperties
     LoadoutList(10)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_EarlyWave.EarlyWaveLoadout10'
     LoadoutList(11)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_EarlyWave.EarlyWaveLoadout11'
     LoadoutList(12)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_EarlyWave.EarlyWaveLoadout12'
+    LoadoutList(13)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_EarlyWave.EarlyWaveLoadout13'
+    LoadoutList(14)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_EarlyWave.EarlyWaveLoadout14'
+    LoadoutList(15)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_EarlyWave.EarlyWaveLoadout15'
 
 }

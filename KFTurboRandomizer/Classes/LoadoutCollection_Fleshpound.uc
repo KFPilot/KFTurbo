@@ -52,7 +52,7 @@ defaultproperties
         Perk=class'V_Demolitions'
         WeaponList(0)=class'KFTurbo.W_SPGrenade_Weap'
         WeaponList(1)=class'KFTurbo.W_PipeBomb_Weap'
-        WeaponList(2)=class'KFMod.SeekerSixRocketLauncher'
+        WeaponList(2)=class'KFTurbo.W_SeekerSix_Weap'
         WeaponList(3)=class'KFTurbo.W_Deagle_Weap'
     End Object
 
@@ -157,8 +157,16 @@ defaultproperties
         WeaponList(1)=class'KFTurbo.W_Deagle_Weap'
     End Object
 
+
+    Begin Object Class=KFTurboRandomizerLoadout Name=FleshpoundLoadout23
+        Perk=class'V_Commando'
+        WeaponList(0)=class'KFTurbo.W_SCARMK17_Weap'
+        WeaponList(1)=class'KFTurbo.W_M32_Weap'
+    End Object
+
+
     // Loadout tally - PLEASE INCREMENT IF YOU ADD LOADOUTS
-    // Fleshpound: Medic: 1 | Firebug: 1 | Berserker: 2 | Demo: 8 | Commando: 1 | Support: 5 | Sharp: 5
+    // Fleshpound: Medic: 1 | Firebug: 1 | Berserker: 2 | Demo: 8 | Commando: 2 | Support: 5 | Sharp: 5
 
     LoadoutList(0)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Fleshpound.FleshpoundLoadout0'
     LoadoutList(1)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Fleshpound.FleshpoundLoadout1'
@@ -183,4 +191,5 @@ defaultproperties
     LoadoutList(20)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Fleshpound.FleshpoundLoadout20'
     LoadoutList(21)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Fleshpound.FleshpoundLoadout21'
     LoadoutList(22)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Fleshpound.FleshpoundLoadout22'
+    LoadoutList(23)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Fleshpound.FleshpoundLoadout23'
 }
