@@ -23,6 +23,5 @@ function inventory SpawnCopy( pawn Other )
 }
 defaultproperties
 {
-    
      InventoryType=Class'KFTurbo.W_FlareRevolver_Weap'
 }

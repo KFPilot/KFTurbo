@@ -3,6 +3,7 @@ class W_FlareRevolver_Nade extends M79GrenadeProjectile;
 
 var     Emitter     FlameTrail;
 var     class<Emitter> FlameTrailEmitterClass;
+var     class<Emitter> ExplosionEmitterClass;
 
 var		string	AmbientSoundRef;
 
@@ -177,7 +178,7 @@ simulated function Explode(vector HitLocation, vector HitNormal)
 
 	if ( EffectIsRelevant(Location,false) )
 	{
-		Spawn(Class'KFTurbo.W_FlareRevolver_NadeExplosion',,, HitLocation, rotator(vect(0,0,1)));
+		Spawn(ExplosionEmitterClass,,, HitLocation, rotator(vect(0,0,1)));
 		Spawn(ExplosionDecal,self,,HitLocation, rotator(-HitNormal));
 	}
 
@@ -225,11 +226,13 @@ defaultproperties
      Damage=40.000000
      DamageRadius=210.000000
      FlameTrailEmitterClass=Class'KFMod.FlareRevolverTrail'
+     ExplosionEmitterClass=Class'KFTurbo.W_FlareRevolver_NadeEmitter'
+     ExplosionDecal=Class'KFMod.FlameThrowerBurnMark_Large'
      MyDamageType=Class'KFMod.DamTypeFlameNade'
      ArmDistSquared=25000000.000000 // 2 seconds of flight time
      ImpactDamageType=Class'KFMod.DamTypeM79GrenadeImpact'
      ImpactDamage=2
-     StaticMeshRef="EffectsSM.Ger_Tracer"
+     StaticMeshRef="kf_generic_sm.40mm_Warhead" //"kf_generic_sm.12Guage_Shell", with drawscale 4, if we can get the texture in
      ExplosionSoundRef="KF_IJC_HalloweenSnd.KF_FlarePistol_Projectile_Hit"
      AmbientSoundRef="KF_IJC_HalloweenSnd.KF_FlarePistol_Projectile_Loop"
      AmbientVolumeScale=1.500000
@@ -242,7 +245,7 @@ defaultproperties
      LightRadius=6.000000
      LightCone=16
      bDynamicLight=True
-     DrawScale=1.000000
+     DrawScale=1.850000
      AmbientGlow=180
-     bUnlit=True
+     bUnlit=False
 }
