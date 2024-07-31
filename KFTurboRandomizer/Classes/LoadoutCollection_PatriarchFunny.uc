@@ -2,23 +2,36 @@ class LoadoutCollection_PatriarchFunny extends KFTurboRandomizerLoadoutCollectio
 
 defaultproperties
 {
-    Begin Object Class=KFTurboRandomizerLoadout Name=FunnyLoadout0
-        Perk=class'V_Demolitions'
-        WeaponList(0)=class'KFTurbo.W_PipeBomb_Weap'
-        WeaponList(1)=class'KFTurboRandomizer.W_PipeBomb_Weap_A'
-        WeaponList(2)=class'KFTurboRandomizer.W_PipeBomb_Weap_B'
-        WeaponList(3)=class'KFTurboRandomizer.W_PipeBomb_Weap_C'
-        WeaponList(4)=class'KFTurboRandomizer.W_PipeBomb_Weap_D'
-        WeaponList(5)=class'KFTurboRandomizer.W_PipeBomb_Weap_E'
-        WeaponList(6)=class'KFTurboRandomizer.W_PipeBomb_Weap_F'
-        WeaponList(7)=class'KFTurboRandomizer.W_PipeBomb_Weap_G'
-        WeaponList(8)=class'KFTurboRandomizer.W_PipeBomb_Weap_H'
-        WeaponList(9)=class'KFTurboRandomizer.W_PipeBomb_Weap_I'
-        WeaponList(10)=class'KFTurboRandomizer.W_PipeBomb_Weap_J'
-        WeaponList(11)=class'KFTurboRandomizer.W_PipeBomb_Weap_K'
-        WeaponList(12)=class'KFTurboRandomizer.W_PipeBomb_Weap_L'
-        WeaponList(13)=class'KFTurboRandomizer.W_PipeBomb_Weap_M'
+    Begin Object Class=LoadoutCollection_Funny Name=ForceImportFunnyLoadout
     End Object
 
-    LoadoutList(0)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_PatriarchFunny.FunnyLoadout0'
+    Begin Object Class=KFTurboRandomizerLoadout Name=FunnyLoadout0
+        Perk=class'V_Commando'
+        WeaponList(0)=class'KFTurbo.W_Bullpup_Weap'
+        WeaponList(1)=class'KFTurbo.W_ThompsonDrum_Weap'
+        WeaponList(2)=class'KFTurbo.W_Ak47_Weap'
+        WeaponList(3)=class'KFTurbo.W_M4203_Weap'
+        WeaponList(4)=class'KFTurbo.W_MKb42_Weap'
+        WeaponList(5)=class'KFTurbo.W_ThompsonSMG_Weap'
+        WeaponList(6)=class'KFTurbo.W_SCARMK17_Weap'
+        WeaponList(7)=class'KFTurbo.W_FNFAL_Weap'
+        bSingle = false
+    End Object
+
+    Begin Object Class=KFTurboRandomizerLoadout Name=FunnyLoadout1
+        Perk=class'V_Firebug'
+        WeaponList(0)=class'KFTurbo.W_BlowerThrower_Weap'
+        bSingle = false
+        bKnife = false
+        bWelder = false
+        bSyringe = false
+    End Object
+
+    LoadoutList(0)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Funny.FunnyLoadout8'
+    LoadoutList(1)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Funny.FunnyLoadout9'
+    LoadoutList(2)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Funny.FunnyLoadout10'
+    LoadoutList(3)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Funny.FunnyLoadout11'
+    LoadoutList(4)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Funny.FunnyLoadout13'
+    LoadoutList(5)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_PatriarchFunny.FunnyLoadout0'
+    LoadoutList(6)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_PatriarchFunny.FunnyLoadout1'
 }
