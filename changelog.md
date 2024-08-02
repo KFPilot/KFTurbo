@@ -240,8 +240,8 @@
         - 33% less maximum ammo 🔻
     - **SealSqueal Harpoon Bomber**
         - Sticking a zed with a harpoon now inflicts [**Harpooned**](#afflictions) ⚠️
-        - It deals bonus 2.5x damage if attached to a ZED's head ⚠️
-        - It deals bonus 1.5x damage if it is detonated with a different explosive ⚠️
+        - It deals double damage if attached to a ZED ⚠️
+        - It deals triple damage if attached to a ZED's head ⚠️
         - 25% faster fire rate 🟢
         - Has no spread and inaccuracy 🟢
 

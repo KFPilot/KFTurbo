@@ -1,24 +1,5 @@
 class W_SealSqueal_Proj extends SealSquealProjectile;
 
-var float ExplosiveComboMultiplier;
-
-//gain bonus damage if detonated via another explosive
-function TakeDamage( int Damage, Pawn InstigatedBy, Vector Hitlocation, Vector Momentum, class<DamageType> DamageType, optional int HitIndex)
-{
-    if( DamageType == class'SirenScreamDamage')
-    {
-        Disintegrate(HitLocation, vect(0,0,1));
-    }
-	else if (class<KFWeaponDamageType>(DamageType).default.bIsExplosive && class<DamTypeSealSquealExplosion>(DamageType) == none)
-	{
-		self.Damage*=ExplosiveComboMultiplier;
-        Explode(HitLocation, vect(0,0,1));
-	}
-    else
-    {
-        Explode(HitLocation, vect(0,0,1));
-    }
-}
 
 // Stick this explosive to the wall or zed it hit
 simulated function Stick(actor HitActor, vector HitLocation)
@@ -302,10 +283,10 @@ simulated function float GetDamageMultiplier(Pawn HitPawn, Vector HitLocation)
 	{
 		if(bAttachedToHead)
 		{
-			return 2.5f;
+			return 3.f;
 		}
 
-		return 1.f;
+		return 2.f;
 	}
 
 	if(KFPawn(HitPawn) != None)
@@ -366,5 +347,4 @@ defaultproperties
      ImpactDamage=0
      Damage=200.000000
      DamageRadius=250.000000
-	 ExplosiveComboMultiplier=1.500000
 }
