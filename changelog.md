@@ -430,4 +430,4 @@
 - Fixed a bug that made the Fleshpound "friendly", preventing it from attacking
 - Fixed various issues with being on fire
 - Damage resistance to M99 reduced from 50% to 47.5%
-- Takes 65% increased damage from Seeker Six isntead of the normal 25% for explosives.
+- Takes 65% increased damage from Seeker Six instead of the normal 25% for explosives.
