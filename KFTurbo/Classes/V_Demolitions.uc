@@ -130,7 +130,7 @@ static function float GetFireSpeedMod(KFPlayerReplicationInfo KFPRI, Weapon Othe
 {
 	if (LAW(Other) != None)
 	{
-		return LerpStat(KFPRI, 1.f, 1.3f);
+		return LerpStat(KFPRI, 1.f, 1.4f);
 	}
 
 	return 1.f;
