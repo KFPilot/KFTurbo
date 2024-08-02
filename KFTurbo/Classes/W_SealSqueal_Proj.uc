@@ -1,6 +1,5 @@
 class W_SealSqueal_Proj extends SealSquealProjectile;
 
-
 // Stick this explosive to the wall or zed it hit
 simulated function Stick(actor HitActor, vector HitLocation)
 {
