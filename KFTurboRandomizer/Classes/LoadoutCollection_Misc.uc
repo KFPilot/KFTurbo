@@ -273,8 +273,20 @@ defaultproperties
         WeaponList(1)=class'KFTurbo.W_Crossbuzzsaw_Weap'
     End Object
 
+    Begin Object Class=KFTurboRandomizerLoadout Name=ScrakeLoadout40
+        Perk=class'V_FieldMedic'
+        WeaponList(0)=class'KFTurbo.W_M99_Weap'
+        WeaponList(1)=class'KFTurbo.W_PipeBomb_Weap'
+    End Object
+
+    Begin Object Class=KFTurboRandomizerLoadout Name=ScrakeLoadout41
+        Perk=class'V_SupportSpec'
+        WeaponList(0)=class'KFTurbo.W_M14_Weap'
+        WeaponList(1)=class'KFTurbo.W_BoomStick_Weap'
+    End Object
+
     // Loadout tally - PLEASE INCREMENT IF YOU ADD LOADOUTS
-    // Misc: Medic: 10 | Firebug: 5 | Berserker: 4 | Demo: 2 | Commando: 8 | Support: 5 | Sharp: 6
+    // Misc: Medic: 11 | Firebug: 5 | Berserker: 4 | Demo: 2 | Commando: 8 | Support: 6 | Sharp: 6
 
     LoadoutList(0)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Misc.MiscLoadout0'
     LoadoutList(1)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Misc.MiscLoadout1'
@@ -316,5 +328,7 @@ defaultproperties
     LoadoutList(37)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Misc.MiscLoadout37'
     LoadoutList(38)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Misc.MiscLoadout38'
     LoadoutList(39)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Misc.MiscLoadout39'
+    LoadoutList(40)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Misc.MiscLoadout40'
+    LoadoutList(41)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Misc.MiscLoadout41'
 
 }
