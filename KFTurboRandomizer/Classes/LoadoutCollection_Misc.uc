@@ -291,8 +291,14 @@ defaultproperties
         WeaponList(1)=class'KFTurboRandomizer.W_BoomStick_Weap_A'
     End Object
 
+    Begin Object Class=KFTurboRandomizerLoadout Name=MiscLoadout43
+        Perk=class'V_Firebug'
+        WeaponList(0)=class'KFTurbo.W_Huskgun_Weap'
+        WeaponList(1)=class'KFTurboRandomizer.W_FlareRevolver_EreDys_Weap'
+    End Object
+
     // Loadout tally - PLEASE INCREMENT IF YOU ADD LOADOUTS
-    // Misc: Medic: 11 | Firebug: 5 | Berserker: 4 | Demo: 2 | Commando: 8 | Support: 7 | Sharp: 6
+    // Misc: Medic: 11 | Firebug: 7 | Berserker: 4 | Demo: 2 | Commando: 8 | Support: 7 | Sharp: 6
 
     LoadoutList(0)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Misc.MiscLoadout0'
     LoadoutList(1)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Misc.MiscLoadout1'
@@ -337,5 +343,5 @@ defaultproperties
     LoadoutList(40)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Misc.MiscLoadout40'
     LoadoutList(41)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Misc.MiscLoadout41'
     LoadoutList(42)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Misc.MiscLoadout42'
-
+    LoadoutList(43)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Misc.MiscLoadout43'
 }
