@@ -166,5 +166,5 @@ static function string GetCustomLevelInfo(byte Level)
 defaultproperties
 {
      OnHUDGoldIcon=Texture'KFTurbo.Perks.Berserker_D'
-	 SRLevelEffects(6)="100% extra melee damage|15% faster melee attacks|20% faster melee movement|20% less damage from Siren Scream|60% less damage from Bloat Bile|10% resistance to all damage|70% discount on melee weapons|20% increase in grenade capacity|Grenades put zeds into Stasis, increasing the damage they take|Spawn with a Machete|Can't be grabbed by Clots|Up to 4 Zed-Time Extensions"
+	 SRLevelEffects(6)="100% extra melee damage|15% faster melee attacks|20% faster melee movement|20% less damage from Siren scream|60% less damage from Bloat bile|10% resistance to all damage|70% discount on melee weapons|20% increase in grenade capacity|Grenades put zeds into Stasis, increasing the damage they take|Spawn with a Machete|Can't be grabbed by Clots|Up to 4 zed-time extensions"
 }
