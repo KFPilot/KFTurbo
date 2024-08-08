@@ -18,6 +18,7 @@ defaultproperties
         WeaponList(0)=class'KFTurbo.W_Katana_Weap'
         WeaponList(1)=class'KFTurboRandomizer.W_Katana_Weap_A'
         bSingle = false
+        bKnife = false
     End Object
 
     Begin Object Class=KFTurboRandomizerLoadout Name=EarlyWaveLoadout3
@@ -97,8 +98,38 @@ defaultproperties
         WeaponList(0)=class'KFTurbo.W_SCARMK17_Weap'
     End Object
 
+    Begin Object Class=KFTurboRandomizerLoadout Name=EarlyWaveLoadout16
+        Perk=class'V_Firebug'
+        WeaponList(0)=class'KFTurboRandomizer.W_FlareRevolver_EreDys_Weap'
+        WeaponList(1)=class'KFTurbo.W_Trenchgun_Weap'
+    End Object
+
+    Begin Object Class=KFTurboRandomizerLoadout Name=EarlyWaveLoadout17
+        Perk=class'V_Berserker'
+        WeaponList(0)=class'KFTurbo.W_Katana_Weap'
+        WeaponList(1)=class'KFTurbo.W_LAR_Weap'
+    End Object
+
+    Begin Object Class=KFTurboRandomizerLoadout Name=EarlyWaveLoadout18
+        Perk=class'V_Commando'
+        WeaponList(0)=class'KFTurbo.W_ThompsonSMG_Weap'
+        WeaponList(1)=class'KFTurbo.W_Bullpup_Weap'
+    End Object
+
+    Begin Object Class=KFTurboRandomizerLoadout Name=EarlyWaveLoadout19
+        Perk=class'V_SupportSpec'
+        WeaponList(0)=class'KFTurbo.W_KSG_Weap'
+        WeaponList(1)=class'KFTurbo.W_Magnum44_Weap'
+    End Object
+
+    Begin Object Class=KFTurboRandomizerLoadout Name=EarlyWaveLoadout20
+        Perk=class'V_Sharpshooter'
+        WeaponList(0)=class'KFTurbo.W_MK23_Weap'
+        WeaponList(1)=class'KFTurbo.W_M14_Weap'
+    End Object
+
     // Loadout tally - PLEASE INCREMENT IF YOU ADD LOADOUTS
-    // Early Wave: Medic: 0 | Firebug: 3 | Berserker: 2 | Demo: 2 | Commando: 3 | Support: 3 | Sharp: 3
+    // Early Wave: Medic: 0 | Firebug: 4 | Berserker: 3 | Demo: 2 | Commando: 4 | Support: 4 | Sharp: 4
 
     LoadoutList(0)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_EarlyWave.EarlyWaveLoadout0'
     LoadoutList(1)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_EarlyWave.EarlyWaveLoadout1'
@@ -116,5 +147,10 @@ defaultproperties
     LoadoutList(13)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_EarlyWave.EarlyWaveLoadout13'
     LoadoutList(14)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_EarlyWave.EarlyWaveLoadout14'
     LoadoutList(15)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_EarlyWave.EarlyWaveLoadout15'
+    LoadoutList(16)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_EarlyWave.EarlyWaveLoadout16'
+    LoadoutList(17)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_EarlyWave.EarlyWaveLoadout17'
+    LoadoutList(18)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_EarlyWave.EarlyWaveLoadout18'
+    LoadoutList(19)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_EarlyWave.EarlyWaveLoadout19'
+    LoadoutList(20)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_EarlyWave.EarlyWaveLoadout20'
 
 }
