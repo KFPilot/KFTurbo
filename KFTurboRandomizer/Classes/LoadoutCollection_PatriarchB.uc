@@ -36,7 +36,6 @@ defaultproperties
     LoadoutList(9)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Scrake.ScrakeLoadout26'
     LoadoutList(10)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Scrake.ScrakeLoadout28'
     LoadoutList(11)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Scrake.ScrakeLoadout34'
-    LoadoutList(12)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Scrake.ScrakeLoadout38'
     LoadoutList(13)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Fleshpound.FleshpoundLoadout0'
     LoadoutList(14)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Fleshpound.FleshpoundLoadout5'
     LoadoutList(15)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Fleshpound.FleshpoundLoadout6'
