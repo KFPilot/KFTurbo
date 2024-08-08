@@ -103,7 +103,6 @@ defaultproperties
         WeaponList(1)=class'KFTurboRandomizer.W_Bullpup_brrt_Weap'
     End Object
     
-    
     Begin Object Class=KFTurboRandomizerLoadout Name=FunnyLoadout13
         Perk=class'V_SupportSpec'
         WeaponList(0)=class'KFTurboRandomizer.W_LAW_WTF_Weap'
@@ -116,7 +115,7 @@ defaultproperties
     End Object
 
     Begin Object Class=KFTurboRandomizerLoadout Name=FunnyLoadout15
-        Perk=class'V_Firebug'
+        Perk=class'V_Sharpshooter'
         WeaponList(0)=class'KFTurbo.W_M32_Weap'
         WeaponList(1)=class'KFTurbo.W_LAW_Weap'
     End Object
