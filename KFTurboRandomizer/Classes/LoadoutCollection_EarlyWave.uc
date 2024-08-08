@@ -128,8 +128,14 @@ defaultproperties
         WeaponList(1)=class'KFTurbo.W_M14_Weap'
     End Object
 
+    Begin Object Class=KFTurboRandomizerLoadout Name=EarlyWaveLoadout21
+        Perk=class'V_Commando'
+        WeaponList(0)=class'KFTurbo.W_Bullpup_Weap'
+        WeaponList(1)=class'KFTurboRandomizer.W_Bullpup_brrt_Weap'
+    End Object
+
     // Loadout tally - PLEASE INCREMENT IF YOU ADD LOADOUTS
-    // Early Wave: Medic: 0 | Firebug: 4 | Berserker: 3 | Demo: 2 | Commando: 4 | Support: 4 | Sharp: 4
+    // Early Wave: Medic: 0 | Firebug: 4 | Berserker: 3 | Demo: 2 | Commando: 5 | Support: 4 | Sharp: 4
 
     LoadoutList(0)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_EarlyWave.EarlyWaveLoadout0'
     LoadoutList(1)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_EarlyWave.EarlyWaveLoadout1'

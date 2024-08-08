@@ -120,8 +120,17 @@ defaultproperties
         WeaponList(1)=class'KFTurbo.W_LAW_Weap'
     End Object
 
+    Begin Object Class=KFTurboRandomizerLoadout Name=FunnyLoadout16
+        Perk=class'V_SupportSpec'
+        WeaponList(0)=class'KFMod.ZEDGun'
+        WeaponList(1)=class'KFMod.ZEDMKIIWeapon'
+        bKnife = false
+        bSingle = false
+        bSyringe = false
+    End Object
+
     // Loadout tally - PLEASE INCREMENT IF YOU ADD LOADOUTS
-    // Funny: Medic: 3 | Firebug: 2 | Berserker: 2 | Demo: 2 | Commando: 2 | Support: 2 | Sharp: 3
+    // Funny: Medic: 3 | Firebug: 2 | Berserker: 2 | Demo: 2 | Commando: 2 | Support: 3 | Sharp: 3
 
     LoadoutList(0)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Funny.FunnyLoadout0'
     LoadoutList(1)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Funny.FunnyLoadout1'
@@ -139,4 +148,5 @@ defaultproperties
     LoadoutList(13)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Funny.FunnyLoadout13'
     LoadoutList(14)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Funny.FunnyLoadout14'
     LoadoutList(15)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Funny.FunnyLoadout15'
+    LoadoutList(16)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Funny.FunnyLoadout16'
 }
