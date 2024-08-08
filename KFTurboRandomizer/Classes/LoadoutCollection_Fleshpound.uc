@@ -146,27 +146,38 @@ defaultproperties
     End Object
 
     Begin Object Class=KFTurboRandomizerLoadout Name=FleshpoundLoadout21
-        Perk=class'V_SupportSpec'
-        WeaponList(0)=class'KFTurbo.W_BoomStick_Weap'
-        WeaponList(1)=class'KFTurboRandomizer.W_BoomStick_Weap_A'
-    End Object
-
-    Begin Object Class=KFTurboRandomizerLoadout Name=FleshpoundLoadout22
         Perk=class'V_Sharpshooter'
         WeaponList(0)=class'KFTurbo.W_M99_Weap'
         WeaponList(1)=class'KFTurbo.W_Deagle_Weap'
     End Object
 
-
-    Begin Object Class=KFTurboRandomizerLoadout Name=FleshpoundLoadout23
+    Begin Object Class=KFTurboRandomizerLoadout Name=FleshpoundLoadout22
         Perk=class'V_Commando'
         WeaponList(0)=class'KFTurbo.W_SCARMK17_Weap'
         WeaponList(1)=class'KFTurbo.W_M32_Weap'
     End Object
 
+    Begin Object Class=KFTurboRandomizerLoadout Name=FleshpoundLoadout23
+        Perk=class'V_Demolitions'
+        WeaponList(0)=class'KFTurbo.W_SealSqueal_Weap'
+        WeaponList(1)=class'KFTurbo.W_SeekerSix_Weap'
+    End Object
+
+    Begin Object Class=KFTurboRandomizerLoadout Name=FleshpoundLoadout24
+        Perk=class'V_Demolitions'
+        WeaponList(0)=class'KFTurbo.W_SealSqueal_Weap'
+        WeaponList(1)=class'KFTurbo.W_M32_Weap'
+        WeaponList(2)=class'KFTurbo.W_SPGrenade_Weap'
+    End Object
+
+    Begin Object Class=KFTurboRandomizerLoadout Name=FleshpoundLoadout25
+        Perk=class'V_Berserker'
+        WeaponList(0)=class'KFTurbo.W_Crossbuzzsaw_Weap'
+        WeaponList(1)=class'KFTurbo.W_Chainsaw_Weap'
+    End Object
 
     // Loadout tally - PLEASE INCREMENT IF YOU ADD LOADOUTS
-    // Fleshpound: Medic: 1 | Firebug: 1 | Berserker: 2 | Demo: 8 | Commando: 2 | Support: 5 | Sharp: 5
+    // Fleshpound: Medic: 1 | Firebug: 1 | Berserker: 2 | Demo: 10 | Commando: 2 | Support: 4 | Sharp: 5
 
     LoadoutList(0)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Fleshpound.FleshpoundLoadout0'
     LoadoutList(1)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Fleshpound.FleshpoundLoadout1'
@@ -192,4 +203,6 @@ defaultproperties
     LoadoutList(21)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Fleshpound.FleshpoundLoadout21'
     LoadoutList(22)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Fleshpound.FleshpoundLoadout22'
     LoadoutList(23)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Fleshpound.FleshpoundLoadout23'
+    LoadoutList(24)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Fleshpound.FleshpoundLoadout24'
+    LoadoutList(25)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Fleshpound.FleshpoundLoadout25'
 }
