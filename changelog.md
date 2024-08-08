@@ -341,7 +341,7 @@
         - 15% longer range 🟢
         - 25% cheaper 🟢
         - 85% larger hit angle 🟢
-        - 10% slower fire rate 🟢
+        - 10% faster fire rate 🟢
 
         - 15% reduced primary fire damage 🔻
         - 22% reduced alternate fire damage 🔻
