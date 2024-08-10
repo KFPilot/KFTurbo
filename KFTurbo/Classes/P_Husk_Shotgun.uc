@@ -107,4 +107,5 @@ defaultproperties
     HeadHealth=270.000000
     HealthMax=800.000000
     Health=800
+    MenuName="Marauder"
 }

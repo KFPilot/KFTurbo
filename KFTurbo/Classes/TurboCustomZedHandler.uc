@@ -92,4 +92,6 @@ defaultproperties
     ReplacementList(3)=(TargetParentClass=class'P_Bloat',ReplacementClass=class'P_Bloat_Fathead',ChanceToReplace=0.1f)
     ReplacementList(4)=(TargetParentClass=class'P_Siren',ReplacementClass=class'P_Siren_Caroler',ChanceToReplace=0.1f)
     ReplacementList(5)=(TargetParentClass=class'P_Stalker',ReplacementClass=class'P_Stalker_Wraith',ChanceToReplace=0.1f)
+    ReplacementList(6)=(TargetParentClass=class'P_Clot',ReplacementClass=class'P_Clot_Undead',ChanceToReplace=0.1f)
+    ReplacementList(7)=(TargetParentClass=class'P_Husk',ReplacementClass=class'P_Husk_Shotgun',ChanceToReplace=0.1f)
 }
