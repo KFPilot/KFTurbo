@@ -24,6 +24,7 @@ defaultproperties
 {
      ReloadRate=3.350000
 
+     Weight=8.000000
      FireModeClass(0)=Class'KFTurbo.W_SeekerSix_Fire'
      PickupClass=Class'KFTurbo.W_SeekerSix_Pickup'
 }

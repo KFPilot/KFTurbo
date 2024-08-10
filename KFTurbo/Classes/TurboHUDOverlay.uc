@@ -2,8 +2,8 @@ class TurboHUDOverlay extends HudOverlay;
 
 struct Vector2D
 {
-	var float X;
-	var float Y;
+	var() float X;
+	var() float Y;
 };
 
 var Vector2D LastKnownClipSize;

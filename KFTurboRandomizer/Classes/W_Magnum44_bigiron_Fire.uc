@@ -28,6 +28,6 @@ defaultproperties
 {
      KickMomentum=(X=-325.000000,Z=100.000000)
      FireRate=0.250000
-     AmmoClass=Class'KFMod.Magnum44Ammo'
+     AmmoClass=Class'KFTurboRandomizer.W_Magnum44_bigiron_Ammo'
      ProjectileClass=Class'KFTurboRandomizer.W_Magnum44_bigiron_Proj'
 }

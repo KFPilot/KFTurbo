@@ -2,6 +2,15 @@
 
 ## General Changes
 - **Removed level-based perk bonuses**: All perks now receive the Level 6 bonuses regardless of player level.
+- **Reworked trader menu**: Now you can select skins directly when you choose the weapon.
+- **Added custom weapon stickers**: You can access these in the skin selector in the trader menu.
+
+- **Redesigned HUD**: Information is more visible, closer to the center of the screen
+- **New Scoreboard**: Easier to tell crucial information at a glance. Now includes healing done.
+- **Added a Ping system**: Players can now ping enemies or pickups (default: X) to create a little text for their teammates.
+- **Custom Achievements**: Players can complete brand new KFTurbo-related server-tracked achievements.
+ 
+
 - **TBA**: insert changes here🚧
 
 ## Afflictions
@@ -117,7 +126,7 @@
         - 40% more recoil 🔻
         - Magazine capacity 10 -> 5 🔻
         - 17% more expensive 🔻
-        - Headshot bonus damage reduced by 15% 🔻
+        - Headshot bonus damage reduced by 13% 🔻
         - 45% less maximum ammo 🔻
     - **Crossbow**
         - 50% less maximum ammo 🔻
@@ -200,13 +209,13 @@
         - 33% less maximum ammo 🔻
         - 5% reduced damage 🔻
     - **Steampunk Thompson**
-        - Removed (probably going to be a skin/variant for the Thompson drum) 🚫
+        - Now a cosmetic variant for the Thompson Drum ⚠️
 ### Demolitions
 - 50% more M4 203 grenades 🟢
 - M4 203 grenades receive 90% damage bonus instead of the standard 60% 🟢
 - 60% more LAW rockets 🟢
 - 30% faster LAW fire rate 🟢
-- 30% faster LAW reload speed 🟢
+- 40% faster LAW reload speed 🟢
 - Perk weapons receive a 30% discount 🔻
 - Pipe bombs receive a 74% discount 🟦
 - Spawn with an M4 203 ⚠️
@@ -233,13 +242,15 @@
         - 33% less maximum ammo 🔻
     - **SealSqueal Harpoon Bomber**
         - Sticking a zed with a harpoon now inflicts [**Harpooned**](#afflictions) ⚠️
-        - It deals double damage if attached to a ZED ⚠️
-        - It deals triple damage if attached to a ZED's head ⚠️
-        - 25% faster fire rate 🟢
+        - It deals 1.5x damage if attached to a ZED (only the highest stick multiplier applies) ⚠️
+        - It deals 1.85x damage if attached to a ZED's head (only the highest stick multiplier applies) ⚠️
+        - 50% faster fire rate 🟢
+        - 33% faster reload speed 🟢
         - Has no spread and inaccuracy 🟢
+        - 14% increased damage 🟢
 
-        - 43% reduced damage 🔻
-        - 38% reduced explosion radius 🔻
+        - 13% reduced explosion radius 🔻
+        - 100% reduced impact damage 🔻
     - **LAW Rocket Launcher**
         - Weight 13 -> 11 🟢
         - 5% increased damage 🟢
@@ -250,7 +261,12 @@
     - **Pipe Bomb**
         - Removed the exploit which let players detonate pipe bombs multiple times by shooting it ⚠️
     - **Seeker Six Rocket Launcher** 
-        - WIP 🚧
+        - 250% increased explosive damage 🟢
+        - 100% increased impact damage 🟢
+
+        - Weight 7 -> 8 🔻
+        - 7% slower reload speed 🔻
+        - 50% less maximum ammo 🔻
 ### Field Medic
 - Healing grenades now have a new model and bounce more 🆕
 - Magazine capacity bonus on the M7A3 reduced to 50% from 100% 🔻
@@ -302,6 +318,7 @@
 - Stun grenades cannot be disintegrated by siren screams 🟢
 - Melee movement speed bonus 30% -> 20% 🔻
 - Damage resistance 40% -> 10% 🔻
+- Melee swing speed 25% -> 15% 🔻
 - Patriarch can never deal more than 95 damage to the Berserker ⚠️
 - Bloat bile damage reduction 80% -> 60% 🔻
 - 20% siren scream damage reduction 🆕
@@ -324,7 +341,7 @@
         - 15% longer range 🟢
         - 25% cheaper 🟢
         - 85% larger hit angle 🟢
-        - 10% slower fire rate 🟢
+        - 10% faster fire rate 🟢
 
         - 15% reduced primary fire damage 🔻
         - 22% reduced alternate fire damage 🔻
@@ -361,9 +378,6 @@
         - 45% slower fire rate 🔻
         - 30% more expensive 🔻
     - **Flare Revolver**
-        - Has a new alternate fire that shoots a grenade-like flare that's affected by gravity and explodes after 2.5 seconds 🆕
-        
-        - Alternate fire shoots 75% slower than primary 🔻
         - 25% reduced maximum and starting ammo 🔻
     - **Trenchgun**
         - Weight 8 -> 7 🟢
@@ -401,12 +415,16 @@
 - Added a new variant: Raptor
 ### Gorefast
 - Added a new cosmetic variant: Classy Gorefast
+- Added a new variant: Assassin
 ### Bloat
 - Added a new variant: Fathead
+### Stalker
+- Fixed inconsistent cloaking state on dedicated servers.
 ### Husk
 - No longer fires cannon after dying
 ### Siren
 - No longer deals damage after dying
+- Now able to destroy high-speed projectiles on dedicated servers.
 - Added a new variant: Caroler
 ### Scrake
 - Fixed "Slow Rage" state, where the scrake would be stuck with a slow movement speed in his charging animation
@@ -416,3 +434,4 @@
 - Fixed a bug that made the Fleshpound "friendly", preventing it from attacking
 - Fixed various issues with being on fire
 - Damage resistance to M99 reduced from 50% to 47.5%
+- Takes 65% increased damage from Seeker Six instead of the normal 25% for explosives.

@@ -34,12 +34,16 @@ function InitComponent(GUIController MyController, GUIComponent MyOwner)
  	Super(UT2K4PlayerLoginMenu).InitComponent(MyController, MyOwner);
 
 	// Mod menus
-	foreach MyController.ViewportOwner.Actor.DynamicActors(class'SRMenuAddition',M)
-		if( M.bHasInit )
-		{
-			AddOnList[AddOnList.Length] = M;
-			M.NotifyMenuOpen(Self,MyController);
-		}
+	if (MyController != None)
+	{
+		foreach MyController.ViewportOwner.Actor.DynamicActors(class'SRMenuAddition',M)
+			if( M.bHasInit )
+			{
+				AddOnList[AddOnList.Length] = M;
+				M.NotifyMenuOpen(Self,MyController);
+			}
+	}
+
 
    	s = GetSizingCaption();
 

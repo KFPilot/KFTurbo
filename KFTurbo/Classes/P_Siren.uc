@@ -201,9 +201,32 @@ simulated function SpawnTwoShots()
     }
 }
 
-State ZombieDying
+simulated function HurtRadius( float DamageAmount, float DamageRadius, class<DamageType> DamageType, float Momentum, vector HitLocation )
+{
+    //HurtRadius uses instigator??? Update this so Sirens correctly disintegrate projectiles.
+    local Pawn PreviousInstigator;
+    PreviousInstigator = Instigator;
+    Instigator = Self;
+    Super.HurtRadius(DamageAmount, DamageRadius, DamageType, Momentum, HitLocation);
+    Instigator = PreviousInstigator;
+}
+
+simulated function PlayDying(class<DamageType> DamageType, vector HitLoc)
+{
+    class'PawnHelper'.static.MonsterDied(Self, AfflictionData);
+
+    Super.PlayDying(DamageType, HitLoc);
+}
+
+state ZombieDying
 {
 ignores AnimEnd, Trigger, Bump, HitWall, HeadVolumeChange, PhysicsVolumeChange, Falling, BreathTimer, Died, RangedAttack, SpawnTwoShots;
+
+    simulated function BeginState()
+    {
+        class'PawnHelper'.static.MonsterDied(Self, AfflictionData);
+        Super.BeginState();
+    }
 }
 
 defaultproperties

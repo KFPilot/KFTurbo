@@ -103,13 +103,41 @@ simulated function Timer()
     }
 
     DebugPrint("FINDING CPRL FOR LOCAL PLAYER", bIsAuthority);
+
+    if (LocalPlayerController == none)
+    {
+        DebugPrint("LocalPlayerController IS NULL.", bIsAuthority);
+        return;
+    }
+
     CPRL = class'ClientPerkRepLink'.static.FindStats(LocalPlayerController);
 
-    if (CPRL != None && CPRL.bRepCompleted && CPRL.CachePerks.Length != 0 && CPRL.ShopInventory.Length != 0)
+    if (CPRL == None)
     {
-        DebugPrint("CLIENT REP COMPLETED AND PERK AND SHOP NON ZERO LIST SIZE. ASSUMING SUCCESS.", bIsAuthority);
-        SetTimer(0.f, false);
+        DebugPrint("FindStats RETURNED NULL.", bIsAuthority);
+        return;
     }
+
+    if (!CPRL.bRepCompleted)
+    {
+        DebugPrint("CLIENT REP COMPLETED WAS FALSE", bIsAuthority);
+        return;
+    }
+
+    if (CPRL.CachePerks.Length != 0)
+    {
+        DebugPrint("CachePerks IS EMPTY.", bIsAuthority);
+        return;
+    }
+
+    if (CPRL.ShopInventory.Length != 0)
+    {
+        DebugPrint("ShopInventory IS EMPTY.", bIsAuthority);
+        return;
+    }
+
+    DebugPrint("CPRL IS ALL GREEN. STOPPING LINK TESTER NOW.", bIsAuthority);
+    SetTimer(0.f, false);
 }
 
 defaultproperties

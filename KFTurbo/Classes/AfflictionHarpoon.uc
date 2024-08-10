@@ -4,7 +4,7 @@ var float HarpoonSpeedModifier;
 
 simulated function PreTick(float DeltaTime)
 {
-	if (OwningMonster.bHarpoonStunned)
+	if (OwningMonster == None || OwningMonster.bHarpoonStunned)
 	{
 		CachedMovementSpeedModifier = HarpoonSpeedModifier;
 	}

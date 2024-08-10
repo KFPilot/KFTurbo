@@ -10,6 +10,8 @@ struct AfflictionData
 	var AfflictionBurn Burn;
 	var AfflictionZap Zap;
 	var AfflictionHarpoon Harpoon;
+	
+	var Pawn LastBurnDamageInstigator; //Stored here instead of within AfflictionBurn because this pointer can become garbage when in an object.
 };
 
 static final simulated function bool IsPawnBurning(Pawn Pawn)
@@ -330,21 +332,21 @@ static simulated function PostTakeDamage(KFMonster Monster, int Damage, Pawn Ins
 		if (Monster.FireDamageClass != AD.Burn.LastBurnDamageType)
 		{
 			AD.Burn.LastBurnDamageType = Monster.FireDamageClass;
-			AD.Burn.LastBurnDamageInstigator = InstigatedBy;
+			AD.LastBurnDamageInstigator = InstigatedBy;
 		}
 
 		if (Monster.bBurnified && AD.Burn.BurnRatio <= 0.f)
 		{
-			class'TurboEventHandler'.static.BroadcastPawnIgnited(AD.Burn.LastBurnDamageInstigator, Monster, class<KFWeaponDamageType>(AD.Burn.LastBurnDamageType), Monster.LastBurnDamage);
+			class'TurboEventHandler'.static.BroadcastPawnIgnited(AD.LastBurnDamageInstigator, Monster, class<KFWeaponDamageType>(AD.Burn.LastBurnDamageType), Monster.LastBurnDamage);
 		}
 	}
 }
 
 static final function TakeFireDamage(KFMonster Monster, int Damage, Pawn Instigator, out AfflictionData AD)
 {
-	if (AD.Burn != None && AD.Burn.LastBurnDamageInstigator != None)
+	if (AD.Burn != None && AD.LastBurnDamageInstigator != None)
 	{
-		Instigator = AD.Burn.LastBurnDamageInstigator;
+		Instigator = AD.LastBurnDamageInstigator;
 	}
 
    	BlockPlayHit(AD);
@@ -470,6 +472,34 @@ static final function TickAfflictionData(float DeltaTime, KFMonster KFM, out Aff
 	}
 }
 
+static final function MonsterDied(KFMonster Monster, out AfflictionData AD)
+{
+	if (Monster == None)
+	{
+		return;
+	}
+
+	DisablePawnCollision(Monster);
+
+	if (AD.Burn != None)
+	{
+		AD.Burn.OnDeath();
+		AD.Burn = None;
+	}
+
+	if (AD.Zap != None)
+	{
+		AD.Zap.OnDeath();
+		AD.Zap = None;
+	}
+
+	if (AD.Harpoon != None)
+	{
+		AD.Harpoon.OnDeath();
+		AD.Harpoon = None;
+	}
+}
+
 static final function DisablePawnCollision(Pawn P)
 {
 	if (P == None)
@@ -553,7 +583,7 @@ static function bool MeleeDamageTarget(KFMonster Monster, int HitDamage, vector 
 		if (IsPawnBurning(Monster) && AD.Burn != None)
 		{
 			HitDamage = float(OriginalDamage) * AD.Burn.BurnMonsterDamageModifier;
-			class'TurboEventHandler'.static.BroadcastBurnMitigatedDamage(AD.Burn.LastBurnDamageInstigator, HumanPawn, HitDamage, OriginalDamage - HitDamage);
+			class'TurboEventHandler'.static.BroadcastBurnMitigatedDamage(AD.LastBurnDamageInstigator, HumanPawn, HitDamage, OriginalDamage - HitDamage);
 		}
 
 		HumanPawn.TakeDamage(HitDamage, Monster, HitLocation, PushDirection, Monster.CurrentDamType);

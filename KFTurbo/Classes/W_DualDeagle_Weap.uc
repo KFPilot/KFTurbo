@@ -1,5 +1,22 @@
 class W_DualDeagle_Weap extends DualDeagle;
 
+simulated function BringUp(optional Weapon PrevWeapon)
+{
+    class'WeaponHelper'.static.WeaponPulloutRemark(Self, 22);
+
+    Super.BringUp(PrevWeapon);
+}
+
+simulated function bool PutDown()
+{
+	if ( Instigator.PendingWeapon.class == class'W_Deagle_Weap' )
+	{
+		bIsReloading = false;
+	}
+
+	return Super(KFWeapon).PutDown();
+}
+
 function bool HandlePickupQuery( pickup Item )
 {
 	if ( Item.InventoryType==Class'W_Deagle_Weap' || Item.InventoryType==Class'W_V_Deagle_Gold_Weap' )
@@ -113,16 +130,6 @@ function DropFrom(vector StartLocation)
 
     Destroyed();
 	Destroy();
-}
-
-simulated function bool PutDown()
-{
-	if ( Instigator.PendingWeapon.class == class'W_Deagle_Weap' )
-	{
-		bIsReloading = false;
-	}
-
-	return Super(KFWeapon).PutDown();
 }
 
 defaultproperties

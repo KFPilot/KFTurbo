@@ -1,5 +1,13 @@
 class W_LAW_Weap extends LAW;
 
+simulated function BringUp(optional Weapon PrevWeapon)
+{
+    class'WeaponHelper'.static.WeaponCheckForHint(Self, 19);
+    class'WeaponHelper'.static.WeaponPulloutRemark(Self, 23);
+
+    Super.BringUp(PrevWeapon);
+}
+
 simulated function ZoomIn(bool bAnimateTransition)
 {
     if( Level.TimeSeconds < FireMode[0].NextFireTime )

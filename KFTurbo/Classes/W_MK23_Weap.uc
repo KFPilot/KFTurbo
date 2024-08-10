@@ -1,5 +1,15 @@
 class W_MK23_Weap extends MK23Pistol;
 
+function bool HandlePickupQuery( pickup Item )
+{
+	if (class'WeaponHelper'.static.SingleWeaponHandlePickupQuery(Self, Item))
+	{
+		return false;
+	}
+
+	return Super.HandlePickupQuery(Item);
+}
+
 simulated function bool PutDown()
 {
 	if ( Instigator.PendingWeapon.class == class'W_DualMK23_Weap' )

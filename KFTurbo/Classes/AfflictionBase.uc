@@ -11,6 +11,11 @@ simulated function Initialize(KFMonster Monster)
 	OwningMonster = Monster;
 }
 
+simulated function OnDeath()
+{
+	OwningMonster = None;
+}
+
 simulated function PreTick(float DeltaTime)
 {
 

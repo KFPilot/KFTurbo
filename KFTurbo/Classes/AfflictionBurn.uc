@@ -29,12 +29,11 @@ var array<AfflictionBurnPriorityData> FirePriorityList;
 var float BurnMonsterDamageModifier;
 
 var bool bBlockPlayHit;
-var Pawn LastBurnDamageInstigator;
 var class<DamageType> LastBurnDamageType;
 
 simulated function PreTick(float DeltaTime)
 {
-    if(!OwningMonster.bBurnified)
+    if(OwningMonster == None || !OwningMonster.bBurnified)
     {
 		return;
     }

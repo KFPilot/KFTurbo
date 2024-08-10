@@ -1,6 +1,6 @@
 class TurboGUIBuyable extends GUIBuyable;
 
-var array<TurboRepLinkSettings.VariantWeapon> VariantList;
+var array<TurboRepLink.VariantWeapon> VariantList;
 var int VariantSelection;
 
 function class<Pickup> GetPickup()

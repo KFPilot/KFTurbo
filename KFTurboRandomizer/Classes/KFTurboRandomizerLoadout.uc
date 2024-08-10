@@ -23,8 +23,16 @@ final function bool HasWeapon(class<KFWeapon> WeaponClass)
     return false;
 }
 
-final function int GetArmor()
+final function int GetArmor(KFTurboRandomizerMut.ELoadoutType LoadoutType)
 {
+    switch(LoadoutType)
+    {
+        case LT_PatriarchTypeA:
+        case LT_PatriarchTypeB:
+        case LT_PatriarchFunny:
+            return 100;
+    }
+
     switch (Perk)
     {
         case class'V_Berserker':

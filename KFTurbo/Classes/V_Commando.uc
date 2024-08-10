@@ -7,6 +7,13 @@ static function AddCustomStats(ClientPerkRepLink Other)
 	Super.AddCustomStats(Other);
 
 	Other.AddCustomValue(class'VP_BullpupDamage');
+	Other.AddCustomValue(class'VP_StalkerKills');
+}
+
+static function int GetStalkerKillStatAsDamage(ClientPerkRepLink StatOther)
+{
+	return StatOther.RBullpupDamageStat + StatOther.GetCustomValueInt(class'VP_BullpupDamage')
+		+ (float(StatOther.GetCustomValueInt(class'VP_StalkerKills')) * (class'P_Stalker'.default.HealthMax * 1.5f));
 }
 
 static function int GetPerkProgressInt(ClientPerkRepLink StatOther, out int FinalInt, byte CurLevel, byte ReqNum)
@@ -38,7 +45,7 @@ static function int GetPerkProgressInt(ClientPerkRepLink StatOther, out int Fina
 		FinalInt = 5500000 + GetScaledRequirement(CurLevel - 5, 500000);
 	}
 
-	return Min(StatOther.RBullpupDamageStat + StatOther.GetCustomValueInt(class'VP_BullpupDamage'), FinalInt);
+	return Min(GetStalkerKillStatAsDamage(StatOther), FinalInt);
 }
 
 static function SpecialHUDInfo(KFPlayerReplicationInfo KFPRI, Canvas C)
@@ -298,4 +305,6 @@ defaultproperties
      StartingWeaponSellPriceLevel5=255.000000
      StartingWeaponSellPriceLevel6=255.000000
      OnHUDGoldIcon=Texture'KFTurbo.Perks.Commando_D'
+	 SRLevelEffects(6)="50% more damage with assault/battle rifles|40% less recoil with assault/battle rifles and SMGs|25% - 60% larger magazines for assault/battle rifles|25% more maximum ammo for assault/battle rifles|35% faster reload with all weapons|70% discount on assault/battle rifles|Spawn with an AK47|Can see cloaked Stalkers from 32m|Can see enemy health from 16m|Up to 4 zed-time extensions"
+
 }

@@ -130,7 +130,7 @@ static function float GetFireSpeedMod(KFPlayerReplicationInfo KFPRI, Weapon Othe
 {
 	if (LAW(Other) != None)
 	{
-		return LerpStat(KFPRI, 1.f, 1.3f);
+		return LerpStat(KFPRI, 1.f, 1.4f);
 	}
 
 	return 1.f;
@@ -204,4 +204,5 @@ defaultproperties
      StartingWeaponSellPriceLevel5=255.000000
      StartingWeaponSellPriceLevel6=255.000000
      OnHUDGoldIcon=Texture'KFTurbo.Perks.Demolitions_D'
+	 SRLevelEffects(6)="60% extra explosives damage|55% resistance to explosives|50% increased capacity for M4 203 Grenades and LAW Rockets|40% faster firing rate with LAW|30% faster reload speed with LAW|120% increase in grenade capacity|Can carry 8 Pipe Bombs|30% discount on explosives|74% discount on Pipe Bombs|Spawn with an M4 203 Rifle and Pipe Bomb"
 }

@@ -15,6 +15,17 @@ replication
 		ServerDebugSkipWave, ServerDebugSkipTrader, ServerMarkActor;
 }
 
+simulated function PostBeginPlay()
+{
+	Super.PostBeginPlay();
+
+	if (Role != ROLE_Authority)
+	{
+		//Spin up CPRL fixer
+		Spawn(class'TurboRepLinkFix', Self);
+	}
+}
+
 simulated function ClientSetHUD(class<HUD> newHUDClass, class<Scoreboard> newScoringClass )
 {
 	if (class'KFTurboMut'.static.GetHUDReplacementClass(string(newHUDClass)) ~= string(class'KFTurbo.TurboHUDKillingFloor'))
@@ -41,6 +52,64 @@ event ClientOpenMenu(string Menu, optional bool bDisconnect,optional string Msg1
 	}
 
 	Super.ClientOpenMenu(Menu, bDisconnect, Msg1, Msg2);	
+}
+
+simulated event ReceiveLocalizedMessage( class<LocalMessage> Message, optional int Switch, optional PlayerReplicationInfo RelatedPRI_1, optional PlayerReplicationInfo RelatedPRI_2, optional Object OptionalObject )
+{
+	switch(Message)
+	{
+		case class'KFMod.WaitingMessage':
+			Message = class'TurboMessageWaiting';
+			break;
+		case class'UnrealGame.PickupMessagePlus':
+			Message = class'TurboMessagePickup';
+			break;
+		case class'ServerPerks.KFVetEarnedMessageSR':
+			Message = class'TurboMessageVeterancy';
+			break;
+	}
+
+	//Accolades are a bit special.
+	if (class<TurboAccoladeLocalMessage>(Message) != None)
+	{
+		CheckAccoladeLocalizedMessage(class<TurboAccoladeLocalMessage>(Message), Switch, RelatedPRI_1, RelatedPRI_2, OptionalObject);
+		return;
+	}
+	
+	Super.ReceiveLocalizedMessage(Message, Switch, RelatedPRI_1, RelatedPRI_2, OptionalObject);
+}
+
+simulated function CheckAccoladeLocalizedMessage(class<TurboAccoladeLocalMessage> Message, optional int Switch, optional PlayerReplicationInfo RelatedPRI_1, optional PlayerReplicationInfo RelatedPRI_2, optional Object OptionalObject)
+{
+	if (!Message.default.bDisplayForAccoladeEarner && PlayerReplicationInfo == RelatedPRI_1)
+	{
+		return;
+	}
+
+	AccoladeMessage(RelatedPRI_1, Message, Message.static.GetString(Switch, RelatedPRI_1, RelatedPRI_2, OptionalObject));
+}
+
+simulated function AccoladeMessage(PlayerReplicationInfo PRI, class<TurboAccoladeLocalMessage> Message, string AccoladeMessage)
+{
+	if ( Level.NetMode == NM_DedicatedServer || GameReplicationInfo == None )
+	{
+		return;
+	}
+
+	if( AllowTextToSpeech(PRI, 'Accolade') )
+	{
+		TextToSpeech(AccoladeMessage, TextToSpeechVoiceVolume );
+	}
+
+	if ( myHUD != None )
+	{
+		myHUD.AddTextMessage(AccoladeMessage, Message, PRI);
+	}
+
+	if (Player != None && Player.Console != None)
+	{
+		Player.Console.Chat(AccoladeMessage, 6.0, PRI );
+	}
 }
 
 exec function Trade()
@@ -77,6 +146,37 @@ function EnableNonZeroExtentTraceCollision(bool bOriginalBlockNonZeroExtentTrace
 	{
 		KFHumanPawn(Pawn).AuxCollisionCylinder.bBlockNonZeroExtentTraces = bOriginalExtBlockNonZeroExtentTraces;
 	}
+}
+
+exec function Speech( Name Type, int Index, string CallSign )
+{
+	if (Pawn != None)
+	{
+		CheckForVoiceCommandMark(Type, Index);
+	}
+
+	Super.Speech(Type, Index, CallSign);
+}
+
+function CheckForVoiceCommandMark(Name Type, int Index)
+{
+	local int VoiceCommandMarkData;
+
+	if (Type == 'ALERT' && Index == 0)
+	{
+		MarkActor();
+		return;
+	}
+
+	VoiceCommandMarkData = class'TurboMarkerType_VoiceCommand'.static.GetGenerateMarkerDataFromVoiceCommand(Type, Index);
+	
+	if (VoiceCommandMarkData == -1)
+	{
+		return;
+	}
+
+	//Mark the pawn with this data.
+	AttemptMarkActor(Pawn.Location, Pawn.Location, Pawn, class'TurboMarkerType_VoiceCommand', VoiceCommandMarkData, MarkColor);
 }
 
 exec function MarkActor()
@@ -127,7 +227,7 @@ exec function MarkActor()
 	if (Actor != None)
 	{
 		EnableNonZeroExtentTraceCollision(bPreviousNonZeroExtentTraces, bPreviousExtendedNonZeroExtentTraces);
-		AttemptMarkActor(StartMarkTrace, HitLocation, Actor);
+		AttemptMarkActor(StartMarkTrace, HitLocation, Actor, None, -1, MarkColor);
 		return;
 	}
 	
@@ -137,7 +237,7 @@ exec function MarkActor()
 	if (Actor != None)
 	{
 		EnableNonZeroExtentTraceCollision(bPreviousNonZeroExtentTraces, bPreviousExtendedNonZeroExtentTraces);
-		AttemptMarkActor(StartMarkTrace, HitLocation, Actor);
+		AttemptMarkActor(StartMarkTrace, HitLocation, Actor, None, -1, MarkColor);
 		return;
 	}
 
@@ -147,52 +247,51 @@ exec function MarkActor()
 	if (Actor != None)
 	{
 		EnableNonZeroExtentTraceCollision(bPreviousNonZeroExtentTraces, bPreviousExtendedNonZeroExtentTraces);
-		AttemptMarkActor(StartMarkTrace, HitLocation, Actor);
+		AttemptMarkActor(StartMarkTrace, HitLocation, Actor, None, -1, MarkColor);
 		return;
 	}
 }
 
-function AttemptMarkActor(vector Start, vector End, Actor TargetActor)
+function AttemptMarkActor(vector Start, vector End, Actor TargetActor, class<TurboMarkerType> DataClassOverride, int DataOverride, TurboPlayerReplicationInfo.EMarkColor Color)
 {
 	local TurboPlayerReplicationInfo TPRI;
+	local Pickup FoundPickup;
 
-	if (TargetActor == None || TargetActor.bWorldGeometry)
+	if ((TargetActor == None || TargetActor.bWorldGeometry) && (Player != None))
 	{
-		return;
+		foreach CollidingActors(class'Pickup', FoundPickup, 40.f, End)
+			break;
+
+		if (FoundPickup == None)
+		{
+			return;
+		}
+
+		TargetActor = FoundPickup;
+
+		if (TargetActor == None || TargetActor.bWorldGeometry)
+		{
+			return;
+		}
 	}
 	
     if (Pawn(TargetActor.Base) != None)
     {
         TargetActor = TargetActor.Base;
     }
+
+	//If no color specified, default to player's currently set color.
+	if (Color == Invalid)
+	{
+		Color = MarkColor;
+	}
 	
 	if (Role != ROLE_Authority)
 	{
-		ServerMarkActor(Start, End, TargetActor, MarkColor);
+		ServerMarkActor(Start, End, TargetActor, DataClassOverride, DataOverride, Color);
 		return;
 	}
 
-	if (NextMarkTime > Level.TimeSeconds)
-	{
-		return;
-	}
-
-	NextMarkTime = Level.TimeSeconds + 0.1f;
-
-	TPRI = class'TurboPlayerReplicationInfo'.static.GetTurboPRI(PlayerReplicationInfo);
-
-	if (TPRI != None)
-	{
-		TPRI.MarkerColor = MarkColor;
-		TPRI.MarkActor(TargetActor);
-	}
-}
-
-function ServerMarkActor(vector Start, vector End, Actor TargetActor, TurboPlayerReplicationInfo.EMarkColor Color)
-{
-	local TurboPlayerReplicationInfo TPRI;
-	log ("Received ServerMarkActor"@TargetActor@Color);
-	
 	if (NextMarkTime > Level.TimeSeconds)
 	{
 		return;
@@ -205,13 +304,19 @@ function ServerMarkActor(vector Start, vector End, Actor TargetActor, TurboPlaye
 	if (TPRI != None)
 	{
 		TPRI.MarkerColor = Color;
-		TPRI.MarkActor(TargetActor);
+		TPRI.MarkActor(TargetActor, DataClassOverride, DataOverride);
 	}
+}
+
+function ServerMarkActor(vector Start, vector End, Actor TargetActor, class<TurboMarkerType> DataClassOverride, int DataOverride, TurboPlayerReplicationInfo.EMarkColor Color)
+{
+	AttemptMarkActor(Start, End, TargetActor, DataClassOverride, DataOverride, Color);
 }
 
 exec function SetMarkColor(TurboPlayerReplicationInfo.EMarkColor Color)
 {
 	MarkColor = Color;
+	SaveConfig();
 }
 
 function ClientCloseBuyMenu()
@@ -381,7 +486,7 @@ simulated function ShowLoginMenu()
 	}
 }
 
-function InitializeSteamStatInt(byte Index, int Value)
+function ServerInitializeSteamStatInt(byte Index, int Value)
 {
 	local ClientPerkRepLink CPRL;
 	local SRCustomProgressInt Progress;
@@ -434,8 +539,11 @@ function InitializeSteamStatInt(byte Index, int Value)
 		return;
 	}
 
-	Progress.CurrentValue = Value;
-	Progress.ValueUpdated();
+	if (Progress.CurrentValue < Value)
+	{
+		Progress.CurrentValue = Value;
+		Progress.ValueUpdated();
+	}
 }
 
 exec function GetWeapon(class<Weapon> NewWeaponClass )

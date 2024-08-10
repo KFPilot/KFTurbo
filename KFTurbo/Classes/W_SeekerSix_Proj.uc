@@ -93,7 +93,7 @@ simulated function HurtRadius( float DamageAmount, float DamageRadius, class<Dam
 		Distance = FMax(VSize(Direction), 1.f);
 		Direction = Direction / Distance;
 
-		Distance = FMax(Distance - Target.CollisionRadius, 0.f);
+		Distance = class'WeaponHelper'.static.GetDistanceToClosestPointOnActor(HitLocation, Target);
 
 		if ( Instigator == None || Instigator.Controller == None )
 		{
@@ -218,6 +218,8 @@ simulated function HurtRadius( float DamageAmount, float DamageRadius, class<Dam
 
 defaultproperties
 {
+	SoundPitch=48
+
 	AppliedMomentumCurve=(Points=((OutVal=0.500000),(InVal=100.000000,OutVal=0.500000),(InVal=350.000000,OutVal=1.000000),(InVal=600.000000,OutVal=1.000000)))
 	ArmDistSquared=10000.000000
 	Speed=2000.000000
@@ -230,7 +232,7 @@ defaultproperties
 	FlockMaxForce=600.000000
 	FlockCurlForce=450.000000
 
-	ImpactDamage=350
+	ImpactDamage=150
 	Damage=350.000000
 	DamageRadius=150.000000
 }

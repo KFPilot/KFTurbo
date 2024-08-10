@@ -309,6 +309,24 @@ state RunningState
 	}
 }
 
+simulated function PlayDying(class<DamageType> DamageType, vector HitLoc)
+{
+    class'PawnHelper'.static.MonsterDied(Self, AfflictionData);
+
+    Super.PlayDying(DamageType, HitLoc);
+}
+
+state ZombieDying
+{
+ignores AnimEnd, Trigger, Bump, HitWall, HeadVolumeChange, PhysicsVolumeChange, Falling, BreathTimer, Died, RangedAttack, SpawnTwoShots;
+
+    simulated function BeginState()
+    {
+        class'PawnHelper'.static.MonsterDied(Self, AfflictionData);
+        Super.BeginState();
+    }
+}
+
 defaultproperties
 {
     Begin Object Class=AfflictionBurn Name=BurnAffliction

@@ -9,6 +9,11 @@ var float ZappedModifier; //How much to reduce ground speed by when zapped. (Not
 
 simulated function PreTick(float DeltaTime)
 {
+	if (OwningMonster == None)
+	{
+		return;
+	}
+
 	CachedTotalZap = OwningMonster.TotalZap;
 
 	if (OwningMonster.bZapped)
@@ -23,6 +28,11 @@ simulated function PreTick(float DeltaTime)
 
 simulated function Tick(float DeltaTime)
 {
+	if (OwningMonster == None)
+	{
+		return;
+	}
+
 	if (CachedTotalZap < 0.f)
 	{
 		return;

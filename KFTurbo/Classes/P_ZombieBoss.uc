@@ -6,6 +6,13 @@ var PawnHelper.AfflictionData AfflictionData;
 var array<Material> CloakedSkinList;
 var Sound HelpMeSound;
 
+var float LastCommandoSpotTime;
+var float CommandoSpotDuration;
+
+var int SneakFailureCount;
+var int ChargeDurationIncreaseFailureCount; //How many failures (when trying to cloak charge) do we need before we start increasing charge duration?
+var int ChargeSpeedIncreaseFailureCount; //How many failures (when trying to cloak charge) do we need before we start increasing charge speed?
+
 simulated function PostBeginPlay()
 {
     Super.PostBeginPlay();
@@ -54,15 +61,21 @@ simulated function Tick(float DeltaTime)
     class'PawnHelper'.static.TickAfflictionData(DeltaTime, self, AfflictionData);
 }
 
+simulated function SpotBoss()
+{
+	LastCommandoSpotTime = Level.TimeSeconds;
+}
+
 //We do our own cloak check. Setting LastCheckTimes means ZombieBoss:Tick will never perform its cloak behaviour.
 simulated function TickCloak(float DeltaTime)
 {
-    local KFHumanPawn HumanPawn;
+    local bool bNewSpotted;
 
-    if (Level.NetMode == NM_DedicatedServer)
-    {
-        return;
-    }
+    if( Level.NetMode == NM_DedicatedServer )
+	{
+		bSpotted = bCloaked && (LastCommandoSpotTime + CommandoSpotDuration > Level.TimeSeconds);
+		return;
+	}
 
     if (!bCloaked || Level.TimeSeconds < LastCheckTimes)
     {
@@ -71,27 +84,17 @@ simulated function TickCloak(float DeltaTime)
 
     LastCheckTimes = Level.TimeSeconds + 0.25f;
 
-    //Ignore visibility, if any pawns around him are capable of showing stalkers, they are using V_Commando as a perk.
-    foreach CollidingActors(Class'KFHumanPawn', HumanPawn, 1600.f, Location)
+    bNewSpotted = bCloaked && LastCommandoSpotTime + CommandoSpotDuration > Level.TimeSeconds;
+
+    if (bNewSpotted != bSpotted)
     {
-        if( HumanPawn.Health <= 0 || !HumanPawn.ShowStalkers() )
+        bSpotted = bNewSpotted;
+        
+        if (!bSpotted)
         {
-            continue;
+            bUnlit = false;
         }
 
-        if( !bSpotted )
-        {
-            bSpotted = True;
-            CloakBoss();
-        }
-        
-        return;
-    }
-    
-    if( bSpotted )
-    {
-        bSpotted = False;
-        bUnlit = false;
         CloakBoss();
     }
 }
@@ -238,8 +241,100 @@ function float NumPlayersHeadHealthModifer()
     return class'PawnHelper'.static.GetHeadHealthModifier(self, Level);
 }
 
+state SneakAround
+{
+	function Tick( float Delta )
+	{
+    	if( Role == ROLE_Authority && bShotAnim)
+    	{
+    		if( bChargingPlayer )
+    		{
+                bChargingPlayer = false;
+
+        		if( Level.NetMode!=NM_DedicatedServer )
+				{
+        			PostNetReceive();
+				}
+    		}
+
+            SetGroundSpeed(GetOriginalGroundSpeed());
+        }
+        else
+        {
+    		if( !bChargingPlayer )
+    		{
+                bChargingPlayer = true;
+
+        		if( Level.NetMode!=NM_DedicatedServer )
+				{
+        			PostNetReceive();
+				}
+    		}
+
+			SetGroundSpeed(OriginalGroundSpeed * GetSneakSpeedMultiplier());
+        }
+
+
+		Global.Tick(Delta);
+	}
+
+Begin:
+	CloakBoss();
+	While( true )
+	{
+		Sleep(0.5);
+
+		if( Level.TimeSeconds - SneakStartTime > GetSneakDuration() )
+		{
+			OnSneakFailed();
+            GoToState('');
+		}
+
+		if( !bCloaked && !bShotAnim )
+		{
+			CloakBoss();
+		}
+
+		if( !Controller.IsInState('ZombieHunt') && !Controller.IsInState('WaitForAnim') )
+		{
+        	Controller.GoToState('ZombieHunt');
+        }
+	}
+}
+
+function float GetSneakDuration()
+{
+	return 10.f * GetSneakDurationMultiplier();
+}
+
+function float GetSneakDurationMultiplier()
+{
+	return 1.f + (float(Max(SneakFailureCount - ChargeDurationIncreaseFailureCount, 0)) * 0.25f);
+}
+
+function float GetSneakSpeedMultiplier()
+{
+	if (bZapped)
+	{
+		return 1.5f + (float(Max(SneakFailureCount - ChargeSpeedIncreaseFailureCount, 0)) * 0.1f);
+	}
+	
+	return 2.5f + (float(Max(SneakFailureCount - ChargeSpeedIncreaseFailureCount, 0)) * 0.1f);
+}
+
+function OnSneakFailed()
+{
+	SneakFailureCount++;
+}
+
 defaultproperties
 {
+    CommandoSpotDuration=2.f
+
+	SneakFailureCount=0
+	ChargeDurationIncreaseFailureCount=1
+	ChargeSpeedIncreaseFailureCount=4
+
     //NOTE: Affliction move speed modifiers are not used by the boss. They exist, but are not used.
     Begin Object Class=AfflictionBurn Name=BurnAffliction
     End Object

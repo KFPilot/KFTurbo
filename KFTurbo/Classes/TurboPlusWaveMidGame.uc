@@ -11,32 +11,35 @@ defaultproperties
      MaxMixInSquadCount=3
      BeatSize=1
 
-	Begin Object Class=TurboMonsterCollectionSquad Name=MidGameSquad0
+	Begin Object Class=TurboMonsterSquad Name=MidGameSquad0
           Squad(0)=(Monster=Bloat,Count=3)
           Squad(1)=(Monster=Clot,Count=2)
+          Squad(2)=(Monster=Stalker,Count=2)
 	End Object
-	RegularSquad(6)=TurboMonsterCollectionSquad'KFTurbo.TurboPlusWaveMidGame.MidGameSquad0'
+	RegularSquad(6)=TurboMonsterSquad'KFTurbo.TurboPlusWaveMidGame.MidGameSquad0'
 
-	Begin Object Class=TurboMonsterCollectionSquad Name=MidGameSquad1
+	Begin Object Class=TurboMonsterSquad Name=MidGameSquad1
           Squad(0)=(Monster=Husk,Count=2)
           Squad(1)=(Monster=Crawler,Count=3)
+          Squad(2)=(Monster=Siren,Count=1)
 	End Object
-	RegularSquad(7)=TurboMonsterCollectionSquad'KFTurbo.TurboPlusWaveMidGame.MidGameSquad1'
+	RegularSquad(7)=TurboMonsterSquad'KFTurbo.TurboPlusWaveMidGame.MidGameSquad1'
 
-	Begin Object Class=TurboMonsterCollectionSquad Name=MidGameSquad2
-          Squad(0)=(Monster=Siren,Count=3)
-          Squad(1)=(Monster=Stalker,Count=2)
+	Begin Object Class=TurboMonsterSquad Name=MidGameSquad2
+          Squad(0)=(Monster=Gorefast,Count=2)
+          Squad(1)=(Monster=Clot,Count=2)
+          Squad(2)=(Monster=Siren,Count=2)
 	End Object
-	RegularSquad(8)=TurboMonsterCollectionSquad'KFTurbo.TurboPlusWaveMidGame.MidGameSquad2'
+	RegularSquad(8)=TurboMonsterSquad'KFTurbo.TurboPlusWaveMidGame.MidGameSquad2'
 
-	Begin Object Class=TurboMonsterCollectionSquad Name=MidGameBeatSquad0
+	Begin Object Class=TurboMonsterSquad Name=MidGameBeatSquad0
           Squad(0)=(Monster=Fleshpound,Count=2)
 	End Object
-	BeatSquad(1)=TurboMonsterCollectionSquad'KFTurbo.TurboPlusWaveMidGame.MidGameBeatSquad0'
+	BeatSquad(1)=TurboMonsterSquad'KFTurbo.TurboPlusWaveMidGame.MidGameBeatSquad0'
 
-	Begin Object Class=TurboMonsterCollectionSquad Name=MidGameBeatSquad1
+	Begin Object Class=TurboMonsterSquad Name=MidGameBeatSquad1
           Squad(0)=(Monster=Scrake,Count=2)
           Squad(1)=(Monster=Fleshpound,Count=2)
 	End Object
-	MixInSquad(2)=TurboMonsterCollectionSquad'KFTurbo.TurboPlusWaveMidGame.MidGameBeatSquad1'
+	MixInSquad(2)=TurboMonsterSquad'KFTurbo.TurboPlusWaveMidGame.MidGameBeatSquad1'
 }

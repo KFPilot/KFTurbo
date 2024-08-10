@@ -542,8 +542,6 @@ function IncrementM14Headshots()
         return;
     }
 
-    log("Increment M14");
-
     M14Headshot.HeadshotData.LastHeadshotTime = Level.TimeSeconds;
     M14Headshot.HeadshotData.Count++;
 
@@ -560,8 +558,6 @@ function ResetM14Headshots()
     {
         return;
     }
-
-    log("Reset M14");
 
     M14Headshot.HeadshotData.Count = 0;
 }
@@ -719,35 +715,35 @@ defaultproperties
 {
     packName="KFTurbo Gameplay Achievements"
 
-    Achievements(0)=(title="Vlad 9000 Stunner",Description="Stun 20 Scrakes with the Vlad 9000",MaxProgress=20,NotifyIncrement=0.25f)
-    Achievements(1)=(title="Combat Shotgun Expert",Description="Kill 50 zeds with the Combat Shotgun within a single wave")
-    Achievements(2)=(title="Fathead Destroyer",Description="Kill a Fathead with one hit using the M99 or XBow 5 times",MaxProgress=5)
+    Achievements(0)=(title="Vlad 9000 Stunner",Description="Stun 20 Scrakes with the Vlad 9000",MaxProgress=20,NotifyIncrement=0.25f,image=Texture'KFTurbo.Achievement.VLADSTUN_D')
+    Achievements(1)=(title="Combat Shotgun Expert",Description="Kill 50 zeds with the Combat Shotgun within a single wave",image=Texture'KFTurbo.Achievement.COMBATSHOTGUNKILL_D')
+    Achievements(2)=(title="Fathead Destroyer",Description="Kill a Fathead with one hit using the M99 or XBow 5 times",MaxProgress=5,image=Texture'KFTurbo.Achievement.FATHEADKILL_D')
 
-    Achievements(3)=(title="Double Six Shooter",Description="Land 9 consecutive headshots on a Scrake with the Magnum 5 times",MaxProgress=5)
-    Achievements(4)=(title="M14 Professional",Description="Land 20 headshots with the M14 without reloading 5 times",MaxProgress=5,NotifyIncrement=1.5f)
-    Achievements(5)=(title="Precise Piercing Bullpup",Description="Land 100 piercing headshots with the Bullpup",MaxProgress=100,NotifyIncrement=0.2f)
+    Achievements(3)=(title="Double Six Shooter",Description="Land 9 consecutive headshots on a Scrake with the Magnum 5 times",MaxProgress=5,image=Texture'KFTurbo.Achievement.MAGNUMHEADSHOT_D')
+    Achievements(4)=(title="M14 Professional",Description="Land 20 headshots with the M14 without reloading 5 times",MaxProgress=5,NotifyIncrement=1.5f,image=Texture'KFTurbo.Achievement.M14PRO_D')
+    Achievements(5)=(title="Precise Piercing Bullpup",Description="Land 100 piercing headshots with the Bullpup",MaxProgress=100,NotifyIncrement=0.2f,image=Texture'KFTurbo.Achievement.BULLPUPPIERCE_D')
 
-    Achievements(6)=(title="Husk Hunter",Description="Kill 20 Husks with the FNFAL",MaxProgress=20,NotifyIncrement=0.5f)
-    Achievements(7)=(title="M4203 Blunt Shot Pro",Description="Kill a Scrake with an unexploded grenade from the M4203 grenade launcher 5 times",MaxProgress=5)
-    Achievements(8)=(title="Orca Trickshot",Description="Deal 3500 damage with a single bomb with the Orca Bomb Propeller 3 times",MaxProgress=3)
+    Achievements(6)=(title="Husk Hunter",Description="Kill 20 Husks with the FNFAL",MaxProgress=20,NotifyIncrement=0.25f,image=Texture'KFTurbo.Achievement.FNFALHUSK_D')
+    Achievements(7)=(title="M4203 Blunt Shot Pro",Description="Kill a Scrake with an unexploded grenade from the M4203 grenade launcher 5 times",MaxProgress=5,image=Texture'KFTurbo.Achievement.M4203SCRAKE_D')
+    Achievements(8)=(title="Orca Trickshot",Description="Deal 3500 damage with a single bomb with the Orca Bomb Propeller 3 times",MaxProgress=3,image=Texture'KFTurbo.Achievement.ORCADAMAGE_D')
 
-    Achievements(9)=(title="M7A3 Professional",Description="Kill a Scrake with a headshot from the M7A3 10 times.",MaxProgress=10,NotifyIncrement=0.5f)
-    Achievements(10)=(title="Tanker",Description="Receive 10000 damage",MaxProgress=10000,NotifyIncrement=0.05f)
-    Achievements(11)=(title="Chainsaw of Irony",Description="Kill a Scrake with only chainsaw headshots")
+    Achievements(9)=(title="M7A3 Professional",Description="Kill a Scrake with a headshot from the M7A3 10 times.",MaxProgress=10,NotifyIncrement=0.5f,image=Texture'KFTurbo.Achievement.M7A7SCRAKE_D')
+    Achievements(10)=(title="Tanker",Description="Receive 10000 damage",MaxProgress=10000,NotifyIncrement=0.05f,image=Texture'KFTurbo.Achievement.TANKER_D')
+    Achievements(11)=(title="Chainsaw of Irony",Description="Kill a Scrake with only chainsaw headshots",image=Texture'KFTurbo.Achievement.CHAINSAW_SCRAKE_D')
 
-    Achievements(12)=(title="Wide Reception",Description="Kill 4 zeds with a single Sycthe swing 5 times",MaxProgress=5,NotifyIncrement=1.5f)
-    Achievements(13)=(title="Field Medic Enjoyer",Description="Play a game as Field Medic without killing a single zed")
+    Achievements(12)=(title="Wide Reception",Description="Kill 4 zeds with a single Sycthe swing 5 times",MaxProgress=5,NotifyIncrement=1.5f,image=Texture'KFTurbo.Achievement.SCYTHEMULTI_D')
+    Achievements(13)=(title="Field Medic Enjoyer",Description="Play a game as Field Medic without killing a single zed",image=Texture'KFTurbo.Achievement.MEDICGAME_D')
 
-    Achievements(14)=(title="Solving disputes in (West) London",Description="Land the killing blow on the Patriarch with a melee weapon")
-    Achievements(15)=(title="Are you kidding me?",Description="Land the killing blow on the Patriarch with the Knife")
-    Achievements(16)=(title="I hate Christmas",Description="Kill 10 Caroler Sirens with headshots",MaxProgress=10,NotifyIncrement=0.5f)
+    Achievements(14)=(title="Solving disputes in (West) London",Description="Land the killing blow on the Patriarch with a melee weapon",image=Texture'KFTurbo.Achievement.MELEEPAT_D')
+    Achievements(15)=(title="Are you kidding me?",Description="Land the killing blow on the Patriarch with the Knife",image=Texture'KFTurbo.Achievement.KNIFEPAT_D')
+    Achievements(16)=(title="I hate Christmas",Description="Kill 10 Caroler Sirens with headshots",MaxProgress=10,NotifyIncrement=0.5f,image=Texture'KFTurbo.Achievement.CAROLERKILLS_D')
 
-    Achievements(17)=(title="Scrake Pusher",Description="Push 20 Scrakes with the MCZ Thrower",MaxProgress=20,NotifyIncrement=0.25f)
-    Achievements(18)=(title="Performance Anxiety",Description="Inflict a Siren with Statis 15 times",MaxProgress=15,NotifyIncrement=0.2f)
-    Achievements(19)=(title="Patriarch Pin Cusion",Description="Stick a Patriarch with 3 Seal Squeal projectiles 5 times",MaxProgress=5)
-    Achievements(20)=(title="Life Saver",Description="Heal a player with 1HP remaining")
-    Achievements(21)=(title="Fire is for Friends",Description="Mitigate 500 damage taken by others by setting zeds on fire",MaxProgress=500,NotifyIncrement=0.2f)
-    Achievements(22)=(title="Ignition",Description="Ignite 3500 zeds",MaxProgress=3500,NotifyIncrement=0.15f)
-    Achievements(23)=(title="The Sword is Mightier than The Hat",Description="Kill 25 Classy Gorefasts as Berserker",MaxProgress=25,NotifyIncrement=0.2f)
-    Achievements(24)=(title="Duck Hunt",Description="Kill a Raptor Crawler while it is airborne 5 times",MaxProgress=5)
+    Achievements(17)=(title="Scrake Pusher",Description="Push 20 Scrakes with the MCZ Thrower",MaxProgress=20,NotifyIncrement=0.25f,image=Texture'KFTurbo.Achievement.MCZ_SCRAKE_D')
+    Achievements(18)=(title="Performance Anxiety",Description="Inflict a Siren with Statis 15 times",MaxProgress=15,NotifyIncrement=0.2f,image=Texture'KFTurbo.Achievement.ZAPSIREN_D')
+    Achievements(19)=(title="Patriarch Pin Cusion",Description="Stick a Patriarch with 3 Seal Squeal projectiles 5 times",MaxProgress=5,image=Texture'KFTurbo.Achievement.SEALSQUEALPAT_D')
+    Achievements(20)=(title="Life Saver",Description="Heal a player with 1HP remaining",image=Texture'KFTurbo.Achievement.HEALNEARDEAD_D')
+    Achievements(21)=(title="Fire is for Friends",Description="Mitigate 500 damage taken by others by setting zeds on fire",MaxProgress=500,NotifyIncrement=0.2f,image=Texture'KFTurbo.Achievement.PREVENTDAMAGEFIRE_D')
+    Achievements(22)=(title="Ignition",Description="Ignite 3500 zeds",MaxProgress=3500,NotifyIncrement=0.15f,image=Texture'KFTurbo.Achievement.IGNITE_D')
+    Achievements(23)=(title="The Sword is Mightier than The Hat",Description="Kill 25 Classy Gorefasts as Berserker",MaxProgress=25,NotifyIncrement=0.2f,image=Texture'KFTurbo.Achievement.ZERKCLASSYKILL_D')
+    Achievements(24)=(title="Duck Hunt",Description="Kill a Raptor Crawler while it is airborne 5 times",MaxProgress=5,image=Texture'KFTurbo.Achievement.JUMPERAIRSHOT_D')
 }

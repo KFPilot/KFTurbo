@@ -3,7 +3,7 @@ class KFTurboGameTypePlus extends KFTurboGameType;
 var TurboMonsterCollection TurboMonsterCollection;
 
 //Refers to the last squad we used to fill out NextSpawnSquad.
-var TurboMonsterCollectionSquad CurrentSquad;
+var TurboMonsterSquad CurrentSquad;
 var float WaveNextSquadSpawnTime;
 
 // Constants for initial game setup
@@ -17,6 +17,7 @@ const FAKED_P_HEALTH = 0;
 function PreBeginPlay()
 {
     local ZombieVolume ZV;
+	local ShopVolume Shop;
     Super.PreBeginPlay();
 
     // Adjust respawn time for each zombie volume
@@ -27,6 +28,13 @@ function PreBeginPlay()
             ZV.CanRespawnTime = FMin(ZV.CanRespawnTime, SPAWN_TIME);
         }
     }
+
+    //Close all shops! We don't use them at this difficulty.
+	foreach AllActors(Class'ShopVolume',Shop) 
+	{
+		Shop.bAlwaysClosed = true;
+        Shop.bAlwaysEnabled = false;
+	}
 }
 
 // Function called after the game begins
@@ -64,22 +72,48 @@ State MatchInProgress
         Super.BeginState();
 
         WaveCountDown = WAVE_COUNTDOWN;
-        OpenShops();
     }
 
-    function CloseShops()
+    //Don't select shops.
+    function SelectShop() {}
+
+    function OpenShops()
     {
         local Controller C;
-        Super.CloseShops();
 
-        // Close buy menu for all players
-        for (C = Level.ControllerList; C != None; C = C.NextController)
+        if (bTradingDoorsOpen)
         {
-            if (TurboPlayerController(C) != None)
+            return;
+        }
+    
+        bTradingDoorsOpen = True;
+
+        for( C=Level.ControllerList; C!=None; C=C.NextController )
+        {
+            if( C.Pawn!=None && C.Pawn.Health>0 )
             {
-                TurboPlayerController(C).ClientCloseBuyMenu();
+                if( KFPlayerController(C) !=None )
+                {
+                    if ( WaveNum < FinalWave )
+                    {
+                        KFPlayerController(C).ClientLocationalVoiceMessage(C.PlayerReplicationInfo, none, 'TRADER', 2);
+                    }
+                    else
+                    {
+                        KFPlayerController(C).ClientLocationalVoiceMessage(C.PlayerReplicationInfo, none, 'TRADER', 3);
+                    }
+
+                    KFPlayerController(C).CheckForHint(31);
+                    HintTime_1 = Level.TimeSeconds + 11;
+                }
             }
         }
+    }
+
+    //It's ok to call this I think.
+    function CloseShops()
+    {
+        Super.CloseShops();
     }
 }
 
@@ -107,7 +141,7 @@ function LoadUpMonsterList()
         TurboMonsterCollection.LoadedMonsterList[TurboMonsterCollection.LoadedMonsterList.Length - 1].static.PreCacheAssets(Level);
     }
 
-    TurboMonsterCollection.InitializeWaves();
+    TurboMonsterCollection.InitializeCollection();
 }
 
 function SetupWave()
@@ -121,7 +155,7 @@ function SetupWave()
     TotalMaxMonsters = TurboMonsterCollection.GetWaveTotalMonsters(WaveNum, GameDifficulty, NumPlayers + NumBots);
 
     WaveNextSquadSpawnTime = TurboMonsterCollection.GetNextSquadSpawnTime(WaveNum);
-    if (WaveNextSquadSpawnTime == -1.f)
+    if (WaveNextSquadSpawnTime < SPAWN_TIME)
     {
         WaveNextSquadSpawnTime = SPAWN_TIME;
     }
@@ -147,25 +181,14 @@ function AddSpecialSquad()
 
 function BuildNextSquad()
 {
-    local TurboMonsterCollectionSquad Squad;
+    local TurboMonsterSquad Squad;
 
     if (NextSpawnSquad.Length != 0)
     {
         return;
     }
 
-    TurboMonsterCollection.PrepareSequence(WaveNum);
-
-    if (TurboMonsterCollection.CurrentSequence.Length > 0)
-    {
-        Squad = TurboMonsterCollection.CurrentSequence[0];
-        TurboMonsterCollection.CurrentSequence.Remove(0, 1);
-    }
-    else if (TurboMonsterCollection.CurrentBeat.Length > 0)
-    {
-        Squad = TurboMonsterCollection.CurrentBeat[0];
-        TurboMonsterCollection.CurrentBeat.Remove(0, 1);
-    }
+    Squad = TurboMonsterCollection.GetNextMonsterSquad();
 
     if (Squad == None)
     {
@@ -176,14 +199,62 @@ function BuildNextSquad()
     CurrentSquad = Squad;
 }
 
+function AddBossBuddySquad()
+{
+    local int TempMaxMonsters, NumMonstersSpawned, TotalZombiesValue;
+    local int MaxAttemptCount;
+
+    TurboMonsterCollection.ApplyFinalSquad(FinalSquadNum, NumPlayers + NumBots, NextSpawnSquad);
+    FinalSquadNum++;
+
+    LastZVol = FindSpawningVolume();
+
+    if(LastZVol != None)
+    {
+        LastSpawningVolume = LastZVol;
+    }
+
+    if(LastZVol == None)
+    {
+        LastZVol = FindSpawningVolume();
+
+        if(LastZVol != None)
+        {
+            LastSpawningVolume = LastZVol;
+        }
+    }
+
+    if (LastZVol == None)
+    {
+        return;
+    }
+
+    NumMonstersSpawned = 0;
+    TempMaxMonsters = 999;
+    MaxAttemptCount = NextSpawnSquad.Length;
+
+    while (MaxAttemptCount >= 0 && NextSpawnSquad.Length > 0)
+    {
+        MaxAttemptCount--;
+
+        if(LastZVol.SpawnInHere(NextSpawnSquad,,NumMonstersSpawned, TempMaxMonsters, 999, TotalZombiesValue))
+        {
+            NumMonsters += NumMonstersSpawned;
+            WaveMonsters += NumMonstersSpawned;
+            NextSpawnSquad.Remove(0, NumMonstersSpawned);
+        }
+    }
+}
+
 // Default properties for the game type
 defaultproperties
 {
     bIsHighDifficulty = true
 
-	Begin Object Class=TurboMonsterCollectionImpl Name=TurboMonsterCollection0
+	Begin Object Class=TurboMonsterCollectionWaveImpl Name=TurboMonsterCollection0
 	End Object
-    TurboMonsterCollection=TurboMonsterCollectionImpl'KFTurbo.KFTurboGameTypePlus.TurboMonsterCollection0'
+    TurboMonsterCollection=TurboMonsterCollectionWaveImpl'KFTurbo.KFTurboGameTypePlus.TurboMonsterCollection0'
+
     // Wave 1
     // Squads: 0-5
     // Wave 2-7

@@ -11,7 +11,7 @@ event PostBeginPlay()
 function OnServerStatsAdded(ServerStStats Stats)
 {
     PendingReplicationLinkList[PendingReplicationLinkList.Length] = Stats;
-    SetTimer(0.01f, false);
+    SetTimer(1.f, false);
 }
 
 function Timer()

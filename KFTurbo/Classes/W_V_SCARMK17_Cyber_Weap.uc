@@ -63,12 +63,31 @@ simulated function UpdateSkin()
 
 static function PreloadAssets(Inventory Inv, optional bool bSkipRefCount)
 {
+     local W_V_SCARMK17_Cyber_Weap Weapon;
+
      Super.PreloadAssets(Inv, bSkipRefCount);
 
-     W_V_SCARMK17_Cyber_Weap(Inv).LoadedStateMaterialList[0] = Material(DynamicLoadObject(default.LoadedStateMaterialRefList[0], class'Material'));
-     W_V_SCARMK17_Cyber_Weap(Inv).LoadedStateMaterialList[1] = Material(DynamicLoadObject(default.LoadedStateMaterialRefList[1], class'Material'));
-     W_V_SCARMK17_Cyber_Weap(Inv).LoadedStateMaterialList[2] = Material(DynamicLoadObject(default.LoadedStateMaterialRefList[2], class'Material'));
-     W_V_SCARMK17_Cyber_Weap(Inv).LoadedStateMaterialList[3] = Material(DynamicLoadObject(default.LoadedStateMaterialRefList[3], class'Material'));
+     default.LoadedStateMaterialList.Length = 4;
+     default.LoadedStateMaterialList[0] = Shader(DynamicLoadObject(default.LoadedStateMaterialRefList[0], class'Shader'));
+     default.LoadedStateMaterialList[1] = Shader(DynamicLoadObject(default.LoadedStateMaterialRefList[1], class'Shader'));
+     default.LoadedStateMaterialList[2] = Shader(DynamicLoadObject(default.LoadedStateMaterialRefList[2], class'Shader'));
+     default.LoadedStateMaterialList[3] = Shader(DynamicLoadObject(default.LoadedStateMaterialRefList[3], class'Shader'));
+
+     Weapon = W_V_SCARMK17_Cyber_Weap(Inv);
+
+     if (Weapon != None)
+     {
+          Weapon.LoadedStateMaterialList = default.LoadedStateMaterialList;
+          Weapon.LastKnownMagAmmo = -1;
+          Weapon.UpdateSkin();
+     }
+}
+
+static function bool UnloadAssets()
+{
+     default.LoadedStateMaterialList.Length = 0;
+
+     return Super.UnloadAssets();
 }
 
 defaultproperties
@@ -79,7 +98,9 @@ defaultproperties
      LoadedStateMaterialRefList(3)="KFTurbo.Cyber.Cyber_SCAR_Reload_SHDR"
 
      SkinRefs(0)="KFTurbo.Cyber.Cyber_SCAR_SHDR"
+     SkinRefs(1)="KFTurbo.Cyber.Cyber_SCAR_SightDot_SHDR"
      PickupClass=Class'KFTurbo.W_V_SCARMK17_Cyber_Pickup'
      AttachmentClass=Class'KFTurbo.W_V_SCARMK17_Cyber_Attachment'
-     Skins(0)=Shader'KFTurbo.Cyber.Cyber_SCAR_SHDR'
+     Skins(0)=None
+     Skins(1)=None
 }

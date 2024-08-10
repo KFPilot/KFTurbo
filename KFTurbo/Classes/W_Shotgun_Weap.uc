@@ -1,5 +1,12 @@
 class W_Shotgun_Weap extends Shotgun;
 
+simulated function BringUp(optional Weapon PrevWeapon)
+{
+     class'WeaponHelper'.static.WeaponCheckForHint(Self, 14);
+
+     Super.BringUp(PrevWeapon);
+}
+
 defaultproperties
 {
      ReloadRate=0.550000

@@ -10,7 +10,12 @@ function InitList(KFSteamStatsAndAchievements StatsAndAchievements)
 	// Grab the Player Controller for later use
 	KFPC = KFPlayerController(PlayerOwner());
 
-	if (KFPC != None && KFPlayerReplicationInfo(KFPC.PlayerReplicationInfo) != None)
+	if (KFPC == None)
+	{
+		return;
+	}
+
+	if (KFPlayerReplicationInfo(KFPC.PlayerReplicationInfo) != None)
 	{
 		CurCL = KFPlayerReplicationInfo(KFPC.PlayerReplicationInfo).ClientVeteranSkill;
 	}

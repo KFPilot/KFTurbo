@@ -1,5 +1,12 @@
 class W_Bullpup_Weap extends Bullpup;
 
+simulated function BringUp(optional Weapon PrevWeapon)
+{
+     class'WeaponHelper'.static.WeaponCheckForHint(Self, 13);
+
+     Super.BringUp(PrevWeapon);
+}
+
 defaultproperties
 {
      MagCapacity=20

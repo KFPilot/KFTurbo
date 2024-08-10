@@ -97,6 +97,50 @@ static final function bool StaticIsTestGameType( Actor Actor )
 	return GameClass.static.IsTestGameType();
 }
 
+final function bool HasAnyTraders()
+{
+	local int Index;
+	local bool bHasAnyTraders;
+	bHasAnyTraders = false;
+
+	for(Index = 0; Index < ShopList.Length; Index++)
+	{
+		if(ShopList[Index].bAlwaysClosed)
+		{
+			continue;
+		}
+		
+		bHasAnyTraders = true;
+		break;		
+	}
+
+	return bHasAnyTraders;
+}
+
+state MatchInProgress
+{
+	//Don't do these things if there are no traders (KFTurbo+ or Randomizer).
+    function SelectShop()
+    {
+		if (!HasAnyTraders())
+		{
+			return;
+		}
+
+		Super.SelectShop();
+    }
+
+    function OpenShops()
+    {
+		if (!HasAnyTraders())
+		{
+			return;
+		}
+
+		Super.OpenShops();
+    }
+}
+
 defaultproperties
 {
     bIsHighDifficulty=false
@@ -122,4 +166,6 @@ defaultproperties
     GameName="Killing Floor Turbo Game Type"
     Description="KF Turbo version of default Killing Floor Game Type."
     ScreenShotName="KFTurbo.Generic.KFTurbo_FB"
+
+	ScoreBoardType="KFTurbo.TurboHUDScoreboard"
 }

@@ -113,7 +113,7 @@ defaultproperties
 	GameName="Killing Floor Turbo Test Mode"
 	Description="Test mode of the Killing Floor Turbo mod."
 	LoginMenuClass="KFTurboTestMut.KFTTLoginMenu"
-	MapPrefix="KFP"
-	BeaconName="KFP"
-	Acronym="KFP"
+	MapPrefix="KFT"
+	BeaconName="KFT"
+	Acronym="KFT"
 }

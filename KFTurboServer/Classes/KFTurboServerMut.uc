@@ -6,7 +6,6 @@ var bool bSpawnedRandomizerHelper;
 
 simulated function PostBeginPlay()
 {
-	local KFTurboMut KFTurboMutator;
 	local KFTurboRandomizerMut KFTurboRandomizerMutator;
 	local ServerPerksMut ServerPerksMutator;
 	Super.PostBeginPlay();
@@ -15,12 +14,6 @@ simulated function PostBeginPlay()
 	{
 		//Manages the creation of KFPRepLink for players joining.
 		RepLinkHandler = Spawn(class'TurboRepLinkHandler', self);
-	}
-
-    foreach Level.AllActors( class'KFTurboMut', KFTurboMutator )
-	{
-		KFTurboMutator.RepLinkSettingsClassString = string(class'KFTurboServer.TurboRepLinkSettingsImpl');
-		break;
 	}
 
 	foreach Level.AllActors( class'KFTurboRandomizerMut', KFTurboRandomizerMutator )
@@ -39,19 +32,10 @@ simulated function PostBeginPlay()
 
 function AddMutator(Mutator M)
 {
-	local KFTurboMut KFTurboMutator;
 	local KFTurboRandomizerMut KFTurboRandomizerMutator;
 	local ServerPerksMut ServerPerksMutator;
 
 	Super.AddMutator(M);
-
-	KFTurboMutator = KFTurboMut(M);
-
-	if (KFTurboMutator != None)
-	{
-		KFTurboMutator.RepLinkSettingsClassString = string(class'KFTurboServer.TurboRepLinkSettingsImpl');
-		return;
-	}
 
 	KFTurboRandomizerMutator = KFTurboRandomizerMut(M);
 	

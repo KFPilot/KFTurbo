@@ -6,6 +6,10 @@ var editinline KFTurboRandomizerLoadoutCollection EarlyWaveLoadout; //50% of lob
 var editinline KFTurboRandomizerLoadoutCollection MiscLoadout; //Remainder of lobby will have a loadout from this list.
 var editinline KFTurboRandomizerLoadoutCollection FunnyLoadout; //Randomly a Misc loadout will be swapped out for a funny one.
 
+var editinline KFTurboRandomizerLoadoutCollection PatriarchTypeALoadout; //33% of lobby will receive a loadout from this list during Patriarch wave.
+var editinline KFTurboRandomizerLoadoutCollection PatriarchTypeBLoadout; //33% of lobby will receive a loadout from this list during Patriarch wave
+var editinline KFTurboRandomizerLoadoutCollection PatriarchFunnyLoadout; //Randomly a type A or B loadout will be swapped out for a funny one.
+
 //Classes for starting equipment.
 var class<KFWeapon> SingleWeaponClass;
 var class<KFWeapon> DualiesWeaponClass;
@@ -14,11 +18,17 @@ var class<KFWeapon> SyringeWeaponClass;
 var class<KFWeapon> WelderWeaponClass;
 var class<KFWeapon> KnifeWeaponClass;
 
+var array<int> UsedEarlyWaveLoadoutList;
+
 var array<int> UsedFleshpoundLoadoutList;
 var array<int> UsedScrakeLoadoutList;
-var array<int> UsedEarlyWaveLoadoutList;
+
 var array<int> UsedMiscLoadoutList;
 var array<int> UsedFunnyLoadoutList;
+
+var array<int> UsedPatriarchTypeALoadoutList;
+var array<int> UsedPatriarchTypeBLoadoutList;
+var array<int> UsedPatriarchFunnyLoadoutList;
 
 static final function RestoreLoadout(KFTurboRandomizerLoadoutCollection LoadoutCollection, out array<int> UsedIndexList)
 {
@@ -61,11 +71,17 @@ static final function InsertIndexInOrder(int NewIndex, out array<int> IndexList)
 
 function PrepareRandomization()
 {
+    RestoreLoadout(EarlyWaveLoadout, UsedEarlyWaveLoadoutList);
+
     RestoreLoadout(FleshpoundLoadout, UsedFleshpoundLoadoutList);
     RestoreLoadout(ScrakeLoadout,  UsedScrakeLoadoutList);
-    RestoreLoadout(EarlyWaveLoadout, UsedEarlyWaveLoadoutList);
+    
     RestoreLoadout(MiscLoadout, UsedMiscLoadoutList);
     RestoreLoadout(FunnyLoadout,  UsedFunnyLoadoutList);
+
+    RestoreLoadout(PatriarchTypeALoadout, UsedPatriarchTypeALoadoutList);
+    RestoreLoadout(PatriarchTypeBLoadout, UsedPatriarchTypeBLoadoutList);
+    RestoreLoadout(PatriarchFunnyLoadout, UsedPatriarchFunnyLoadoutList);
 }
 
 function KFTurboRandomizerLoadout GetRandomFleshpoundLoadout()
@@ -91,6 +107,21 @@ final function KFTurboRandomizerLoadout GetRandomMiscLoadout()
 final function KFTurboRandomizerLoadout GetRandomFunnyLoadout()
 {
     return TakeLoadout(FunnyLoadout.GetRandomIndex(), FunnyLoadout, UsedFunnyLoadoutList);
+}
+
+final function KFTurboRandomizerLoadout GetRandomPatriarchTypeALoadout()
+{
+    return TakeLoadout(PatriarchTypeALoadout.GetRandomIndex(), PatriarchTypeALoadout, UsedPatriarchTypeALoadoutList);
+}
+
+final function KFTurboRandomizerLoadout GetRandomPatriarchTypeBLoadout()
+{
+    return TakeLoadout(PatriarchTypeBLoadout.GetRandomIndex(), PatriarchTypeBLoadout, UsedPatriarchTypeBLoadoutList);
+}
+
+final function KFTurboRandomizerLoadout GetRandomPatriarchFunnyLoadout()
+{
+    return TakeLoadout(PatriarchFunnyLoadout.GetRandomIndex(), PatriarchFunnyLoadout, UsedPatriarchFunnyLoadoutList);
 }
 
 defaultproperties
@@ -121,4 +152,16 @@ defaultproperties
     Begin Object Class=LoadoutCollection_Funny Name=FunnyLoadoutCollection
     End Object
     FunnyLoadout=KFTurboRandomizerLoadoutCollection'KFTurboRandomizer.KFTurboRandomizerSettings.FunnyLoadoutCollection'
+
+    Begin Object Class=LoadoutCollection_PatriarchA Name=PatriarchALoadoutCollection
+    End Object
+    PatriarchTypeALoadout=KFTurboRandomizerLoadoutCollection'KFTurboRandomizer.KFTurboRandomizerSettings.PatriarchALoadoutCollection'
+
+    Begin Object Class=LoadoutCollection_PatriarchB Name=PatriarchBLoadoutCollection
+    End Object
+    PatriarchTypeBLoadout=KFTurboRandomizerLoadoutCollection'KFTurboRandomizer.KFTurboRandomizerSettings.PatriarchBLoadoutCollection'
+
+    Begin Object Class=LoadoutCollection_PatriarchFunny Name=PatriarchFunnyLoadoutCollection
+    End Object
+    PatriarchFunnyLoadout=KFTurboRandomizerLoadoutCollection'KFTurboRandomizer.KFTurboRandomizerSettings.PatriarchFunnyLoadoutCollection'
 }

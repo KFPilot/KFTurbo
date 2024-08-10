@@ -10,13 +10,159 @@ replication
 
 var bool bDebugServerBuyWeapon;
 
+var float NextCloakCheckTime;
+
 simulated function Tick(float DeltaTime)
 {
 	Super.Tick(DeltaTime);
 
 	UpdateHealthHealingTo();
+
+	if (Level.NetMode == NM_DedicatedServer)
+	{
+		return;
+	}
+
+    if (Level.GRI == None)
+    {
+        return;
+    }
+
+	if (ShowStalkers())
+	{
+		SpotCloakedMonsters();
+	}
 }
 
+//Fixed not properly dropping weapons until carry weight is valid.
+function VeterancyChanged()
+{
+	local Inventory CurrentInventory;
+	local KFWeapon CurrentWeapon;
+	local KFPlayerReplicationInfo KFPRI;
+	local int MaxAmmo;
+
+	MaxCarryWeight = Default.MaxCarryWeight;
+
+	KFPRI = KFPlayerReplicationInfo(PlayerReplicationInfo);
+
+	if ( KFPRI != none && KFPRI.ClientVeteranSkill != none )
+	{
+		MaxCarryWeight += KFPRI.ClientVeteranSkill.Static.AddCarryMaxWeight(KFPRI);
+	}
+
+	if ( CurrentWeight > MaxCarryWeight )
+	{
+		CurrentInventory = Inventory;
+
+		while (CurrentInventory != None)
+		{
+			CurrentWeapon = KFWeapon(CurrentInventory);
+			CurrentInventory = CurrentInventory.Inventory;
+
+			if (CurrentWeapon == None || CurrentWeapon.bKFNeverThrow)
+			{
+				continue;
+			}
+
+			CurrentWeapon.Velocity = Velocity;
+			CurrentWeapon.DropFrom(Location + (VRand() * 10.f));
+
+			if ( CurrentWeight <= MaxCarryWeight )
+			{
+				break;
+			}
+		}
+	}
+
+	// Make sure nothing is over the Max Ammo amount when changing Veterancy
+	for ( CurrentInventory = Inventory; CurrentInventory != none; CurrentInventory = CurrentInventory.Inventory )
+	{
+		if ( Ammunition(CurrentInventory) != none )
+		{
+			MaxAmmo = Ammunition(CurrentInventory).default.MaxAmmo;
+
+			if ( KFPRI != none && KFPRI.ClientVeteranSkill != none )
+			{
+				MaxAmmo = float(MaxAmmo) * KFPRI.ClientVeteranSkill.static.AddExtraAmmoFor(KFPRI, Ammunition(CurrentInventory).Class);
+			}
+
+			if ( Ammunition(CurrentInventory).AmmoAmount > MaxAmmo )
+			{
+				Ammunition(CurrentInventory).AmmoAmount = MaxAmmo;
+			}
+		}
+	}
+}
+
+//Changed out damage type to ignore (and more importantly not damage) armor.
+function TakeFireDamage(int Damage, pawn BInstigator)
+{
+    if( Damage > 0 )
+    {
+        TakeDamage(Damage, BInstigator, Location, vect(0,0,0), class'TurboHumanBurned_DT');
+
+        if (BurnDown > 0)
+        {
+            BurnDown--;
+        }
+        if(BurnDown==0)
+        {
+            bBurnified = false;
+        }
+    }
+    else
+    {
+        BurnDown = 0;
+        bBurnified = false;
+    }
+}
+
+simulated function bool ShowStalkers()
+{
+	if ( KFPlayerReplicationInfo(PlayerReplicationInfo) != none && KFPlayerReplicationInfo(PlayerReplicationInfo).ClientVeteranSkill != none )
+	{
+		return KFPlayerReplicationInfo(PlayerReplicationInfo).ClientVeteranSkill.Static.ShowStalkers(KFPlayerReplicationInfo(PlayerReplicationInfo));
+	}
+
+	return false;
+}
+
+simulated function SpotCloakedMonsters()
+{
+	local P_Stalker Stalker;
+	local P_ZombieBoss Boss;
+	local float SpottingRange;
+	SpottingRange = 1600.f;
+
+	if (NextCloakCheckTime > Level.TimeSeconds)
+	{
+		return;
+	}
+
+	NextCloakCheckTime = Level.TimeSeconds + 0.125f + (FRand() * 0.125f);
+
+	if (!IsLocallyControlled())
+	{
+		SpottingRange *= 0.25f;
+	}
+
+	foreach CollidingActors(class'P_Stalker', Stalker, SpottingRange)
+	{
+		if (Stalker.Health > 0)
+		{
+			Stalker.SpotStalker();
+		}
+	}
+
+	foreach CollidingActors(class'P_ZombieBoss', Boss, SpottingRange)
+	{
+		if (Boss.Health > 0)
+		{
+			Boss.SpotBoss();
+		}
+	}
+}
 
 function bool CanBuyNow()
 {

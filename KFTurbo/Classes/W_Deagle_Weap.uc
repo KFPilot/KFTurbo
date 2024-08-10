@@ -1,5 +1,12 @@
 class W_Deagle_Weap extends Deagle;
 
+simulated function BringUp(optional Weapon PrevWeapon)
+{
+     class'WeaponHelper'.static.WeaponCheckForHint(Self, 12);
+
+     Super.BringUp(PrevWeapon);
+}
+
 function bool HandlePickupQuery(pickup Item)
 {
 	local int Index;

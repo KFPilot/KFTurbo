@@ -11,6 +11,49 @@ enum ETraceResult
 	TR_None
 };
 
+//Takes into account cylinder size when giving back a distance.
+static final function float GetDistanceToClosestPointOnActor(Vector Location, Actor Target)
+{
+	local float DistZ;
+
+	Location = (Location - Target.Location);
+	DistZ = FMax(0.f, Abs(Location.Z) - Target.CollisionHeight);
+	
+	Location.X = Abs(Location.X);
+	Location.Y = Abs(Location.Y);
+	Location.Z = 0.f;
+	
+	Location -= (Normal(Location) * Target.CollisionRadius);
+	Location.Z = DistZ;
+
+	return VSize(Location);
+}
+
+//Takes into account both actors' cylinder size when giving back a distance.
+static final function float GetDistanceBetweenActors(Actor A, Actor B)
+{
+	local float DistZ;
+	local Vector Distance;
+
+	Distance = (A.Location - B.Location);
+	
+	//Get result Z component and clear it out from distance vector for now.
+	DistZ = FMax(0.f, Abs(Distance.Z) - (A.CollisionHeight + B.CollisionHeight));
+	Distance.Z = 0.f;
+	
+	//Remove sum of cylinder sizes from the XY component.
+	Distance.X = Abs(Distance.X);
+	Distance.Y = Abs(Distance.Y);
+	Distance -= (Normal(Distance) * (A.CollisionRadius + B.CollisionRadius));
+
+	//Put it all back together.
+	Distance.X = FMax(Distance.X, 0.f);
+	Distance.Y = FMax(Distance.Y, 0.f);
+	Distance.Z = DistZ;
+	
+	return VSize(Distance);
+}
+
 static final function PenetratingWeaponTrace(Vector TraceStart, KFWeapon Weapon, KFFire Fire, int PenetrationMax, float PenetrationMultiplier)
 {
 	local Actor HitActor;
@@ -268,6 +311,293 @@ static final function BeginGrenadeSmoothRotation(Nade Grenade, float DownwardOff
 	}
 
 	Grenade.SetPhysics(PHYS_None);
+}
+
+//Helpers to do hint checking for us.
+static final function WeaponCheckForHint(KFWeapon Weapon, int HintID)
+{
+	local KFPlayerController PC;
+
+	if (Weapon == None || Weapon.ClientGrenadeState == GN_BringUp)
+	{
+		return;
+	}
+
+	PC = KFPlayerController(Weapon.Instigator.Controller);
+
+	if (PC == None)
+	{
+		return;
+	}
+
+	PC.CheckForHint(HintID);
+}
+
+//Helpers to do pullout remarks for us.
+static final function WeaponPulloutRemark(KFWeapon Weapon, int RemarkID)
+{
+	local KFPlayerController PC;
+
+	if (Weapon == None || Weapon.ClientGrenadeState == GN_BringUp)
+	{
+		return;
+	}
+
+	PC = KFPlayerController(Weapon.Instigator.Controller);
+
+	if (PC == None)
+	{
+		return;
+	}
+
+	PC.WeaponPulloutRemark(RemarkID);
+}
+
+static final function class<KFWeaponPickup> GetOriginalWeaponPickup(class<KFWeaponPickup> WeaponPickup)
+{
+	if (WeaponPickup == None)
+	{
+		return None;
+	}
+
+	if (WeaponPickup.default.VariantClasses.Length == 0)
+	{
+		return WeaponPickup;
+	}
+
+	return class<KFWeaponPickup>(WeaponPickup.default.VariantClasses[0]);
+}
+
+//Checks if pickup is a single version of the provided dual weapon and does "already has gun" notification. Returns true if weapon was rejected (because we have the dual version of it).
+static final function bool DualWeaponHandlePickupQuery(KFWeapon DualWeapon, Pickup ItemPickup)
+{
+	local class<KFWeaponPickup> WeaponPickupClass, DemoReplacementClass;
+
+	if (DualWeapon == None || ItemPickup == None)
+	{
+		return false;
+	}
+
+	//It's hard to tell what we're looking at - so always resolve the non-variant class.
+	WeaponPickupClass = GetOriginalWeaponPickup(class<KFWeaponPickup>(ItemPickup.Class));
+	if (WeaponPickupClass == None)
+	{
+		return false;
+	}
+
+	DemoReplacementClass = GetOriginalWeaponPickup(class<KFWeaponPickup>(DualWeapon.DemoReplacement.default.PickupClass));
+	if (WeaponPickupClass != DemoReplacementClass)
+	{
+		return false;
+	}
+	
+	if( DualWeapon.LastHasGunMsgTime < DualWeapon.Level.TimeSeconds && PlayerController(DualWeapon.Instigator.Controller) != none )
+	{
+		DualWeapon.LastHasGunMsgTime = DualWeapon.Level.TimeSeconds + 0.5;
+		PlayerController(DualWeapon.Instigator.Controller).ReceiveLocalizedMessage(Class'KFMainMessages', 1);
+	}
+
+	return true;
+}
+
+static final function DualWeaponGiveTo(KFWeapon DualWeapon, Pawn Other, optional Pickup Pickup)
+{
+	local class<KFWeaponPickup> WeaponPickupClass;
+	local Inventory Inventory;
+	local KFWeapon Weapon;
+	local int OldAmmo;
+	local bool bNoPickup;
+
+	WeaponPickupClass = GetOriginalWeaponPickup(class<KFWeaponPickup>(DualWeapon.DemoReplacement.default.PickupClass));
+	DualWeapon.MagAmmoRemaining = 0;
+
+	for(Inventory = Other.Inventory; Inventory != None; Inventory = Inventory.Inventory)
+	{
+		if (!ClassIsChildOf(Inventory.PickupClass, WeaponPickupClass))
+		{
+			continue;
+		}
+
+		Weapon = KFWeapon(Inventory);
+
+		if( WeaponPickup(Pickup)!= none )
+		{
+			WeaponPickup(Pickup).AmmoAmount[0] += Weapon(Inventory).AmmoAmount(0);
+		}
+		else
+		{
+			OldAmmo = Weapon.AmmoAmount(0);
+			bNoPickup = true;
+		}
+
+		DualWeapon.MagAmmoRemaining = Weapon.MagAmmoRemaining;
+		Inventory.Destroyed();
+		Inventory.Destroy();
+		break;
+	}
+
+	if (KFWeaponPickup(Pickup) != None && Pickup.bDropped)
+	{
+		DualWeapon.MagAmmoRemaining = Clamp(DualWeapon.MagAmmoRemaining + KFWeaponPickup(Pickup).MagAmmoRemaining, 0, DualWeapon.MagCapacity);
+	}
+	else
+	{
+		if (class<KFWeapon>(DualWeapon.DemoReplacement) != None)
+		{
+			DualWeapon.MagAmmoRemaining = Clamp(DualWeapon.MagAmmoRemaining + class<KFWeapon>(DualWeapon.DemoReplacement).default.MagCapacity, 0, DualWeapon.MagCapacity);
+		}
+		else
+		{
+			DualWeapon.MagAmmoRemaining = Clamp(DualWeapon.MagAmmoRemaining, 0, DualWeapon.MagCapacity);
+		}
+	}
+
+	if (bNoPickup)
+	{
+		DualWeapon.AddAmmo(OldAmmo, 0);
+		Clamp(Ammunition(DualWeapon.Instigator.FindInventoryType(DualWeapon.GetFireMode(0).AmmoClass)).AmmoAmount, 0, DualWeapon.MaxAmmo(0));
+	}
+}
+
+static final function DualWeaponDropFrom(KFWeapon DualWeapon, Vector StartLocation)
+{
+	local int ModeIndex;
+	local KFWeaponPickup Pickup;
+	local KFWeapon Weapon;
+	local Ammunition WeaponAmmunition;
+	local int AmmoThrown, OtherAmmo;
+
+	if(DualWeapon == None && !DualWeapon.bCanThrow)
+	{
+		return;
+	}
+
+	AmmoThrown = DualWeapon.AmmoAmount(0);
+	DualWeapon.ClientWeaponThrown();
+
+	for (ModeIndex = 0; ModeIndex < DualWeapon.NUM_FIRE_MODES; ModeIndex++)
+	{
+		if (DualWeapon.GetFireMode(ModeIndex).bIsFiring)
+		{
+			DualWeapon.StopFire(ModeIndex);
+		}
+	}
+
+	if ( DualWeapon.Instigator != None )
+	{
+		DualWeapon.DetachFromPawn(DualWeapon.Instigator);
+	}
+
+	if(DualWeapon.Instigator != None && DualWeapon.Instigator.Health > 0)
+	{
+		OtherAmmo = AmmoThrown / 2;
+		AmmoThrown -= OtherAmmo;
+		Weapon = DualWeapon.Spawn(class<KFWeapon>(DualWeapon.DemoReplacement));
+		Weapon.GiveTo(DualWeapon.Instigator);
+		
+		WeaponAmmunition = Ammunition(DualWeapon.Instigator.FindInventoryType(DualWeapon.GetFireMode(0).AmmoClass));
+
+		if (WeaponAmmunition != None)
+		{
+			WeaponAmmunition.AmmoAmount = OtherAmmo;
+		}
+
+		Weapon.MagAmmoRemaining = DualWeapon.MagAmmoRemaining / 2;
+		DualWeapon.MagAmmoRemaining = Max( DualWeapon.MagAmmoRemaining - Weapon.MagAmmoRemaining, 0);
+	}
+
+	Pickup = DualWeapon.Spawn(class<KFWeaponPickup>(DualWeapon.DemoReplacement.default.PickupClass),,, StartLocation);
+
+	if (Pickup != None)
+	{
+		Pickup.InitDroppedPickupFor(DualWeapon);
+		Pickup.Velocity = DualWeapon.Velocity;
+		Pickup.AmmoAmount[0] = AmmoThrown;
+
+		if(Pickup != None)
+		{
+			Pickup.MagAmmoRemaining = DualWeapon.MagAmmoRemaining;
+		}
+
+		if (DualWeapon.Instigator.Health > 0)
+		{
+			Pickup.bThrown = true;
+		}
+	}
+
+    DualWeapon.Destroyed();
+	DualWeapon.Destroy();
+}
+
+static final function DualWeaponPutDown(KFWeapon DualWeapon)
+{
+	if (DualWeapon.Instigator.PendingWeapon.class == DualWeapon.DemoReplacement)
+	{
+		DualWeapon.bIsReloading = false;
+	}
+}
+
+static final function bool SingleWeaponHandlePickupQuery(KFWeapon SingleWeapon, Pickup ItemPickup)
+{
+	local class<KFWeaponPickup> WeaponPickupClass, ItemPickupClass;
+	WeaponPickupClass = GetOriginalWeaponPickup(class<KFWeaponPickup>(SingleWeapon.PickupClass));
+	ItemPickupClass = GetOriginalWeaponPickup(class<KFWeaponPickup>(ItemPickup.Class));
+
+	if (WeaponPickupClass == ItemPickupClass)
+	{
+		if ( KFPlayerController(SingleWeapon.Instigator.Controller) != none )
+		{
+			KFPlayerController(SingleWeapon.Instigator.Controller).PendingAmmo = WeaponPickup(ItemPickup).AmmoAmount[0];
+		}
+
+		return true;
+	}
+
+	return false;
+}
+
+static final function bool SingleWeaponSpawnCopy(KFWeaponPickup SingleWeaponPickup, Pawn Other, class<KFWeapon> DualWeaponClass)
+{
+	local Inventory Inventory;
+	local KFWeapon Weapon;
+	local class<KFWeaponPickup> WeaponPickupClass, InventoryPickupClass;
+	WeaponPickupClass = GetOriginalWeaponPickup(SingleWeaponPickup.Class);
+
+	if (WeaponPickupClass == None)
+	{
+		return false;
+	}
+
+	for(Inventory = Other.Inventory; Inventory != None; Inventory = Inventory.Inventory)
+	{
+		InventoryPickupClass = GetOriginalWeaponPickup(class<KFWeaponPickup>(Inventory.PickupClass));
+		if (InventoryPickupClass != WeaponPickupClass)
+		{
+			continue;
+		}
+
+		if(SingleWeaponPickup.Inventory != None)
+		{
+			SingleWeaponPickup.Inventory.Destroy();
+		}
+
+		SingleWeaponPickup.InventoryType = DualWeaponClass;
+
+		Weapon = KFWeapon(Inventory);
+
+		if (Weapon != None)
+		{
+			SingleWeaponPickup.AmmoAmount[0] += Weapon.AmmoAmount(0);
+			SingleWeaponPickup.MagAmmoRemaining += Weapon.MagAmmoRemaining;
+		}
+
+		Inventory.Destroyed();
+		Inventory.Destroy();
+		return true;
+	}
+
+	SingleWeaponPickup.InventoryType = SingleWeaponPickup.default.InventoryType;
+	return false;
 }
 
 defaultproperties

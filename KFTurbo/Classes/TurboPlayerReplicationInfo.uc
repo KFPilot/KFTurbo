@@ -2,20 +2,18 @@ class TurboPlayerReplicationInfo extends LinkedReplicationInfo;
 
 var KFPlayerReplicationInfo OwningReplicationInfo;
 
-struct MarkedActorInfo
-{
-    var Actor MarkedActor;
-    var Vector Location;
+var Actor MarkedActor;
+var class<Actor> MarkActorClass;
 
-    var class<Actor> ActorClass;
-    var class<Object> DataClass;
-    var Object DataObject;
+var Object DataObject;
+var class<Object> DataClass;
 
-    var float MarkTime;
-    var float MarkDuration;
-};
+var int MarkerData;
 
-var MarkedActorInfo MarkInfo;
+var Vector MarkLocation;
+var float MarkTime;
+var float MarkDuration;
+var int HealthHealed;
 
 enum EMarkColor{
 	Invalid,
@@ -38,6 +36,9 @@ var array<Color> MarkerColorList;
 
 var class<Actor> LastReceivedActorClass;
 var float LastReceivedMarkTime;
+var Object LastKnownDataObject;
+var class<Object> LastKnownDataClass;
+var int LastKnownMarkerData;
 
 var String MarkDisplayString;
 var float WorldZOffset;
@@ -53,13 +54,16 @@ var localized String PlayerStringRight;
 
 replication
 {
+    reliable if( bNetInitial && ROLE == ROLE_Authority)
+        OwningReplicationInfo;
 	reliable if( Role==ROLE_Authority )
-		MarkInfo, MarkerColor;
+		MarkedActor, MarkActorClass, MarkLocation, DataClass, DataObject, MarkDuration, MarkerData, MarkerColor, HealthHealed;
 }
 
 simulated function PostBeginPlay()
 {
     Super.PostBeginPlay();
+
     Disable('Tick');
 }
 
@@ -83,8 +87,19 @@ static function Color GetMarkerColor(EMarkColor Color)
     return default.MarkerColorList[Color];
 }
 
-function MarkActor(Actor Target)
+simulated function final vector GetMarkLocation()
 {
+    if (MarkedActor != None && CanMarkReceiveLocationUpdate())
+    {
+        return MarkedActor.Location;
+    }
+
+    return MarkLocation;
+}
+
+function MarkActor(Actor Target, class<TurboMarkerType> DataClassOverride, int DataOverride)
+{
+    local TurboPlayerReplicationInfo TPRI;
     if (Target == None)
     {
         return;
@@ -95,27 +110,55 @@ function MarkActor(Actor Target)
         return;
     }
 
-    if (MarkInfo.MarkedActor == Target)
+    //We should probably make this more accurate but essentially this is a prelim check if our mark changed.
+    if (MarkedActor == Target && (DataClassOverride == None || DataClass == DataClassOverride) && (DataOverride == -1 || MarkerData == DataOverride))
     {
-        MarkInfo.MarkTime = Level.TimeSeconds;
+        MarkTime = Level.TimeSeconds;
         return;
+    }
+
+    TPRI = GetTPRIMarkingActor(Target);
+
+    if (TPRI != None)
+    {
+        TPRI.ClearMarkedActor();
     }
 
     ClearMarkedActor();
 
-    MarkInfo.MarkedActor = Target;
-    MarkInfo.Location = Target.Location;
+    MarkedActor = Target;
+    MarkActorClass = Target.Class;
 
-    MarkInfo.ActorClass = Target.Class;
-    MarkInfo.DataClass = GetRelevantDataClass(Target);
-    MarkInfo.DataObject = GetRelevantDataObject(Target);
+    DataObject = GetRelevantDataObject(Target);
 
-    MarkInfo.MarkTime = Level.TimeSeconds;
-    MarkInfo.MarkDuration = GetMarkDuration(Target);
+    if (DataClassOverride != None)
+    {
+        DataClass = DataClassOverride;
+    }
+    else
+    {
+        DataClass = GetRelevantDataClass(Target);
+    }
+
+    if (DataOverride != -1)
+    {
+        MarkerData = DataOverride;
+    }
+    else
+    {
+        MarkerData = GetRelevantData(Target);
+    }
+
+    MarkLocation = Target.Location;
+
+    MarkTime = Level.TimeSeconds;
+    MarkDuration = GetMarkDuration(Target);
 
     Enable('Tick');
 
     NetUpdateTime = Level.TimeSeconds - 2.f;
+
+    TryVoiceLine();
 
     if (Level.NetMode != NM_DedicatedServer)
     {
@@ -125,70 +168,128 @@ function MarkActor(Actor Target)
 
 function ClearMarkedActor()
 {
-    MarkInfo.MarkedActor = None;
-    MarkInfo.ActorClass = None;
-    MarkInfo.DataClass = None;
-    MarkInfo.MarkTime = -1;
-    MarkInfo.MarkDuration = -1;
+    MarkedActor = None;
+    MarkActorClass = None;
+    
+    DataObject = None;
+    DataClass = None;
+
+    MarkerData = 0;
+
+    MarkTime = -1;
+    MarkDuration = -1;
+
+    MarkDisplayString = "";
+    WorldZOffset = 0;
 
     Disable('Tick');
     
     NetUpdateTime = Level.TimeSeconds - 2.f;
 }
 
-function bool CanMarkActor(Actor Target)
+final function TurboPlayerReplicationInfo GetTPRIMarkingActor(Actor TargetActor)
 {
-    if (Target == None)
+    local TurboPlayerReplicationInfo TPRI;
+
+    if (TargetActor == None)
     {
-        return false;
+        return None;
     }
 
-    if (Pickup(Target) != None)
+    foreach TargetActor.DynamicActors(class'TurboPlayerReplicationInfo', TPRI)
     {
-        return Pickup(Target).InventoryType != None;
-    }
-
-    if (Pawn(Target) != None)
-    {
-        return Pawn(Target).Health > 0;
-    }
-
-    return false;
-}
-
-function class<Object> GetRelevantDataClass(Actor Target)
-{
-    if (Pickup(Target) != None && Pickup(Target).InventoryType != None)
-    {
-        return Pickup(Target).InventoryType;
-    }
-
-    return Target.Class;
-}
-
-function Object GetRelevantDataObject(Actor Target)
-{
-    if (Pawn(Target) != None && Pawn(Target).PlayerReplicationInfo != None)
-    {
-        return Pawn(Target).PlayerReplicationInfo;
+        if (TPRI != Self && TPRI.MarkedActor == TargetActor)
+        {
+            return TPRI;
+        }
     }
 
     return None;
 }
 
-function float GetMarkDuration(Actor Target)
+function bool CanMarkActor(Actor TargetActor)
 {
-    return 5.f;
+    if (TargetActor == None)
+    {
+        return false;
+    }
+
+    if (Pickup(TargetActor) != None)
+    {
+        if (Pickup(TargetActor).InventoryType != None || CashPickup(TargetActor) != None || Vest(TargetActor) != None)
+        {
+            return true;
+        }
+
+        if (KFAmmoPickup(TargetActor) != None)
+        {
+            return !TargetActor.bHidden;
+        }
+
+        return false;
+    }
+
+    if (Pawn(TargetActor) != None)
+    {
+        return Pawn(TargetActor).Health > 0;
+    }
+
+    return false;
 }
 
-function bool NeedsLocationTickUpdate(Actor Target)
+function class<Object> GetRelevantDataClass(Actor TargetActor)
 {
-    return false;
+    if (Pickup(TargetActor) != None && Pickup(TargetActor).InventoryType != None)
+    {
+        return Pickup(TargetActor).InventoryType;
+    }
+
+    return TargetActor.Class;
+}
+
+function Object GetRelevantDataObject(Actor TargetActor)
+{
+    if (Pawn(TargetActor) != None && Pawn(TargetActor).PlayerReplicationInfo != None)
+    {
+        return Pawn(TargetActor).PlayerReplicationInfo;
+    }
+
+    return None;
+}
+
+function int GetRelevantData(Actor TargetActor)
+{
+    if (CashPickup(TargetActor) != None)
+    {
+        return CashPickup(TargetActor).CashAmount;
+    }
+
+    return 0;
+}
+
+function float GetMarkDuration(Actor TargetActor)
+{
+    if (class<TurboMarkerType>(DataClass) != None)
+    {
+        return class<TurboMarkerType>(DataClass).static.GetMarkerDuration(MarkedActor, MarkActorClass, DataObject, DataClass, MarkerData);
+    }
+
+    if (Pawn(TargetActor) != None)
+    {
+        return 20.f;
+    }
+
+    if (Pickup(TargetActor) != None)
+    {
+        return 10.f;
+    }
+
+    return 10.f;
 }
 
 function bool HasMarkData()
 {
-    if (MarkInfo.MarkedActor == None)
+    if (MarkedActor == None)
     {
         return false;
     }
@@ -200,83 +301,187 @@ function Tick(float DeltaTime)
 {
     Super.Tick(DeltaTime);
 
-    if (MarkInfo.MarkedActor == None)
+    if (Level.GRI == None)
+    {
+        return;
+    }
+
+    if (!CanMarkActor(MarkedActor))
     {
         ClearMarkedActor();
         return;
     }
 
-    if (!CanMarkActor(MarkInfo.MarkedActor))
+    if (MarkTime + MarkDuration < Level.TimeSeconds)
     {
         ClearMarkedActor();
         return;
     }
     
-    MarkInfo.Location = MarkInfo.MarkedActor.Location;
+    if (CanMarkReceiveLocationUpdate())
+    {
+        MarkLocation = MarkedActor.Location;
+    }
+}
+
+simulated function bool CanMarkReceiveLocationUpdate()
+{
+    //If we're marking a zed, make sure if it's cloaked we're not providing locational updates.
+    if (KFMonster(MarkedActor) != None)
+    {
+        return !KFMonster(MarkedActor).bCloaked || KFMonster(MarkedActor).bSpotted;
+    }
+
+    if (class<TurboMarkerType>(DataClass) != None)
+    {
+        return class<TurboMarkerType>(DataClass).static.ShouldReceiveLocationUpdate(MarkedActor, MarkActorClass, DataObject, DataClass, MarkerData);
+    }
+
+    return true;
 }
 
 simulated function bool HasMarkUpdate()
 {
-    if (MarkInfo.ActorClass == LastReceivedActorClass && MarkInfo.MarkTime == LastReceivedMarkTime)
+    if (MarkActorClass != LastReceivedActorClass || MarkTime != LastReceivedMarkTime || LastKnownDataObject != DataObject)
     {
-        return false;
+        return true;
     }
 
-    return true;
+    if (LastKnownDataClass != DataClass || MarkerData != LastKnownMarkerData)
+    {
+        return true;
+    }
+
+    log("No Marker Update");
+    return false;
 }
 
 simulated function OnReceivedMark()
 {
     MarkDisplayString = GenerateDisplayString();
     WorldZOffset = GetWorldZOffset();
+
+    LastReceivedActorClass = MarkActorClass;
+    LastReceivedMarkTime = MarkTime;
+    LastKnownDataObject = DataObject;
+    LastKnownDataClass = DataClass;
+    LastKnownMarkerData = MarkerData;
 }
 
 simulated function String GenerateDisplayString()
 {
-    if (Pickup(MarkInfo.MarkedActor) != None)
+    if (class<TurboMarkerType>(DataClass) != None)
     {
-        return PickupStringLeft$Pickup(MarkInfo.MarkedActor).InventoryType.default.ItemName$PickupStringRight;
+        return class<TurboMarkerType>(DataClass).static.GenerateMarkerDisplayString(MarkedActor, MarkActorClass, DataObject, DataClass, MarkerData);
     }
-    else if(class<Pickup>(MarkInfo.ActorClass) != None)
+    
+    if (Pickup(MarkedActor) != None || class<Pickup>(MarkActorClass) != None)
     {
-        return PickupStringLeft$class<Inventory>(MarkInfo.DataClass).default.ItemName$PickupStringRight;
-    }
-
-    if (KFMonster(MarkInfo.MarkedActor) != None)
-    {
-        return MonsterStringLeft$Caps(KFMonster(MarkInfo.MarkedActor).MenuName)$MonsterStringRight;
-    }
-    else if(class<KFMonster>(MarkInfo.ActorClass) != None)
-    {
-        return MonsterStringLeft$Caps(class<KFMonster>(MarkInfo.ActorClass).default.MenuName)$MonsterStringRight;
+        return GeneratePickupDisplayString(Pickup(MarkedActor), class<Pickup>(MarkActorClass));
     }
 
-    if (KFHumanPawn(MarkInfo.MarkedActor) != None || class<KFHumanPawn>(MarkInfo.ActorClass) != None)
+    if (KFMonster(MarkedActor) != None || class<KFMonster>(MarkActorClass) != None)
     {
-        if (KFPlayerReplicationInfo(MarkInfo.DataObject) != None)
+        return GenerateMonsterDisplayString(KFMonster(MarkedActor), class<KFMonster>(MarkActorClass));
+    }
+
+    if (KFHumanPawn(MarkedActor) != None || class<KFHumanPawn>(MarkActorClass) != None)
+    {
+        if (KFPlayerReplicationInfo(DataObject) != None)
         {
-            return KFPlayerReplicationInfo(MarkInfo.DataObject).PlayerName;
+            return KFPlayerReplicationInfo(DataObject).PlayerName;
         }
     }
 
     return "";
 }
 
+simulated function String GeneratePickupDisplayString(Pickup PickupActor, class<Pickup> PickupClass)
+{
+    //Leverage localized values.
+    if (PickupActor != None)
+    {
+        if (Vest(MarkedActor) != None)
+        {
+            return PickupStringLeft$class'BuyableVest'.default.ItemName$PickupStringRight; //This text is "Combat armour".
+        }
+        else if (KFAmmoPickup(MarkedActor) != None)
+        {
+            return PickupStringLeft$GUILabel(class'GUIInvHeaderTabPanel'.default.Controls[1]).Caption$PickupStringRight; //This text is "ammo".
+        }
+        else if (CashPickup(MarkedActor) != None)
+        {
+            return PickupStringLeft$MarkerData@class'KFTab_BuyMenu'.default.MoneyCaption$PickupStringRight; 
+        }
+
+        if (Pickup(MarkedActor).InventoryType == None)
+        {
+            if (DataClass != None)
+            {
+                return PickupStringLeft$class<Inventory>(DataClass).default.ItemName$PickupStringRight;
+            }
+
+            return "";
+        }
+    
+        return PickupStringLeft$Pickup(MarkedActor).InventoryType.default.ItemName$PickupStringRight;
+    }
+
+    if (class<Vest>(PickupClass) != None)
+    {
+        return PickupStringLeft$class'BuyableVest'.default.ItemName$PickupStringRight; //This text is "Combat armour".
+    }
+    else if (class<KFAmmoPickup>(PickupClass) != None)
+    {
+        return PickupStringLeft$GUILabel(class'GUIInvHeaderTabPanel'.default.Controls[1]).Caption$PickupStringRight; //This text is "ammo".
+    }
+    else if (class<CashPickup>(PickupClass) != None)
+    {
+        return PickupStringLeft$MarkerData@class'KFTab_BuyMenu'.default.MoneyCaption$PickupStringRight;
+    }
+
+    if (class<Inventory>(DataClass) != None)
+    {
+        return PickupStringLeft$class<Inventory>(DataClass).default.ItemName$PickupStringRight;
+    }
+
+    return "";
+}
+
+simulated function String GenerateMonsterDisplayString(KFMonster Monster, class<KFMonster> MonsterClass)
+{
+    if (Monster != None)
+    {
+        return MonsterStringLeft$Caps(Monster.MenuName)$MonsterStringRight;
+    }
+    
+    return MonsterStringLeft$Caps(MonsterClass.default.MenuName)$MonsterStringRight;
+}
+
 simulated function float GetWorldZOffset()
 {
-    if (KFMonster(MarkInfo.MarkedActor) != None || class<KFMonster>(MarkInfo.ActorClass) != None)
+    local float ExtraOffset;
+
+    if (KFMonster(MarkedActor) != None || class<KFMonster>(MarkActorClass) != None)
     {
-        return GetMonsterZOffset(KFMonster(MarkInfo.MarkedActor), class<KFMonster>(MarkInfo.ActorClass));
+        return GetMonsterZOffset(KFMonster(MarkedActor), class<KFMonster>(MarkActorClass));
     }
 
-    if (MarkInfo.MarkedActor != None)
+    ExtraOffset = 0.f;
+
+    if (KFHumanPawn(MarkedActor) != None || class<KFHumanPawn>(MarkActorClass) != None)
     {
-        return MarkInfo.MarkedActor.CollisionHeight;
+        ExtraOffset = 16.f;
     }
 
-    if (MarkInfo.ActorClass != None)
+    if (MarkedActor != None)
     {
-        return MarkInfo.ActorClass.default.CollisionHeight;
+        return MarkedActor.CollisionHeight + ExtraOffset;
+    }
+
+    if (MarkActorClass != None)
+    {
+        return MarkActorClass.default.CollisionHeight + ExtraOffset;
     }
 
     return 0.f;
@@ -284,18 +489,101 @@ simulated function float GetWorldZOffset()
 
 simulated function float GetMonsterZOffset(KFMonster Monster, class<KFMonster> MonsterClass)
 {
+    local float ExtraOffset;
+
+    if (ZombieBoss(MarkedActor) != None || class<ZombieBoss>(MarkActorClass) != None)
+    {
+        ExtraOffset = 16.f;
+    }
+
     if (Monster != None)
     {
-        return Monster.CollisionRadius + Monster.ColHeight + (Monster.ColOffset.Z * 0.5f);
+        return Monster.CollisionRadius + Monster.ColHeight + (Monster.ColOffset.Z * 0.5f) + ExtraOffset;
     }
     else if (MonsterClass != None)
     {
-        return MonsterClass.default.CollisionRadius + MonsterClass.default.ColHeight + (MonsterClass.default.ColOffset.Z * 0.5f);
+        return MonsterClass.default.CollisionRadius + MonsterClass.default.ColHeight + (MonsterClass.default.ColOffset.Z * 0.5f) + ExtraOffset;
     }
     else
     {
         return 0.f;
     }
+}
+
+function TryVoiceLine()
+{
+    local PlayerController PlayerController;
+
+    PlayerController = PlayerController(Owner);
+
+    if (PlayerController == None || FRand() < 0.25f)
+    {
+        return;
+    }
+    
+    if (KFMonster(MarkedActor) != None)
+    {
+        TryMonsterVoiceLine(KFMonster(MarkedActor));
+        return;
+    }
+    
+    if (Pickup(MarkedActor) != None)
+    {
+        TryPickupVoiceLine(Pickup(MarkedActor));
+        return;
+    }
+}
+
+function TryMonsterVoiceLine(KFMonster MarkedMonster)
+{
+    if (ZombieFleshPound(MarkedActor) != None)
+    {
+        PlayerController(Owner).Speech('AUTO', 12, "");
+    }
+    else if (ZombieScrake(MarkedActor) != None)
+    {
+        PlayerController(Owner).Speech('AUTO', 14, "");
+    }
+    else if (ZombieSiren(MarkedActor) != None)
+    {
+        PlayerController(Owner).Speech('AUTO', 15, "");
+    }
+}
+
+function TryPickupVoiceLine(Pickup MarkedPickup)
+{
+    if (CashPickup(MarkedActor) != None)
+    {
+        PlayerController(Owner).Speech('AUTO', 4, "");
+        return;
+    }
+    
+    if (MarkedPickup.InventoryType != None)
+    {
+        if (FRand() < 0.25f)
+        {
+            return;
+        }
+
+        if (class<W_Boomstick_Weap>(MarkedPickup.InventoryType) != None)
+        {
+            PlayerController(Owner).Speech('AUTO', 21, "");
+        }
+        else if (class<W_DualDeagle_Weap>(MarkedPickup.InventoryType) != None)
+        {
+            PlayerController(Owner).Speech('AUTO', 22, "");
+        }
+        else if (class<W_LAW_Weap>(MarkedPickup.InventoryType) != None)
+        {
+            PlayerController(Owner).Speech('AUTO', 23, "");
+        }
+        else if (class<W_Axe_Weap>(MarkedPickup.InventoryType) != None)
+        {
+            PlayerController(Owner).Speech('AUTO', 24, "");
+        }
+        return;
+    }
+
 }
 
 static function TurboPlayerReplicationInfo GetTurboPRI(PlayerReplicationInfo PRI)
@@ -335,7 +623,10 @@ defaultproperties
     MonsterStringLeft="["
     MonsterStringRight="]"
 
-    MarkerColorList(0)=(R=0,G=0,B=0,A=255) //Invalid
+    PickupStringLeft=""
+    PickupStringRight=""
+
+    MarkerColorList(0)=(R=255,G=255,B=255,A=255) //Invalid
     MarkerColorList(1)=(R=255,G=0,B=0,A=255) //Red
     MarkerColorList(2)=(R=0,G=255,B=0,A=255) //Green
     MarkerColorList(3)=(R=0,G=0,B=255,A=255) //Blue
@@ -344,27 +635,8 @@ defaultproperties
     MarkerColorList(6)=(R=0,G=255,B=255,A=255) //Cyan
     MarkerColorList(7)=(R=255,G=128,B=0,A=255) //Orange
     MarkerColorList(8)=(R=255,G=0,B=255,A=255) //Pink
-    MarkerColorList(9)=(R=50,G=255,B=50,A=255) //Lime
+    MarkerColorList(9)=(R=50,G=255,B=100,A=255) //Lime
     MarkerColorList(10)=(R=255,G=255,B=255,A=255) //White
     MarkerColorList(11)=(R=128,G=128,B=128,A=255) //Grey
-    MarkerColorList(12)=(R=255,G=255,B=255,A=255) //Black
+    MarkerColorList(12)=(R=0,G=0,B=0,A=255) //Black
 }
-
-/*
-
-enum EMarkColor{
-	Invalid,
-	Red,
-	Green,
-	Blue,
-	Yellow,
-	Purple,
-    Cyan,
-    Orange,
-    Pink,
-    Line,
-    White,
-    Grey,
-    Black
-};
- */

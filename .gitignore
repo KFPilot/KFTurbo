@@ -31,3 +31,8 @@
 !Textures
 /Textures/**
 !Textures/KFTurboHUD.utx
+
+#Relevant maps.
+!Maps
+/Maps/**
+!Maps/KFT-TurboSteamyTestMap.rom

@@ -8,7 +8,6 @@ simulated event PostBeginPlay()
 	PCOwner = Level.GetLocalPlayerController();
 	Initialize(PCOwner);
 	GetStatsAndAchievements();
-	//log("Called GetStatsAndAchievements", 'KFTurbo');
 }
 
 simulated event PostNetBeginPlay();
@@ -17,7 +16,13 @@ simulated event OnStatsAndAchievementsReady()
 {
 	local int WeaponIndex, VariantIndex, WeaponLockID;
 	local class<KFWeapon> WeaponClass;
-	//log("Calling OnStatsAndAchievementsReady", 'KFTurbo');
+	local ClientPerkRepLink CPRL;
+
+	if (Link == None || PCOwner == None)
+	{
+		LifeSpan = 1.f;
+		return;
+	}
 
 	InitStatInt(OwnedWeaponDLC, GetOwnedWeaponDLC());
 
@@ -73,7 +78,44 @@ simulated event OnStatsAndAchievementsReady()
 		}
 	}
 
-	//Link.DebugVariantInfo(false);
+	CPRL = class'ClientPerkRepLink'.static.FindStats(PCOwner);
+	for(WeaponIndex = (CPRL.ShopInventory.Length - 1); WeaponIndex>=0; --WeaponIndex)
+	{
+		if(CPRL.ShopInventory[WeaponIndex].bDLCLocked == 0 )
+		{
+			continue;
+		}
+		
+		WeaponLockID = class<KFWeapon>(CPRL.ShopInventory[WeaponIndex].PC.Default.InventoryType).Default.AppID;
+		if(WeaponLockID != 0)
+		{
+			if(PlayerOwnsWeaponDLC(WeaponLockID))
+			{
+				CPRL.ShopInventory[WeaponIndex].bDLCLocked = 0;
+			}
+			else if(class<KFWeapon>(CPRL.ShopInventory[WeaponIndex].PC.Default.InventoryType).Default.UnlockedByAchievement != -1)
+			{
+				CPRL.ShopInventory[WeaponIndex].bDLCLocked = 2; // Special hack for dwarf axe.
+			}
+			else
+			{
+				CPRL.ShopInventory[WeaponIndex].bDLCLocked = 1;
+			}
+
+			continue;
+		}
+
+		WeaponLockID = class<KFWeapon>(CPRL.ShopInventory[WeaponIndex].PC.Default.InventoryType).Default.UnlockedByAchievement;
+
+		if( Achievements[WeaponLockID].bCompleted == 1 )
+		{
+			CPRL.ShopInventory[WeaponIndex].bDLCLocked = 0;
+		}
+		else
+		{
+			CPRL.ShopInventory[WeaponIndex].bDLCLocked = 2;
+		}
+	}
 
 	UpdatePerkStats();
 
@@ -92,39 +134,39 @@ simulated function UpdatePerkStats()
 
 	GetStatInt(DamageHealedStat, SteamNameStat[0]);
 	SavedDamageHealedStat = DamageHealedStat.Value;
-	PlayerController.InitializeSteamStatInt(0, DamageHealedStat.Value);
+	PlayerController.ServerInitializeSteamStatInt(0, DamageHealedStat.Value);
 
 	GetStatInt(WeldingPointsStat, SteamNameStat[1]);
 	SavedWeldingPointsStat = WeldingPointsStat.Value;
-	PlayerController.InitializeSteamStatInt(1, WeldingPointsStat.Value);
+	PlayerController.ServerInitializeSteamStatInt(1, WeldingPointsStat.Value);
 
 	GetStatInt(ShotgunDamageStat, SteamNameStat[2]);
 	SavedShotgunDamageStat = ShotgunDamageStat.Value;
-	PlayerController.InitializeSteamStatInt(2, ShotgunDamageStat.Value);
+	PlayerController.ServerInitializeSteamStatInt(2, ShotgunDamageStat.Value);
 
 	GetStatInt(HeadshotKillsStat, SteamNameStat[3]);
 	SavedHeadshotKillsStat = HeadshotKillsStat.Value;
-	PlayerController.InitializeSteamStatInt(3, HeadshotKillsStat.Value);
+	PlayerController.ServerInitializeSteamStatInt(3, HeadshotKillsStat.Value);
 
 	GetStatInt(StalkerKillsStat, SteamNameStat[4]);
 	SavedStalkerKillsStat = StalkerKillsStat.Value;
-	PlayerController.InitializeSteamStatInt(4, StalkerKillsStat.Value);
+	PlayerController.ServerInitializeSteamStatInt(4, StalkerKillsStat.Value);
 
 	GetStatInt(BullpupDamageStat, SteamNameStat[5]);
 	SavedBullpupDamageStat = BullpupDamageStat.Value;
-	PlayerController.InitializeSteamStatInt(5, BullpupDamageStat.Value);
+	PlayerController.ServerInitializeSteamStatInt(5, BullpupDamageStat.Value);
 
 	GetStatInt(MeleeDamageStat, SteamNameStat[6]);
 	SavedMeleeDamageStat = MeleeDamageStat.Value;
-	PlayerController.InitializeSteamStatInt(6, MeleeDamageStat.Value);
+	PlayerController.ServerInitializeSteamStatInt(6, MeleeDamageStat.Value);
 
 	GetStatInt(FlameThrowerDamageStat, SteamNameStat[7]);
 	SavedFlameThrowerDamageStat = FlameThrowerDamageStat.Value;
-	PlayerController.InitializeSteamStatInt(7, FlameThrowerDamageStat.Value);
+	PlayerController.ServerInitializeSteamStatInt(7, FlameThrowerDamageStat.Value);
 
 	GetStatInt(ExplosivesDamageStat, SteamNameStat[21]);
 	SavedExplosivesDamageStat = ExplosivesDamageStat.Value;
-	PlayerController.InitializeSteamStatInt(21, ExplosivesDamageStat.Value);
+	PlayerController.ServerInitializeSteamStatInt(21, ExplosivesDamageStat.Value);
 }
 
 defaultproperties

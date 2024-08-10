@@ -93,6 +93,9 @@ function TakeDamage( int Damage, Pawn InstigatedBy, Vector Hitlocation, Vector M
             case class'DamTypeMedicNade':
                 Damage *= 2.0f;
                 break;
+            case class'DamTypeSeekerSixRocket':
+                Damage *= 1.65f;
+                break;
             default:
                 Damage *= 1.25f;
                 break;
@@ -295,6 +298,24 @@ Ignores StartCharging;
 	}
 }
 
+simulated function PlayDying(class<DamageType> DamageType, vector HitLoc)
+{
+    class'PawnHelper'.static.MonsterDied(Self, AfflictionData);
+
+    Super.PlayDying(DamageType, HitLoc);
+}
+
+state ZombieDying
+{
+ignores AnimEnd, Trigger, Bump, HitWall, HeadVolumeChange, PhysicsVolumeChange, Falling, BreathTimer, Died, RangedAttack, SpawnTwoShots;
+
+    simulated function BeginState()
+    {
+        class'PawnHelper'.static.MonsterDied(Self, AfflictionData);
+        Super.BeginState();
+    }
+}
+
 defaultproperties
 {
     Begin Object Class=AfflictionBurn Name=BurnAffliction
@@ -306,7 +327,7 @@ defaultproperties
     End Object
 
     Begin Object Class=AfflictionHarpoon Name=HarpoonAffliction
-        HarpoonSpeedModifier=0.5f
+        HarpoonSpeedModifier=0.25f
     End Object
 
     AfflictionData=(Burn=AfflictionBurn'BurnAffliction',Zap=AfflictionZap'ZapAffliction',Harpoon=AfflictionHarpoon'HarpoonAffliction')

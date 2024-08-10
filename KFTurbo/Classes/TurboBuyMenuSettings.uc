@@ -1,4 +1,13 @@
+//This class makes it easier for anyone extending KFTurbo to add weapon variants and have those variants show up in the trader just like ones built into KFTurbo.
+//Can be set on a subclass of TurboBuyMenuSaleList via TurboBuyMenuSaleList::TurboBuyMenuSettingsClassString.
 class TurboBuyMenuSettings extends Object;
+
+var localized String HintDefault;
+var localized String GoldDefault;
+var localized String CamoDefault;
+var localized String CyberDefault;
+var localized String SteampunkDefault;
+var localized String StickerDefault;
 
 function Texture GetIconForPickup(String VariantID)
 {
@@ -24,6 +33,12 @@ function Texture GetIconForPickup(String VariantID)
             return Texture'KFTurbo.HUD.SkellIcon_D';
         case "SHOWME":
             return Texture'KFTurbo.HUD.ShowMeProIcon_D';
+        case "CYB":
+            return Texture'KFTurbo.HUD.CyberIcon_D';
+        case "STP":
+            return Texture'KFTurbo.HUD.SteampunkIcon_D';
+        case "PRIDE":
+            return Texture'KFTurbo.HUD.PrideIcon_D';
     }
 
     return Texture'KFTurbo.HUD.StickerIcon_D';
@@ -34,11 +49,15 @@ function String GetHintForPickup(String VariantID)
     switch (VariantID)
     {
         case "DEF":
-            return "Default";
+            return HintDefault;
         case "GOLD":
-            return "Gold";
+            return GoldDefault;
         case "CAMO":
-            return "Camo";
+            return CamoDefault;
+        case "CYB":
+            return CyberDefault;
+        case "STP":
+            return SteampunkDefault;
         case "TURBO":
         case "VM":
         case "WEST":
@@ -46,8 +65,19 @@ function String GetHintForPickup(String VariantID)
         case "SCUD":
         case "CUBIC":
         case "SHOWME":
-            return "Sticker";
+        case "PRIDE":
+            return StickerDefault;
     }
     
-    return "Sticker";
+    return StickerDefault;
+}
+
+defaultproperties
+{
+    HintDefault = "Default"
+    GoldDefault = "Gold"
+    CamoDefault = "Camo"
+    CyberDefault = "Cyber"
+    SteampunkDefault = "Steampunk"
+    StickerDefault = "Sticker"
 }
