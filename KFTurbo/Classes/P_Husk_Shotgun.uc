@@ -2,6 +2,7 @@ class P_Husk_Shotgun extends P_Husk_SUM;
 
 var int AttackRange;
 var int AttackSpreadDegree;
+var int AttackProjectileCount;
 
 function RangedAttack(Actor A)
 {
@@ -72,12 +73,12 @@ function SpawnTwoShots()
     // Turn off extra collision before spawning vomit, otherwise spawn fails
     ToggleAuxCollision(false);
 
-    for (i = 0; i < 5; i++)
-    {
-        // Get the base aim
-        FireRotation = Controller.AdjustAim(SavedFireProperties, FireStart, 600);
+    // Get the base aim
+    FireRotation = Controller.AdjustAim(SavedFireProperties, FireStart, 600);
 
-        // Create a random deviation within a 15-degree cone
+    for (i = 0; i < AttackProjectileCount; i++)
+    {
+        // Create a random deviation within a cone
         AdjustedRotation.Pitch = FireRotation.Pitch + RandRange(-AttackSpreadDegree * 182, AttackSpreadDegree * 182);  // Convert degrees to Unreal's rotation units
         AdjustedRotation.Yaw = FireRotation.Yaw + RandRange(-AttackSpreadDegree * 182, AttackSpreadDegree * 182);    // Convert degrees to Unreal's rotation units
         AdjustedRotation.Roll = FireRotation.Roll;
@@ -105,10 +106,11 @@ defaultproperties
 {
 	AttackRange=700
 	AttackSpreadDegree=15
+	AttackProjectileCount=5
     ProjectileFireInterval=1.500000
     HuskFireProjClass=Class'KFTurbo.P_Husk_Shotgun_Proj'
     HeadHealth=270.000000
     HealthMax=800.000000
     Health=800
-    MenuName="Marauder"
+    MenuName="Scorcher"
 }
