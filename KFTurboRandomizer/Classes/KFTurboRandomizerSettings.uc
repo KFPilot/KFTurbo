@@ -18,70 +18,82 @@ var class<KFWeapon> SyringeWeaponClass;
 var class<KFWeapon> WelderWeaponClass;
 var class<KFWeapon> KnifeWeaponClass;
 
-var array<int> UsedEarlyWaveLoadoutList;
+var array<KFTurboRandomizerLoadout> UsedEarlyWaveLoadoutList;
 
-var array<int> UsedFleshpoundLoadoutList;
-var array<int> UsedScrakeLoadoutList;
+var array<KFTurboRandomizerLoadout> UsedFleshpoundLoadoutList;
+var array<KFTurboRandomizerLoadout> UsedScrakeLoadoutList;
 
-var array<int> UsedMiscLoadoutList;
-var array<int> UsedFunnyLoadoutList;
+var array<KFTurboRandomizerLoadout> UsedMiscLoadoutList;
+var array<KFTurboRandomizerLoadout> UsedFunnyLoadoutList;
 
-var array<int> UsedPatriarchTypeALoadoutList;
-var array<int> UsedPatriarchTypeBLoadoutList;
-var array<int> UsedPatriarchFunnyLoadoutList;
+var array<KFTurboRandomizerLoadout> UsedPatriarchTypeALoadoutList;
+var array<KFTurboRandomizerLoadout> UsedPatriarchTypeBLoadoutList;
+var array<KFTurboRandomizerLoadout> UsedPatriarchFunnyLoadoutList;
 
-static final function RestoreLoadout(KFTurboRandomizerLoadoutCollection LoadoutCollection, out array<int> UsedIndexList)
+static final function RestoreLoadoutCollection(KFTurboRandomizerLoadoutCollection LoadoutCollection, out array<KFTurboRandomizerLoadout> UsedLoadoutList)
 {
-    local int Index;
+    local int LoadoutIndex, UsedLoadoutIndex;
+    local bool bFoundLoadout;
+
+    //Reset the loadout collection list.
     LoadoutCollection.LoadoutList = LoadoutCollection.default.LoadoutList;
-    for (Index = UsedIndexList.Length - 1; Index >= 0; Index--)
+
+    //Go through the used loadouts for this loadout collection and remove the ones we've used.
+    for (LoadoutIndex = LoadoutCollection.LoadoutList.Length - 1; LoadoutIndex >= 0; LoadoutIndex--)
     {
-        LoadoutCollection.LoadoutList.Remove(Index, 1);
+        //Get rid of any accidentally empty elements.
+        if (LoadoutCollection.LoadoutList[LoadoutIndex] == None)
+        {
+            LoadoutCollection.LoadoutList.Remove(LoadoutIndex, 1);
+            continue;
+        }
+
+        bFoundLoadout = false;
+        for (UsedLoadoutIndex = UsedLoadoutList.Length - 1; UsedLoadoutIndex >= 0; UsedLoadoutIndex--)
+        {
+            if (LoadoutCollection.LoadoutList[LoadoutIndex] != UsedLoadoutList[UsedLoadoutIndex])
+            {
+                continue;
+            }
+
+            bFoundLoadout = true;
+            break;
+        }
+
+        if (!bFoundLoadout)
+        {
+            continue;
+        }
+
+        LoadoutCollection.LoadoutList.Remove(LoadoutIndex, 1);
     }
 
-    //Consume used index list.
-    UsedIndexList.Length = 0;
+    //Empty the used loadout list.
+    UsedLoadoutList.Length = 0;
 }
 
-static final function KFTurboRandomizerLoadout TakeLoadout(int Index, KFTurboRandomizerLoadoutCollection LoadoutCollection, out array<int> IndexList)
+static final function KFTurboRandomizerLoadout TakeLoadout(int Index, KFTurboRandomizerLoadoutCollection LoadoutCollection, out array<KFTurboRandomizerLoadout> UsedLoadoutList)
 {
     local KFTurboRandomizerLoadout Loadout;
     Loadout = LoadoutCollection.LoadoutList[Index];
     LoadoutCollection.LoadoutList.Remove(Index, 1);
-    InsertIndexInOrder(Index, IndexList);
+    UsedLoadoutList[UsedLoadoutList.Length] = Loadout;
     return Loadout;
-}
-
-//Inserts indices from low to high order.
-static final function InsertIndexInOrder(int NewIndex, out array<int> IndexList)
-{
-    local int Index;
-    for (Index = 0; Index < IndexList.Length; Index++)
-    {
-        if (IndexList[Index] < NewIndex)
-        {
-            IndexList.Insert(Index, 1);
-            IndexList[Index] = NewIndex;
-            return;
-        }
-    }
-
-    IndexList[IndexList.Length] = NewIndex;
 }
 
 function PrepareRandomization()
 {
-    RestoreLoadout(EarlyWaveLoadout, UsedEarlyWaveLoadoutList);
+    RestoreLoadoutCollection(EarlyWaveLoadout, UsedEarlyWaveLoadoutList);
 
-    RestoreLoadout(FleshpoundLoadout, UsedFleshpoundLoadoutList);
-    RestoreLoadout(ScrakeLoadout,  UsedScrakeLoadoutList);
+    RestoreLoadoutCollection(FleshpoundLoadout, UsedFleshpoundLoadoutList);
+    RestoreLoadoutCollection(ScrakeLoadout,  UsedScrakeLoadoutList);
     
-    RestoreLoadout(MiscLoadout, UsedMiscLoadoutList);
-    RestoreLoadout(FunnyLoadout,  UsedFunnyLoadoutList);
+    RestoreLoadoutCollection(MiscLoadout, UsedMiscLoadoutList);
+    RestoreLoadoutCollection(FunnyLoadout,  UsedFunnyLoadoutList);
 
-    RestoreLoadout(PatriarchTypeALoadout, UsedPatriarchTypeALoadoutList);
-    RestoreLoadout(PatriarchTypeBLoadout, UsedPatriarchTypeBLoadoutList);
-    RestoreLoadout(PatriarchFunnyLoadout, UsedPatriarchFunnyLoadoutList);
+    RestoreLoadoutCollection(PatriarchTypeALoadout, UsedPatriarchTypeALoadoutList);
+    RestoreLoadoutCollection(PatriarchTypeBLoadout, UsedPatriarchTypeBLoadoutList);
+    RestoreLoadoutCollection(PatriarchFunnyLoadout, UsedPatriarchFunnyLoadoutList);
 }
 
 function KFTurboRandomizerLoadout GetRandomFleshpoundLoadout()

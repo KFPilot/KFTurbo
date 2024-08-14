@@ -43,11 +43,10 @@ defaultproperties
         WeaponList(1)=class'KFMod.Machete'
     End Object
 
-    LoadoutList(0)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Scrake.ScrakeLoadout9'
-    LoadoutList(1)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Misc.MiscLoadout14'
-    LoadoutList(2)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_PatriarchA.PatriarchALoadout0'
-    LoadoutList(3)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_PatriarchA.PatriarchALoadout1'
-    LoadoutList(4)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_PatriarchA.PatriarchALoadout2'
-    LoadoutList(5)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_PatriarchA.PatriarchALoadout3'
-    LoadoutList(6)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_PatriarchA.PatriarchALoadout4'
+    LoadoutList(0)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Misc.MiscLoadout14'
+    LoadoutList(1)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_PatriarchA.PatriarchALoadout0'
+    LoadoutList(2)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_PatriarchA.PatriarchALoadout1'
+    LoadoutList(3)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_PatriarchA.PatriarchALoadout2'
+    LoadoutList(4)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_PatriarchA.PatriarchALoadout3'
+    LoadoutList(5)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_PatriarchA.PatriarchALoadout4'
 }

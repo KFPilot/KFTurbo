@@ -353,6 +353,12 @@ static final function TakeFireDamage(KFMonster Monster, int Damage, Pawn Instiga
 	Monster.TakeDamage(Damage, Instigator, vect(0,0,0), vect(0,0,0), Monster.FireDamageClass);
    	UnblockPlayHit(AD);
 
+	//Someone called this function but nulled this out. Their goal was likely to apply damage without a hit reaction. 
+	if (Monster.FireDamageClass == None)
+	{
+		return;
+	}
+
 	if ( Monster.BurnDown > 0 )
 	{
 		Monster.BurnDown--;

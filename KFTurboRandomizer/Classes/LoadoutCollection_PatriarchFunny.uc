@@ -34,4 +34,11 @@ defaultproperties
     LoadoutList(4)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Funny.FunnyLoadout13'
     LoadoutList(5)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_PatriarchFunny.FunnyLoadout0'
     LoadoutList(6)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_PatriarchFunny.FunnyLoadout1'
+    
+    LoadoutList(7)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Funny.FleshpoundLoadout16'
+    LoadoutList(8)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Funny.ScrakeLoadout24'
+    LoadoutList(9)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Funny.ScrakeLoadout26'
+    LoadoutList(10)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Funny.MiscLoadout32'
+    LoadoutList(11)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Funny.MiscLoadout34'
+    LoadoutList(12)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Funny.MiscLoadout37'
 }

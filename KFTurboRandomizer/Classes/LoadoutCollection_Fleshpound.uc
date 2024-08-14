@@ -2,13 +2,6 @@ class LoadoutCollection_Fleshpound extends KFTurboRandomizerLoadoutCollection;
 
 defaultproperties
 {
-    Begin Object Class=KFTurboRandomizerLoadout Name=FleshpoundLoadout0
-        Perk=class'V_FieldMedic'
-        WeaponList(0)=class'KFTurbo.W_M32_Weap'
-        WeaponList(1)=class'KFTurbo.W_KrissM_Weap'
-        WeaponList(2)=class'KFTurbo.W_MP5M_Weap'
-    End Object
-
     Begin Object Class=KFTurboRandomizerLoadout Name=FleshpoundLoadout1
         Perk=class'V_Firebug'
         WeaponList(0)=class'KFTurbo.W_M32_Weap'
@@ -20,13 +13,6 @@ defaultproperties
         Perk=class'V_Berserker'
         WeaponList(0)=class'KFTurbo.W_M32_Weap'
         WeaponList(1)=class'KFTurbo.W_Claymore_Weap'
-    End Object
-
-    Begin Object Class=KFTurboRandomizerLoadout Name=FleshpoundLoadout3
-        Perk=class'V_Berserker'
-        WeaponList(0)=class'KFTurbo.W_Crossbuzzsaw_Weap'
-        WeaponList(1)=class'KFTurbo.W_Katana_Weap'
-        WeaponList(2)=class'KFTurbo.W_FlareRevolver_Weap'
     End Object
 
     Begin Object Class=KFTurboRandomizerLoadout Name=FleshpoundLoadout4
@@ -111,12 +97,6 @@ defaultproperties
         WeaponList(2)=class'KFTurbo.W_BoomStick_Weap'
     End Object
 
-    Begin Object Class=KFTurboRandomizerLoadout Name=FleshpoundLoadout16
-        Perk=class'V_Demolitions'
-        WeaponList(0)=class'KFTurbo.W_LAW_Weap'
-        WeaponList(1)=class'KFTurboRandomizer.W_LAW_Weap_A'
-    End Object
-
     Begin Object Class=KFTurboRandomizerLoadout Name=FleshpoundLoadout17
         Perk=class'V_Sharpshooter'
         WeaponList(0)=class'KFTurbo.W_Dual44_Weap'
@@ -170,39 +150,29 @@ defaultproperties
         WeaponList(2)=class'KFTurbo.W_SPGrenade_Weap'
     End Object
 
-    Begin Object Class=KFTurboRandomizerLoadout Name=FleshpoundLoadout25
-        Perk=class'V_Berserker'
-        WeaponList(0)=class'KFTurbo.W_Crossbuzzsaw_Weap'
-        WeaponList(1)=class'KFTurbo.W_Chainsaw_Weap'
-    End Object
-
     // Loadout tally - PLEASE INCREMENT IF YOU ADD LOADOUTS
-    // Fleshpound: Medic: 1 | Firebug: 1 | Berserker: 2 | Demo: 10 | Commando: 2 | Support: 4 | Sharp: 5
+    // Fleshpound: Medic: 0 | Firebug: 1 | Berserker: 0 | Demo: 9 | Commando: 2 | Support: 4 | Sharp: 5
 
-    LoadoutList(0)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Fleshpound.FleshpoundLoadout0'
-    LoadoutList(1)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Fleshpound.FleshpoundLoadout1'
-    LoadoutList(2)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Fleshpound.FleshpoundLoadout2'
-    LoadoutList(3)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Fleshpound.FleshpoundLoadout3'
-    LoadoutList(4)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Fleshpound.FleshpoundLoadout4'
-    LoadoutList(5)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Fleshpound.FleshpoundLoadout5'
-    LoadoutList(6)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Fleshpound.FleshpoundLoadout6'
-    LoadoutList(7)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Fleshpound.FleshpoundLoadout7'
-    LoadoutList(8)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Fleshpound.FleshpoundLoadout8'
-    LoadoutList(9)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Fleshpound.FleshpoundLoadout9'
-    LoadoutList(10)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Fleshpound.FleshpoundLoadout10'
-    LoadoutList(11)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Fleshpound.FleshpoundLoadout11'
-    LoadoutList(12)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Fleshpound.FleshpoundLoadout12'
-    LoadoutList(13)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Fleshpound.FleshpoundLoadout13'
-    LoadoutList(14)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Fleshpound.FleshpoundLoadout14'
-    LoadoutList(15)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Fleshpound.FleshpoundLoadout15'
-    LoadoutList(16)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Fleshpound.FleshpoundLoadout16'
-    LoadoutList(17)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Fleshpound.FleshpoundLoadout17'
-    LoadoutList(18)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Fleshpound.FleshpoundLoadout18'
-    LoadoutList(19)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Fleshpound.FleshpoundLoadout19'
-    LoadoutList(20)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Fleshpound.FleshpoundLoadout20'
-    LoadoutList(21)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Fleshpound.FleshpoundLoadout21'
-    LoadoutList(22)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Fleshpound.FleshpoundLoadout22'
-    LoadoutList(23)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Fleshpound.FleshpoundLoadout23'
-    LoadoutList(24)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Fleshpound.FleshpoundLoadout24'
-    LoadoutList(25)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Fleshpound.FleshpoundLoadout25'
+    LoadoutList(0)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Fleshpound.FleshpoundLoadout1'
+    LoadoutList(1)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Fleshpound.FleshpoundLoadout2'
+    LoadoutList(2)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Fleshpound.FleshpoundLoadout4'
+    LoadoutList(3)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Fleshpound.FleshpoundLoadout5'
+    LoadoutList(4)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Fleshpound.FleshpoundLoadout6'
+    LoadoutList(5)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Fleshpound.FleshpoundLoadout7'
+    LoadoutList(6)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Fleshpound.FleshpoundLoadout8'
+    LoadoutList(7)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Fleshpound.FleshpoundLoadout9'
+    LoadoutList(8)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Fleshpound.FleshpoundLoadout10'
+    LoadoutList(9)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Fleshpound.FleshpoundLoadout11'
+    LoadoutList(10)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Fleshpound.FleshpoundLoadout12'
+    LoadoutList(11)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Fleshpound.FleshpoundLoadout13'
+    LoadoutList(12)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Fleshpound.FleshpoundLoadout14'
+    LoadoutList(13)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Fleshpound.FleshpoundLoadout15'
+    LoadoutList(15)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Fleshpound.FleshpoundLoadout17'
+    LoadoutList(16)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Fleshpound.FleshpoundLoadout18'
+    LoadoutList(17)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Fleshpound.FleshpoundLoadout19'
+    LoadoutList(18)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Fleshpound.FleshpoundLoadout20'
+    LoadoutList(19)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Fleshpound.FleshpoundLoadout21'
+    LoadoutList(20)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Fleshpound.FleshpoundLoadout22'
+    LoadoutList(21)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Fleshpound.FleshpoundLoadout23'
+    LoadoutList(22)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Fleshpound.FleshpoundLoadout24'
 }

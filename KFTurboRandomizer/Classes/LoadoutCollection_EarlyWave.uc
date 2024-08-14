@@ -13,14 +13,6 @@ defaultproperties
         WeaponList(1)=class'KFTurbo.W_MAC10_Weap'
     End Object
 
-    Begin Object Class=KFTurboRandomizerLoadout Name=EarlyWaveLoadout2
-        Perk=class'V_Berserker'
-        WeaponList(0)=class'KFTurbo.W_Katana_Weap'
-        WeaponList(1)=class'KFTurboRandomizer.W_Katana_Weap_A'
-        bSingle = false
-        bKnife = false
-    End Object
-
     Begin Object Class=KFTurboRandomizerLoadout Name=EarlyWaveLoadout3
         Perk=class'V_Berserker'
         WeaponList(0)=class'KFTurbo.W_Scythe_Weap'
@@ -81,12 +73,6 @@ defaultproperties
         WeaponList(1)=class'KFTurbo.W_MK23_Weap'
     End Object
 
-    Begin Object Class=KFTurboRandomizerLoadout Name=EarlyWaveLoadout13
-        Perk=class'V_Firebug'
-        WeaponList(0)=class'KFTurboRandomizer.W_FlareRevolver_EreDys_Weap'
-        WeaponList(1)=class'KFTurbo.W_FlareRevolver_Weap'
-    End Object
-
     Begin Object Class=KFTurboRandomizerLoadout Name=EarlyWaveLoadout14
         Perk=class'V_SupportSpec'
         WeaponList(0)=class'KFTurbo.W_Shotgun_Weap'
@@ -96,12 +82,6 @@ defaultproperties
     Begin Object Class=KFTurboRandomizerLoadout Name=EarlyWaveLoadout15
         Perk=class'V_Commando'
         WeaponList(0)=class'KFTurbo.W_SCARMK17_Weap'
-    End Object
-
-    Begin Object Class=KFTurboRandomizerLoadout Name=EarlyWaveLoadout16
-        Perk=class'V_Firebug'
-        WeaponList(0)=class'KFTurboRandomizer.W_FlareRevolver_EreDys_Weap'
-        WeaponList(1)=class'KFTurbo.W_Trenchgun_Weap'
     End Object
 
     Begin Object Class=KFTurboRandomizerLoadout Name=EarlyWaveLoadout17
@@ -128,35 +108,26 @@ defaultproperties
         WeaponList(1)=class'KFTurbo.W_M14_Weap'
     End Object
 
-    Begin Object Class=KFTurboRandomizerLoadout Name=EarlyWaveLoadout21
-        Perk=class'V_Commando'
-        WeaponList(0)=class'KFTurbo.W_Bullpup_Weap'
-        WeaponList(1)=class'KFTurboRandomizer.W_Bullpup_brrt_Weap'
-    End Object
-
     // Loadout tally - PLEASE INCREMENT IF YOU ADD LOADOUTS
-    // Early Wave: Medic: 0 | Firebug: 4 | Berserker: 3 | Demo: 2 | Commando: 5 | Support: 4 | Sharp: 4
+    // Early Wave: Medic: 0 | Firebug: 2 | Berserker: 2 | Demo: 2 | Commando: 4 | Support: 4 | Sharp: 4
 
     LoadoutList(0)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_EarlyWave.EarlyWaveLoadout0'
     LoadoutList(1)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_EarlyWave.EarlyWaveLoadout1'
-    LoadoutList(2)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_EarlyWave.EarlyWaveLoadout2'
-    LoadoutList(3)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_EarlyWave.EarlyWaveLoadout3'
-    LoadoutList(4)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_EarlyWave.EarlyWaveLoadout4'
-    LoadoutList(5)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_EarlyWave.EarlyWaveLoadout5'
-    LoadoutList(6)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_EarlyWave.EarlyWaveLoadout6'
-    LoadoutList(7)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_EarlyWave.EarlyWaveLoadout7'
-    LoadoutList(8)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_EarlyWave.EarlyWaveLoadout8'
-    LoadoutList(9)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_EarlyWave.EarlyWaveLoadout9'
-    LoadoutList(10)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_EarlyWave.EarlyWaveLoadout10'
-    LoadoutList(11)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_EarlyWave.EarlyWaveLoadout11'
-    LoadoutList(12)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_EarlyWave.EarlyWaveLoadout12'
-    LoadoutList(13)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_EarlyWave.EarlyWaveLoadout13'
-    LoadoutList(14)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_EarlyWave.EarlyWaveLoadout14'
-    LoadoutList(15)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_EarlyWave.EarlyWaveLoadout15'
-    LoadoutList(16)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_EarlyWave.EarlyWaveLoadout16'
-    LoadoutList(17)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_EarlyWave.EarlyWaveLoadout17'
-    LoadoutList(18)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_EarlyWave.EarlyWaveLoadout18'
-    LoadoutList(19)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_EarlyWave.EarlyWaveLoadout19'
-    LoadoutList(20)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_EarlyWave.EarlyWaveLoadout20'
+    LoadoutList(2)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_EarlyWave.EarlyWaveLoadout3'
+    LoadoutList(3)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_EarlyWave.EarlyWaveLoadout4'
+    LoadoutList(4)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_EarlyWave.EarlyWaveLoadout5'
+    LoadoutList(5)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_EarlyWave.EarlyWaveLoadout6'
+    LoadoutList(6)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_EarlyWave.EarlyWaveLoadout7'
+    LoadoutList(7)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_EarlyWave.EarlyWaveLoadout8'
+    LoadoutList(8)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_EarlyWave.EarlyWaveLoadout9'
+    LoadoutList(9)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_EarlyWave.EarlyWaveLoadout10'
+    LoadoutList(10)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_EarlyWave.EarlyWaveLoadout11'
+    LoadoutList(11)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_EarlyWave.EarlyWaveLoadout12'
+    LoadoutList(13)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_EarlyWave.EarlyWaveLoadout14'
+    LoadoutList(14)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_EarlyWave.EarlyWaveLoadout15'
+    LoadoutList(16)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_EarlyWave.EarlyWaveLoadout17'
+    LoadoutList(17)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_EarlyWave.EarlyWaveLoadout18'
+    LoadoutList(18)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_EarlyWave.EarlyWaveLoadout19'
+    LoadoutList(19)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_EarlyWave.EarlyWaveLoadout20'
 
 }

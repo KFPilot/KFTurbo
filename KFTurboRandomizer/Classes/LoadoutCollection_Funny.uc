@@ -129,9 +129,122 @@ defaultproperties
         bSyringe = false
     End Object
 
-    // Loadout tally - PLEASE INCREMENT IF YOU ADD LOADOUTS
-    // Funny: Medic: 3 | Firebug: 2 | Berserker: 2 | Demo: 2 | Commando: 2 | Support: 3 | Sharp: 3
+    //Moved in from other collections where they didn't belong
+    Begin Object Class=KFTurboRandomizerLoadout Name=EarlyWaveLoadout2
+        Perk=class'V_Berserker'
+        WeaponList(0)=class'KFTurbo.W_Katana_Weap'
+        WeaponList(1)=class'KFTurboRandomizer.W_Katana_Weap_A'
+        bSingle = false
+        bKnife = false
+    End Object
 
+    Begin Object Class=KFTurboRandomizerLoadout Name=EarlyWaveLoadout13
+        Perk=class'V_Firebug'
+        WeaponList(0)=class'KFTurboRandomizer.W_FlareRevolver_EreDys_Weap'
+        WeaponList(1)=class'KFTurbo.W_FlareRevolver_Weap'
+    End Object
+
+    Begin Object Class=KFTurboRandomizerLoadout Name=EarlyWaveLoadout16
+        Perk=class'V_Firebug'
+        WeaponList(0)=class'KFTurboRandomizer.W_FlareRevolver_EreDys_Weap'
+        WeaponList(1)=class'KFTurbo.W_Trenchgun_Weap'
+    End Object
+
+    Begin Object Class=KFTurboRandomizerLoadout Name=EarlyWaveLoadout21
+        Perk=class'V_Commando'
+        WeaponList(0)=class'KFTurbo.W_Bullpup_Weap'
+        WeaponList(1)=class'KFTurboRandomizer.W_Bullpup_brrt_Weap'
+    End Object
+
+    Begin Object Class=KFTurboRandomizerLoadout Name=FleshpoundLoadout16
+        Perk=class'V_Demolitions'
+        WeaponList(0)=class'KFTurbo.W_LAW_Weap'
+        WeaponList(1)=class'KFTurboRandomizer.W_LAW_Weap_A'
+    End Object
+
+    Begin Object Class=KFTurboRandomizerLoadout Name=ScrakeLoadout9
+        Perk=class'V_Berserker'
+        WeaponList(0)=class'KFTurbo.W_Claymore_Weap'
+        bKnife = false
+        bSingle = false
+    End Object
+
+    Begin Object Class=KFTurboRandomizerLoadout Name=ScrakeLoadout24
+        Perk=class'V_SupportSpec'
+        WeaponList(0)=class'KFTurbo.W_M99_Weap'
+        WeaponList(1)=class'KFTurboRandomizer.W_M99_Weap_A'
+        WeaponList(2)=class'KFMod.Machete'
+    End Object
+
+    Begin Object Class=KFTurboRandomizerLoadout Name=ScrakeLoadout26
+        Perk=class'V_Sharpshooter'
+        WeaponList(0)=class'KFTurbo.W_Magnum44_Weap'
+        WeaponList(1)=class'KFTurboRandomizer.W_Dual44_Weap_A'
+        WeaponList(2)=class'KFTurboRandomizer.W_Magnum44_bigiron_Weap'
+    End Object
+
+    Begin Object Class=KFTurboRandomizerLoadout Name=ScrakeLoadout27
+        Perk=class'V_Berserker'
+        WeaponList(0)=class'KFTurboRandomizer.W_Knife_Weap_A'
+        WeaponList(1)=class'KFTurboRandomizer.W_Machete_Weap_A'
+        WeaponList(2)=class'KFMod.Machete'
+        WeaponList(3)=class'KFTurbo.W_Axe_Weap'
+        WeaponList(4)=class'KFTurboRandomizer.W_Axe_Weap_A'
+    End Object
+
+    Begin Object Class=KFTurboRandomizerLoadout Name=ScrakeLoadout38
+        Perk=class'V_Sharpshooter'
+        WeaponList(0)=class'KFTurbo.W_Bullpup_Weap'
+        WeaponList(1)=class'KFTurbo.W_NailGun_Weap'
+        WeaponList(2)=class'KFTurboRandomizer.W_Magnum44_bigiron_Weap'
+    End Object
+
+    Begin Object Class=KFTurboRandomizerLoadout Name=MiscLoadout42
+        Perk=class'V_SupportSpec'
+        WeaponList(0)=class'KFTurbo.W_BoomStick_Weap'
+        WeaponList(1)=class'KFTurboRandomizer.W_BoomStick_Weap_A'
+    End Object
+
+    Begin Object Class=KFTurboRandomizerLoadout Name=MiscLoadout43
+        Perk=class'V_Firebug'
+        WeaponList(0)=class'KFTurbo.W_Huskgun_Weap'
+        WeaponList(1)=class'KFTurboRandomizer.W_FlareRevolver_EreDys_Weap'
+    End Object
+
+    Begin Object Class=KFTurboRandomizerLoadout Name=MiscLoadout32
+        Perk=class'V_Sharpshooter'
+        WeaponList(0)=class'KFTurboRandomizer.W_M14_infinity_Weap'
+    End Object
+
+    Begin Object Class=KFTurboRandomizerLoadout Name=MiscLoadout33
+        Perk=class'V_SupportSpec'
+        WeaponList(0)=class'KFTurbo.W_Shotgun_Weap'
+        WeaponList(1)=class'KFTurboRandomizer.W_Shotgun_Weap_A'
+        WeaponList(2)=class'KFTurboRandomizer.W_Shotgun_Weap_B'
+    End Object
+
+    Begin Object Class=KFTurboRandomizerLoadout Name=MiscLoadout34
+        Perk=class'V_Demolitions'
+        WeaponList(0)=class'KFTurbo.W_SeekerSix_Weap'
+        WeaponList(1)=class'KFTurboRandomizer.W_SeekerSix_Weap_A'
+        WeaponList(2)=class'KFTurbo.W_MK23_Weap'
+    End Object
+
+    Begin Object Class=KFTurboRandomizerLoadout Name=MiscLoadout36
+        Perk=class'V_Commando'
+        WeaponList(0)=class'KFTurbo.W_V_ThompsonDrum_STP_Weap'
+        WeaponList(1)=class'KFTurbo.W_ThompsonSMG_Weap'
+        WeaponList(2)=class'KFTurboRandomizer.W_ThompsonDrum_spread_Weap'
+    End Object
+
+    Begin Object Class=KFTurboRandomizerLoadout Name=MiscLoadout37
+        Perk=class'V_SupportSpec'
+        WeaponList(0)=class'KFTurbo.W_AA12_Weap'
+        WeaponList(1)=class'KFTurboRandomizer.W_AA12_Weap_A'
+    End Object
+
+    // Loadout tally - PLEASE INCREMENT IF YOU ADD LOADOUTS
+    // Funny: Medic: 3 | Firebug: 3 | Berserker: 4 | Demo: 3 | Commando: 3 | Support: 7 | Sharp: 6
     LoadoutList(0)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Funny.FunnyLoadout0'
     LoadoutList(1)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Funny.FunnyLoadout1'
     LoadoutList(2)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Funny.FunnyLoadout2'
@@ -149,4 +262,24 @@ defaultproperties
     LoadoutList(14)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Funny.FunnyLoadout14'
     LoadoutList(15)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Funny.FunnyLoadout15'
     LoadoutList(16)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Funny.FunnyLoadout16'
+    
+    LoadoutList(17)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Funny.EarlyWaveLoadout2'
+    LoadoutList(18)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Funny.EarlyWaveLoadout13'
+    LoadoutList(19)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Funny.EarlyWaveLoadout16'
+    LoadoutList(20)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Funny.EarlyWaveLoadout21'
+    LoadoutList(21)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Funny.FleshpoundLoadout16'
+
+    LoadoutList(22)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Funny.ScrakeLoadout9'
+    LoadoutList(23)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Funny.ScrakeLoadout24'
+    LoadoutList(24)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Funny.ScrakeLoadout26'
+    LoadoutList(25)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Funny.ScrakeLoadout27'
+    LoadoutList(26)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Funny.ScrakeLoadout38'
+
+    LoadoutList(27)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Funny.MiscLoadout32'
+    LoadoutList(28)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Funny.MiscLoadout33'
+    LoadoutList(29)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Funny.MiscLoadout34'
+    LoadoutList(30)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Funny.MiscLoadout36'
+    LoadoutList(31)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Funny.MiscLoadout37'
+    LoadoutList(32)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Funny.MiscLoadout42'
+    LoadoutList(33)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Funny.MiscLoadout43'
 }

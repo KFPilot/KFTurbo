@@ -266,7 +266,8 @@ function bool SetupWaveLoadoutTypes(int PlayerCount, int TotalPlayerCount, out a
 		}
 
 		PlayerTypeCount = Round(FMin(float(TotalPlayerCount) * 0.33f, 1.f));
-		PlayerTypeCount = Min(PlayerCount, PlayerTypeCount);
+		//The Max(2, <>) makes sure that in 3-player (or more) games there are at least 2 Scrake loadouts.
+		PlayerTypeCount = Min(PlayerCount, Max(2, PlayerTypeCount));
 
 		if (PlayerTypeCount == 0)
 		{

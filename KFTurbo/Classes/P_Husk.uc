@@ -175,7 +175,7 @@ defaultproperties
     End Object
 
     Begin Object Class=AfflictionHarpoon Name=HarpoonAffliction
-        HarpoonSpeedModifier=0.5f
+        HarpoonSpeedModifier=0.2f //Slower for now to make the buggy movement look a little funnier.
     End Object
 
     AfflictionData=(Burn=None,Zap=AfflictionZap'ZapAffliction',Harpoon=AfflictionHarpoon'HarpoonAffliction')

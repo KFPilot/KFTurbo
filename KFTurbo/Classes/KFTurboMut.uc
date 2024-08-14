@@ -8,8 +8,6 @@ class KFTurboMut extends Mutator
 
 var TurboCustomZedHandler CustomZedHandler;
 
-var config String RepLinkSettingsClassString;
-
 var config bool bDebugClientPerkRepLink;
 
 simulated function PostBeginPlay()
