@@ -1,3 +1,8 @@
+
+//-------------------------------------------------------------------------------
+// Shotgun Husk
+//-------------------------------------------------------------------------------
+
 class P_Husk_Shotgun extends P_Husk_SUM;
 
 var int AttackRange;
@@ -28,7 +33,7 @@ function RangedAttack(Actor A)
         return;
 	}
 
-
+	// We do not care about fog in this case because the range is short to begin with.
 	if ( (KFDoorMover(A) != none || VSize(A.Location-Location) <= AttackRange) && !bDecapitated && !bZapped && !bHarpoonStunned)
 	{
         bShotAnim = true;
@@ -104,9 +109,9 @@ function SpawnTwoShots()
 
 defaultproperties
 {
-	AttackRange=700
-	AttackSpreadDegree=15
-	AttackProjectileCount=5
+	AttackRange=700 //Range in units from where the husk is allowed to initiate an attack.
+	AttackSpreadDegree=15 //Random deviation of the projectiles fired by the husk
+	AttackProjectileCount=5 //Count of projectiles fired by the husk
     ProjectileFireInterval=1.500000
     HuskFireProjClass=Class'KFTurbo.P_Husk_Shotgun_Proj'
     HeadHealth=270.000000
