@@ -1,10 +1,10 @@
 # KFTurbo+
 
-KFTurboPlus builds on the foundation of KFTurbo, featuring accelerated enemy spawns with Zeds like Scrakes and Fleshpounds appearing early in the game. As waves progress, the spawn rate increases steeply, adding more challenge and filling the map with additional Zeds. Players start with increased cash, enabling them to afford suitable loadouts from the beginning, and trading can be done anywhere on the map during trader waves.
+KFTurbo+ builds on the foundation of KFTurbo, featuring accelerated enemy spawns with zeds like Scrakes and Fleshpounds appearing early in the game. As waves progress, the spawn rate increases steeply, adding more challenge and filling the map with additional zeds. Players start with increased cash, enabling them to afford suitable loadouts from the beginning, and trading can be done anywhere on the map during trader waves.
 
 ## Key Features:
-- **Fast-Paced Spawns**: Zeds spawn at a high rate.
-- **Zed Density**: More Zeds are present on the map at once.
+- **Fast-Paced Spawns**: zeds spawn at a high rate.
+- **Zed Density**: More zeds are present on the map at once.
 - **Early Tough Enemies**: Scrakes and Fleshpounds appear in early waves and quickly increase in numbers.
 - **Increased Starting Cash**: Players start with enough cash to afford their loadouts right from the start.
 - **Difficulty**: Designed to challenge players, while remaining beatable.
