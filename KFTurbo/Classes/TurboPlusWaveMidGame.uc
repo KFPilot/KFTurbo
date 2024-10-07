@@ -6,7 +6,7 @@ defaultproperties
      TotalMonsters=45
      WaveDifficulty=2.f
 
-     RegularSequenceSize=7
+     RegularSequenceSize=8
      MinMixInSquadCount=2
      MaxMixInSquadCount=3
      BeatSize=1
