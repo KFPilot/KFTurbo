@@ -5,8 +5,7 @@ defaultproperties
      MaxMonsters=55
      TotalMonsters=55
      WaveDifficulty=3.f
-
-     RegularSequenceSize=7
+     RegularSequenceSize=8
      MinMixInSquadCount=3
      MaxMixInSquadCount=4
      BeatSize=1
@@ -34,7 +33,6 @@ defaultproperties
 	End Object
 	MixInSquad(3)=TurboMonsterSquad'KFTurbo.TurboPlusWaveLateGame.LateGameBeatSquad3'
 
-     //Override single FP beat spawn with 3.
 	Begin Object Class=TurboMonsterSquad Name=LateGameBeatSquad0
           Squad(0)=(Monster=Fleshpound,Count=3)
 	End Object
