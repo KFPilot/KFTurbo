@@ -352,10 +352,10 @@ static function Color GetPerkColor(byte Level)
 		return class'Canvas'.static.MakeColor(255,190,11,255); //Gold
 	case 7:
 	case 8:
-		return class'Canvas'.static.MakeColor(255,235,225,255); //Platinum
+		return class'Canvas'.static.MakeColor(225,235,255,255); //Platinum
 	}
 
-	return class'Canvas'.static.MakeColor(255,255,225,255);
+	return class'Canvas'.static.MakeColor(225,235,255,255);
 }
 
 static function byte PreDrawPerk(Canvas C, byte Level, out Material PerkIcon, out Material StarIcon)

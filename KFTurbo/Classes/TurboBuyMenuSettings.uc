@@ -10,6 +10,7 @@ var localized String GoldDefault;
 var localized String CamoDefault;
 var localized String CyberDefault;
 var localized String SteampunkDefault;
+var localized String VeterancyDefault;
 var localized String StickerDefault;
 
 function Texture GetIconForPickup(String VariantID)
@@ -22,6 +23,8 @@ function Texture GetIconForPickup(String VariantID)
             return Texture'KFTurbo.HUD.GoldIcon_D';
         case "CAMO":
             return Texture'KFTurbo.HUD.CamoIcon_D';
+        case "VET":
+            return Texture'KFTurbo.HUD.NeonIcon_D';
         case "TURBO":
             return Texture'KFTurbo.HUD.TurboIcon_D';
         case "VM":
@@ -61,6 +64,8 @@ function String GetHintForPickup(String VariantID)
             return CyberDefault;
         case "STP":
             return SteampunkDefault;
+        case "VET":
+            return VeterancyDefault;
         case "TURBO":
         case "VM":
         case "WEST":
@@ -82,5 +87,6 @@ defaultproperties
     CamoDefault = "Camo"
     CyberDefault = "Cyber"
     SteampunkDefault = "Steampunk"
+    VeterancyDefault = "Neon"
     StickerDefault = "Sticker"
 }

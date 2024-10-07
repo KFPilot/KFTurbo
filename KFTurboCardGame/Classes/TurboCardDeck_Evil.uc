@@ -278,7 +278,7 @@ defaultproperties
         CardName(0)="Poorly Oiled"
         CardName(1)="Machine"
         CardDescriptionList(0)="Players at"
-        CardDescriptionList(1)="less than 750%"
+        CardDescriptionList(1)="less than 75%"
         CardDescriptionList(2)="max health move"
         CardDescriptionList(3)="at 75% speed."
         OnActivateCard=ActivatePoorlyOiledMachine

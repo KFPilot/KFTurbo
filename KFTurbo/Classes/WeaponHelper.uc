@@ -56,7 +56,7 @@ static final function float GetDistanceBetweenActors(Actor A, Actor B)
 
 static final function PenetratingWeaponTrace(Vector TraceStart, KFWeapon Weapon, KFFire Fire, int PenetrationMax, float PenetrationMultiplier)
 {
-	local Actor HitActor;
+	local Actor HitActor, HitActorExtCollision;
 	local array<Actor> IgnoreActors;
 	local Vector TraceEnd, MomentumVector;
 	local Vector HitLocation;
@@ -83,6 +83,9 @@ static final function PenetratingWeaponTrace(Vector TraceStart, KFWeapon Weapon,
 
 	while(HitCount < PenetrationMax)
 	{
+		HitActor = None;
+		HitActorExtCollision = None;
+
 		switch(WeaponTrace(TraceStart, TraceEnd, MomentumVector, Weapon, Fire, HitActor, HitLocation, (PenetrationMultiplier ** float(HitCount))))
 		{
 		case TR_Block:
@@ -95,23 +98,30 @@ static final function PenetratingWeaponTrace(Vector TraceStart, KFWeapon Weapon,
 			break;
 		}
 
-		if(HitActor != None)
+		if (HitActor == None)
 		{
-			if(ExtendedZCollision(HitActor) != None && HitActor.Owner != None)
+			TraceStart = HitLocation;
+
+			if (VSize(TraceStart - TraceEnd) < 0.1)
 			{
-				HitActor.Owner.SetCollision(false);
-				IgnoreActors[IgnoreActors.Length] = HitActor.Owner;
+				break;
 			}
 
-			if(KFMonster(HitActor) != None && KFMonster(HitActor).MyExtCollision != None)
-			{
-				KFMonster(HitActor).MyExtCollision.SetCollision(false);
-				IgnoreActors[IgnoreActors.Length] = KFMonster(HitActor).MyExtCollision;				
-			}
-
-			HitActor.SetCollision(false);
-			IgnoreActors[IgnoreActors.Length] = HitActor;
+			continue;
 		}
+
+		//Needs to handle both player and monster extended collision.
+		if (xPawn(HitActor.Base) != None)
+		{
+			HitActorExtCollision = HitActor;
+			HitActor = HitActor.Base;
+			
+			HitActorExtCollision.SetCollision(false);
+			IgnoreActors[IgnoreActors.Length] = HitActorExtCollision;
+		}
+		
+		HitActor.SetCollision(false);
+		IgnoreActors[IgnoreActors.Length] = HitActor;
 
 		TraceStart = HitLocation;
 
@@ -130,10 +140,11 @@ static final function ETraceResult WeaponTrace(Vector TraceStart, Vector TraceEn
 	local Vector HitNormal;
 	local array<int> HitPoints;
 
-	HitActor = Fire.Instigator.HitPointTrace(HitLocation, HitNormal, TraceEnd, HitPoints, TraceStart, vect(0,0,0), 1);
+	HitActor = Fire.Instigator.HitPointTrace(HitLocation, HitNormal, TraceEnd, HitPoints, TraceStart,, 1);
 
 	if(ShouldSkipActor(HitActor, Fire.Instigator))
 	{
+		HitActor = None;
 		return TR_None;
 	}
 

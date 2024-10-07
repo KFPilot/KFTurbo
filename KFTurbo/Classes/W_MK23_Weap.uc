@@ -12,7 +12,7 @@ function bool HandlePickupQuery( pickup Item )
 
 simulated function bool PutDown()
 {
-	if ( Instigator.PendingWeapon.class == class'W_DualMK23_Weap' )
+	if (DualMK23Pistol(Instigator.PendingWeapon) != None)
 	{
 		bIsReloading = false;
 	}

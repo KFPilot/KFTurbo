@@ -1,9 +1,18 @@
 class W_Magnum44_Weap extends Magnum44Pistol;
 
+function bool HandlePickupQuery( pickup Item )
+{
+	if (class'WeaponHelper'.static.SingleWeaponHandlePickupQuery(Self, Item))
+	{
+		return false;
+	}
+
+	return Super.HandlePickupQuery(Item);
+}
 
 simulated function bool PutDown()
 {
-	if ( Instigator.PendingWeapon.class == class'W_Dual44_Weap' )
+	if (Dual44Magnum(Instigator.PendingWeapon) != None)
 	{
 		bIsReloading = false;
 	}

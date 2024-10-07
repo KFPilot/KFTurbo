@@ -4,6 +4,63 @@ var KFHumanPawn HitHumanPawn;
 //Used by KFSteamStats
 var bool bIsMP7Projectile, bIsMP5Projectile;
 
+simulated function PostNetReceive()
+{
+     if( bHidden && !bHitHealTarget && HealLocation != vect(0,0,0))
+     {
+          HitHealTarget(HealLocation,vector(HealRotation));
+     }
+}
+
+simulated function Destroyed()
+{
+	if (SmokeTrail != None)
+	{
+		SmokeTrail.HandleOwnerDestroyed();
+	}
+
+	if(!bHitHealTarget && HealLocation != vect(0,0,0))
+	{
+          HitHealTarget(Location,-vector(Rotation));
+     }
+	else if(!bHasExploded)
+     {
+		Explode(Location,-vector(Rotation));
+     }
+
+    Super(ROBallisticProjectile).Destroyed();
+}
+
+simulated function Explode(vector HitLocation, vector HitNormal)
+{
+     local ROBulletHitEffect ExplosionEffect;
+     bHasExploded = True;
+
+     // Don't do the regular effect if we healed someone
+     if( bHitHealTarget )
+     {
+          return;
+     }
+
+     SetPhysics(PHYS_None);
+
+     if(Level.NetMode != NM_DedicatedServer)
+     {
+          ExplosionEffect = Spawn(class'ROBulletHitEffect',,, Location, rotator(-HitNormal));
+          ExplosionEffect.SetDrawScale(0.15f);
+     }
+
+     BlowUp(HitLocation);
+     Destroy();
+}
+
+state WaitForServerHeal
+{
+Begin:
+     Sleep(1.f);
+     Destroy();
+}
+
 simulated function ProcessTouch(Actor Other, Vector HitLocation)
 {
 	local KFHumanPawn Healed;
@@ -11,20 +68,13 @@ simulated function ProcessTouch(Actor Other, Vector HitLocation)
 	local float MedicReward;
 	local float HealSum; // for modifying based on perks
 
-	if ( Other == None || Other == Instigator || Other.Base == Instigator )
+     if (bHasExploded)
      {
           return;
      }
-	
-     if (Role != ROLE_Authority)
-     {
-          if( KFHumanPawn(Other) != none )
-          {
-               bHidden = true;
-               SetPhysics(PHYS_None);
-          }
 
-	     Explode(HitLocation,-vector(Rotation));
+	if ( Other == None || Other == Instigator || Other.Base == Instigator )
+     {
           return;
      }
 
@@ -34,9 +84,27 @@ simulated function ProcessTouch(Actor Other, Vector HitLocation)
      {
           Healed = KFHumanPawn(Other.Base);
      }
+	
+     if (Role != ROLE_Authority)
+     {
+          bHidden = true;
+          SetPhysics(PHYS_None);
+
+          if (Healed == None)
+          {
+               Explode(HitLocation,-vector(Rotation));
+          }
+          else
+          {
+               GotoState('WaitForServerHeal');
+          }
+          return;
+     }
 
      if (Instigator == none || Healed == None || Healed.Health <= 0 || Healed.Health >= Healed.HealthMax || !Healed.bCanBeHealed)
      {
+          bHidden = true;
+          SetPhysics(PHYS_None);
 	     Explode(HitLocation, -vector(Rotation));
           return;
      }

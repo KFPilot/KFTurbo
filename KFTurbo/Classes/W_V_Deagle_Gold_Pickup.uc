@@ -1,44 +1,18 @@
-class W_V_Deagle_Gold_Pickup extends GoldenDeaglePickup;
+class W_V_Deagle_Gold_Pickup extends W_Deagle_Pickup;
 
-function inventory SpawnCopy(pawn Other)
+function Inventory SpawnCopy(pawn Other)
 {
-	local Inventory I;
-	local int Index;
-	local bool bIsSingleVariant;
-
-	for (I = Other.Inventory; I != none; I = I.Inventory)
-	{
-		bIsSingleVariant = false;
-
-		for (Index = 0; Index < default.VariantClasses.Length; Index++)
-		{
-			if (default.VariantClasses[Index] == I.default.PickupClass)
-			{
-				bIsSingleVariant = true;
-				break;
-			}
-		}
-
-		if (bIsSingleVariant)
-		{
-			if (Inventory != none)
-				Inventory.Destroy();
-			InventoryType = Class'W_V_DualDeagle_Gold_Weap';
-			AmmoAmount[0] += Deagle(I).AmmoAmount(0);
-			MagAmmoRemaining += Deagle(I).MagAmmoRemaining;
-			I.Destroyed();
-			I.Destroy();
-			Return Super(KFWeaponPickup).SpawnCopy(Other);
-		}
-	}
-
-	InventoryType = Default.InventoryType;
+	class'WeaponHelper'.static.SingleWeaponSpawnCopy(Self, Other, class'W_V_DualDeagle_Gold_Weap');
 	Return Super(KFWeaponPickup).SpawnCopy(Other);
 }
 
 defaultproperties
 {
-     VariantClasses(0)=Class'KFTurbo.W_Deagle_Pickup'
-     VariantClasses(1)=Class'KFTurbo.W_V_Deagle_Gold_Pickup'
-     InventoryType=Class'KFTurbo.W_V_Deagle_Gold_Weap'
+	InventoryType=Class'KFTurbo.W_V_Deagle_Gold_Weap'
+
+	ItemName="Golden Handcannon"
+	ItemShortName="Golden Handcannon"
+	PickupMessage="You got the gold handcannon."
+	StaticMesh=StaticMesh'KF_pickupsGold_Trip.HandcannonGold_Pickup'
+	Skins(0)=Texture'KF_Weapons3rd_Gold_T.Weapons.Gold_Handcannon_3rd'
 }

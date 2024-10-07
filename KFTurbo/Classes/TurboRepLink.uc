@@ -10,8 +10,8 @@ const VMVariantID = "VM"; //VM sticker skins.
 const WLVariantID = "WEST"; //Westlondon sticker skins.
 const CyberVariantID = "CYB"; //Cyber Weapon skins.
 const SteampunkVariantID = "STP"; //Steampunk weapon skins.
+const VeterancyVariantID = "VET"; //Neon weapon (Veterancy weapons) skins.
 
-//Special variants - accessible to specific players.
 const RetartVariantID = "RET";
 const ScuddlesVariantID = "SCUD";
 const CubicVariantID = "CUBIC";
@@ -298,6 +298,11 @@ simulated function SetupVariantWeaponEntry(out VariantWeapon Entry)
         Entry.VariantID = CyberVariantID;
         Entry.ItemStatus = 0;
     }
+    else if (IsGenericVeterancySkin(Entry.VariantClass))
+    {
+        Entry.VariantID = VeterancyVariantID;
+        Entry.ItemStatus = 0;
+    }
     else
     {
         Entry.VariantID = DefaultID;
@@ -465,6 +470,11 @@ static final function bool IsGenericCyberSkin(class<Pickup> PickupClass)
 static final function bool IsGenericSteampunkSkin(class<Pickup> PickupClass)
 {
 	return InStr(Caps(PickupClass), "_STP_") != -1;
+}
+
+static final function bool IsGenericVeterancySkin(class<Pickup> PickupClass)
+{
+	return InStr(Caps(PickupClass), "_VET_") != -1;
 }
 
 defaultproperties
