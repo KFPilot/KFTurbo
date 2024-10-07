@@ -1,11 +1,11 @@
-//Killing Floor Turbo KFTurboGameTypePlus
-//Distributed under the terms of the GPL-2.0 License.
-//For more information see https://github.com/KFPilot/KFTurbo.
+// Killing Floor Turbo KFTurboGameTypePlus
+// Distributed under the terms of the GPL-2.0 License.
+// For more information see https://github.com/KFPilot/KFTurbo.
 class KFTurboGameTypePlus extends KFTurboGameType;
 
 var TurboMonsterCollection TurboMonsterCollection;
 
-//Refers to the last squad we used to fill out NextSpawnSquad.
+// Refers to the last squad we used to fill out NextSpawnSquad.
 var TurboMonsterSquad CurrentSquad;
 var float WaveNextSquadSpawnTime;
 
@@ -14,7 +14,7 @@ const INITIAL_CASH = 42069;
 const SPAWN_TIME = 1.0;
 const WAVE_COUNTDOWN = 60;
 const STD_MAX_ZOMBIES = 48;
-const FAKED_P_HEALTH = 0;
+const FAKED_P_HEALTH = 0; // Currently not being used but maybe in the future? Force to 6p?
 
 // Function called before the game begins
 function PreBeginPlay()
@@ -32,7 +32,7 @@ function PreBeginPlay()
         }
     }
 
-    //Close all shops! We don't use them at this difficulty.
+    // Close all shops! We don't use them at this difficulty.
 	foreach AllActors(Class'ShopVolume',Shop) 
 	{
 		Shop.bAlwaysClosed = true;
@@ -77,7 +77,7 @@ State MatchInProgress
         WaveCountDown = WAVE_COUNTDOWN;
     }
 
-    //Don't select shops.
+    // Don't select shops.
     function SelectShop() {}
     
     function float CalcNextSquadSpawnTime()
@@ -118,7 +118,7 @@ State MatchInProgress
         }
     }
 
-    //It's ok to call this I think.
+    // It's ok to call this I think.
     function CloseShops()
     {
         Super.CloseShops();
@@ -149,7 +149,7 @@ function LoadUpMonsterList()
 function SetupWave()
 {
     TraderProblemLevel = 0;
-    ZombiesKilled=0;
+    ZombiesKilled = 0;
     WaveMonsters = 0;
     WaveNumClasses = 0;
 
@@ -260,15 +260,6 @@ defaultproperties
 	Begin Object Class=TurboMonsterCollectionWaveImpl Name=TurboMonsterCollection0
 	End Object
     TurboMonsterCollection=TurboMonsterCollectionWaveImpl'KFTurbo.KFTurboGameTypePlus.TurboMonsterCollection0'
-
-    // Wave 1
-    // Squads: 0-5
-    // Wave 2-7
-    // Squads: 6-11
-    // Wave 8-9
-    // Squads: 12-17
-    // Wave 10
-    // Squads: 18-22
 
     LongWaves(0)=(WaveMask=63,WaveMaxMonsters=35,WaveDifficulty=2.000000)
     LongWaves(1)=(WaveMask=4032,WaveMaxMonsters=35,WaveDifficulty=2.000000)
