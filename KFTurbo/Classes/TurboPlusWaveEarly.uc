@@ -5,11 +5,9 @@ defaultproperties
      MaxMonsters=35
      TotalMonsters=35
      WaveDifficulty=1.f
-
      RegularSequenceSize=10
      MinMixInSquadCount=1
      MaxMixInSquadCount=2
-
      BeatSize=2
 
 	Begin Object Class=TurboMonsterSquad Name=EarlySquad0
