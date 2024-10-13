@@ -3,7 +3,6 @@ class W_MP5M_Fire extends KFFire;
 defaultproperties
 {
      AmmoClass=Class'KFTurbo.W_MP5M_Ammo'
-     // mac10 impl
      FireAimedAnim="Fire_Iron"
      RecoilRate=0.060000
      maxVerticalRecoilAngle=124
