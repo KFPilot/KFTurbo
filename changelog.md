@@ -283,7 +283,9 @@
         - 13% more expensive 🔻
         - 45% less maximum ammo 🔻
     - **MP5**
+        - 17% increased damage 🟢
         - 12% faster reload speed 🟢
+        - Firing type is no longer high RoF ⚠️
         
         - Magazine capacity 32 -> 30 🔻
         - 13% less maximum ammo 🔻
