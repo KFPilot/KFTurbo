@@ -2,7 +2,7 @@ class TurboPlusWaveMidGame extends TurboPlusWaveEarly;
 
 defaultproperties
 {
-     MaxMonsters=45
+     MaxMonsters=40
      TotalMonsters=45
      WaveDifficulty=2.f
 
@@ -27,7 +27,6 @@ defaultproperties
 	Begin Object Class=TurboMonsterSquad Name=MidGameSquad2
           Squad(0)=(Monster=Gorefast,Count=2)
           Squad(1)=(Monster=Clot,Count=2)
-          Squad(2)=(Monster=Siren,Count=2)
 	End Object
 	RegularSquad(8)=TurboMonsterSquad'MidGameSquad2'
 
