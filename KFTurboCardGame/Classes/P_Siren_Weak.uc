@@ -9,13 +9,16 @@ simulated function PostBeginPlay()
 
 defaultproperties
 {
+     HeadRadius=5.500000
+     HeadScale=0.9000000
      ScreamRadius=500
      ScreamForce=-100000
      ColRadius=16.000000
-     ColHeight=3.300000
-     ColOffset=(Z=30.000000)
+     PrePivot=(Z=-1.000000)
+     ColHeight=4.000000
+     ColOffset=(Z=33.000000)
      CollisionRadius=16.500000
-     CollisionHeight=29.000000
+     CollisionHeight=31.000000
      MeleeRange=34.000000
      HeadHealth=100.000000
      HealthMax=150.000000

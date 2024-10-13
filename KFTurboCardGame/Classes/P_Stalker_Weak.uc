@@ -10,7 +10,6 @@ simulated function PostBeginPlay()
 defaultproperties
 {
      HeadRadius=5.500000
-     HeadHeight=1.650000
      HeadScale=0.900000
      ColRadius=18.000000
      ColHeight=3.300000

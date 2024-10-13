@@ -14,7 +14,8 @@ defaultproperties
      HeadScale=0.900000
      ColRadius=16.000000
      ColHeight=6.600000
-     ColOffset=(Z=38.000000)
+     ColOffset=(Z=40.000000)
+     PrePivot=(Z=0.000000)
      CollisionRadius=16.500000
      CollisionHeight=35.000000
      MeleeRange=23.000000
