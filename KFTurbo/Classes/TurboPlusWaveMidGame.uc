@@ -12,7 +12,6 @@ defaultproperties
      BeatSize=1
 
      Begin Object Class=TurboMonsterSquad Name=MidGameSquad0
-          Squad(0)=(Monster=Bloat,Count=3)
           Squad(1)=(Monster=Clot,Count=2)
           Squad(2)=(Monster=Stalker,Count=2)
 	End Object
@@ -34,6 +33,7 @@ defaultproperties
 
 	Begin Object Class=TurboMonsterSquad Name=MidGameBeatSquad0
           Squad(0)=(Monster=Fleshpound,Count=2)
+          Squad(0)=(Monster=Bloat,Count=1)
 	End Object
 	BeatSquad(1)=TurboMonsterSquad'MidGameBeatSquad0'
 
