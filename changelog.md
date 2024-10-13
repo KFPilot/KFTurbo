@@ -304,9 +304,9 @@
         - 53% stronger healing potency 🟢
         - 25% less recoil 🟢
         - 7% increased damage 🟢
-        - 17% slower fire rate 🔻
         - Headshot bonus damage increased by 105% 🟢
 
+        - 17% slower fire rate 🔻
         - 50% more charge consumed per dart 🔻
         - 10% more expensive 🔻
         - Magazine capacity 15 -> 10 🔻
