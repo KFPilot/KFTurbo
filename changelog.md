@@ -304,7 +304,7 @@
         - 53% stronger healing potency 🟢
         - 25% less recoil 🟢
         - 7% increased damage 🟢
-        - 45% faster fire rate 🟢
+        - 17% slower fire rate 🔻
         - Headshot bonus damage increased by 105% 🟢
 
         - 50% more charge consumed per dart 🔻

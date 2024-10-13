@@ -27,11 +27,17 @@ var TurboHUDOverlay MarkInfoHUD;
 simulated event PostRender( canvas Canvas )
 {
 	bUseBloom = bool(ConsoleCommand("get ini:Engine.Engine.ViewportManager Bloom"));
-	PlayerOwner.PostFX_SetActive(0, false);
+	if (bUseBloom)
+	{
+		PlayerOwner.PostFX_SetActive(0, false);
+	}
 
 	Super.PostRender(Canvas);
 
-	PlayerOwner.PostFX_SetActive(0, bUseBloom);
+	if (bUseBloom)
+	{
+		PlayerOwner.PostFX_SetActive(0, bUseBloom);
+	}
 }
 
 simulated function PostBeginPlay()

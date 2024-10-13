@@ -9,7 +9,7 @@ defaultproperties
      DamageMax=75
      Momentum=8000.000000
      bWaitForRelease=True
-     FireRate=0.300000
+     FireRate=0.200000
      AmmoClass=Class'KFTurbo.W_M7A3M_Ammo'
      Spread=0.006500
 }
