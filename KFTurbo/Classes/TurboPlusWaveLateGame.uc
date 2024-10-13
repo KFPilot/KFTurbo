@@ -2,8 +2,8 @@ class TurboPlusWaveLateGame extends TurboPlusWaveMidGame;
 
 defaultproperties
 {
-     MaxMonsters=55
-     TotalMonsters=55
+     MaxMonsters=45
+     TotalMonsters=50
      WaveDifficulty=3.f
      RegularSequenceSize=8
      MinMixInSquadCount=3
@@ -16,7 +16,6 @@ defaultproperties
 	RegularSquad(5)=TurboMonsterSquad'KFTurbo.TurboPlusWaveLateGame.LateGameSquad5'
 
 	Begin Object Class=TurboMonsterSquad Name=LateGameSquad6
-          Squad(0)=(Monster=Husk,Count=2)
           Squad(1)=(Monster=Clot,Count=2)
 	End Object
 	RegularSquad(6)=TurboMonsterSquad'KFTurbo.TurboPlusWaveLateGame.LateGameSquad6'
