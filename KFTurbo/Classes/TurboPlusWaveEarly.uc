@@ -20,7 +20,6 @@ defaultproperties
 	Begin Object Class=TurboMonsterSquad Name=EarlySquad1
           Squad(0)=(Monster=Gorefast,Count=2)
           Squad(1)=(Monster=Clot,Count=2)
-          Squad(2)=(Monster=Bloat,Count=1)
 	End Object
 	RegularSquad(1)=TurboMonsterSquad'EarlySquad1'
      
