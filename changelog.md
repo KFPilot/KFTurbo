@@ -213,7 +213,7 @@
 ### Demolitions
 - 50% more M4 203 grenades 🟢
 - M4 203 grenades receive 90% damage bonus instead of the standard 60% 🟢
-- 60% more LAW rockets 🟢
+- 50% more LAW rockets 🟢
 - 30% faster LAW fire rate 🟢
 - 40% faster LAW reload speed 🟢
 - Perk weapons receive a 30% discount 🔻
@@ -256,7 +256,7 @@
         - 5% increased damage 🟢
         - 138% increased dud impact damage 🟢
         - 8% cheaper 🟢
-
+        - 20% more maximum and starting ammo 🟢
         - 43% more player pushback on firing 🔻
     - **Pipe Bomb**
         - Removed the exploit which let players detonate pipe bombs multiple times by shooting it ⚠️
