@@ -17,6 +17,7 @@ defaultproperties
      ColOffset=(Z=38.000000)
      CollisionRadius=16.500000
      CollisionHeight=35.000000
+     MeleeRange=23.000000
      HealthMax=125.000000
      Health=125.000000
      HeadHealth=25.000000

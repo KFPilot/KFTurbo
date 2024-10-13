@@ -1,5 +1,4 @@
-class P_Clot_Weak extends P_Clot_STA;
-
+class P_Siren_Weak extends P_Siren_STA;
 
 simulated function PostBeginPlay()
 {
@@ -7,17 +6,18 @@ simulated function PostBeginPlay()
 
      SetBoneScale(10, 0.66f, RootBone);
 }
+
 defaultproperties
 {
-     HeadRadius=5.500000
-     HeadHeight=1.320000
-     HeadScale=0.900000
+     ScreamRadius=500
+     ScreamForce=-100000
      ColRadius=16.000000
      ColHeight=3.300000
      ColOffset=(Z=30.000000)
      CollisionRadius=16.500000
      CollisionHeight=29.000000
-     HealthMax=65.000000
-     Health=65.000000
-     HeadHealth=25.000000
+     MeleeRange=34.000000
+     HeadHealth=100.000000
+     HealthMax=150.000000
+     Health=150
 }

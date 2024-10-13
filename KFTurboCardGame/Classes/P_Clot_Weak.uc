@@ -1,4 +1,4 @@
-class P_Stalker_Weak extends P_Stalker_STA;
+class P_Clot_Weak extends P_Clot_STA;
 
 
 simulated function PostBeginPlay()
@@ -10,14 +10,15 @@ simulated function PostBeginPlay()
 defaultproperties
 {
      HeadRadius=5.500000
-     HeadHeight=1.650000
+     HeadHeight=1.320000
      HeadScale=0.900000
-     ColRadius=18.000000
+     ColRadius=16.000000
      ColHeight=3.300000
      ColOffset=(Z=30.000000)
-     CollisionRadius=18.000000
+     CollisionRadius=16.500000
      CollisionHeight=29.000000
-     HealthMax=50.000000
-     Health=50.000000
+     MeleeRange=15.000000
+     HealthMax=65.000000
+     Health=65.000000
      HeadHealth=25.000000
 }
