@@ -36,5 +36,4 @@ defaultproperties
      aimerror=30.000000
      Spread=0.01000
      SpreadStyle=SS_Random
-
 }
