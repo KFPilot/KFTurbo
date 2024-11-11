@@ -290,7 +290,7 @@ simulated function DrawSelectableCardList(Canvas C)
 	local array<int> VoteList;
 	
 	C.SetDrawColor(255, 255, 255, 255);
-	C.Font = class'KFTurboFonts'.static.LoadBoldFontStatic(4);
+	C.Font = class'KFTurboFontHelper'.static.LoadBoldFontStatic(4);
 
 	CenterIndex = float(CurrentCardCount) / 2.f;
 	CardSize = FMin(C.ClipX / 9.f, 256.f);
@@ -416,7 +416,7 @@ simulated function DrawActiveCardList(Canvas C)
 		return;
 	}
 
-	C.Font = class'KFTurboFonts'.static.LoadFontStatic(5);
+	C.Font = class'KFTurboFontHelper'.static.LoadFontStatic(5);
 	TempX = C.ClipX - 2.f;
 	TempY += CardSize * 0.7f; //Remainder of CardSize for a given CardOffset, plus some extra padding.
 
@@ -639,7 +639,7 @@ simulated function DrawBorrowedTime(Canvas C)
 
 	C.FontScaleX = 1.f;
 	C.FontScaleY = 1.f;
-	C.Font = class'KFTurboFonts'.static.LoadLargeNumberFont(GetFontSizeForWarnLevel(WarnLevel));
+	C.Font = class'KFTurboFontHelper'.static.LoadLargeNumberFont(GetFontSizeForWarnLevel(WarnLevel));
 	C.TextSize(GetStringOfZeroes(Len(TimeString)), TextSizeX, TextSizeY);
 	TextScale = (SizeY) / TextSizeY;
 	C.FontScaleX = TextScale;

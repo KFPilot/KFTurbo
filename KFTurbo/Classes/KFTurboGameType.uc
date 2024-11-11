@@ -317,6 +317,7 @@ function SetupWave()
 {
 	Super.SetupWave();
 	
+    ClearTraderEndVotes();
 	class'TurboWaveEventHandler'.static.BroadcastWaveStarted(Self, WaveNum);
 }
 
@@ -383,35 +384,37 @@ state MatchInProgress
 }
 
 //Check if enough people have voted to end the trader and end it.
-function AttemptTraderEnd()
+function AttemptTraderEnd(TurboPlayerController VoteInstigator)
 {
-    local int NumVoters, NumVotes;
-    local Controller C;
+    local int Index, NumVoters, NumVotes;
+    local TurboPlayerReplicationInfo TPRI;
     local float VotePercent;
     
-    if (bWaveInProgress)
+    if (bWaveInProgress || WaveCountDown <= 10)
 	{
 		return;
 	}
 
+    if (StaticIsTestGameType(Self))
+    {
+        return;
+    }
+
     NumVoters = 0;
     NumVotes = 0;
 
-    for (C = Level.ControllerList; C != None; C = C.NextController)
-    {
-        if (C.PlayerReplicationInfo == None || C.PlayerReplicationInfo.bOnlySpectator)
-        {
-            continue;
-        }
+	for (Index = Level.GRI.PRIArray.Length - 1; Index >= 0; Index--)
+	{
+		TPRI = TurboPlayerReplicationInfo(Level.GRI.PRIArray[Index]);
 
-        if (TurboPlayerController(C) == None || TurboPlayerReplicationInfo(C.PlayerReplicationInfo) == None)
+        if (TPRI == None)
         {
             continue;
         }
 
         NumVoters++;
         
-        if (TurboPlayerReplicationInfo(C.PlayerReplicationInfo).bVotedForTraderEnd)
+        if (TPRI.bVotedForTraderEnd)
         {
             NumVotes++;
         }
@@ -426,10 +429,34 @@ function AttemptTraderEnd()
 
     if (VotePercent < 0.51f)
     {
+        //This means someone instigated a vote.
+        if (NumVoters == 1)
+        {
+            BroadcastLocalizedMessage(class'TurboEndTraderVoteMessage',,VoteInstigator.PlayerReplicationInfo);
+        }
         return;
     }
 
 	WaveCountDown = Min(WaveCountDown, 10);
+    TurboGameReplicationInfo(GameReplicationInfo).TimeToNextWave = WaveCountDown;
+}
+
+function ClearTraderEndVotes()
+{
+    local int Index;
+    local TurboPlayerReplicationInfo TPRI;
+
+	for (Index = Level.GRI.PRIArray.Length - 1; Index >= 0; Index--)
+	{
+		TPRI = TurboPlayerReplicationInfo(Level.GRI.PRIArray[Index]);
+
+        if (TPRI == None)
+        {
+            continue;
+        }
+
+        TPRI.ClearTraderEndVote();
+    }
 }
 
 defaultproperties

@@ -30,7 +30,7 @@ static function RenderComplexMessage(
 	}
 
 	Canvas.DrawColor.A = A;
-	Canvas.Font = class'KFTurboFonts'.static.LoadFontStatic(default.FontSize);
+	Canvas.Font = class'KFTurboFontHelper'.static.LoadFontStatic(default.FontSize);
 	Canvas.FontScaleX = FMax(Canvas.ClipY / 2160.f, 0.75f);
 	Canvas.FontScaleY = Canvas.FontScaleX;
 	Canvas.TextSize(MessageString, XS, YS);

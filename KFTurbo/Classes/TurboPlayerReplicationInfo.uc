@@ -26,6 +26,11 @@ function Timer()
         ShieldStrength = 0.f;
 		HealthMax = 100;
     }
+
+    if (bOnlySpectator && bVotedForTraderEnd)
+    {
+        bVotedForTraderEnd = false;
+    }
 }
 
 function RequestTraderEnd()
@@ -39,13 +44,13 @@ function RequestTraderEnd()
 
     GameType = KFTurboGameType(Level.Game);
 
-    if (GameType == None || GameType.bWaveInProgress)
+    if (GameType == None || GameType.bWaveInProgress || GameType.WaveCountDown <= 10)
     {
         return;
     }
 
     bVotedForTraderEnd = true;
-    GameType.AttemptTraderEnd();
+    GameType.AttemptTraderEnd(TurboPlayerController(Owner));
 }
 
 function ClearTraderEndVote()

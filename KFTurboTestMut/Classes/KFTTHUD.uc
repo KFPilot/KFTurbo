@@ -1,6 +1,12 @@
 class KFTTHUD extends TurboHUDKillingFloor;
 
-simulated function DrawKFHUDTextElements(Canvas C);
+simulated function DrawKFHUDTextElements(Canvas C) 
+{
+	if (WaveInfoHUD != None)
+	{
+		WaveInfoHUD.Render(C);
+	}
+}
 
 function DrawDoorHealthBars(Canvas C) {
 	if (PlayerOwner.Pawn != None)

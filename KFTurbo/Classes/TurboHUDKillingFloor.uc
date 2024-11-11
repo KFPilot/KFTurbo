@@ -1,5 +1,5 @@
 //Killing Floor Turbo TurboHUDKillingFloor
-//KFTurbo's HUD. Uses TurboHUDOverlays instead of HUDKillingFloor.
+//KFTurbo's HUD. Leverages TurboHUDOverlays for most of the UI elements.
 //Distributed under the terms of the GPL-2.0 License.
 //For more information see https://github.com/KFPilot/KFTurbo.
 class TurboHUDKillingFloor extends SRHUDKillingFloor;
@@ -15,8 +15,8 @@ var bool bSortedEmoteList;
 var class<TurboHUDOverlay> PlayerInfoHUDClass;
 var TurboHUDOverlay PlayerInfoHUD;
 
-var class<TurboHUDOverlay> WaveInfoHUDClass;
-var TurboHUDOverlay WaveInfoHUD;
+var class<TurboHUDWaveInfo> WaveInfoHUDClass;
+var TurboHUDWaveInfo WaveInfoHUD;
 
 var class<TurboHUDOverlay> PlayerHUDClass;
 var TurboHUDOverlay PlayerHUD;
@@ -895,14 +895,35 @@ simulated final function DrawScaledSmileyText( string S, canvas C, optional out 
 	C.SetPos(PX,PY);
 }
 
+simulated function LocalizedMessage( class<LocalMessage> Message, optional int Switch, optional PlayerReplicationInfo RelatedPRI_1, optional PlayerReplicationInfo RelatedPRI_2, optional Object OptionalObject, optional String CriticalString)
+{
+	if (class<KillsMessage>(Message) != None)
+	{
+		if (OptionalObject == None)
+		{
+			return;
+		}
+
+		WaveInfoHUD.ReceivedKillMessage(class<KillsMessage>(Message), class<Monster>(OptionalObject), RelatedPRI_1);
+		return;
+	}
+
+	Super.LocalizedMessage(Message, Switch, RelatedPRI_1, RelatedPRI_2, OptionalObject, CriticalString);
+}
+
+simulated function UpdateKillMessage(Object OptionalObject, PlayerReplicationInfo RelatedPRI_1)
+{
+	//LocalMessage list no longer handles kill messages.
+}
+
 static function Font LoadFontStatic(int i)
 {
-	return class'KFTurboFonts'.static.LoadFontStatic(i);
+	return class'KFTurboFontHelper'.static.LoadFontStatic(i);
 }
 
 simulated function Font LoadFont(int i)
 {
-	return class'KFTurboFonts'.static.LoadFontStatic(i);
+	return class'KFTurboFontHelper'.static.LoadFontStatic(i);
 }
 
 defaultproperties

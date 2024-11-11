@@ -52,6 +52,10 @@ var(Layout) float PingTextSizeY;
 var(Color) Color PingIconColor;
 var Texture PingIcon;
 
+var localized string ThousandSuffix;
+var localized string MillionSuffix;
+var localized string SeparatorCharacter;
+
 simulated function UpdateScoreBoard(Canvas Canvas)
 {
 	local TurboPlayerReplicationInfo OwnerPRI, TPRI;
@@ -121,7 +125,7 @@ simulated final function DrawScoreboardHeader(Canvas Canvas, float CenterY, floa
 	//Draw Difficulty
 	Canvas.FontScaleX = 1.f;
 	Canvas.FontScaleY = 1.f;
-	Canvas.Font = class'KFTurboFonts'.static.LoadFontStatic(2);
+	Canvas.Font = class'KFTurboFontHelper'.static.LoadFontStatic(2);
 	DrawString = SkillLevel[Clamp(InvasionGameReplicationInfo(GRI).BaseDifficulty, 0, 7)];
 	Canvas.TextSize(DrawString, TextSizeX, TextSizeY);
 	Canvas.FontScaleY = (SizeY * 0.125f) / (TextSizeY * 0.5f);
@@ -159,6 +163,29 @@ simulated final function DrawScoreboardHeader(Canvas Canvas, float CenterY, floa
 	Canvas.TextSize(class'TurboHUDOverlay'.static.GetStringOfZeroes(Len(DrawString)), TextSizeX, TextSizeY);
 	Canvas.SetPos(CenterX - (TextSizeX * 0.5f), CenterY + (SizeY * 0.35f));
 	class'TurboHUDOverlay'.static.DrawCounterTextMeticulous(Canvas, DrawString, TextSizeX, 1.f);
+}
+
+static final function string GetCompressedNumber(int Number)
+{
+	local string Result;
+	if (Number < 10000)
+	{
+		return string(Number);
+	}
+	else if (Number < 1000000)
+	{
+		Number = Number / 100;
+		Result = string(Number);
+		Result = Left(Result, Len(Result) - 1)$default.SeparatorCharacter$Right(Result, 1)$default.ThousandSuffix;
+		return Result;
+	}
+	else
+	{
+		Number = Number / 100000;
+		Result = string(Number);
+		Result = Left(Result, Len(Result) - 1)$default.SeparatorCharacter$Right(Result, 1)$default.ThousandSuffix;
+		return Result;
+	}
 }
 
 simulated final function DrawPlayerEntry(Canvas Canvas, TurboPlayerReplicationInfo TurboPRI, float SizeY, float PositionY, bool bIsLocalPlayer, bool bIsFirstEntry)
@@ -228,7 +255,7 @@ simulated final function DrawPlayerEntry(Canvas Canvas, TurboPlayerReplicationIn
 
 	DrawText = "000";
 
-	Canvas.Font = class'KFTurboFonts'.static.LoadFontStatic(2);
+	Canvas.Font = class'KFTurboFontHelper'.static.LoadFontStatic(2);
 	Canvas.FontScaleX = 1.f;
 	Canvas.FontScaleY = 1.f;
 	Canvas.TextSize(DrawText, TextSizeX, TextSizeY);
@@ -297,7 +324,7 @@ simulated final function DrawPlayerEntry(Canvas Canvas, TurboPlayerReplicationIn
 	}
 
 	Canvas.DrawColor = ScoreboardTextColor;
-	DrawText = string(TurboPRI.HealthHealed);
+	DrawText = GetCompressedNumber(TurboPRI.HealthHealed);
 
 	Canvas.TextSize(class'TurboHUDOverlay'.static.GetStringOfZeroes(Len(DrawText)), TextSizeX, TextSizeY);
 	Canvas.SetPos(TempX - (TextSizeX * 0.5f), CenterY - (TextSizeY * 0.5f));
@@ -315,7 +342,7 @@ simulated final function DrawPlayerEntry(Canvas Canvas, TurboPlayerReplicationIn
 	}
 	
 	Canvas.DrawColor = ScoreboardTextColor;
-	DrawText = string(Min(int(TurboPRI.Score), 9999999)) $ class'KFTab_BuyMenu'.default.MoneyCaption;
+	DrawText = GetCompressedNumber(TurboPRI.Score) @ class'KFTab_BuyMenu'.default.MoneyCaption;
 	Canvas.TextSize(class'TurboHUDOverlay'.static.GetStringOfZeroes(Len(DrawText)), TextSizeX, TextSizeY);
 	Canvas.SetPos(TempX - (TextSizeX * 0.5f), CenterY - (TextSizeY * 0.5f));
 	class'TurboHUDOverlay'.static.DrawCounterTextMeticulous(Canvas, DrawText, TextSizeX, 1.f);
@@ -344,7 +371,7 @@ simulated final function DrawPlayerEntry(Canvas Canvas, TurboPlayerReplicationIn
 		Canvas.DrawColor = Canvas.MakeColor(255, 0, 0, 255);
 		Canvas.FontScaleX = 1.f;
 		Canvas.FontScaleY = 1.f;
-		Canvas.Font = class'KFTurboFonts'.static.LoadFontStatic(6);
+		Canvas.Font = class'KFTurboFontHelper'.static.LoadFontStatic(6);
 		Canvas.TextSize(DrawText, TextSizeX, TextSizeY);
 		Canvas.FontScaleX = (SizeY * 0.5f) / TextSizeY;
 		Canvas.FontScaleY = Canvas.FontScaleX;
@@ -396,4 +423,9 @@ defaultproperties
 	PingSizeY = 0.75f
 	PingIconColor=(R=16,G=16,B=16,A=200)
 	PingIcon=Texture'KFTurbo.Scoreboard.ScoreboardPing_D'
+
+	
+	ThousandSuffix="K"
+	MillionSuffix="M"
+	SeparatorCharacter="."
 }

@@ -681,7 +681,7 @@ static final function SealSquealProjTakeDamage(SealSquealProjectile Projectile, 
 	{
         if(class<SirenScreamDamage>(DamageType) != None)
         {
-            Projectile.Disintegrate(HitLocation, vect(0,0,1));
+			return; //Seal Squeal does not disintegrate;
         }
         else
         {

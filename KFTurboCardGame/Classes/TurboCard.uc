@@ -50,7 +50,7 @@ function SetupScriptedTexture(ScriptedTexture Tex)
 	ApplyDescription(Tex);
 
 	FullTitleString = Caps(FullTitleString@"| Killing Floor Turbo");
-	TextFont = class'KFTurboFonts'.static.LoadFontStatic(8);
+	TextFont = class'KFTurboFontHelper'.static.LoadFontStatic(8);
 	Tex.TextSize(FullTitleString, TextFont, TextSizeX, TextSizeY);
 	TempX = (SizeX - 21) - TextSizeX;
 	TempY = (SizeY - 64) - (TextSizeY - 3);
@@ -89,7 +89,7 @@ function string ApplyTitle(ScriptedTexture Tex)
 
 	if (FullTitleString.Length != 0)
 	{
-		TextFont = class'KFTurboFonts'.static.LoadBoldFontStatic(4);
+		TextFont = class'KFTurboFontHelper'.static.LoadBoldFontStatic(4);
 		Tex.TextSize(FullTitleString[0], TextFont, TextSizeX, TextSizeY);
 
 		//Space from top of texture to top of card + card margin + half of card header size
@@ -141,7 +141,7 @@ function ApplyDescription(ScriptedTexture Tex)
 	GetCardDescription(FullDescriptionString);
 	if (FullDescriptionString.Length != 0)
 	{
-		TextFont = class'KFTurboFonts'.static.LoadFontStatic(4);
+		TextFont = class'KFTurboFontHelper'.static.LoadFontStatic(4);
 		Tex.TextSize(FullDescriptionString[0], TextFont, TextSizeX, TextSizeY);
 
 		//Space from top of texture to top of card + card margin + half of card header size

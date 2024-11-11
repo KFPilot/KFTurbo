@@ -8,10 +8,10 @@ var float ClientNextMarkTime, NextMarkTime;
 
 replication
 {
-	reliable if( Role==ROLE_Authority )
+	reliable if( Role == ROLE_Authority )
 		ClientCloseBuyMenu;
-	reliable if( Role<ROLE_Authority )
-		ServerDebugSkipWave, SkipTrader, ServerMarkActor, ServerNotifyShoppingState;
+	reliable if( Role < ROLE_Authority )
+		ServerDebugSkipWave, EndTrader, ServerMarkActor, ServerNotifyShoppingState;
 }
 
 simulated function PostBeginPlay()
@@ -387,7 +387,7 @@ exec function ServerDebugSkipWave()
 	KFGameType(Level.Game).KillZeds();
 }
 
-exec function SkipTrader()
+exec function EndTrader()
 {
 	if (KFGameType(Level.Game) == None || KFGameType(Level.Game).bWaveInProgress)
 	{

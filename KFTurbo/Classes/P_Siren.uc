@@ -8,6 +8,9 @@ var PawnHelper.AfflictionData AfflictionData;
 var bool bUnstunTimeReady;
 var float UnstunTime;
 
+var float ScreamAftershockDelay;
+var float ScreamAftershockTime;
+
 simulated function PostBeginPlay()
 {
     Super.PostBeginPlay();
@@ -52,6 +55,12 @@ simulated function Tick(float DeltaTime)
     {
         bSTUNNED = false;
         bUnstunTimeReady = false;
+    }
+
+    if (ScreamAftershockTime > 0.f && ScreamAftershockTime < Level.TimeSeconds)
+    {
+        PerformAftershock();
+        ScreamAftershockTime = -1.f;
     }
 }
 
@@ -188,20 +197,56 @@ function RangedAttack(Actor A)
 
 simulated function SpawnTwoShots()
 {
-    if( bDecapitated || bZapped || bHarpoonStunned )
+    if ( bDecapitated || bZapped || bHarpoonStunned )
     {
         return;
     }
 
     DoShakeEffect();
 
-    if( Level.NetMode!=NM_Client )
+    if ( Role != ROLE_Authority )
     {
-        // Deal Actual Damage.
-        if( Controller!=None && KFDoorMover(Controller.Target)!=None )
-            Controller.Target.TakeDamage(ScreamDamage*0.6,Self,Location,vect(0,0,0),ScreamDamageType);
-        else HurtRadius(ScreamDamage ,ScreamRadius, ScreamDamageType, ScreamForce, Location);
+        return;
     }
+
+    if ( Controller != None && KFDoorMover(Controller.Target) != None )
+    {
+        Controller.Target.TakeDamage(ScreamDamage*0.6, Self, Location, vect(0,0,0), ScreamDamageType);
+    }
+    else
+    {
+        HurtRadius(ScreamDamage, ScreamRadius, ScreamDamageType, ScreamForce, Location);
+    }
+
+    ScreamAftershockTime = Level.TimeSeconds + ScreamAftershockDelay;
+}
+
+//Make it a little more likely siren screams actually disintegrate projectiles.
+function PerformAftershock()
+{
+	local Projectile Projectile;
+	local float DamageScale, Distance;
+	local vector Direction;
+
+    if( bDecapitated || bZapped || bHarpoonStunned )
+    {
+        return;
+    }
+
+	foreach VisibleCollidingActors(class 'Projectile', Projectile, ScreamRadius, Location)
+	{
+        Direction = Projectile.Location - Location;
+        Distance = FMax(1, VSize(Direction));
+        Direction = Direction / Distance;
+        DamageScale = 1.f - FMax(0, (Distance - Projectile.CollisionRadius) / ScreamRadius);
+
+        if (DamageScale <= 0.f)
+        {
+            continue;
+        }
+
+        Projectile.TakeDamage(DamageScale * ScreamDamage, Instigator, Projectile.Location - 0.5 * (Projectile.CollisionHeight + Projectile.CollisionRadius) * Direction, (DamageScale * ScreamForce * Direction), ScreamDamageType);
+	}
 }
 
 simulated function HurtRadius( float DamageAmount, float DamageRadius, class<DamageType> DamageType, float Momentum, vector HitLocation )
@@ -223,7 +268,7 @@ simulated function PlayDying(class<DamageType> DamageType, vector HitLoc)
 
 state ZombieDying
 {
-ignores AnimEnd, Trigger, Bump, HitWall, HeadVolumeChange, PhysicsVolumeChange, Falling, BreathTimer, Died, RangedAttack, SpawnTwoShots;
+ignores AnimEnd, Trigger, Bump, HitWall, HeadVolumeChange, PhysicsVolumeChange, Falling, BreathTimer, Died, RangedAttack, SpawnTwoShots, PerformAftershock;
 
     simulated function BeginState()
     {
@@ -256,4 +301,7 @@ defaultproperties
     End Object
 
     AfflictionData=(Burn=AfflictionBurn'BurnAffliction',Zap=AfflictionZap'ZapAffliction',Harpoon=AfflictionHarpoon'HarpoonAffliction')
+
+    ScreamAftershockDelay=0.15f
+    ScreamAftershockTime=-1.f
 }

@@ -403,11 +403,10 @@ function bool WasHeadshot(KFMonster Injured)
 function MonsterNetDamage(out float DamageMultiplier, KFMonster Injured, Pawn InstigatedBy, Vector HitLocation, out Vector Momentum, class<KFWeaponDamageType> WeaponDamageType)
 {
     local bool bWasHeadshot;
+    bWasHeadshot = WasHeadshot(Injured);
 
     if (WeaponDamageType.default.bCheckForHeadShots)
     {
-        bWasHeadshot = WasHeadshot(Injured);
-
         if (bWasHeadshot)
         {
             //We use kill message rules to figure out if something is a trash zed.

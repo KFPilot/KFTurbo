@@ -12,7 +12,7 @@ static function RenderComplexMessage(
 	optional Object OptionalObject
 	)
 {
-	Canvas.Font = class'KFTurboFonts'.static.LoadFontStatic(default.FontSize);
+	Canvas.Font = class'KFTurboFontHelper'.static.LoadFontStatic(default.FontSize);
 	Canvas.FontScaleX = FMax(Canvas.ClipY / 2160.f, 0.5f);
 	Canvas.FontScaleY = Canvas.FontScaleX;
 
