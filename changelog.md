@@ -92,10 +92,13 @@
     - 1.5x bonus headshot multiplier for off-perk weapons
 - 60% faster reload speed with perk weapons 🟦
 - 40% faster reload speed with the 44 Magnum and Dual Magnum. 🔻
-- 15% faster reload speed with the M99. 🔻
+- 15% faster reload speed with the M99 and Crossbow. 🔻
 - Spawn with a Lever Action Rifle ⚠️
 - Crossbow and M99 no longer get a purchase cost discount 🔻
-- Crosbow and M99 Ammo now gets a 30% purchase cost discount 🟢
+- Crossbow and M99 Ammo now gets a 30% purchase cost discount 🟢
+- Crossbow and M99 fire 15% faster 🔻
+- Lever Action Rifle and SP Musket fire 60% faster 🟦
+
 - **Weapons**
     - **MK23 & Dual MK23**
         - 9% faster reload speed 🟢
@@ -123,13 +126,13 @@
         - 11% increased damage 🟢
         - 60% tighter spread 🟢
 
-        - 40% more recoil 🔻
+        - 20% more recoil 🔻
         - Magazine capacity 10 -> 6 🔻
         - 17% more expensive 🔻
         - Headshot bonus damage reduced by 13% 🔻
-        - 45% less maximum ammo 🔻
+        - 40% less maximum ammo 🔻
     - **Crossbow**
-        - 50% less maximum ammo 🔻
+        - 17% less maximum ammo 🔻
     - **M99 AMR**
         - Now obliterates normal and welded doors 🆕
         - Weight 13 -> 12 🟢
@@ -279,9 +282,11 @@
         - 33% stronger healing potency 🟢
         - 33% faster syringe recovery 🟢
         - 30% higher maximum healing charge 🟢
+        - Firing type is no longer high RoF ⚠️
 
         - 13% more expensive 🔻
         - 45% less maximum ammo 🔻
+        - 19% lower fire rate 🔻
     - **MP5**
         - 17% increased damage 🟢
         - 12% faster reload speed 🟢
@@ -290,15 +295,20 @@
         - Magazine capacity 32 -> 30 🔻
         - 13% less maximum ammo 🔻
         - 16% weaker healing potency 🔻
+        - 7% lower fire rate 🔻
     - **Kriss/Schneidzekk**
         - 38% cheaper 🟢
         - 5% increased damage 🟢
         - 13% more maximum ammo 🟢
+        - 🚧 50% tighter spread 🟢
+        - 🚧 75% less recoil 🟢
+        - 🚧 Firing type is no longer high RoF ⚠️
 
         - Weight 3 -> 4 🔻
         - 30% lower maximum healing charge  🔻
         - 33% slower syringe recovery 🔻
         - 50% weaker healing potency 🔻
+        - 🚧 48% lower fire rate 🔻
     - **M7A3**
         - 23% faster reload speed 🟢
         - 53% stronger healing potency 🟢

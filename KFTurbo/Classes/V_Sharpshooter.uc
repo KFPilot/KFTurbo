@@ -112,11 +112,7 @@ static function float GetFireSpeedMod(KFPlayerReplicationInfo KFPRI, Weapon Othe
 	{
 		Multiplier *= LerpStat(KFPRI, 1.f, 1.15f);
 	}
-	else if (SPSniperRifle(Other) != None)
-	{
-		Multiplier *= LerpStat(KFPRI, 1.f, 1.3f);
-	}
-	else if (Winchester(Other) != None)
+	else if (Winchester(Other) != None || SPSniperRifle(Other) != None)
 	{
 		Multiplier *= LerpStat(KFPRI, 1.f, 1.6f);
 	}
