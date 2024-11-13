@@ -164,6 +164,7 @@
         - 35% less maximum and starting ammo 🔻
     - **Thompson Drum** 
         - 66% more maximum and starting ammo 🟢
+        - 20% tighter spread 🟢
 
         - 10% slower reload speed 🔻
         - Weight 5 -> 6 🔻
@@ -171,8 +172,10 @@
         - 23% reduced damage 🔻
     - **AK47** 
         - Weight 6 -> 5 🟢
+        - 20% tighter spread 🟢
     - **MKb42**
         - 10% faster reload speed 🟢
+        - 15% tighter spread 🟢
     - **M4 203**
         - Replaces the original M4 ⚠️
         - Uses the scope from the M4 ⚠️
@@ -181,17 +184,19 @@
         - 36% cheaper than the M4 203 🟢
         - 25% less recoil 🟢
         - 23% increased damage 🟢
+        - 25% tighter spread 🟢
 
         - Single-shot fire mode removed 🔻
         - 75% more expensive than the M4 🔻
         - 17% less maximum grenades 🔻
         - 28% slower fire rate 🔻
     - **SCAR MK17**
-        - Unchanged 🟦
+        - 25% tighter spread 🟢
     - **FN FAL** 
         - 13% faster reload speed 🟢
         - 9% cheaper 🟢
         - Headshot bonus damage increased by 80% 🟢
+        - 60% tighter spread 🟢
 
         - Full-auto fire mode removed 🔻
         - Magazine capacity 20 -> 12 🔻
@@ -201,7 +206,7 @@
         - New incendiary variant 🆕
         - Ignites enemies  [**Burning**](#afflictions) 🆕
         - 12% less recoil 🟢
-        - 25% tighter spread 🟢
+        - 15% tighter spread 🟢
         - Firing type is no longer high RoF ⚠️
 
         - 63% slower fire rate 🔻
@@ -219,7 +224,7 @@
 - 50% more LAW rockets 🟢
 - 30% faster LAW fire rate 🟢
 - 40% faster LAW reload speed 🟢
-- Perk weapons receive a 30% discount 🔻
+- Perk weapons discount 70% -> 30% 🔻
 - Pipe bombs receive a 74% discount 🟦
 - Spawn with an M4 203 ⚠️
 - **Weapons**
@@ -235,6 +240,7 @@
         - 36% cheaper than the M4 203 🟢
         - 25% less recoil 🟢
         - 23% increased damage 🟢
+        - 25% tighter spread 🟢
 
         - Single-shot fire mode removed 🔻
         - 75% more expensive than the M4 🔻
@@ -274,8 +280,10 @@
 ### Field Medic
 - Healing grenades now have a new model and bounce more 🆕
 - Magazine capacity bonus on the M7A3 reduced to 50% from 100% 🔻
-- 20% faster movement speed 🔻
+- Movement speed bonus 25% -> 20% 🔻
+- 20% increase to grenade capacity 🟢
 - Receives 20% more ammo for M7A3 🟢
+- Knife movement speed bonus now applies to on-perk weapons as well. 🟢
 - **Weapons**
     - **MP7**
         - 38% increased damage 🟢
@@ -300,15 +308,15 @@
         - 38% cheaper 🟢
         - 5% increased damage 🟢
         - 13% more maximum ammo 🟢
-        - 🚧 50% tighter spread 🟢
-        - 🚧 75% less recoil 🟢
-        - 🚧 Firing type is no longer high RoF ⚠️
+        - 50% tighter spread 🟢
+        - 50% less recoil 🟢
+        - Firing type is no longer high RoF ⚠️
 
         - Weight 3 -> 4 🔻
         - 30% lower maximum healing charge  🔻
         - 33% slower syringe recovery 🔻
         - 50% weaker healing potency 🔻
-        - 🚧 48% lower fire rate 🔻
+        - 48% lower fire rate 🔻
     - **M7A3**
         - 23% faster reload speed 🟢
         - 53% stronger healing potency 🟢
@@ -329,7 +337,7 @@
 - Grenades are replaced with stun grenades that put zeds into [**Stasis**](#afflictions) 🆕
 - 20% increase to grenade capacity 🟢
 - Stun grenades cannot be disintegrated by siren screams 🟢
-- Melee movement speed bonus 30% -> 20% 🔻
+- Melee movement speed bonus 30% -> 25% 🔻
 - Damage resistance 40% -> 10% 🔻
 - Melee swing speed 25% -> 15% 🔻
 - Patriarch can never deal more than 95 damage to the Berserker ⚠️
@@ -403,7 +411,7 @@
         - New incendiary variant 🆕
         - Ignites enemies  [**Burning**](#afflictions) 🆕
         - 12% less recoil 🟢
-        - 25% tighter spread 🟢
+        - 15% tighter spread 🟢
         - Firing type is no longer high RoF ⚠️
 
         - 63% slower fire rate 🔻

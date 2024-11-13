@@ -31,5 +31,6 @@ defaultproperties
      ShakeOffsetTime=1.250000
      BotRefireRate=0.990000
      FlashEmitterClass=Class'ROEffects.MuzzleFlash1stSTG'
+     MaxSpread=0.090000
      aimerror=42.000000
 }

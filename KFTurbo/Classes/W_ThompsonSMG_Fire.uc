@@ -31,6 +31,7 @@ defaultproperties
      BotRefireRate=0.150000
      FlashEmitterClass=Class'ROEffects.MuzzleFlash1stSTG'
      aimerror=35.000000
+     MaxSpread=0.102000
      Spread=0.008000
      SpreadStyle=SS_Random
 

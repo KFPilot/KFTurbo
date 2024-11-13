@@ -7,4 +7,5 @@ defaultproperties
      DamageMax=52
      bWaitForRelease=True
      AmmoClass=Class'KFTurbo.W_FNFAL_Ammo'
+     MaxSpread=0.048000
 }
