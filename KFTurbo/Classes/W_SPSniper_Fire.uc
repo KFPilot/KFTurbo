@@ -2,7 +2,6 @@ class W_SPSniper_Fire extends SPSniperFire;
 
 defaultproperties
 {
-     RecoilRate=0.110000
      maxVerticalRecoilAngle=700
      maxHorizontalRecoilAngle=425
      MaxSpread=0.048000

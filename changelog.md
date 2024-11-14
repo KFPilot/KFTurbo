@@ -80,6 +80,7 @@
         
     - **Hunting Shotgun**:
         - Unchanged 🟦
+
     - **VLAD-9000**: Reworked
         - Fires a single nail that deals high damage and pierces multiple zeds 🆕
         - Alternate fire toggles a laser aim module 🆕
@@ -103,19 +104,19 @@
 
 - **Weapons**
 
-    - 🚧 **MK23 & Dual MK23**
+    - **MK23 & Dual MK23**
         - 9% faster reload speed 🟢
 
-        - 🚧 10% wider spread 🔻
+        - 10% wider spread 🔻
         - Penetration count 10 -> 0 🔻
-    - 🚧 **Handcannon & Dual Handcannon**
+    - **Handcannon & Dual Handcannon**
         - 27% less recoil 🟢
         - Damage loss after penetrating reduced by 40%. 🟢
 
         - Penetration count 10 -> 1 🔻
-    - 🚧 **44 Magnum**
+    - **44 Magnum & Dual 44 Magnum**
         - 14% increased damage 🟢
-        - 🚧 11% tighter spread 🟢
+        - 10% tighter spread 🟢
         - Headshot bonus damage increased by 80% 🟢
 
         - Weight 2 -> 3 🔻
@@ -163,12 +164,12 @@
         - Now penetrates up to 2 zeds with a damage loss of 25% 🆕
         - Weight 6 -> 5 🟢
         - 8% increased damage 🟢
-        - 🚧 Has no spread and inaccuracy 🟢
+        - 90% tighter spread 🟢
 
         - Horizontal Recoil increased by 133% 🔻
         - Magazine capacity 40 -> 20 🔻
         - 25% more expensive 🔻
-        - 35% less maximum and starting ammo 🔻
+        - 35% less maximum ammo 🔻
     - **Thompson Drum** 
         - 66% more maximum and starting ammo 🟢
         - 20% tighter spread 🟢
@@ -344,6 +345,7 @@
         - 25% less recoil 🟢
         - 7% increased damage 🟢
         - Headshot bonus damage increased by 105% 🟢
+        - 30% tighter spread 🟢
 
         - 17% slower fire rate 🔻
         - 50% more charge consumed per dart 🔻

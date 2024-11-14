@@ -7,7 +7,6 @@ function DoTrace(Vector Start, Rotator Direction)
 
 defaultproperties
 {
-     RecoilRate=0.090000
      maxVerticalRecoilAngle=1250
      maxHorizontalRecoilAngle=250
      DamageType=Class'KFTurbo.W_Dual44_DT'
@@ -15,4 +14,5 @@ defaultproperties
      DamageMax=120
      FireRate=0.075000
      Spread=0.008000
+     MaxSpread=0.108000
 }

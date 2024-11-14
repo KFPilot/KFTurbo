@@ -2,7 +2,6 @@ class W_M7A3M_Fire extends M7A3MFire;
 
 defaultproperties
 {
-     RecoilRate=0.070000
      maxVerticalRecoilAngle=750
      maxHorizontalRecoilAngle=175
      DamageType=Class'KFTurbo.W_M7A3M_DT'
@@ -11,5 +10,6 @@ defaultproperties
      bWaitForRelease=True
      FireRate=0.200000
      AmmoClass=Class'KFTurbo.W_M7A3M_Ammo'
+     MaxSpread=0.084000
      Spread=0.006500
 }
