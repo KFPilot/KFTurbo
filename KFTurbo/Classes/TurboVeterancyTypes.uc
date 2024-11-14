@@ -9,6 +9,11 @@ var float HighDifficultyExtraAmmoMultiplier;
 
 var	Texture StarTexture;
 
+var() Color LevelColors[7];
+
+var() localized string MaxTierTitle;
+var() Color MaxTierColor;
+
 //Are we playing KFTurbo+? Fixed to be callable by clients.
 static final function bool IsHighDifficulty( Actor Actor )
 {
@@ -303,19 +308,30 @@ static function string GetFullPerkName(byte Level)
 
 	Title = GetPerkTitle(Level);
 
-	if (Title != "")
+	if (Title == "")
 	{
-		return Title @ Default.VeterancyName;
+		return Default.VeterancyName;
 	}
 
-	return Default.VeterancyName;
+	return Title @ Default.VeterancyName;
 }
 
 static function string GetPerkTitle(byte Level)
 {
-	local int Index;
-	Index = Min(GetPerkTier(Level), ArrayCount(Default.LevelNames) - 1);
-	return Default.LevelNames[Index];
+	local int Tier;
+	Tier = GetPerkTier(Level);
+
+	if (Tier <= 0)
+	{
+		return "";
+	}
+
+	if (Tier == GetMaxTier())
+	{
+		return default.MaxTierTitle;
+	}
+
+	return default.LevelNames[Tier - 1];
 }
 
 //Lerp function but written so that we mutate our exact behaviour in a centralized location.
@@ -329,38 +345,32 @@ static function float LerpStat(KFPlayerReplicationInfo KFPRI, float A, float B)
 	return Lerp(Level, A, B);*/
 }
 
+static final function byte GetMaxTier()
+{
+	return ArrayCount(Default.LevelNames);
+}
+
 static final function byte GetPerkTier(byte Level)
 {
 	return Level / Default.LevelRankRequirement;
 }
 
-static function Color GetPerkColor(byte Level)
+static final function Color GetPerkColor(byte Level)
 {
-	local int Index;
-	Index = GetPerkTier(Level);
+	local int Tier;
+	Tier = GetPerkTier(Level);
 
-	switch (Index)
+	if (Tier <= 0)
 	{
-	case 0:
-		return class'Canvas'.static.MakeColor(255,32,32,255); //Red
-	case 1:
-		return class'Canvas'.static.MakeColor(25,208,0,255); //Green
-	case 2:
-		return class'Canvas'.static.MakeColor(11,120,255,255); //Blue
-	case 3:
-		return class'Canvas'.static.MakeColor(255,0,255,255); //Pink
-	case 4:
-		return class'Canvas'.static.MakeColor(150,30,255,255); //Purple
-	case 5:
-		return class'Canvas'.static.MakeColor(255,110,0,255); //Orange
-	case 6:
-		return class'Canvas'.static.MakeColor(255,190,11,255); //Gold
-	case 7:
-	case 8:
-		return class'Canvas'.static.MakeColor(225,235,255,255); //Platinum
+		return class'Canvas'.static.MakeColor(255, 32, 32, 255);
 	}
 
-	return class'Canvas'.static.MakeColor(225,235,255,255);
+	if (Tier == GetMaxTier())
+	{
+		return default.MaxTierColor;
+	}
+
+	return default.LevelColors[Tier - 1];
 }
 
 static function byte PreDrawPerk(Canvas C, byte Level, out Material PerkIcon, out Material StarIcon)
@@ -384,10 +394,22 @@ defaultproperties
 	
 	StarTexture=Texture'KFTurbo.Perks.Star_D'
 
-	LevelNames(1)="Experienced"
-	LevelNames(2)="Skilled"
-	LevelNames(3)="Adept"
-	LevelNames(4)="Masterful"
-	LevelNames(5)="Inhuman"
-	LevelNames(6)="Godlike"
+	LevelNames(0)="Experienced"
+	LevelNames(1)="Skilled"
+	LevelNames(2)="Adept"
+	LevelNames(3)="Masterful"
+	LevelNames(4)="Inhuman"
+	LevelNames(5)="Godlike"
+	LevelNames(6)="Peak"
+	
+	LevelColors(0)=(R=25,G=208,B=0,A=255)
+	LevelColors(1)=(R=11,G=120,B=255,A=255)
+	LevelColors(2)=(R=255,G=0,B=255,A=255)
+	LevelColors(3)=(R=150,G=30,B=255,A=255)
+	LevelColors(4)=(R=255,G=110,B=0,A=255)
+	LevelColors(5)=(R=255,G=190,B=11,A=255)
+	LevelColors(6)=(R=255,G=235,B=255,A=255)
+
+	MaxTierTitle="";
+	MaxTierColor=(R=255,G=255,B=255,A=255)
 }

@@ -36,6 +36,16 @@ const IGNITE_ZEDS_3500 = 22;
 const ZERK_CLASSY_KILL_25 = 23;
 const JUMPER_AIRSHOT_KILL_5 = 24;
 
+const WIN_CARDGAME_1 = 25;
+const WIN_CARDGAME_2 = 26;
+const WIN_CARDGAME_3 = 27;
+const WIN_CARDGAME_4 = 28;
+const WIN_CARDGAME_5 = 29;
+
+const WIN_RANDOMIZER_1 = 30;
+const WIN_RANDOMIZER_2 = 31;
+const WIN_RANDOMIZER_3 = 32;
+
 var Pawn LastVladStunnedScrake;
 
 var int CombatShotgunKills;
@@ -77,9 +87,6 @@ var array<Pawn> PushedScrakeList;
 
 var bool bPatriarchHarpoonCountNeedsReset;
 
-//===============
-// ACHIEVEMENT GAMEPLAY EVENTS
-
 function MatchStarting()
 {
     if (!class'KFTurboGameType'.static.StaticAreStatsAndAchievementsEnabled(self))
@@ -87,7 +94,7 @@ function MatchStarting()
         return;
     }
 
-    bCanEarnMedicGame = class'VeterancyChecks'.static.isFieldMedic(KFPlayerReplicationInfo(OwnerController.PlayerReplicationInfo));
+    bCanEarnMedicGame = class'V_FieldMedic'.static.IsFieldMedic(KFPlayerReplicationInfo(OwnerController.PlayerReplicationInfo));
 }
 
 event MatchEnd(string mapname, float difficulty, int length, byte result, int waveNum)
@@ -114,7 +121,7 @@ event WaveStart(int waveNum)
     ResetMagnumHeadshots();
     ResetM14Headshots();
     
-    if (bCanEarnMedicGame && !class'VeterancyChecks'.static.isFieldMedic(KFPlayerReplicationInfo(OwnerController.PlayerReplicationInfo)))
+    if (bCanEarnMedicGame && !class'V_FieldMedic'.static.IsFieldMedic(KFPlayerReplicationInfo(OwnerController.PlayerReplicationInfo)))
     {
         bCanEarnMedicGame = false;
     }
@@ -749,4 +756,14 @@ defaultproperties
     Achievements(22)=(title="Ignition",Description="Ignite 3500 zeds",MaxProgress=3500,NotifyIncrement=0.15f,image=Texture'KFTurbo.Achievement.IGNITE_D')
     Achievements(23)=(title="The Sword is Mightier than The Hat",Description="Kill 25 Classy Gorefasts as Berserker",MaxProgress=25,NotifyIncrement=0.2f,image=Texture'KFTurbo.Achievement.ZERKCLASSYKILL_D')
     Achievements(24)=(title="Duck Hunt",Description="Kill a Raptor Crawler while it is airborne 5 times",MaxProgress=5,image=Texture'KFTurbo.Achievement.JUMPERAIRSHOT_D')
+
+    //Achievements(25)=(title="High Card",Description="Win a game of KFTurbo Card Game.",image=Texture'KFTurbo.Achievement.JUMPERAIRSHOT_D')
+    //Achievements(26)=(title="Pair",Description="Win two games of KFTurbo Card Game.",image=Texture'KFTurbo.Achievement.JUMPERAIRSHOT_D')
+    //Achievements(27)=(title="Three Of A Kind",Description="Win three games of KFTurbo Card Game.",image=Texture'KFTurbo.Achievement.JUMPERAIRSHOT_D')
+    //Achievements(28)=(title="Four Of A Kind",Description="Win four games of KFTurbo Card Game.",image=Texture'KFTurbo.Achievement.JUMPERAIRSHOT_D')
+    //Achievements(29)=(title="Royal flush",Description="Win five game of KFTurbo Card Game.",image=Texture'KFTurbo.Achievement.JUMPERAIRSHOT_D')
+
+    //Achievements(30)=(title="Mixed Up",Description="Win a game of KFTurbo Randomizer.",image=Texture'KFTurbo.Achievement.JUMPERAIRSHOT_D')
+    //Achievements(31)=(title="Well Shuffled",Description="Win two games of KFTurbo Randomizer.",image=Texture'KFTurbo.Achievement.JUMPERAIRSHOT_D')
+    //Achievements(32)=(title="Thoroughly Blended",Description="Win three games of KFTurbo Randomizer.",image=Texture'KFTurbo.Achievement.JUMPERAIRSHOT_D')
 }

@@ -97,7 +97,7 @@ static function float GetFireSpeedMod(KFPlayerReplicationInfo KFPRI, Weapon Othe
 
 static function float GetMeleeMovementSpeedModifier(KFPlayerReplicationInfo KFPRI)
 {
-	return LerpStat(KFPRI, 0.f, 0.2f);
+	return LerpStat(KFPRI, 0.f, 0.25f);
 }
 
 static function int ReduceDamage(KFPlayerReplicationInfo KFPRI, KFPawn Injured, Pawn Instigator, int InDamage, class<DamageType> DmgType)

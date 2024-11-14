@@ -15,7 +15,7 @@ var int NewHealthMax;
 
 //Flags for CustomPlayerState.
 const ShoppingFlag = 1;
-const MainMenuOpen = 2;
+const LoginMenuFlag = 2;
 //const CustomPlayerStateFlag_3 = 4;
 //const CustomPlayerStateFlag_4 = 8;
 //const CustomPlayerStateFlag_5 = 16;
@@ -61,9 +61,17 @@ function UpdatePlayerFlags()
 
 	NextPlayerFlagsCheckTime = Level.TimeSeconds + 0.125f + (FRand() * 0.125f);
 
-	if (TurboPlayerController(Controller) != None && TurboPlayerController(Controller).bShopping)
+	if (TurboPlayerController(Controller) != None)
 	{
-		NewPlayerFlags = NewPlayerFlags | ShoppingFlag;
+		if (TurboPlayerController(Controller).bShopping)
+		{
+			NewPlayerFlags = NewPlayerFlags | ShoppingFlag;
+		}
+
+		if (TurboPlayerController(Controller).bInLoginMenu)
+		{
+			NewPlayerFlags = NewPlayerFlags | LoginMenuFlag;
+		}
 	}
 
 	if (NewPlayerFlags != PlayerFlags)
@@ -72,9 +80,14 @@ function UpdatePlayerFlags()
 	}
 }
 
-simulated function bool IsShopping()
+simulated final function bool IsShopping()
 {
 	return (PlayerFlags & ShoppingFlag) == ShoppingFlag;
+}
+
+simulated final function bool IsInLoginMenu()
+{
+	return (PlayerFlags & LoginMenuFlag) == LoginMenuFlag;
 }
 
 //Fixed not properly dropping weapons until carry weight is valid.
@@ -88,6 +101,12 @@ function VeterancyChanged()
 	MaxCarryWeight = Default.MaxCarryWeight;
 
 	KFPRI = KFPlayerReplicationInfo(PlayerReplicationInfo);
+
+	//Attempt to speed up perk selection updates.
+	if (KFPRI != None)
+	{
+		KFPRI.NetUpdateTime = Level.TimeSeconds - 2.f;
+	}
 
 	if ( KFPRI != none && KFPRI.ClientVeteranSkill != none )
 	{
@@ -310,6 +329,53 @@ simulated function DisplayInventoryDebug(Canvas Canvas, Weapon Weapon, out float
     Canvas.DrawText(T, false);
     YPos += YL;
     Canvas.SetPos(4,YPos);
+}
+
+simulated function ChangedWeapon()
+{
+	local KFWeapon CurrentWeapon;
+	local KFPlayerReplicationInfo KFPRI;
+
+	InventorySpeedModifier = 0.f;
+
+    if(PendingWeapon == None || !AllowHoldWeapon(KFWeapon(PendingWeapon)))
+	{
+		PendingWeapon = None;
+		return;
+	}
+
+	Super(KFPawn).ChangedWeapon();
+
+	CurrentWeapon = KFWeapon(Weapon);
+
+	if (CurrentWeapon == None)
+	{
+		return;
+	}
+
+	KFPRI = KFPlayerReplicationInfo(PlayerReplicationInfo);
+
+	if (KFPRI == None)
+	{
+		return;
+	}
+
+	if (CurrentWeapon.bSpeedMeUp)
+	{
+		BaseMeleeIncrease = default.BaseMeleeIncrease;
+
+		if (KFPRI != None && KFPRI.ClientVeteranSkill != None)
+		{
+			BaseMeleeIncrease += KFPRI.ClientVeteranSkill.Static.GetMeleeMovementSpeedModifier(KFPRI);
+		}
+		
+        InventorySpeedModifier = ((default.GroundSpeed * BaseMeleeIncrease) - (CurrentWeapon.Weight * 2.f));
+	}
+	else if (KFMedicGun(CurrentWeapon) != None && class'V_FieldMedic'.static.IsFieldMedic(KFPRI))
+	{
+		BaseMeleeIncrease = default.BaseMeleeIncrease * 0.5f;
+		InventorySpeedModifier = ((default.GroundSpeed * BaseMeleeIncrease) - (CurrentWeapon.Weight * 2.f));
+	}
 }
 
 simulated function UpdateHealth()

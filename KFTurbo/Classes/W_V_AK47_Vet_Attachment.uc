@@ -84,6 +84,7 @@ defaultproperties
      LoadedStateMaterialRefList(5)="KFTurbo.VetTiers.AK47_Vet_3rd_Orange_SHDR"
      LoadedStateMaterialRefList(6)="KFTurbo.VetTiers.AK47_Vet_3rd_Gold_SHDR"
      LoadedStateMaterialRefList(7)="KFTurbo.VetTiers.AK47_Vet_3rd_Plat_SHDR"
+     LoadedStateMaterialRefList(8)="KFTurbo.VetTiers.AK47_Vet_3rd_Rainbow_SHDR"
 
      SkinRefs(0)="KFTurbo.Vet.AK47_Vet_3rd_SHDR"
 }

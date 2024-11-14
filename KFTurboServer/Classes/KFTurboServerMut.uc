@@ -21,6 +21,7 @@ simulated function PostBeginPlay()
 	foreach Level.AllActors( class'ServerPerksMut', ServerPerksMutator )
 	{
 		ServerPerksMutator.bNoSavingProgress = !class'KFTurboGameType'.static.StaticAreStatsAndAchievementsEnabled(Self);
+		ServerPerksMutator.bAllowAlwaysPerkChanges = ServerPerksMutator.bAllowAlwaysPerkChanges || class'KFTurboGameType'.static.StaticIsTestGameType(Self);
 		
 		if (!ServerPerksMutator.bEnabledEmoIcons)
 		{
@@ -76,6 +77,7 @@ function AddMutator(Mutator M)
 	if (ServerPerksMutator != None)
 	{
 		ServerPerksMutator.bNoSavingProgress = !class'KFTurboGameType'.static.StaticAreStatsAndAchievementsEnabled(Self);
+		ServerPerksMutator.bAllowAlwaysPerkChanges = ServerPerksMutator.bAllowAlwaysPerkChanges || class'KFTurboGameType'.static.StaticIsTestGameType(Self);
 
 		if (!ServerPerksMutator.bEnabledEmoIcons)
 		{

@@ -46,6 +46,9 @@ var Texture EdgeContainer;
 var Texture LeftEdgeContainer;
 var Texture SquareContainer;
 
+var Color ActiveWaveIconColor;
+var Texture ActiveWaveIcon;
+
 //Kill Feed
 struct KillFeedEntry
 {
@@ -384,6 +387,14 @@ simulated function DrawActiveWave(Canvas C, Vector2D Center)
 	if (ActiveWaveFadeRatio <= 0.001f)
 	{
 		return;
+	}
+
+	if (ActiveWaveIcon != None)
+	{
+		C.DrawColor = ActiveWaveIconColor;
+		C.DrawColor.A = byte(float(ActiveWaveIconColor.A) * ActiveWaveFadeRatio);
+		C.SetPos(Center.X - (C.ClipY * BackplateSize.Y * 0.3f), Center.Y - (C.ClipY * BackplateSize.Y * 0.3f));
+		C.DrawRect(ActiveWaveIcon, C.ClipY * BackplateSize.Y * 0.6f, C.ClipY * BackplateSize.Y * 0.6f);
 	}
 
 	C.SetDrawColor(255, 255, 255, byte(ActiveWaveFadeRatio * 255.f));
@@ -883,4 +894,7 @@ defaultproperties
 	EliteMonsterKillLifeTime=5.f
 	EliteMonsterKillCountExtension=0.2f
 	KillFeedFontSizeOffset=0
+
+	ActiveWaveIconColor=(R=255,G=255,B=255,A=80)
+	ActiveWaveIcon=Texture'KFTurbo.Scoreboard.ScoreboardKill_D'
 }

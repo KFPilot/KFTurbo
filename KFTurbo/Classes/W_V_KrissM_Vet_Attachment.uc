@@ -84,6 +84,7 @@ defaultproperties
      LoadedStateMaterialRefList(5)="KFTurbo.VetTiers.Kriss_Vet_3rd_Orange_SHDR"
      LoadedStateMaterialRefList(6)="KFTurbo.VetTiers.Kriss_Vet_3rd_Gold_SHDR"
      LoadedStateMaterialRefList(7)="KFTurbo.VetTiers.Kriss_Vet_3rd_Plat_SHDR"
+     LoadedStateMaterialRefList(8)="KFTurbo.VetTiers.Kriss_Vet_3rd_Rainbow_SHDR"
 
      Skins(0)=Shader'KFTurbo.Vet.Kriss_Vet_3rd_SHDR'
 }

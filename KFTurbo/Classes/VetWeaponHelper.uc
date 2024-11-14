@@ -4,7 +4,7 @@
 //For more information see https://github.com/KFPilot/KFTurbo.
 class VetWeaponHelper extends Object;
 
-var array<Texture> VeterancyColorTextureList;
+var array<Material> VeterancyColorTextureList;
 
 static final function byte GetPlayerWeaponTier(Pawn Pawn, class<TurboVeterancyTypes> VeterancyClass)
 {
@@ -117,4 +117,5 @@ defaultproperties
     VeterancyColorTextureList(5)=Texture'KFTurbo.Vet.VetOrange_D'
     VeterancyColorTextureList(6)=Texture'KFTurbo.Vet.VetGold_D'
     VeterancyColorTextureList(7)=Texture'KFTurbo.Vet.VetPlatinum_D'
+    VeterancyColorTextureList(8)=TexScaler'KFTurbo.Vet.Rainbow_SCLR'
 }

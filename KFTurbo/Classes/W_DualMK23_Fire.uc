@@ -1,8 +1,8 @@
 class W_DualMK23_Fire extends DualMK23Fire;
 
-function DoTrace(Vector Start, Rotator Dir)
+function DoTrace(Vector Start, Rotator Direction)
 {
-	class'WeaponHelper'.static.PenetratingWeaponTrace(Start, KFWeapon(Weapon), self, 0, 0.0);
+	class'WeaponHelper'.static.PenetratingWeaponTrace(Start, Direction, KFWeapon(Weapon), self, 0, 0.0);
 }
 
 defaultproperties

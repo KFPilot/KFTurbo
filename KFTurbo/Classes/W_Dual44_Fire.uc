@@ -1,8 +1,8 @@
 class W_Dual44_Fire extends Dual44MagnumFire;
 
-function DoTrace(Vector Start, Rotator Dir)
+function DoTrace(Vector Start, Rotator Direction)
 {
-	class'WeaponHelper'.static.PenetratingWeaponTrace(Start, KFWeapon(Weapon), self, 2, 0.9);
+	class'WeaponHelper'.static.PenetratingWeaponTrace(Start, Direction, KFWeapon(Weapon), self, 2, 0.9);
 }
 
 defaultproperties
@@ -13,6 +13,6 @@ defaultproperties
      DamageType=Class'KFTurbo.W_Dual44_DT'
      DamageMin=100
      DamageMax=120
-     FireRate=0.125000
+     FireRate=0.075000
      Spread=0.008000
 }

@@ -186,6 +186,26 @@ function bool InternalOnPreDraw(Canvas C)
 	return false;
 }
 
+function Opened(GUIComponent Sender)
+{
+	Super.Opened(Sender);
+
+	if (TurboPlayerController(PlayerOwner()) != None)
+	{
+        TurboPlayerController(PlayerOwner()).SetLoginMenuState(true);
+    }
+}
+
+function Closed(GUIComponent Sender, bool bCancelled)
+{
+	Super.Closed(Sender,bCancelled);
+
+	if (TurboPlayerController(PlayerOwner()) != None)
+	{
+        TurboPlayerController(PlayerOwner()).SetLoginMenuState(false);
+    }
+}
+
 defaultproperties
 {
 }

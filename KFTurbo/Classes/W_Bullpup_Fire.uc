@@ -1,8 +1,8 @@
 class W_Bullpup_Fire extends BullpupFire;
 
-function DoTrace(Vector Start, Rotator Dir)
+function DoTrace(Vector Start, Rotator Direction)
 {
-	class'WeaponHelper'.static.PenetratingWeaponTrace(Start, KFWeapon(Weapon), self, 2, 0.75);
+	class'WeaponHelper'.static.PenetratingWeaponTrace(Start, Direction, KFWeapon(Weapon), self, 2, 0.75);
 }
 
 defaultproperties

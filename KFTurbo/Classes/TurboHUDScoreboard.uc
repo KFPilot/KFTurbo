@@ -342,7 +342,7 @@ simulated final function DrawPlayerEntry(Canvas Canvas, TurboPlayerReplicationIn
 	}
 	
 	Canvas.DrawColor = ScoreboardTextColor;
-	DrawText = GetCompressedNumber(TurboPRI.Score) @ class'KFTab_BuyMenu'.default.MoneyCaption;
+	DrawText = GetCompressedNumber(TurboPRI.Score) $ class'KFTab_BuyMenu'.default.MoneyCaption;
 	Canvas.TextSize(class'TurboHUDOverlay'.static.GetStringOfZeroes(Len(DrawText)), TextSizeX, TextSizeY);
 	Canvas.SetPos(TempX - (TextSizeX * 0.5f), CenterY - (TextSizeY * 0.5f));
 	class'TurboHUDOverlay'.static.DrawCounterTextMeticulous(Canvas, DrawText, TextSizeX, 1.f);

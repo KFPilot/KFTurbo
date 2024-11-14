@@ -49,4 +49,12 @@ function NotifyPlayerClosedTrader()
 
 defaultproperties
 {
+	Begin Object Class=TurboGUIQuickPerkSelect Name=TurboQuickSelect
+		WinTop=0.011906
+		WinLeft=0.008008
+		WinWidth=0.316601
+		WinHeight=0.082460
+		OnDraw=TurboQuickSelect.MyOnDraw
+	End Object
+	QuickPerkSelect=TurboGUIQuickPerkSelect'TurboQuickSelect'
 }

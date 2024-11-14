@@ -273,7 +273,8 @@ function int GetPlayerVeterancyLevel(class<KFVeterancyTypes> NewVet)
 	return 0;
 }
 
-function ServerSetPerk(class<KFVeterancyTypes> NewVet, byte newLevel) {
+function ServerSetPerk(class<KFVeterancyTypes> NewVet)
+{
 	local KFPlayerReplicationInfo PRI;
 	local KFHumanPawn P;
 	local ClientPerkRepLink CPRL;
@@ -288,14 +289,16 @@ function ServerSetPerk(class<KFVeterancyTypes> NewVet, byte newLevel) {
 	}
 	
 	P = KFHumanPawn(Pawn);
-	if (P != None) {
+
+	if (P != None)
+	{
 		P.VeterancyChanged();
 	}
 }
 
-exec function SetPerk(string NewPerk, optional int newLevel) {
+exec function SetPerk(string NewPerk, optional int newLevel)
+{
 	local KFPlayerReplicationInfo PRI;
-	local byte selectedLevel;
 	local string Msg;
 	
 	PRI = KFPlayerReplicationInfo(PlayerReplicationInfo);
@@ -309,6 +312,7 @@ exec function SetPerk(string NewPerk, optional int newLevel) {
 			SelectedVeterancy = class'KFTurbo.V_FieldMedic';
 			break;
 		case "supp":
+		case "support":
 			SelectedVeterancy = class'KFTurbo.V_SupportSpec';
 			break;
 		case "sharp":
@@ -322,29 +326,29 @@ exec function SetPerk(string NewPerk, optional int newLevel) {
 			SelectedVeterancy = class'KFTurbo.V_Berserker';
 			break;
 		case "fire":
+		case "firebug":
 			SelectedVeterancy = class'KFTurbo.V_Firebug';
 			break;
 		case "demo":
 			SelectedVeterancy = class'KFTurbo.V_Demolitions';
 			break;
 		default:
-			ClientMessage("Available perk names: med/medic, supp, sharp, cmdo/mando, zerk, fire, demo");
+			ClientMessage("Available perk names: med/medic, supp/support, sharp, cmdo/mando, zerk, fire/firebug, demo.");
 			return;
 	}
-
-	selectedLevel = Clamp(newLevel, 0, 6);
 	
-	Msg = "You are %adv% a %Level% '%Perk%'";
-	Msg = Repl(Msg, "%Level%", "Level" @ selectedLevel);
+	Msg = "You are %adv% a %Perk%.";
 	Msg = Repl(Msg, "%Perk%", SelectedVeterancy.default.VeterancyName);
 	
-	if (SelectedVeterancy != PRI.ClientVeteranSkill || selectedLevel != PRI.ClientVeteranSkillLevel) {
+	if (SelectedVeterancy != PRI.ClientVeteranSkill)
+	{
 		Msg = Repl(Msg, "%adv%", "now");
-		ServerSetPerk(SelectedVeterancy, selectedLevel);
+		ServerSetPerk(SelectedVeterancy);
 		SetSelectedVeterancy(SelectedVeterancy);
 		SaveConfig();
 	}
-	else {
+	else
+	{
 		Msg = Repl(Msg, "%adv%", "already");
 	}
 	

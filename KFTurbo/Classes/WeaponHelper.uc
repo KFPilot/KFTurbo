@@ -54,7 +54,7 @@ static final function float GetDistanceBetweenActors(Actor A, Actor B)
 	return VSize(Distance);
 }
 
-static final function PenetratingWeaponTrace(Vector TraceStart, KFWeapon Weapon, KFFire Fire, int PenetrationMax, float PenetrationMultiplier)
+static final function PenetratingWeaponTrace(Vector TraceStart, Rotator Direction, KFWeapon Weapon, KFFire Fire, int PenetrationMax, float PenetrationMultiplier)
 {
 	local Actor HitActor, HitActorExtCollision;
 	local array<Actor> IgnoreActors;
@@ -79,7 +79,7 @@ static final function PenetratingWeaponTrace(Vector TraceStart, KFWeapon Weapon,
 	} 
 
 	PenetrationMax++;
-	GetTraceInfo(Weapon, Fire, TraceStart, TraceEnd, MomentumVector);
+	GetTraceInfo(Weapon, Fire, TraceStart, Direction, TraceEnd, MomentumVector);
 
 	while(HitCount < PenetrationMax)
 	{
@@ -176,15 +176,10 @@ static final function ETraceResult WeaponTrace(Vector TraceStart, Vector TraceEn
 }
 
 //Gets the trace endpoint and momentum vector given a Weapon and KFFire.
-static final function GetTraceInfo(Weapon Weapon, KFFire Fire, Vector Start, out Vector TraceEnd, out Vector Momentum)
+static final function GetTraceInfo(Weapon Weapon, KFFire Fire, Vector Start, Rotator Direction, out Vector TraceEnd, out Vector Momentum)
 {
-	local Vector X, Y, Z;
-	Weapon.GetViewAxes(X, Y, Z);
-
-	Fire.MaxRange();
-
-	TraceEnd = Start + Fire.TraceRange * X;
-	Momentum = Fire.Momentum * X;
+	TraceEnd = Start + (Fire.TraceRange * Vector(Direction));
+	Momentum = Fire.Momentum * Vector(Direction);
 }
 
 //Returns true if this actor is a world object.

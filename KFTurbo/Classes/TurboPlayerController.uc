@@ -6,12 +6,15 @@ var TurboChatInteraction TurboChatInteraction;
 
 var float ClientNextMarkTime, NextMarkTime;
 
+var bool bInLoginMenu, bHasClosedLoginMenu;
+var float LoginMenuTime;
+
 replication
 {
 	reliable if( Role == ROLE_Authority )
 		ClientCloseBuyMenu;
 	reliable if( Role < ROLE_Authority )
-		ServerDebugSkipWave, EndTrader, ServerMarkActor, ServerNotifyShoppingState;
+		ServerDebugSkipWave, EndTrader, ServerMarkActor, ServerNotifyShoppingState, ServerNotifyLoginMenuState;
 }
 
 simulated function PostBeginPlay()
@@ -29,6 +32,22 @@ simulated function PostBeginPlay()
 		//Spin up CPRL fixer
 		Spawn(class'TurboRepLinkFix', Self);
 	}
+}
+
+simulated function Tick(float DeltaTime)
+{
+	Super.Tick(DeltaTime);
+
+	if (LoginMenuTime >= 0.f && (LoginMenuTime < Level.TimeSeconds) && IsLocalPlayerController())
+	{
+		ServerNotifyLoginMenuState(false);
+		LoginMenuTime = -1.f;
+	}
+}
+
+simulated final function bool IsLocalPlayerController()
+{
+	return Viewport(Player) != None;
 }
 
 simulated function SetupTurboInteraction()
@@ -57,6 +76,30 @@ function ServerNotifyShoppingState(bool bNewShoppingState)
 	}
 
 	bShopping = bNewShoppingState;
+}
+
+//Holding escape would allow for people to spam the server with the ServerNotifyLoginMenuState RPC inadvertently...
+simulated function SetLoginMenuState(bool bNewLoginMenuState)
+{
+	if (bNewLoginMenuState)
+	{
+		if (bHasClosedLoginMenu)
+		{
+			ServerNotifyLoginMenuState(true);
+			LoginMenuTime = -1.f;
+			bHasClosedLoginMenu = false;
+		}
+	}
+	else
+	{
+		LoginMenuTime = Level.TimeSeconds + 1.f;
+		bHasClosedLoginMenu = true;
+	}
+}
+
+function ServerNotifyLoginMenuState(bool bNewLoginMenuState)
+{
+	bInLoginMenu = bNewLoginMenuState;
 }
 
 simulated function ClientSetHUD(class<HUD> newHUDClass, class<Scoreboard> newScoringClass )
@@ -409,4 +452,8 @@ defaultproperties
     PlayerReplicationInfoClass=Class'KFTurbo.TurboPlayerReplicationInfo'
 
 	WeaponRemappingSettings=class'WeaponRemappingSettingsImpl'
+
+	bInLoginMenu=false
+	bHasClosedLoginMenu=true //Starts as closed.
+	LoginMenuTime=-1.f
 }
