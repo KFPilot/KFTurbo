@@ -10,7 +10,6 @@ defaultproperties
      RecoilVelocityScale=5.000000
      FireRate=0.057000
      AmmoClass=Class'KFTurboRandomizer.W_Bullpup_brrt_Ammo'
-     aimerror=124.000000
      Spread=1.50000
      SpreadStyle=SS_Random
 }

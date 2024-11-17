@@ -43,5 +43,4 @@ defaultproperties
      FireForce="AssaultRifleFire"
      AmmoPerFire=1
      BotRefireRate=0.100000
-     aimerror=30.000000
 }

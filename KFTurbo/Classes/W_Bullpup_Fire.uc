@@ -12,7 +12,6 @@ defaultproperties
      DamageMin=28
      DamageMax=28
      FireRate=0.100000
-     aimerror=1.000000
      Spread=0.000850
      MaxSpread=0.012000
      SpreadStyle=SS_None

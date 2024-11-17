@@ -26,7 +26,6 @@ defaultproperties
      ShakeOffsetRate=(X=1000.000000,Y=1000.000000,Z=1000.000000)
      ShakeOffsetTime=1.250000
      FlashEmitterClass=Class'ROEffects.MuzzleFlash1stMP'
-     aimerror=30.000000
      SpreadStyle=SS_Random
      bRandomPitchFireSound=False
      bAccuracyBonusForSemiAuto=True

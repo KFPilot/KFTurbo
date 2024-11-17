@@ -33,7 +33,6 @@ defaultproperties
      AmmoPerFire=1
      BotRefireRate=0.100000
      FlashEmitterClass=Class'ROEffects.MuzzleFlash1stMP'
-     aimerror=30.000000
      Spread=0.01000
      SpreadStyle=SS_Random
 }

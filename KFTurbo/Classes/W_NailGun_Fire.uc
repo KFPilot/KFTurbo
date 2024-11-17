@@ -30,6 +30,5 @@ defaultproperties
      AmmoClass=Class'KFTurbo.W_NailGun_Ammo'
      ProjectileClass=Class'KFTurbo.W_NailGun_Proj'
      Spread=0.005000
-     aimerror=1.000000
      SpreadStyle=SS_None
 }
