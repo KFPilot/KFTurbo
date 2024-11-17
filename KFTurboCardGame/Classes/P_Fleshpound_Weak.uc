@@ -22,4 +22,5 @@ defaultproperties
      HeadScale=1.100000
      HeadRadius=5.500000
      PrePivot=(Z=-16.000000)
+     MeleeDamage=17
 }

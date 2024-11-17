@@ -23,4 +23,6 @@ defaultproperties
      HeadHealth=100.000000
      HealthMax=150.000000
      Health=150
+     MeleeDamage=6
+     ScreamDamage=4
 }

@@ -22,5 +22,5 @@ defaultproperties
      PrePivot=(Z=-13.000000)
      CollisionRadius=22.000000  
      CollisionHeight=40.000000
-
+     MeleeDamage=10
 }
