@@ -10,5 +10,5 @@ simulated function ProcessTouch(Actor Other, vector HitLocation)
 
 defaultproperties
 {
-     HeadShotDamageMult=1.640000
+    MyDamageType=Class'W_AA12_DT'
 }

@@ -1,6 +1,7 @@
 class W_Trenchgun_Proj extends TrenchgunBullet;
 
-defaultproperties{
+defaultproperties
+{
      PenDamageReduction=0.650000
-     HeadShotDamageMult=1.750000
+     MyDamageType=Class'W_Trenchgun_DT'
 }
