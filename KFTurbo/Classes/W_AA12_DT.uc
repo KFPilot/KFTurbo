@@ -2,5 +2,5 @@ class W_AA12_DT extends DamTypeAA12Shotgun;
 
 defaultproperties
 {
-    HeadShotDamageMult=1.100000
+    HeadShotDamageMult=1.875000
 }

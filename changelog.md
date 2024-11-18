@@ -76,7 +76,7 @@
         - 66% wider spread 🔻
         - 14% slower reload speed 🔻
     - **AA-12**:
-        - Headshot bonus damage increased by 10% 🟢
+        - Headshot bonus damage increased by 70% 🟢
         
     - **Hunting Shotgun**:
         - Unchanged 🟦
@@ -437,7 +437,7 @@
     - **Trenchgun**
         - Weight 8 -> 7 🟢
         - 23% less damage loss after penetrating. 🟢
-        - Headshot bonus damage increased by 16% 🟢
+        - Headshot bonus damage increased by 18% 🟢
         - 50% less player pushback on firing 🟢
         
         - 20% more expensive 🔻
