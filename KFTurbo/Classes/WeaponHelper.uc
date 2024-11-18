@@ -246,6 +246,8 @@ static final function bool AlreadyHitPawn(out Actor HitActor, out array<Pawn> Hi
 	{
 		return false;
 	}
+	
+	HitActor = Pawn;
 
 	for (Index = 0; Index < HitPawnList.Length; Index++)
 	{

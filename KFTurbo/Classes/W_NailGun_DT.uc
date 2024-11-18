@@ -3,5 +3,6 @@ class W_NailGun_DT extends DamTypeNailGun
 
 defaultproperties
 {
+     HeadShotDamageMult=1.705000
      WeaponClass=Class'KFTurbo.W_NailGun_Weap'
 }

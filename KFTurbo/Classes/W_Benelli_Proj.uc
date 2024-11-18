@@ -1,14 +1,7 @@
-class W_Benelli_Proj extends BenelliBullet;
-
-simulated function ProcessTouch(Actor Other, vector HitLocation)
-{
-    local float PreviousDamage;
-    PreviousDamage = Damage;
-    Super.ProcessTouch(Other, HitLocation);
-    class'WeaponHelper'.static.OnShotgunProjectileHit(Self, Other, PreviousDamage);
-}
+class W_Benelli_Proj extends W_BaseShotgunBullet;
 
 defaultproperties
 {
-     PenDamageReduction=0.750000
+    PenDamageReduction=0.750000
+    MyDamageType=Class'KFMod.DamTypeBenelli'
 }

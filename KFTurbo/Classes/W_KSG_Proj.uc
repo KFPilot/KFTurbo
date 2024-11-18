@@ -1,14 +1,9 @@
-class W_KSG_Proj extends KSGBullet;
-
-simulated function ProcessTouch(Actor Other, vector HitLocation)
-{
-     local float PreviousDamage;
-     PreviousDamage = Damage;
-     Super.ProcessTouch(Other, HitLocation);
-     class'WeaponHelper'.static.OnShotgunProjectileHit(Self, Other, PreviousDamage);
-}
+class W_KSG_Proj extends W_BaseShotgunBullet;
 
 defaultproperties
 {
-     Damage=20.000000
+     PenDamageReduction=0.750000
+     
+     Damage=19.500000
+     MyDamageType=Class'KFMod.DamTypeKSGShotgun'
 }
