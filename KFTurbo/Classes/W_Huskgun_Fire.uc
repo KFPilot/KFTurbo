@@ -81,19 +81,28 @@ function class<Projectile> GetDesiredProjectileClass()
 /* Convenient place to perform changes to a newly spawned projectile */
 function PostSpawnProjectile(Projectile P)
 {
+    local float ChargeFactor;
+    local float NormalizedChargeFactor;
+    local float MaxDamageMultiplier;
+
     Super(KFShotgunFire).PostSpawnProjectile(P);
 
-    if( HoldTime < GetScaledMaxChargeTime() )
+    MaxDamageMultiplier = class'HuskGunFire'.Default.MaxChargeTime * 2.5;
+
+    ChargeFactor = FMin(HoldTime, GetScaledMaxChargeTime());
+    NormalizedChargeFactor = ChargeFactor / GetScaledMaxChargeTime();
+
+    if (HoldTime < GetScaledMaxChargeTime())
     {
-        HuskGunProjectile(p).ImpactDamage *= HoldTime * 2.5;
-        HuskGunProjectile(p).Damage *= (1.0 + (HoldTime/GetScaledMaxChargeTime()));// up to double damage
-        HuskGunProjectile(p).DamageRadius *= (1.0 + (HoldTime/(GetScaledMaxChargeTime()/2.0)));// up 3x the damage radius
+        HuskGunProjectile(p).ImpactDamage *= NormalizedChargeFactor * MaxDamageMultiplier;
+        HuskGunProjectile(p).Damage *= (1.0 + (ChargeFactor / GetScaledMaxChargeTime()));  // Up to double damage.
+        HuskGunProjectile(p).DamageRadius *= (1.0 + (ChargeFactor / (GetScaledMaxChargeTime() / 2.0)));  // Up to 3x the damage radius.
     }
     else
     {
-        HuskGunProjectile(p).ImpactDamage *= GetScaledMaxChargeTime() * 2.5;
-        HuskGunProjectile(p).Damage *= 2.0;// up to double damage
-        HuskGunProjectile(p).DamageRadius *= 3.0;// up 3x the damage radius
+        HuskGunProjectile(p).ImpactDamage *= MaxDamageMultiplier;
+        HuskGunProjectile(p).Damage *= 2.0;  // Up to double damage.
+        HuskGunProjectile(p).DamageRadius *= 3.0;  // Up to 3x the damage radius.
     }
 }
 
