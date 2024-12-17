@@ -22,6 +22,8 @@ KFTurbo has the following official servers:
 * Ireland - `38.180.21.26:7707`
 * Poland - `38.180.227.82:7707`
 * Japan - `38.180.202.205:7707`
+* Austria - `38.180.143.157:7707`
+* Brazil - `38.180.16.109:7707`
 
 ## Setup
 For information on how to setup a server with KFTurbo, read the setup instructions [here](./SETUP.md).
