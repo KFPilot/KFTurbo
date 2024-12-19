@@ -17,10 +17,10 @@ defaultproperties
      HealthMax=500.000000
      Health=500
      HeadHeight=2.050000
-     HeadScale=1.300000
-     HeadRadius=5.500000
      PrePivot=(Z=-13.000000)
      CollisionRadius=22.000000  
      CollisionHeight=40.000000
      MeleeDamage=10
+     OnlineHeadshotOffset=(X=24.000000,Y=5.000000,Z=30.000000)
+     OnlineHeadshotScale=1.250000
 }
