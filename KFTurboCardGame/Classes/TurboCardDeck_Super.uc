@@ -377,5 +377,5 @@ defaultproperties
         CardDescriptionList(4)="of themselves."
         OnActivateCard=ActivateDeEvolution
     End Object
-    DeckCardObjectList(22)=TurboCard'DeEvolution'
+    DeckCardObjectList(23)=TurboCard'DeEvolution'
 }
