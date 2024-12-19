@@ -368,7 +368,6 @@ defaultproperties
     End Object
     DeckCardObjectList(22)=TurboCard'MassDetonation'
 
-/*
     Begin Object Name=DeEvolution Class=TurboCard_Super
         CardName(0)="De-Evolution"
         CardDescriptionList(0)="All zeds have"
@@ -379,5 +378,4 @@ defaultproperties
         OnActivateCard=ActivateDeEvolution
     End Object
     DeckCardObjectList(22)=TurboCard'DeEvolution'
-*/
 }
