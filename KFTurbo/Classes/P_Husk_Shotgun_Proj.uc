@@ -1,30 +1,15 @@
 class P_Husk_Shotgun_Proj extends HuskFireProjectile;
 
 var byte Bounces;
-var string BounceSoundRef;
 var Sound BounceSound;
+var string BounceSoundRef;
 var class<Emitter> FlameTrailEmitterClass;
 var class<Emitter> ImpactEmitterClass;
 var class<Emitter> ImpactDripEmitterClass;
 
-static function PreloadAssets()
-{
-    Super.PreloadAssets();
-	default.BounceSound = Sound(DynamicLoadObject(default.BounceSoundRef, class'Sound', true));
-}
-
-
-static function bool UnloadAssets()
-{
-    Super.UnloadAssets();
-	default.BounceSound = none;
-	return true;
-}
-
 simulated function PostBeginPlay()
 {
-    log("PostBeginPlay: BounceSound is " @ BounceSound); //None
-    log("PostBeginPlay: BounceSoundRef is " @ BounceSoundRef);
+    default.BounceSound=Sound(DynamicLoadObject(BounceSoundRef, class'Sound', true));
 	if ( Level.NetMode != NM_DedicatedServer )
 	{
 		if ( !PhysicsVolume.bWaterVolume )
@@ -81,7 +66,7 @@ simulated function HitWall( vector HitNormal, actor Wall )
 
     	if ( !Level.bDropDetail && (Level.NetMode != NM_DedicatedServer))
     	{
-            Spawn(ImpactDripEmitterClass,,,Location, rotator(hitnormal)); //doesn't spawn
+            Spawn(ImpactDripEmitterClass,,,Location, rotator(hitnormal)); //doesn't spawn - material is none
             Spawn(ImpactEmitterClass,,,Location);
     	}
 
@@ -98,8 +83,8 @@ defaultproperties
     FlameTrailEmitterClass=Class'KFTurbo.P_Husk_Shotgun_ProjEmitter'
     ImpactEmitterClass=Class'KFTurbo.P_Husk_Shotgun_BounceEmitter'
     ImpactDripEmitterClass=Class'KFTurbo.P_Husk_Shotgun_BounceDripEmitter'
-    BounceSoundRef="KF_FlamethrowerSnd.FireBase.Fire1Shot1" 
     StaticMesh=StaticMesh'EffectsSM.Weapons.Ger_Tracer_Ball'
+    BounceSoundRef="KF_FlamethrowerSnd.FireBase.Fire1Shot1"
     Bounces=1
     Damage=5.000000
     LightHue=255

@@ -2,8 +2,8 @@ class P_Husk_Shotgun_BounceDripEmitter extends Emitter;
 
 defaultproperties
 {
-    Begin Object Class=SparkEmitter Name=SparkEmitter0
-        TimeBetweenSegmentsRange=(Min=0.200000,Max=0.200000)
+    Begin Object Class=SpriteEmitter Name=SpriteEmitter0
+        UseDirectionAs=PTDU_Up
         UseCollision=True
         UseColorScale=True
         FadeOut=True
@@ -13,16 +13,16 @@ defaultproperties
         Acceleration=(Z=-500.000000)
         ColorScale(0)=(Color=(R=255,A=255))
         ColorScale(1)=(RelativeTime=1.000000,Color=(R=128,A=255))
+        FadeOutStartTime=0.800000
         MaxParticles=20
-      
-        StartSizeRange=(X=(Min=50.000000,Max=50.000000),Y=(Min=50.000000,Max=50.000000),Z=(Min=50.000000,Max=50.000000))
+        StartSizeRange=(X=(Min=5.000000,Max=10.000000),Y=(Min=0.100000,Max=0.200000),Z=(Min=5.000000,Max=10.000000))
         InitialParticlesPerSecond=5000.000000
         DrawStyle=PTDS_Brighten
         Texture=Texture'KFX.KFSparkHead'
-        LifetimeRange=(Min=0.700000,Max=1.000000)
-        StartVelocityRange=(X=(Min=-75.000000,Max=75.000000),Y=(Min=-75.000000,Max=75.000000),Z=(Min=150.000000,Max=150.000000))
+        LifetimeRange=(Min=0.400000,Max=0.600000)
+        StartVelocityRange=(X=(Min=-500.000000,Max=500.000000),Y=(Min=-500.000000,Max=500.000000),Z=(Max=500.000000))
     End Object
-    Emitters(0)=SparkEmitter'KFTurbo.P_Husk_Shotgun_BounceDripEmitter.SparkEmitter0'
+    Emitters(0)=SpriteEmitter'KFTurbo.P_Husk_Shotgun_BounceDripEmitter.SpriteEmitter0'
 
     AutoDestroy=True
     bNoDelete=False

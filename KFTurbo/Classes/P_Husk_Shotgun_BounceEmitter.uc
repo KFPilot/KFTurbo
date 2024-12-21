@@ -27,7 +27,7 @@ defaultproperties
         Texture=Texture'Effects_Tex.explosions.impact_2frame'
         TextureUSubdivisions=2
         TextureVSubdivisions=1
-        LifetimeRange=(Min=0.200000,Max=0.200000)
+        LifetimeRange=(Min=0.400000,Max=0.400000)
         StartVelocityRange=(Z=(Min=10.000000,Max=10.000000))
     End Object
     Emitters(0)=SpriteEmitter'KFTurbo.P_Husk_Shotgun_BounceEmitter.SpriteEmitter0'
