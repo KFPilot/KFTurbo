@@ -5,7 +5,7 @@ var Sound BounceSound;
 var string BounceSoundRef;
 var class<Emitter> FlameTrailEmitterClass;
 var class<Emitter> ImpactEmitterClass;
-var class<Emitter> ImpactDripEmitterClass;
+var class<Emitter> ExplosionEmitterClass;
 
 simulated function PostBeginPlay()
 {
@@ -64,10 +64,9 @@ simulated function HitWall( vector HitNormal, actor Wall )
         Velocity = 0.65 * (Velocity - 2.0*HitNormal*(Velocity dot HitNormal));
         Bounces = Bounces - 1;
 
-    	if ( !Level.bDropDetail && (Level.NetMode != NM_DedicatedServer))
+    	if ( EffectIsRelevant(Location,false))
     	{
-            Spawn(ImpactDripEmitterClass,,,Location, rotator(hitnormal)); //doesn't spawn - material is none
-            Spawn(ImpactEmitterClass,,,Location);
+            Spawn(ImpactEmitterClass,,,Location, rotator(hitnormal));
     	}
 
         return;
@@ -78,11 +77,62 @@ simulated function HitWall( vector HitNormal, actor Wall )
     }
 }
 
+simulated function Explode(vector HitLocation, vector HitNormal)
+{
+    local Controller C;
+    local PlayerController  LocalPlayer;
+    local float ShakeScale;
+
+    bHasExploded = True;
+
+    // Don't explode if this is a dud
+    if( bDud )
+    {
+        Velocity = vect(0,0,0);
+        LifeSpan=1.0;
+        SetPhysics(PHYS_Falling);
+    }
+
+    PlaySound(ExplosionSound,,2.0);
+    if ( EffectIsRelevant(Location,false) )
+    {
+        Spawn(ExplosionEmitterClass,,,HitLocation + HitNormal*20,rotator(HitNormal));
+        Spawn(ExplosionDecal,self,,HitLocation, rotator(-HitNormal));
+    }
+
+    BlowUp(HitLocation);
+    Destroy();
+
+    // Shake nearby players screens
+    LocalPlayer = Level.GetLocalPlayerController();
+    if ( LocalPlayer != none )
+    {
+        ShakeScale = GetShakeScale(Location, LocalPlayer.ViewTarget.Location);
+        if( ShakeScale > 0 )
+        {
+            LocalPlayer.ShakeView(RotMag * ShakeScale, RotRate, RotTime, OffsetMag * ShakeScale, OffsetRate, OffsetTime);
+        }
+    }
+
+    for ( C=Level.ControllerList; C!=None; C=C.NextController )
+    {
+        if ( PlayerController(C) != None && C != LocalPlayer )
+        {
+            ShakeScale = GetShakeScale(Location, PlayerController(C).ViewTarget.Location);
+            if( ShakeScale > 0 )
+            {
+                C.ShakeView(RotMag * ShakeScale, RotRate, RotTime, OffsetMag * ShakeScale, OffsetRate, OffsetTime);
+            }
+        }
+    }
+}
+
 defaultproperties
 {
     FlameTrailEmitterClass=Class'KFTurbo.P_Husk_Shotgun_ProjEmitter'
     ImpactEmitterClass=Class'KFTurbo.P_Husk_Shotgun_BounceEmitter'
-    ImpactDripEmitterClass=Class'KFTurbo.P_Husk_Shotgun_BounceDripEmitter'
+    ExplosionEmitterClass=Class'KFTurbo.P_Husk_Shotgun_ExplosionEmitter'
+    ExplosionDecal=Class'KFMod.FlameThrowerBurnMark_Medium'
     StaticMesh=StaticMesh'EffectsSM.Weapons.Ger_Tracer_Ball'
     BounceSoundRef="KF_FlamethrowerSnd.FireBase.Fire1Shot1"
     Bounces=1
