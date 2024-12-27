@@ -11,15 +11,17 @@ var class<Emitter> FlameTrailEmitterClass;
 var class<Emitter> ImpactEmitterClass;
 var class<Emitter> ExplosionEmitterClass;
 
+
 simulated function PostBeginPlay()
 {
+    SetTimer(60.0, false);
     default.BounceSound=Sound(DynamicLoadObject(BounceSoundRef, class'Sound', true));
 	if ( Level.NetMode != NM_DedicatedServer )
 	{
 		if (!PhysicsVolume.bWaterVolume)
 		{
 			FlameTrail = Spawn(FlameTrailEmitterClass,self);
-			Trail = Spawn(class'FlameThrowerFlame',self); // The short yellow wriggly trail behind the projectile - otherwise its just a ball
+			Trail = Spawn(class'P_Husk_Shotgun_DepthTrail',self);
 		}
 	}
 
@@ -52,6 +54,15 @@ simulated function PostBeginPlay()
 }
 
 
+function Timer()
+{
+    // Check if the projectile has already exploded
+    if (!bHasExploded)
+    {
+        Explode(Location,vect(0, 0, 1));
+    }
+}
+
 simulated function HitWall(vector HitNormal, actor Wall)
 {
 	if (Bounces > 0)
@@ -74,6 +85,26 @@ simulated function HitWall(vector HitNormal, actor Wall)
 		super(Projectile).HitWall(HitNormal,Wall);
     }
 }
+
+
+simulated function Destroyed()
+{
+	if (Trail != none)
+	{
+		Trail.mRegen=False;
+		Trail.SetPhysics(PHYS_None);
+		Trail.GotoState('');
+	}
+
+	if (FlameTrail != none)
+	{
+        FlameTrail.Kill();
+		FlameTrail.SetPhysics(PHYS_None);
+	}
+
+	Super.Destroyed();
+}
+
 
 function TakeDamage(int Damage, Pawn InstigatedBy, Vector Hitlocation, Vector Momentum, class<DamageType> damageType, optional int HitIndex)
 {
@@ -174,4 +205,6 @@ defaultproperties
     LightHue=255
     LightSaturation=64
     AmbientGlow=254
+    LightRadius=5.000000
+    bNetNotify=False
 }
