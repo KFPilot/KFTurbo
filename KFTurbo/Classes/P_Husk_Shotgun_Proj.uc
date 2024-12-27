@@ -4,18 +4,18 @@
 
 class P_Husk_Shotgun_Proj extends HuskFireProjectile;
 
-var byte Bounces;
+var byte Bounces; // Amount of time the projectile can bounce
 var Sound BounceSound;
-var string BounceSoundRef;
-var class<Emitter> FlameTrailEmitterClass;
-var class<Emitter> ImpactEmitterClass;
-var class<Emitter> ExplosionEmitterClass;
+var string BounceSoundRef; // Sound played when bouncing
+var class<Emitter> FlameTrailEmitterClass; // Particles spawned periodically in flight
+var class<Emitter> ImpactEmitterClass; // Particles spawned when bouncing
+var class<Emitter> ExplosionEmitterClass; // Particles spawned when exploding
 
 
 simulated function PostBeginPlay()
 {
-    SetTimer(60.0, false);
-    default.BounceSound=Sound(DynamicLoadObject(BounceSoundRef, class'Sound', true));
+    SetTimer(60.0, false); // Destroy this projectile after a while
+    default.BounceSound=Sound(DynamicLoadObject(BounceSoundRef, class'Sound', true)); // Load Bounce Sound (Zeds don't have PreloadAssets)
 	if ( Level.NetMode != NM_DedicatedServer )
 	{
 		if (!PhysicsVolume.bWaterVolume)
@@ -86,29 +86,9 @@ simulated function HitWall(vector HitNormal, actor Wall)
     }
 }
 
-
-simulated function Destroyed()
-{
-	if (Trail != none)
-	{
-		Trail.mRegen=False;
-		Trail.SetPhysics(PHYS_None);
-		Trail.GotoState('');
-	}
-
-	if (FlameTrail != none)
-	{
-        FlameTrail.Kill();
-		FlameTrail.SetPhysics(PHYS_None);
-	}
-
-	Super.Destroyed();
-}
-
-
 function TakeDamage(int Damage, Pawn InstigatedBy, Vector Hitlocation, Vector Momentum, class<DamageType> damageType, optional int HitIndex)
 {
-
+    // Prevent projectile from being blown up or disintegrated
 }
 
 simulated function Explode(vector HitLocation, vector HitNormal)
@@ -153,7 +133,7 @@ simulated function Explode(vector HitLocation, vector HitNormal)
     }
 }
 
-simulated singular function Touch(Actor Other)
+simulated singular function Touch(Actor Other) // Overriding Touch here, because HuskFireProjectile has incorrect early return
 {
     local vector    HitLocation, HitNormal;
 
@@ -182,7 +162,7 @@ simulated singular function Touch(Actor Other)
 	}
 }
 
-simulated function ProcessTouch(Actor Other, Vector HitLocation)
+simulated function ProcessTouch(Actor Other, Vector HitLocation) // HuskFireProjectile calls LAWProj instead of Projectile in ProcessTouch resulting in accessing none
 {
     if (ExtendedZCollision(Other) != None || KFMonster(Other) != None)
     {
@@ -206,5 +186,5 @@ defaultproperties
     LightSaturation=64
     AmbientGlow=254
     LightRadius=5.000000
-    bNetNotify=False
+    bNetNotify=False // Not needed due to being immune to disintegration
 }
