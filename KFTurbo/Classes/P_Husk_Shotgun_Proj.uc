@@ -1,3 +1,7 @@
+//-------------------------------------------------------------------------------
+// Shotgun Husk Projectile
+//-------------------------------------------------------------------------------
+
 class P_Husk_Shotgun_Proj extends HuskFireProjectile;
 
 var byte Bounces;
@@ -12,10 +16,10 @@ simulated function PostBeginPlay()
     default.BounceSound=Sound(DynamicLoadObject(BounceSoundRef, class'Sound', true));
 	if ( Level.NetMode != NM_DedicatedServer )
 	{
-		if ( !PhysicsVolume.bWaterVolume )
+		if (!PhysicsVolume.bWaterVolume)
 		{
 			FlameTrail = Spawn(FlameTrailEmitterClass,self);
-			Trail = Spawn(class'FlameThrowerFlame',self);
+			Trail = Spawn(class'FlameThrowerFlame',self); // The short yellow wriggly trail behind the projectile - otherwise its just a ball
 		}
 	}
 
@@ -41,30 +45,24 @@ simulated function PostBeginPlay()
 	}
 
     OrigLoc = Location;
-
-    if( !bDud )
-    {
-        Dir = vector(Rotation);
-        Velocity = speed * Dir;
-    }
+    Dir = vector(Rotation);
+    Velocity = speed * Dir;
 
     super(ROBallisticProjectile).PostBeginPlay();
 }
 
 
-simulated function HitWall( vector HitNormal, actor Wall )
+simulated function HitWall(vector HitNormal, actor Wall)
 {
-    SetRotation(rotator(Normal(Velocity)));
-    
 	if (Bounces > 0)
     {
         if (!Level.bDropDetail)
             PlaySound(BounceSound, ESoundSlot.SLOT_Misc );
 
-        Velocity = 0.65 * (Velocity - 2.0*HitNormal*(Velocity dot HitNormal));
+        Velocity = (Velocity - 2.0*HitNormal*(Velocity dot HitNormal));
         Bounces = Bounces - 1;
 
-    	if ( EffectIsRelevant(Location,false))
+    	if (EffectIsRelevant(Location,false))
     	{
             Spawn(ImpactEmitterClass,,,Location, rotator(hitnormal));
     	}
@@ -77,6 +75,11 @@ simulated function HitWall( vector HitNormal, actor Wall )
     }
 }
 
+function TakeDamage(int Damage, Pawn InstigatedBy, Vector Hitlocation, Vector Momentum, class<DamageType> damageType, optional int HitIndex)
+{
+
+}
+
 simulated function Explode(vector HitLocation, vector HitNormal)
 {
     local Controller C;
@@ -85,16 +88,8 @@ simulated function Explode(vector HitLocation, vector HitNormal)
 
     bHasExploded = True;
 
-    // Don't explode if this is a dud
-    if( bDud )
-    {
-        Velocity = vect(0,0,0);
-        LifeSpan=1.0;
-        SetPhysics(PHYS_Falling);
-    }
-
     PlaySound(ExplosionSound,,2.0);
-    if ( EffectIsRelevant(Location,false) )
+    if (EffectIsRelevant(Location,false))
     {
         Spawn(ExplosionEmitterClass,,,HitLocation + HitNormal*20,rotator(HitNormal));
         Spawn(ExplosionDecal,self,,HitLocation, rotator(-HitNormal));
@@ -105,18 +100,18 @@ simulated function Explode(vector HitLocation, vector HitNormal)
 
     // Shake nearby players screens
     LocalPlayer = Level.GetLocalPlayerController();
-    if ( LocalPlayer != none )
+    if (LocalPlayer != none)
     {
         ShakeScale = GetShakeScale(Location, LocalPlayer.ViewTarget.Location);
-        if( ShakeScale > 0 )
+        if(ShakeScale > 0)
         {
             LocalPlayer.ShakeView(RotMag * ShakeScale, RotRate, RotTime, OffsetMag * ShakeScale, OffsetRate, OffsetTime);
         }
     }
 
-    for ( C=Level.ControllerList; C!=None; C=C.NextController )
+    for (C=Level.ControllerList; C!=None; C=C.NextController)
     {
-        if ( PlayerController(C) != None && C != LocalPlayer )
+        if (PlayerController(C) != None && C != LocalPlayer)
         {
             ShakeScale = GetShakeScale(Location, PlayerController(C).ViewTarget.Location);
             if( ShakeScale > 0 )
@@ -127,6 +122,45 @@ simulated function Explode(vector HitLocation, vector HitNormal)
     }
 }
 
+simulated singular function Touch(Actor Other)
+{
+    local vector    HitLocation, HitNormal;
+
+	if (Other == None || KFBulletWhipAttachment(Other) != None)
+    {
+		return;
+    }
+
+	if (Other.bProjTarget || Other.bBlockActors)
+	{
+		LastTouched = Other;
+		if (Velocity == vect(0,0,0) || Other.IsA('Mover'))
+		{
+			ProcessTouch(Other,Location);
+			LastTouched = None;
+			return;
+		}
+
+		if (Other.TraceThisActor(HitLocation, HitNormal, Location, Location - 2*Velocity, GetCollisionExtent()))
+			HitLocation = Location;
+
+		ProcessTouch(Other, HitLocation);
+		LastTouched = None;
+		if ((Role < ROLE_Authority) && (Other.Role == ROLE_Authority) && (Pawn(Other) != None))
+			ClientSideTouch(Other, HitLocation);
+	}
+}
+
+simulated function ProcessTouch(Actor Other, Vector HitLocation)
+{
+    if (ExtendedZCollision(Other) != None || KFMonster(Other) != None)
+    {
+        return;
+    }
+
+    super(Projectile).ProcessTouch(Other, HitLocation);
+}
+
 defaultproperties
 {
     FlameTrailEmitterClass=Class'KFTurbo.P_Husk_Shotgun_ProjEmitter'
@@ -135,8 +169,8 @@ defaultproperties
     ExplosionDecal=Class'KFMod.FlameThrowerBurnMark_Medium'
     StaticMesh=StaticMesh'EffectsSM.Weapons.Ger_Tracer_Ball'
     BounceSoundRef="KF_FlamethrowerSnd.FireBase.Fire1Shot1"
-    Bounces=1
-    Damage=5.000000
+    Bounces=5
+    Damage=10.000000
     LightHue=255
     LightSaturation=64
     AmbientGlow=254

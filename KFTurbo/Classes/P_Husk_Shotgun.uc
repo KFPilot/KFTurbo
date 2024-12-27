@@ -1,13 +1,15 @@
 
 //-------------------------------------------------------------------------------
 // Shotgun Husk
+// AKA Scorcher
+// Tankier, close range husk that fires a volley of projectiles
 //-------------------------------------------------------------------------------
 
 class P_Husk_Shotgun extends P_Husk_SUM;
 
-var int AttackRange; //Range in units from where the husk is allowed to initiate an attack.
-var int AttackSpreadDegree; //Random deviation of the projectiles fired by the husk, in degrees.
-var int AttackProjectileCount; //Count of projectiles fired by the husk.
+var int AttackRange; // Minimum distance in units from the target when the husk is allowed to initiate an attack.
+var int AttackSpreadDegree; // Random deviation of the projectiles fired by the husk, in degrees.
+var int AttackProjectileCount; // Count of projectiles fired by the husk.
 
 function RangedAttack(Actor A)
 {
@@ -88,17 +90,6 @@ function SpawnTwoShots()
         AdjustedRotation.Yaw = FireRotation.Yaw + RandRange(-AttackSpreadDegree * 182, AttackSpreadDegree * 182);    // Convert degrees to Unreal's rotation units
         AdjustedRotation.Roll = FireRotation.Roll;
 
-        foreach DynamicActors(class'KFMonsterController', KFMonstControl)
-        {
-            if( KFMonstControl != Controller )
-            {
-                if( PointDistToLine(KFMonstControl.Pawn.Location, vector(AdjustedRotation), FireStart) < 75 )
-                {
-                    KFMonstControl.GetOutOfTheWayOfShot(vector(AdjustedRotation), FireStart);
-                }
-            }
-        }
-
         // Spawn the projectile with the adjusted rotation
         Spawn(HuskFireProjClass, , , FireStart, AdjustedRotation);
     }
@@ -109,7 +100,7 @@ function SpawnTwoShots()
 
 defaultproperties
 {
-	AttackRange=700
+	AttackRange=2100
 	AttackSpreadDegree=15
 	AttackProjectileCount=5
     ProjectileFireInterval=1.500000
