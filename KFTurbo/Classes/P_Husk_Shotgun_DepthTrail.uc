@@ -1,4 +1,3 @@
-// A darker red, larger, and longer trail for projectiles
 class P_Husk_Shotgun_DepthTrail extends FlameThrowerFlame;
 
 defaultproperties

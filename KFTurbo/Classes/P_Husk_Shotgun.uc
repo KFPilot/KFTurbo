@@ -10,6 +10,43 @@ class P_Husk_Shotgun extends P_Husk_SUM;
 var int AttackRange; // Minimum distance in units from the target when the husk is allowed to initiate an attack.
 var int AttackSpreadDegree; // Random deviation of the projectiles fired by the husk, in degrees.
 var int AttackProjectileCount; // Count of projectiles fired by the husk.
+var class<Emitter> SmokeStackEmitterClass;
+
+simulated function PostBeginPlay()
+{
+    local Emitter AttachedEmitter;
+    local vector BoneLocation;
+    local vector AttachOffset;
+
+    super.PostBeginPlay();
+
+    BoneLocation = GetBoneCoords('CHR_Ribcage').Origin;
+    AttachOffset = vect(13, -1, 9); 
+
+    if (SmokeStackEmitterClass != None)
+    {
+		AttachedEmitter = Spawn(SmokeStackEmitterClass, , , BoneLocation, rot(0, 0, 0));
+
+        if (AttachToBone(AttachedEmitter, 'CHR_Ribcage'))
+        {
+            AttachedEmitter.SetRelativeLocation(AttachOffset);
+        }
+		else
+        {
+            log("Failed to attach emitter to bone.", 'Error');
+            AttachedEmitter.Destroy();
+        }
+    }
+}
+
+simulated function Destroyed()
+{
+    if (SmokeStackEmitterClass != None)
+    {
+        SmokeStackEmitterClass = None;
+    }
+    super.Destroyed();
+}
 
 function RangedAttack(Actor A)
 {
@@ -52,7 +89,6 @@ function SpawnTwoShots()
 {
 	local vector X,Y,Z, FireStart;
 	local rotator FireRotation, AdjustedRotation;
-	local KFMonsterController KFMonstControl;
     local int i;
 
 
@@ -104,6 +140,7 @@ defaultproperties
 	AttackSpreadDegree=15
 	AttackProjectileCount=5
     ProjectileFireInterval=1.500000
+	SmokeStackEmitterClass=Class'KFTurbo.P_Husk_Shotgun_SmokeEmitter'
     HuskFireProjClass=Class'KFTurbo.P_Husk_Shotgun_Proj'
     HeadHealth=270.000000
     HealthMax=800.000000
