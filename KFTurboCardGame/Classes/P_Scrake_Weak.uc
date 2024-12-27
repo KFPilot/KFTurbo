@@ -23,4 +23,5 @@ defaultproperties
      MeleeDamage=10
      OnlineHeadshotOffset=(X=24.000000,Y=5.000000,Z=30.000000)
      OnlineHeadshotScale=1.250000
+     MenuName="Small Scrake"
 }

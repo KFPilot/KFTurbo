@@ -18,4 +18,5 @@ defaultproperties
      CollisionHeight=16.000000
      MeleeDamage=3
      OnlineHeadshotOffset=(X=20.000000,Z=5.000000)
+     MenuName="Baby Crawler"
 }

@@ -24,4 +24,5 @@ defaultproperties
      MeleeDamage=6
      ScreamDamage=4
      OnlineHeadshotOffset=(X=8.000000,Z=30.000000)
+     MenuName="Squeaker"
 }

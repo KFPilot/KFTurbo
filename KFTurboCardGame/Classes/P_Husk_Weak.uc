@@ -74,4 +74,5 @@ defaultproperties
      MeleeDamage=7
      HuskFireProjClass=Class'KFTurboCardGame.P_Husk_Weak_Proj'
      OnlineHeadshotOffset=(X=18.000000,Z=40.000000)
+     MenuName="Husk Lite"
 }

@@ -23,4 +23,5 @@ defaultproperties
      MeleeDamage=7
      OnlineHeadshotOffset=(Y=5.000000,X=12.000000,Z=25.000000)
      OnlineHeadshotScale=1.000000
+     MenuName="Gorefast Jr."
 }

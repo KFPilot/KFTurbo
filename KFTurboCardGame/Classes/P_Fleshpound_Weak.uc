@@ -23,4 +23,5 @@ defaultproperties
      MeleeDamage=17
      OnlineHeadshotOffset=(X=22.000000,Z=38.000000)
      OnlineHeadshotScale=1.250000
+     MenuName="Mini Fleshpound"
 }

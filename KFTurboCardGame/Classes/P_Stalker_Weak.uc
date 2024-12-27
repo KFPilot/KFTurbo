@@ -21,5 +21,5 @@ defaultproperties
      MeleeDamage=5
      OnlineHeadshotOffset=(X=16.000000,Z=27.000000)
      OnlineHeadshotScale=1.100000
-
+     MenuName="Shortstack Stalker"
 }
