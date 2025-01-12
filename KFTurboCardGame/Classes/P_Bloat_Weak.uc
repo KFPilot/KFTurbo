@@ -64,5 +64,5 @@ defaultproperties
      OnlineHeadshotOffset=(X=5.000000,Z=40.000000)
 	 OnlineHeadshotScale=1.400000
      MeleeDamage=7
-	 MenuName="Diet Bloat"
+	 MenuName="Weak Bloat"
 }

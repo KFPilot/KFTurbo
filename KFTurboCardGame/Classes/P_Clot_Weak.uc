@@ -23,5 +23,5 @@ defaultproperties
      OnlineHeadshotOffset=(X=20.000000,Z=28.000000)
      OnlineHeadshotScale=1.000000
      MeleeDamage=3
-     MenuName="Clotlet"
+     MenuName="Weak Clot"
 }
