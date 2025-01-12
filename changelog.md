@@ -501,7 +501,6 @@
 - Fixed inconsistent cloaking state on dedicated servers.
 ### Husk
 - No longer fires cannon after dying
-- Added a new special variant: Scorcher
 ### Siren
 - No longer deals damage after dying
 - Now able to destroy high-speed projectiles on dedicated servers.
