@@ -703,6 +703,7 @@ static final function EMonsterTier GetMonsterTier(class<Monster> MonsterClass)
 		case class'P_Husk_HAL':
 		case class'P_Husk_SUM':
 		case class'P_Husk_XMA':
+		case class'P_Husk_Shotgun':
 		
 		case class'P_Siren_STA':
 		case class'P_Siren_HAL':
@@ -795,6 +796,7 @@ static final function EMonster GetMonsterType(class<Monster> MonsterClass)
 		case class'P_Husk_HAL':
 		case class'P_Husk_SUM':
 		case class'P_Husk_XMA':
+		case class'P_Husk_Shotgun':
 			return Husk;
 		
 		case class'P_Siren_STA':

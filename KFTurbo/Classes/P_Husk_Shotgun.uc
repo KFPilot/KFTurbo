@@ -148,7 +148,7 @@ defaultproperties
 	AttackRange=2100
 	AttackSpreadDegree=15
 	AttackProjectileCount=5
-    ProjectileFireInterval=1.500000
+    ProjectileFireInterval=2.500000
 	SteamEmitterClass=Class'KFTurbo.P_Husk_Shotgun_SteamEmitter'
 	SteamPuffEmitterClass=Class'KFTurbo.P_Husk_Shotgun_SteamPuffEmitter'
     HuskFireProjClass=Class'KFTurbo.P_Husk_Shotgun_Proj'

@@ -186,7 +186,8 @@ defaultproperties
     StaticMesh=StaticMesh'EffectsSM.Weapons.Ger_Tracer_Ball'
     BounceSoundRef="KF_FlamethrowerSnd.FireBase.Fire1Shot1"
     Bounces=5
-    Damage=10.000000
+    Damage=7.000000
+    MomentumTransfer=31250.000000
     ProjectileLifeSpan=60.000000
     LightHue=255
     LightSaturation=64
