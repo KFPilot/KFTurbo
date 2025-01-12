@@ -9,8 +9,6 @@ simulated function PostBeginPlay()
 }
 defaultproperties
 {
-     HeadRadius=5.500000
-     HeadScale=0.900000
      ColRadius=18.000000
      ColHeight=3.300000
      ColOffset=(Z=30.000000)
@@ -21,4 +19,7 @@ defaultproperties
      Health=50.000000
      HeadHealth=25.000000
      MeleeDamage=5
+     OnlineHeadshotOffset=(X=16.000000,Z=27.000000)
+     OnlineHeadshotScale=1.100000
+     MenuName="Weak Stalker"
 }

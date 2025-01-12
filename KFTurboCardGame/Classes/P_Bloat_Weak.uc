@@ -60,8 +60,9 @@ defaultproperties
      MeleeRange=23.000000
      HealthMax=265.000000
      Health=265
-     HeadScale=1.300000
-     HeadRadius=6.000000
      HeadHealth=25.000000
+     OnlineHeadshotOffset=(X=5.000000,Z=40.000000)
+	 OnlineHeadshotScale=1.400000
      MeleeDamage=7
+	 MenuName="Weak Bloat"
 }

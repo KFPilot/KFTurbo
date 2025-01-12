@@ -130,18 +130,18 @@ static function float GetMagCapacityMod(KFPlayerReplicationInfo KFPRI, KFWeapon 
 
 	if (Bullpup(Other) != None 
 		|| AK47AssaultRifle(Other) != None 
-		|| SCARMK17AssaultRifle(Other) != None
+		|| ThompsonSMG(Other) != None
 		|| MKb42AssaultRifle(Other) != None)
 	{
-		Multiplier *= LerpStat(KFPRI, 1.f, 1.25f);
+		Multiplier *= LerpStat(KFPRI, 1.f, 1.2f);
 	}
 	else if (ThompsonDrumSMG(Other) != None || SPThompsonSMG(Other) != none)
 	{
 		Multiplier *= LerpStat(KFPRI, 1.f, 1.6f);
 	}
-	else if (ThompsonSMG(Other) != None)
+	else if (SCARMK17AssaultRifle(Other) != None)
 	{
-		Multiplier *= LerpStat(KFPRI, 1.f, 1.2f);
+		Multiplier *= LerpStat(KFPRI, 1.f, 1.25f);
 	}
 	else if (M4AssaultRifle(Other) != None)
 	{
@@ -322,5 +322,5 @@ defaultproperties
     PerkIndex=3
 	CustomLevelInfo=""
 	Requirements(0)="Deal %x damage with Assault Rifles."
-	SRLevelEffects(6)="50% more damage with assault/battle rifles|40% less recoil with assault/battle rifles and SMGs|25% - 60% larger magazines for assault/battle rifles|25% more maximum ammo for assault/battle rifles|35% faster reload with all weapons|70% discount on assault/battle rifles|Spawn with an AK47|Can see cloaked Stalkers from 32m|Can see enemy health from 16m|Up to 4 zed-time extensions"
+	SRLevelEffects(6)="50% more damage with assault/battle rifles|40% less recoil with assault/battle rifles and SMGs|20% - 60% larger magazines for assault/battle rifles|25% more maximum ammo for assault/battle rifles|35% faster reload with all weapons|70% discount on assault/battle rifles|Spawn with an Bullpup|Can see cloaked Stalkers from 32m|Can see enemy health from 16m|Up to 4 zed-time extensions"
 }

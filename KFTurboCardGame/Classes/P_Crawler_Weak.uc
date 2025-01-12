@@ -13,10 +13,10 @@ defaultproperties
      Health=35
      HeadHealth=25.000000
      HeadHeight=2.500000
-     HeadScale=1.000000
-     HeadRadius=5.500000
      PrePivot=(Z=-2.000000)
      CollisionRadius=16.000000
      CollisionHeight=16.000000
      MeleeDamage=3
+     OnlineHeadshotOffset=(X=20.000000,Z=5.000000)
+     MenuName="Weak Crawler"
 }

@@ -71,8 +71,8 @@ defaultproperties
      MeleeRange=23.000000
      HealthMax=300.000000
      Health=300
-     HeadScale=1.300000
-     HeadRadius=5.500000
      MeleeDamage=7
      HuskFireProjClass=Class'KFTurboCardGame.P_Husk_Weak_Proj'
+     OnlineHeadshotOffset=(X=18.000000,Z=40.000000)
+     MenuName="Weak Husk"
 }

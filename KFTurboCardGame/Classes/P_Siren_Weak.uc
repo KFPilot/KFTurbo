@@ -9,8 +9,6 @@ simulated function PostBeginPlay()
 
 defaultproperties
 {
-     HeadRadius=5.500000
-     HeadScale=0.9000000
      ScreamRadius=500
      ScreamForce=-100000
      ColRadius=16.000000
@@ -25,4 +23,6 @@ defaultproperties
      Health=150
      MeleeDamage=6
      ScreamDamage=4
+     OnlineHeadshotOffset=(X=8.000000,Z=30.000000)
+     MenuName="Weak Siren"
 }

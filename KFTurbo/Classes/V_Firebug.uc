@@ -219,5 +219,5 @@ defaultproperties
 	PerkIndex=5
 	CustomLevelInfo=""
 	Requirements(0)="Deal %x damage with weapons that cause Burning."
-	SRLevelEffects(6)="60% extra damage with Flamethrower and Husk Gun|15% extra damage with MAC10, Trenchgun and Thompson Incendiary|60% faster reload speed with perk weapons|60% larger magazine for Flamethrower, MAC-10 and Thompson Incendiary|60% more ammo for with perk weapons|100% resistance to fire|100% extra Flamethrower range|Grenades set enemies on fire|70% discount on perk weapons|Spawn with a MAC-10"
+	SRLevelEffects(6)="60% extra damage with Flamethrower and Husk Gun|15% extra damage with MAC10, Trenchgun and Thompson Incendiary|60% faster reload speed with perk weapons|60% larger magazine for MAC-10 and Thompson Incendiary|60% more ammo for MAC-10 and Thompson Incendiary|20% more ammo and tank capacity for Flamethrower|100% extra Flamethrower range|Grenades set enemies on fire|70% discount on perk weapons|100% resistance to fire|Spawn with a MAC-10"
 }

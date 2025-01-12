@@ -207,5 +207,5 @@ defaultproperties
     PerkIndex=4
 	CustomLevelInfo=""
     Requirements(0)="Deal %x damage with melee weapons."
-	SRLevelEffects(6)="100% extra melee damage|15% faster melee attacks|20% faster melee movement|20% less damage from Siren scream|60% less damage from Bloat bile|10% resistance to all damage|70% discount on melee weapons|20% increase in grenade capacity|Grenades put zeds into Stasis, increasing the damage they take|Spawn with a Machete|Can't be grabbed by Clots|Up to 4 zed-time extensions"
+	SRLevelEffects(6)="100% extra melee damage|15% faster melee attacks|25% faster melee movement|40% less damage from Siren scream|70% less damage from Bloat bile|15% resistance to all damage|70% discount on melee weapons|20% increase in grenade capacity|Grenades put zeds into Stasis, increasing the damage they take|Spawn with a Machete|Can't be grabbed by Clots|Up to 4 zed-time extensions"
 }

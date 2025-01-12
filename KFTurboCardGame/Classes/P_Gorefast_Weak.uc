@@ -9,9 +9,7 @@ simulated function PostBeginPlay()
 }
 defaultproperties
 {
-     HeadRadius=5.500000
-     HeadHeight=1.650000
-     HeadScale=0.900000
+     HeadHeight=1.000000
      ColRadius=16.000000
      ColHeight=6.600000
      ColOffset=(Z=40.000000)
@@ -23,4 +21,7 @@ defaultproperties
      Health=125.000000
      HeadHealth=25.000000
      MeleeDamage=7
+     OnlineHeadshotOffset=(Y=5.000000,X=12.000000,Z=25.000000)
+     OnlineHeadshotScale=1.000000
+     MenuName="Weak Gorefast"
 }
