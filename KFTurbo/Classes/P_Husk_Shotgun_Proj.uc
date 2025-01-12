@@ -107,7 +107,9 @@ simulated function Explode(vector HitLocation, vector HitNormal)
         Spawn(ExplosionDecal,self,,HitLocation, rotator(-HitNormal));
     }
 
-    FlameTrail.Kill();
+    if (FlameTrail != None){
+        FlameTrail.Kill();
+    }
     BlowUp(HitLocation);
     Destroy();
 

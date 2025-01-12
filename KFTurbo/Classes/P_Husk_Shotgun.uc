@@ -152,6 +152,9 @@ defaultproperties
 	SteamEmitterClass=Class'KFTurbo.P_Husk_Shotgun_SteamEmitter'
 	SteamPuffEmitterClass=Class'KFTurbo.P_Husk_Shotgun_SteamPuffEmitter'
     HuskFireProjClass=Class'KFTurbo.P_Husk_Shotgun_Proj'
+    OnlineHeadshotOffset=(X=25.000000,Z=45.000000)
+    OnlineHeadshotScale=1.100000
+	HeadHeight=-5.000000
     HeadHealth=270.000000
     HealthMax=800.000000
     Health=800
