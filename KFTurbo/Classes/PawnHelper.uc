@@ -42,7 +42,7 @@ enum EMonster
 	Gorefast_Assassin,
 	Bloat_Fathead,
 	Siren_Caroler,
-    Husk_Shotgun,
+	Husk_Shotgun,
 
 	//Failed to resolve.
 	Unknown

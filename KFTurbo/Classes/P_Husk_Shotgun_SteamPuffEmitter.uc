@@ -12,7 +12,7 @@ defaultproperties
         UseRandomSubdivision=True
         ColorScale(0)=(Color=(B=255,G=255,R=255,A=255))
         ColorScale(1)=(RelativeTime=1.000000,Color=(B=255,G=255,R=255,A=255))
-        FadeOutStartTime=0.660000
+        FadeOutStartTime=0.400000
         FadeInEndTime=0.100000
         MaxParticles=14
         Opacity=0.100000
