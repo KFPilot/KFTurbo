@@ -151,16 +151,13 @@ static function float GetReloadSpeedModifier(KFPlayerReplicationInfo KFPRI, KFWe
 	{
 		Multiplier *= LerpStat(KFPRI, 1.f, 1.15f);
 	}
-	else if(Magnum44Pistol(Other) != None || Dual44Magnum(Other) != None)
-	{
-		Multiplier *= LerpStat(KFPRI, 1.f, 1.4f);
-	}
 	else if (Winchester(Other) != None
 		|| Single(Other) != None || Dualies(Other) != None
 		|| Deagle(Other) != None || DualDeagle(Other) != None
 		|| MK23Pistol(Other) != None || DualMK23Pistol(Other) != None
 		|| M14EBRBattleRifle(Other) != None
-		|| SPSniperRifle(Other) != None)
+		|| SPSniperRifle(Other) != None || Magnum44Pistol(Other) != None 
+		|| Dual44Magnum(Other) != None)
 	{
 		Multiplier *= LerpStat(KFPRI, 1.f, 1.6f);
 	}

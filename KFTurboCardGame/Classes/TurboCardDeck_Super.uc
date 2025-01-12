@@ -669,7 +669,7 @@ defaultproperties
         OnActivateCard=ActivateTooMuchForZBlock
     End Object
     DeckCardObjectList(28)=TurboCard'TooMuchForZBlock'
-/*
+
     Begin Object Name=DeEvolution Class=TurboCard_Super
         CardName(0)="De-Evolution"
         CardDescriptionList(0)="All zeds have"
@@ -680,6 +680,5 @@ defaultproperties
         OnActivateCard=ActivateDeEvolution
         CardID="SUPER_DEEVOLUTION"
     End Object
-    DeckCardObjectList(22)=TurboCard'DeEvolution'
-*/
+    DeckCardObjectList(29)=TurboCard'DeEvolution'
 }
