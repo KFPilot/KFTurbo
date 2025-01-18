@@ -8,11 +8,13 @@ function DoFireEffect()
 
 function DoTrace(Vector Start, Rotator Direction)
 {
-	class'WeaponHelper'.static.PenetratingWeaponTrace(Start, Direction, KFWeapon(Weapon), self, 0, 0.0);
+	class'WeaponHelper'.static.PenetratingWeaponTrace(Start, Direction, KFWeapon(Weapon), self, 2, 0.75);
 }
 
 defaultproperties
 {
      MaxSpread=0.102000
      AmmoClass=class'W_MKb42_Ammo'
+     DamageMin=45
+     DamageMax=51
 }
