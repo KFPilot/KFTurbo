@@ -16,7 +16,9 @@ var float ProjectileLifeSpan; // How long the projectile is allowed to exist bef
 simulated function PostBeginPlay()
 {
     SetTimer(ProjectileLifeSpan, false); // Explode this projectile after a while
+
     default.BounceSound=Sound(DynamicLoadObject(BounceSoundRef, class'Sound', true)); // Load Bounce Sound (Zeds don't have PreloadAssets)
+
 	if ( Level.NetMode != NM_DedicatedServer )
 	{
 		if (!PhysicsVolume.bWaterVolume)
@@ -66,17 +68,18 @@ function Timer()
 
 simulated function HitWall(vector HitNormal, actor Wall)
 {
-	if (Bounces > 0)
+	if (Bounces > 0) // Handle bouncing
     {
         if (!Level.bDropDetail)
-            PlaySound(BounceSound, ESoundSlot.SLOT_Misc );
+            PlaySound(BounceSound, ESoundSlot.SLOT_Misc ); // Play bounce sound
 
-        Velocity = (Velocity - 2.0*HitNormal*(Velocity dot HitNormal));
-        Bounces = Bounces - 1;
+        Velocity = (Velocity - 2.0*HitNormal*(Velocity dot HitNormal)); // Reflect velocity
+
+        Bounces--;
 
     	if (EffectIsRelevant(Location,false))
     	{
-            Spawn(ImpactEmitterClass,,,Location, rotator(hitnormal));
+            Spawn(ImpactEmitterClass,,,Location, rotator(hitnormal)); // Spawn impact particles if relevant
     	}
 
         return;
@@ -101,15 +104,17 @@ simulated function Explode(vector HitLocation, vector HitNormal)
     bHasExploded = True;
 
     PlaySound(ExplosionSound,,2.0);
+
     if (EffectIsRelevant(Location,false))
     {
         Spawn(ExplosionEmitterClass,,,HitLocation + HitNormal*20,rotator(HitNormal));
         Spawn(ExplosionDecal,self,,HitLocation, rotator(-HitNormal));
     }
 
-    if (FlameTrail != None){
-        FlameTrail.Kill();
+    if (FlameTrail != None){ 
+        FlameTrail.Kill(); // This might not be needed
     }
+
     BlowUp(HitLocation);
     Destroy();
 
