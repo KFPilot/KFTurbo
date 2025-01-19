@@ -187,7 +187,7 @@ static function float AddExtraAmmoFor(KFPlayerReplicationInfo KFPRI, class<Ammun
 
 	if (IsPerkAmmunition(AmmoType))
 	{
-		if (ThompsonDrumAmmo(AmmoType) != None)
+		if (AmmoType == class'W_ThompsonDrum_Ammo')
 			Multiplier *= LerpStat(KFPRI, 1.f, 1.4f);
 		else
 			Multiplier *= LerpStat(KFPRI, 1.f, 1.25f);
