@@ -1,46 +1,47 @@
 ## KF Turbo CardGame - all available cards
 
+
 ### Evil Deck
 
 | Image                                | Title                          | Description |
-|-------------------------------------|--------------------------------|-------------|
-| ![Hyperbloats](./media/cards/HYPERBLOATS.png.png) | Hyperbloats                   | Increases Bloat speed by 300%. |
-| ![Belligerent Scrakes](./media/cards/BELLIGERENT_SCRAKES.png) | Belligerent Scrakes           | All Scrakes spawn raged. |
-| ![Hair-Trigger Fleshpounds](./media/cards/HAIR-TRIGGER_FLESHPOUNDS.png) | Hair-Trigger Fleshpounds      | Fleshpounds rage when receiving any damage. |
-| ![Overclocked Husks](./media/cards/OVERCLOCKED_HUSKS.png) | Overclocked Husks             | Husk Fireball refire time reduced by 99%. |
-| ![Complete Recession](./media/cards/COMPLETE_RECESSION.png) | Complete Recession            | All prices in trader cost 150% more. |
-| ![Friendly Fire](./media/cards/FRIENDLY_FIRE.png.png) | Friendly Fire                 | Increases damage to allies by 10%. |
-| ![Super Sirens](./media/cards/SUPER_SIRENS.png) | Super Sirens                  | Increases Siren scream damage by 100% and scream range by 25%. |
-| ![Locked In](./media/cards/LOCKED_IN.png) | Locked In                     | All players are locked to their current perk. |
-| ![Greed Begets Slow Speed](./media/cards/GREED_BEGETS_SLOW_SPEED.png) | Greed Begets Slow Speed       | The more money a player holds, the slower they become. |
-| ![Slip'n'Slide](./media/cards/SLIP'N'SLIDE.png) | Slip'n'Slide                  | Players and zeds are now very slippery. |
-| ![Freeze Tag](./media/cards/FREEZE_TAG.png) | Freeze Tag                    | During the wave players cannot move unless they hold a melee weapon. |
-| ![Sudden Death](./media/cards/SUDDEN_DEATH.png) | Sudden Death                  | If any player dies, the squad dies. |
-| ![Clotting Issues](./media/cards/CLOTTING_ISSUES.png) | Clotting Issues               | After receiving melee damage, players lose 2 health every second for 5 seconds. |
-| ![Lethal Specimens](./media/cards/LETHAL_SPECIMENS.png) | Lethal Specimens              | Zeds deal 50% more damage and knockback is increased by 200%. |
-| ![Poorly Oiled Machine](./media/cards/POORLY_OILED_MACHINE.png) | Poorly Oiled Machine          | Players at less than 75% max health move at 75% speed. |
-| ![Noodle Arms](./media/cards/NOODLE_ARMS.png) | Noodle Arms                   | Reduces max carry weight by 2 for all players. |
-| ![In Plain Sight](./media/cards/IN_PLAIN_SIGHT.png) | In Plain Sight                | Allows spawns to occur in sight of players. |
-| ![Hand Cramps](./media/cards/HAND_CRAMPS.png) | Hand Cramps                   | Reduces reload speed for all players by 25%. |
-| ![Doorless](./media/cards/DOORLESS.png) | Doorless                      | Removes all doors. |
-| ![Smaller Blind](./media/cards/SMALLER_BLIND.png) | Smaller Blind                 | Reduces card selection by 1. |
-| ![On Borrowed Time](./media/cards/ON_BORROWED_TIME.png) | On Borrowed Time              | Waves now have a time limit based on wave size. All players die when time runs out. |
-| ![Bank Run](./media/cards/BANK_RUN.png) | Bank Run                      | Players lose half of their dosh at the end of trader time. |
-| ![No Rest For The Wicked](./media/cards/NO_REST_FOR_THE_WICKED.png) | No Rest For The Wicked        | Players take damage when standing still. |
-| ![Garbage Day](./media/cards/GARBAGE_DAY.png) | Garbage Day                   | Trash zeds have 50% more health. |
-| ![No Junkies](./media/cards/NO_JUNKIES.png) | No Junkies                    | Syringes are removed from all players. |
-| ![Marked For Death](./media/cards/MARKED_FOR_DEATH.png) | Marked For Death              | Each wave a random player is chosen and takes 200% more damage for a wave. |
-| ![Restricted Explosives](./media/cards/RESTRICTED_EXPLOSIVES.png) | Restricted Explosives         | Reduces explosive range by 50%. |
-| ![Oops! All Scrakes!](./media/cards/OOPS!_ALL_SCRAKES!.png) | Oops! All Scrakes!            | All zeds have a 5% chance to be replaced with a Scrake instead. |
-| ![Mixed Signals](./media/cards/MIXED_SIGNALS.png) | Mixed Signals                 | Next trader location randomly changes throughout the wave. |
-| ![High Throughput](./media/cards/HIGH_THROUGHPUT.png) | High Throughput               | Increases maximum alive zeds at once by 40%. |
-| ![Naked Snake](./media/cards/NAKED_SNAKE.png) | Naked Snake                   | Players cannot buy armor at the trader. |
-| ![This Is My Rifle](./media/cards/THIS_IS_MY_RIFLE.png) | This Is My Rifle              | Players cannot drop or sell their weapons. |
-| ![Sacrificial Card](./media/cards/SACRIFICIAL_CARD.png) | Sacrificial Card              | Removes a random Super card. |
-| ![Unfortunate Upgrade](./media/cards/UNFORTUNATE_UPGRADE.png) | Unfortunate Upgrade           | Non-elites have a 5% chance to be replaced with a special zed. Special zeds have a 5% chance to be replaced with an elite zed. |
-| ![Curse of RA](./media/cards/CURSE_OF_RA.png) | Curse of RA                   | ??? |
-| ![Double Time It](./media/cards/DOUBLE_TIME_IT.png) | Double Time It | Reduces trader time by 50%. |
-| ![Bad Blood](./media/cards/BAD_BLOOD.png) | Bad Blood | Decreases max health for all players by 20%. |
+|--------------------------------------|--------------------------------|-------------|
+| <img src="./media/cards/HYPERBLOATS.png" width="128" height="200"> | Hyperbloats                   | Increases Bloat speed by 300%. |
+| <img src="./media/cards/BELLIGERENT_SCRAKES.png" width="128" height="200"> | Belligerent Scrakes           | All Scrakes spawn raged. |
+| <img src="./media/cards/HAIR-TRIGGER_FLESHPOUNDS.png" width="128" height="200"> | Hair-Trigger Fleshpounds      | Fleshpounds rage when receiving any damage. |
+| <img src="./media/cards/OVERCLOCKED_HUSKS.png" width="128" height="200"> | Overclocked Husks             | Husk Fireball refire time reduced by 99%. |
+| <img src="./media/cards/COMPLETE_RECESSION.png" width="128" height="200"> | Complete Recession            | All prices in trader cost 150% more. |
+| <img src="./media/cards/FRIENDLY_FIRE.png" width="128" height="200"> | Friendly Fire                 | Increases damage to allies by 10%. |
+| <img src="./media/cards/SUPER_SIRENS.png" width="128" height="200"> | Super Sirens                  | Increases Siren scream damage by 100% and scream range by 25%. |
+| <img src="./media/cards/LOCKED_IN.png" width="128" height="200"> | Locked In                     | All players are locked to their current perk. |
+| <img src="./media/cards/GREED_BEGETS_SLOW_SPEED.png" width="128" height="200"> | Greed Begets Slow Speed       | The more money a player holds, the slower they become. |
+| <img src="./media/cards/SLIP'N'SLIDE.png" width="128" height="200"> | Slip'n'Slide                  | Players and zeds are now very slippery. |
+| <img src="./media/cards/FREEZE_TAG.png" width="128" height="200"> | Freeze Tag                    | During the wave players cannot move unless they hold a melee weapon. |
+| <img src="./media/cards/SUDDEN_DEATH.png" width="128" height="200"> | Sudden Death                  | If any player dies, the squad dies. |
+| <img src="./media/cards/CLOTTING_ISSUES.png" width="128" height="200"> | Clotting Issues               | After receiving melee damage, players lose 2 health every second for 5 seconds. |
+| <img src="./media/cards/LETHAL_SPECIMENS.png" width="128" height="200"> | Lethal Specimens              | Zeds deal 50% more damage and knockback is increased by 200%. |
+| <img src="./media/cards/POORLY_OILED_MACHINE.png" width="128" height="200"> | Poorly Oiled Machine          | Players at less than 75% max health move at 75% speed. |
+| <img src="./media/cards/NOODLE_ARMS.png" width="128" height="200"> | Noodle Arms                   | Reduces max carry weight by 2 for all players. |
+| <img src="./media/cards/IN_PLAIN_SIGHT.png" width="128" height="200"> | In Plain Sight                | Allows spawns to occur in sight of players. |
+| <img src="./media/cards/HAND_CRAMPS.png" width="128" height="200"> | Hand Cramps                   | Reduces reload speed for all players by 25%. |
+| <img src="./media/cards/DOORLESS.png" width="128" height="200"> | Doorless                      | Removes all doors. |
+| <img src="./media/cards/SMALLER_BLIND.png" width="128" height="200"> | Smaller Blind                 | Reduces card selection by 1. |
+| <img src="./media/cards/ON_BORROWED_TIME.png" width="128" height="200"> | On Borrowed Time              | Waves now have a time limit based on wave size. All players die when time runs out. |
+| <img src="./media/cards/BANK_RUN.png" width="128" height="200"> | Bank Run                      | Players lose half of their dosh at the end of trader time. |
+| <img src="./media/cards/NO_REST_FOR_THE_WICKED.png" width="128" height="200"> | No Rest For The Wicked        | Players take damage when standing still. |
+| <img src="./media/cards/GARBAGE_DAY.png" width="128" height="200"> | Garbage Day                   | Trash zeds have 50% more health. |
+| <img src="./media/cards/NO_JUNKIES.png" width="128" height="200"> | No Junkies                    | Syringes are removed from all players. |
+| <img src="./media/cards/MARKED_FOR_DEATH.png" width="128" height="200"> | Marked For Death              | Each wave a random player is chosen and takes 200% more damage for a wave. |
+| <img src="./media/cards/RESTRICTED_EXPLOSIVES.png" width="128" height="200"> | Restricted Explosives         | Reduces explosive range by 50%. |
+| <img src="./media/cards/OOPS!_ALL_SCRAKES!.png" width="128" height="200"> | Oops! All Scrakes!            | All zeds have a 5% chance to be replaced with a Scrake instead. |
+| <img src="./media/cards/MIXED_SIGNALS.png" width="128" height="200"> | Mixed Signals                 | Next trader location randomly changes throughout the wave. |
+| <img src="./media/cards/HIGH_THROUGHPUT.png" width="128" height="200"> | High Throughput               | Increases maximum alive zeds at once by 40%. |
+| <img src="./media/cards/NAKED_SNAKE.png" width="128" height="200"> | Naked Snake                   | Players cannot buy armor at the trader. |
+| <img src="./media/cards/THIS_IS_MY_RIFLE.png" width="128" height="200"> | This Is My Rifle              | Players cannot drop or sell their weapons. |
+| <img src="./media/cards/SACRIFICIAL_CARD.png" width="128" height="200"> | Sacrificial Card              | Removes a random Super card. |
+| <img src="./media/cards/UNFORTUNATE_UPGRADE.png" width="128" height="200"> | Unfortunate Upgrade           | Non-elites have a 5% chance to be replaced with a special zed. Special zeds have a 5% chance to be replaced with an elite zed. |
+| <img src="./media/cards/CURSE_OF_RA.png" width="128" height="200"> | Curse of RA                   | ??? |
+| <img src="./media/cards/DOUBLE_TIME_IT.png" width="128" height="200"> | Double Time It                | Reduces trader time by 50%. |
+| <img src="./media/cards/BAD_BLOOD.png" width="128" height="200"> | Bad Blood                     | Decreases max health for all players by 20%. |
 
 
 ### Good Deck
