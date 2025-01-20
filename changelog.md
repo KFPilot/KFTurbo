@@ -126,6 +126,7 @@
         - 14% increased damage 🟢
         - 10% tighter spread 🟢
         - Headshot bonus damage increased by 80% 🟢
+        - Penetration count 2 -> 4 🟢
 
         - Weight 2 -> 3 🔻
         - 20% more recoil 🔻
@@ -225,6 +226,7 @@
         - 60% tighter spread 🟢
 
         - Full-auto fire mode removed 🔻
+        - Maximum fire rate reduced by 75% 🔻
         - Magazine capacity 20 -> 12 🔻
         - 20% reduced damage 🔻
         - 36% less maximum and starting ammo 🔻
