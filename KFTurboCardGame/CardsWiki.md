@@ -45,7 +45,7 @@
     <tr style="height: 200px;">
       <td style="width: 150px;"><img src="./media/cards/SUPER_SIRENS.png" width="128" height="200"></td>
       <td style="width: 150px;">Super Sirens</td>
-      <td style="width: 200px;">Increases Siren scream damage by 100% and scream range by 25%.</td>
+      <td style="width: 200px;">Increases Siren scream damage by 100%<br> and scream range by 25%.</td>
     </tr>
     <tr style="height: 200px;">
       <td style="width: 150px;"><img src="./media/cards/LOCKED_IN.png" width="128" height="200"></td>
@@ -65,7 +65,7 @@
     <tr style="height: 200px;">
       <td style="width: 150px;"><img src="./media/cards/FREEZE_TAG.png" width="128" height="200"></td>
       <td style="width: 150px;">Freeze Tag</td>
-      <td style="width: 200px;">During the wave players cannot move unless they hold a melee weapon.</td>
+      <td style="width: 200px;">During the wave players cannot move<br> unless they hold a melee weapon.</td>
     </tr>
     <tr style="height: 200px;">
       <td style="width: 150px;"><img src="./media/cards/SUDDEN_DEATH.png" width="128" height="200"></td>
@@ -75,12 +75,12 @@
     <tr style="height: 200px;">
       <td style="width: 150px;"><img src="./media/cards/CLOTTING_ISSUES.png" width="128" height="200"></td>
       <td style="width: 150px;">Clotting Issues</td>
-      <td style="width: 200px;">After receiving melee damage, players lose 2 health every second for 5 seconds.</td>
+      <td style="width: 200px;">After receiving melee damage,<br> players lose 2 health every second for 5 seconds.</td>
     </tr>
     <tr style="height: 200px;">
       <td style="width: 150px;"><img src="./media/cards/LETHAL_SPECIMENS.png" width="128" height="200"></td>
       <td style="width: 150px;">Lethal Specimens</td>
-      <td style="width: 200px;">Zeds deal 50% more damage and knockback is increased by 200%.</td>
+      <td style="width: 200px;">Zeds deal 50% more damage<br> and knockback is increased by 200%.</td>
     </tr>
     <tr style="height: 200px;">
       <td style="width: 150px;"><img src="./media/cards/POORLY_OILED_MACHINE.png" width="128" height="200"></td>
@@ -115,12 +115,12 @@
     <tr style="height: 200px;">
       <td style="width: 150px;"><img src="./media/cards/ON_BORROWED_TIME.png" width="128" height="200"></td>
       <td style="width: 150px;">On Borrowed Time</td>
-      <td style="width: 200px;">Waves now have a time limit based on wave size. All players die when time runs out.</td>
+      <td style="width: 200px;">Waves now have a time limit based on wave size.<br> All players die when time runs out.</td>
     </tr>
     <tr style="height: 200px;">
       <td style="width: 150px;"><img src="./media/cards/BANK_RUN.png" width="128" height="200"></td>
       <td style="width: 150px;">Bank Run</td>
-      <td style="width: 200px;">Players lose half of their dosh at the end of trader time.</td>
+      <td style="width: 200px;">Players lose half of their dosh<br> at the end of trader time.</td>
     </tr>
     <tr style="height: 200px;">
       <td style="width: 150px;"><img src="./media/cards/NO_REST_FOR_THE_WICKED.png" width="128" height="200"></td>
@@ -140,7 +140,7 @@
     <tr style="height: 200px;">
       <td style="width: 150px;"><img src="./media/cards/MARKED_FOR_DEATH.png" width="128" height="200"></td>
       <td style="width: 150px;">Marked For Death</td>
-      <td style="width: 200px;">Each wave a random player is chosen and takes 200% more damage for a wave.</td>
+      <td style="width: 200px;">Each wave a random player is chosen<br> and takes 200% more damage for a wave.</td>
     </tr>
     <tr style="height: 200px;">
       <td style="width: 150px;"><img src="./media/cards/RESTRICTED_EXPLOSIVES.png" width="128" height="200"></td>
@@ -150,12 +150,12 @@
     <tr style="height: 200px;">
       <td style="width: 150px;"><img src="./media/cards/OOPS!_ALL_SCRAKES!.png" width="128" height="200"></td>
       <td style="width: 150px;">Oops! All Scrakes!</td>
-      <td style="width: 200px;">All zeds have a 5% chance to be replaced with a Scrake instead.</td>
+      <td style="width: 200px;">All zeds have a 5% chance to be<br> replaced with a Scrake instead.</td>
     </tr>
     <tr style="height: 200px;">
       <td style="width: 150px;"><img src="./media/cards/MIXED_SIGNALS.png" width="128" height="200"></td>
       <td style="width: 150px;">Mixed Signals</td>
-      <td style="width: 200px;">Next trader location randomly changes throughout the wave.</td>
+      <td style="width: 200px;">Next trader location randomly changes<br> throughout the wave.</td>
     </tr>
     <tr style="height: 200px;">
       <td style="width: 150px;"><img src="./media/cards/HIGH_THROUGHPUT.png" width="128" height="200"></td>
@@ -180,7 +180,7 @@
     <tr style="height: 200px;">
       <td style="width: 150px;"><img src="./media/cards/UNFORTUNATE_UPGRADE.png" width="128" height="200"></td>
       <td style="width: 150px;">Unfortunate Upgrade</td>
-      <td style="width: 200px;">Non-elites have a 5% chance to be replaced with a special zed. Special zeds have a 5% chance to be replaced with an elite zed.</td>
+      <td style="width: 200px;">Non-elites have a 5% chance to be replaced with a special zed.<br> Special zeds have a 5% chance to be replaced with an elite zed.</td>
     </tr>
     <tr style="height: 200px;">
       <td style="width: 150px;"><img src="./media/cards/CURSE_OF_RA.png" width="128" height="200"></td>
@@ -405,177 +405,177 @@
     <tr style="height: 200px;">
       <td style="width: 150px;"><img src="./media/cards/Short_Term_Reward.png" width="128" height="200"></td>
       <td style="width: 150px;">Short Term Reward</td>
-      <td style="width: 200px;">All players receive 500 extra dosh each wave but trader time is reduced by 15%.</td>
+      <td style="width: 200px;">All players receive 500 extra dosh each wave<br> but trader time is reduced by 15%.</td>
     </tr>
     <tr style="height: 200px;">
       <td style="width: 150px;"><img src="./media/cards/Sawed_Off_Magazines.png" width="128" height="200"></td>
       <td style="width: 150px;">Sawed Off Magazines</td>
-      <td style="width: 200px;">Increases reload speed of all weapons by 15% and reduces magazine size by 20%.</td>
+      <td style="width: 200px;">Increases reload speed of all weapons by 15%<br> and reduces magazine size by 20%.</td>
     </tr>
     <tr style="height: 200px;">
       <td style="width: 150px;"><img src="./media/cards/Mo'_Cards_Mo'_Problems.png" width="128" height="200"></td>
       <td style="width: 150px;">Mo' Cards Mo' Problems</td>
-      <td style="width: 200px;">Increases card selection by 1 but increases wave size by 25%.</td>
+      <td style="width: 200px;">Increases card selection by 1<br> but increases wave size by 25%.</td>
     </tr>
     <tr style="height: 200px;">
       <td style="width: 150px;"><img src="./media/cards/Fleshpound++_Scrake--.png" width="128" height="200"></td>
       <td style="width: 150px;">Fleshpound++ Scrake--</td>
-      <td style="width: 200px;">Fleshpounds take 15% less damage but Scrakes take 10% more damage.</td>
+      <td style="width: 200px;">Fleshpounds take 15% less damage<br> but Scrakes take 10% more damage.</td>
     </tr>
     <tr style="height: 200px;">
       <td style="width: 150px;"><img src="./media/cards/Brisk_Pace.png" width="128" height="200"></td>
       <td style="width: 150px;">Brisk Pace</td>
-      <td style="width: 200px;">Reduces wave size by 10% but increases wave speed by 200%.</td>
+      <td style="width: 200px;">Reduces wave size by 10%<br> but increases wave speed by 200%.</td>
     </tr>
     <tr style="height: 200px;">
       <td style="width: 150px;"><img src="./media/cards/Specialization.png" width="128" height="200"></td>
       <td style="width: 150px;">Specialization</td>
-      <td style="width: 200px;">Increases on-perk weapon damage by 5% but reduces off-perk damage by 15%.</td>
+      <td style="width: 200px;">Increases on-perk weapon damage by 5%<br> but reduces off-perk damage by 15%.</td>
     </tr>
     <tr style="height: 200px;">
       <td style="width: 150px;"><img src="./media/cards/Precision_Explosives.png" width="128" height="200"></td>
       <td style="width: 150px;">Precision Explosives</td>
-      <td style="width: 200px;">Increases explosive damage by 10% but reduces explosive range by 25%.</td>
+      <td style="width: 200px;">Increases explosive damage by 10%<br> but reduces explosive range by 25%.</td>
     </tr>
     <tr style="height: 200px;">
       <td style="width: 150px;"><img src="./media/cards/Awkwardly_Deep_Ammo_Pockets.png" width="128" height="200"></td>
       <td style="width: 150px;">Awkwardly Deep Ammo Pockets</td>
-      <td style="width: 200px;">Increases max ammo by 10% but reduces reload speed by 15%.</td>
+      <td style="width: 200px;">Increases max ammo by 10%<br> but reduces reload speed by 15%.</td>
     </tr>
     <tr style="height: 200px;">
       <td style="width: 150px;"><img src="./media/cards/Conflict_Escalation.png" width="128" height="200"></td>
       <td style="width: 150px;">Conflict Escalation</td>
-      <td style="width: 200px;">Increases damage by players by 5% and damage by zeds by 10%.</td>
+      <td style="width: 200px;">Increases damage by players by 5%<br> and damage by zeds by 10%.</td>
     </tr>
     <tr style="height: 200px;">
       <td style="width: 150px;"><img src="./media/cards/Compound_Surplus.png" width="128" height="200"></td>
       <td style="width: 150px;">Compound Surplus</td>
-      <td style="width: 200px;">Increases dosh received from kills by 15% and wave size by 10%.</td>
+      <td style="width: 200px;">Increases dosh received from kills by 15%<br> and wave size by 10%.</td>
     </tr>
     <tr style="height: 200px;">
       <td style="width: 150px;"><img src="./media/cards/Double_Edged_Sword.png" width="128" height="200"></td>
       <td style="width: 150px;">Double Edged Sword</td>
-      <td style="width: 200px;">Increases player damage by 5% and friendly fire damage by 5%.</td>
+      <td style="width: 200px;">Increases player damage by 5%<br> and friendly fire damage by 5%.</td>
     </tr>
     <tr style="height: 200px;">
       <td style="width: 150px;"><img src="./media/cards/Heavy_Ammunition.png" width="128" height="200"></td>
       <td style="width: 150px;">Heavy Ammunition</td>
-      <td style="width: 200px;">Increases player ranged damage by 5% but reduces max ammo by 10%.</td>
+      <td style="width: 200px;">Increases player ranged damage by 5%<br> but reduces max ammo by 10%.</td>
     </tr>
     <tr style="height: 200px;">
       <td style="width: 150px;"><img src="./media/cards/Magazine_Overclock.png" width="128" height="200"></td>
       <td style="width: 150px;">Magazine Overclock</td>
-      <td style="width: 200px;">Increases firerate by 15% but reduces reload speed by 10%.</td>
+      <td style="width: 200px;">Increases firerate by 15%<br> but reduces reload speed by 10%.</td>
     </tr>
     <tr style="height: 200px;">
       <td style="width: 150px;"><img src="./media/cards/Precision_Shooting.png" width="128" height="200"></td>
       <td style="width: 150px;">Precision Shooting</td>
-      <td style="width: 200px;">Reduces spread by 30% but reduces firerate by 10%.</td>
+      <td style="width: 200px;">Reduces spread by 30%<br> but reduces firerate by 10%.</td>
     </tr>
     <tr style="height: 200px;">
       <td style="width: 150px;"><img src="./media/cards/Thin_Skinned.png" width="128" height="200"></td>
       <td style="width: 150px;">Thin Skinned</td>
-      <td style="width: 200px;">Increases player speed by 10% but increases damage taken from zeds by 10%.</td>
+      <td style="width: 200px;">Increases player speed by 10%<br> but increases damage taken from zeds by 10%.</td>
     </tr>
     <tr style="height: 200px;">
       <td style="width: 150px;"><img src="./media/cards/Premium_Weapons.png" width="128" height="200"></td>
       <td style="width: 150px;">Premium Weapons</td>
-      <td style="width: 200px;">Increases weapon firerate, reload, and accuracy by 5% but increases trader prices by 15%.</td>
+      <td style="width: 200px;">Increases weapon firerate, reload, and accuracy by 5%<br> but increases trader prices by 15%.</td>
     </tr>
     <tr style="height: 200px;">
       <td style="width: 150px;"><img src="./media/cards/Turtle_Shell.png" width="128" height="200"></td>
       <td style="width: 150px;">Turtle Shell</td>
-      <td style="width: 200px;">Reduces damage to players by 10% and player move speed by 5%.</td>
+      <td style="width: 200px;">Reduces damage to players by 10%<br> and player move speed by 5%.</td>
     </tr>
     <tr style="height: 200px;">
       <td style="width: 150px;"><img src="./media/cards/Price_Paid_In_Blood.png" width="128" height="200"></td>
       <td style="width: 150px;">Price Paid In Blood</td>
-      <td style="width: 200px;">Reduces player health by 10% and trader prices by 50%.</td>
+      <td style="width: 200px;">Reduces player health by 10%<br> and trader prices by 50%.</td>
     </tr>
     <tr style="height: 200px;">
       <td style="width: 150px;"><img src="./media/cards/Distracted_Driving.png" width="128" height="200"></td>
       <td style="width: 150px;">Distracted Driving</td>
-      <td style="width: 200px;">Stalkers are more distracting and deal 100% more damage.</td>
+      <td style="width: 200px;">Stalkers are more distracting<br> and deal 100% more damage.</td>
     </tr>
     <tr style="height: 200px;">
       <td style="width: 150px;"><img src="./media/cards/High_Speed_Low_Drag.png" width="128" height="200"></td>
       <td style="width: 150px;">High Speed Low Drag</td>
-      <td style="width: 200px;">Decreases max carry capacity by 1. Increases player movement speed by 15%.</td>
+      <td style="width: 200px;">Decreases max carry capacity by 1.<br> Increases player movement speed by 15%.</td>
     </tr>
     <tr style="height: 200px;">
       <td style="width: 150px;"><img src="./media/cards/Unlicensed_Practitioner.png" width="128" height="200"></td>
       <td style="width: 150px;">Unlicensed Practitioner</td>
-      <td style="width: 200px;">Increases heal potency for Field Medics by 10% but reduces heal potency for non-Field Medics by 25%.</td>
+      <td style="width: 200px;">Increases heal potency for Field Medics by 10%<br> but reduces heal potency for non-Field Medics by 25%.</td>
     </tr>
     <tr style="height: 200px;">
       <td style="width: 150px;"><img src="./media/cards/Russian_Roulette.png" width="128" height="200"></td>
       <td style="width: 150px;">Russian Roulette</td>
-      <td style="width: 200px;">Zeds and players have a 0.1% chance to die instantly when taking damage.</td>
+      <td style="width: 200px;">Zeds and players have a 0.1% chance to die instantly<br> when taking damage.</td>
     </tr>
     <tr style="height: 200px;">
       <td style="width: 150px;"><img src="./media/cards/Concentrated_Healing.png" width="128" height="200"></td>
       <td style="width: 150px;">Concentrated Healing</td>
-      <td style="width: 200px;">Increases heal potency by 15% but reduces heal charge rate by 15%.</td>
+      <td style="width: 200px;">Increases heal potency by 15%<br> but reduces heal charge rate by 15%.</td>
     </tr>
     <tr style="height: 200px;">
       <td style="width: 150px;"><img src="./media/cards/Dropping_Ballast.png" width="128" height="200"></td>
       <td style="width: 150px;">Dropping Ballast</td>
-      <td style="width: 200px;">Increases max ammo by 10% but reduces grenade max ammo by 20%.</td>
+      <td style="width: 200px;">Increases max ammo by 10%<br> but reduces grenade max ammo by 20%.</td>
     </tr>
     <tr style="height: 200px;">
       <td style="width: 150px;"><img src="./media/cards/With_A_Bit_More_Kick.png" width="128" height="200"></td>
       <td style="width: 150px;">With A Bit More Kick</td>
-      <td style="width: 200px;">Increases shotgun pellet count by 20% but increases shotgun recoil and kickback by 25%.</td>
+      <td style="width: 200px;">Increases shotgun pellet count by 20%<br> but increases shotgun recoil and kickback by 25%.</td>
     </tr>
     <tr style="height: 200px;">
       <td style="width: 150px;"><img src="./media/cards/More_Game_To_Play.png" width="128" height="200"></td>
       <td style="width: 150px;">More Game To Play</td>
-      <td style="width: 200px;">Increases max weapon ammo by 15% and damage by 5% but wave size is increased by 20%.</td>
+      <td style="width: 200px;">Increases max weapon ammo by 15% and damage by 5%<br> but wave size is increased by 20%.</td>
     </tr>
     <tr style="height: 200px;">
       <td style="width: 150px;"><img src="./media/cards/Collateral_Damage.png" width="128" height="200"></td>
       <td style="width: 150px;">Collateral Damage</td>
-      <td style="width: 200px;">Increases explosive damage by 10% but increases friendly fire damage by 5%.</td>
+      <td style="width: 200px;">Increases explosive damage by 10%<br> but increases friendly fire damage by 5%.</td>
     </tr>
     <tr style="height: 200px;">
       <td style="width: 150px;"><img src="./media/cards/More_Healing_More_Hurting.png" width="128" height="200"></td>
       <td style="width: 150px;">More Healing More Hurting</td>
-      <td style="width: 200px;">Increases heal potency by 20% but increases friendly fire damage by 5%.</td>
+      <td style="width: 200px;">Increases heal potency by 20%<br> but increases friendly fire damage by 5%.</td>
     </tr>
     <tr style="height: 200px;">
       <td style="width: 150px;"><img src="./media/cards/Oversized_Pipebombs.png" width="128" height="200"></td>
       <td style="width: 150px;">Oversized Pipebombs</td>
-      <td style="width: 200px;">Increases Pipebomb damage by 50% and radius by 25% but reduces Pipebomb max ammo by 50%.</td>
+      <td style="width: 200px;">Increases Pipebomb damage by 50% and radius by 25%<br> but reduces Pipebomb max ammo by 50%.</td>
     </tr>
     <tr style="height: 200px;">
       <td style="width: 150px;"><img src="./media/cards/Short_Hop.png" width="128" height="200"></td>
       <td style="width: 150px;">Short Hop</td>
-      <td style="width: 200px;">Increases player speed by 10% but reduces jump height by 75%.</td>
+      <td style="width: 200px;">Increases player speed by 10%<br> but reduces jump height by 75%.</td>
     </tr>
     <tr style="height: 200px;">
       <td style="width: 150px;"><img src="./media/cards/Charge_Exchange.png" width="128" height="200"></td>
       <td style="width: 150px;">Charge Exchange</td>
-      <td style="width: 200px;">Increases heal recharge speed by 25% but reduces weld speed by 50%.</td>
+      <td style="width: 200px;">Increases heal recharge speed by 25%<br> but reduces weld speed by 50%.</td>
     </tr>
     <tr style="height: 200px;">
       <td style="width: 150px;"><img src="./media/cards/Risky_Regen.png" width="128" height="200"></td>
       <td style="width: 150px;">Risky Regen</td>
-      <td style="width: 200px;">Increases regen by 3 every 5 seconds but reduces max health by 10%.</td>
+      <td style="width: 200px;">Increases regen by 3 every 5 seconds<br> but reduces max health by 10%.</td>
     </tr>
     <tr style="height: 200px;">
       <td style="width: 150px;"><img src="./media/cards/Diluted_Healing.png" width="128" height="200"></td>
       <td style="width: 150px;">Diluted Healing</td>
-      <td style="width: 200px;">Reduces heal potency by 15% but increases heal charge rate by 15%.</td>
+      <td style="width: 200px;">Reduces heal potency by 15%<br> but increases heal charge rate by 15%.</td>
     </tr>
     <tr style="height: 200px;">
       <td style="width: 150px;"><img src="./media/cards/Trade_In.png" width="128" height="200"></td>
       <td style="width: 150px;">Trade In</td>
-      <td style="width: 200px;">Removes all good cards in exchange for a random super card.</td>
+      <td style="width: 200px;">Removes all good cards in exchange for<br> a random super card.</td>
     </tr>
     <tr style="height: 200px;">
       <td style="width: 150px;"><img src="./media/cards/A_Deal_With_The_Devil.png" width="128" height="200"></td>
       <td style="width: 150px;">A Deal With The Devil</td>
-      <td style="width: 200px;">In exchange for receiving a random Super card, receive a random Evil card as well.</td>
+      <td style="width: 200px;">In exchange for receiving a random Super card,<br> receive a random Evil card as well.</td>
     </tr>
     <tr style="height: 200px;">
       <td style="width: 150px;"><img src="./media/cards/Re-Roll.png" width="128" height="200"></td>
@@ -590,7 +590,7 @@
     <tr style="height: 200px;">
       <td style="width: 150px;"><img src="./media/cards/A_Soul_For_A_Soul.png" width="128" height="200"></td>
       <td style="width: 150px;">A Soul For A Soul</td>
-      <td style="width: 200px;">Removes a random super card and removes a random evil card.</td>
+      <td style="width: 200px;">Removes a random super card<br> and removes a random evil card.</td>
     </tr>
   </tbody>
 </table>
@@ -615,17 +615,17 @@
     <tr style="height: 200px;">
       <td style="width: 150px;"><img src="./media/cards/COMMANDO_FIRING_EXTENSION.png" width="128" height="200"></td>
       <td style="width: 150px;">Commando Firing Extension</td>
-      <td style="width: 200px;">Increases Commando on-perk weapon magazine size by 200%, reload speed by 20% and max ammo by 20%.</td>
+      <td style="width: 200px;">Increases Commando on-perk weapon magazine size by 200%,<br> reload speed by 20% and max ammo by 20%.</td>
     </tr>
     <tr style="height: 200px;">
       <td style="width: 150px;"><img src="./media/cards/FIRE_HAZARD.png" width="128" height="200"></td>
       <td style="width: 150px;">Fire Hazard</td>
-      <td style="width: 200px;">Increases Firebug on-perk weapon fire damage by 50% and firerate by 100%.</td>
+      <td style="width: 200px;">Increases Firebug on-perk weapon fire damage by 50%<br> and firerate by 100%.</td>
     </tr>
     <tr style="height: 200px;">
       <td style="width: 150px;"><img src="./media/cards/UBER_MEDIC.png" width="128" height="200"></td>
       <td style="width: 150px;">Uber Medic</td>
-      <td style="width: 200px;">Increases Field Medic grenade damage by 900%, on-perk weapon magazine size by 100%, and heal potency by 50%.</td>
+      <td style="width: 200px;">Increases Field Medic grenade damage by 900%,<br> on-perk weapon magazine size by 100%,<br> and heal potency by 50%.</td>
     </tr>
     <tr style="height: 200px;">
       <td style="width: 150px;"><img src="./media/cards/WEAKENED_FLESHPOUNDS.png" width="128" height="200"></td>
@@ -640,7 +640,7 @@
     <tr style="height: 200px;">
       <td style="width: 150px;"><img src="./media/cards/SUPER_GRENADES.png" width="128" height="200"></td>
       <td style="width: 150px;">Super Grenades</td>
-      <td style="width: 200px;">Increases grenade carry capacity by 100% and increases power of all grenades by 100%.</td>
+      <td style="width: 200px;">Increases grenade carry capacity by 100%<br> and increases power of all grenades by 100%.</td>
     </tr>
     <tr style="height: 200px;">
       <td style="width: 150px;"><img src="./media/cards/OVERHEAL.png" width="128" height="200"></td>
@@ -695,7 +695,7 @@
     <tr style="height: 200px;">
       <td style="width: 150px;"><img src="./media/cards/MAXIMUM_PAYNE.png" width="128" height="200"></td>
       <td style="width: 150px;">Maximum Payne</td>
-      <td style="width: 200px;">Increases dual pistol's magazine size by 50% and firerate/reload speed during zed time by 100%.</td>
+      <td style="width: 200px;">Increases dual pistol's magazine size by 50%<br> and firerate/reload speed during zed time by 100%.</td>
     </tr>
     <tr style="height: 200px;">
       <td style="width: 150px;"><img src="./media/cards/PACKED_SHELLS.png" width="128" height="200"></td>
@@ -705,7 +705,7 @@
     <tr style="height: 200px;">
       <td style="width: 150px;"><img src="./media/cards/SUBSTITUTE.png" width="128" height="200"></td>
       <td style="width: 150px;">Substitute</td>
-      <td style="width: 200px;">Negates the first 10 times a player receives damage each wave.</td>
+      <td style="width: 200px;">Negates the first 10 times a player<br> receives damage each wave.</td>
     </tr>
     <tr style="height: 200px;">
       <td style="width: 150px;"><img src="./media/cards/THE_DEEPEST_OF_AMMO_POCKETS.png" width="128" height="200"></td>
@@ -755,7 +755,7 @@
     <tr style="height: 200px;">
       <td style="width: 150px;"><img src="./media/cards/DE-EVOLUTION.png" width="128" height="200"></td>
       <td style="width: 150px;">De-Evolution</td>
-      <td style="width: 200px;">All zeds have a chance to be replaced with weaker versions of themselves.</td>
+      <td style="width: 200px;">All zeds have a chance to be replaced<br> with weaker versions of themselves.</td>
     </tr>
     <tr style="height: 200px;">
       <td style="width: 150px;"><img src="./media/cards/BREAK_TIME.png" width="128" height="200"></td>
