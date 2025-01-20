@@ -525,4 +525,5 @@
 - Fixed a bug that made the Fleshpound "friendly", preventing it from attacking
 - Fixed various issues with being on fire
 - Damage resistance to M99 reduced from 50% to 47.5%
+- Damage resistance to Commando weapons reduced from 50% to 0%
 - Takes 65% increased damage from Seeker Six instead of the normal 25% for explosives.
