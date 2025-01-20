@@ -6,9 +6,9 @@
 <table border="1">
   <thead>
     <tr>
-      <th>Image</th>
-      <th>Title</th>
-      <th>Description</th>
+      <th style="width: 150px;">Image</th>
+      <th style="width: 150px;">Title</th>
+      <th style="width: 450px;">Description</th>
     </tr>
   </thead>
   <tbody>
@@ -206,9 +206,9 @@
 <table border="1">
   <thead>
     <tr>
-      <th>Image</th>
-      <th>Title</th>
-      <th>Description</th>
+      <th style="width: 150px;">Image</th>
+      <th style="width: 150px;">Title</th>
+      <th style="width: 450px;">Description</th>
     </tr>
   </thead>
   <tbody>
@@ -396,9 +396,9 @@
 <table border="1">
   <thead>
     <tr>
-      <th>Image</th>
-      <th>Title</th>
-      <th>Description</th>
+      <th style="width: 150px;">Image</th>
+      <th style="width: 150px;">Title</th>
+      <th style="width: 450px;">Description</th>
     </tr>
   </thead>
   <tbody>
@@ -601,9 +601,9 @@
 <table border="1">
   <thead>
     <tr>
-      <th>Image</th>
-      <th>Title</th>
-      <th>Description</th>
+      <th style="width: 150px;">Image</th>
+      <th style="width: 150px;">Title</th>
+      <th style="width: 450px;">Description</th>
     </tr>
   </thead>
   <tbody>
