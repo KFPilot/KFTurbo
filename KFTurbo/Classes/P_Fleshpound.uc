@@ -77,9 +77,23 @@ function TakeDamage( int Damage, Pawn InstigatedBy, Vector Hitlocation, Vector M
         }
 
         bIsHeadShot = IsHeadShot(Hitlocation, normal(Momentum), HeadShotCheckScale);
-
+        // Commando weapons don't get the damage reduction
+		if (
+            class<DamTypeBullpup>(DamageType) != None ||
+            class<DamTypeAK47AssaultRifle>(DamageType) != None ||
+            class<DamTypeSCARMK17AssaultRifle>(DamageType) != None ||
+            class<DamTypeM4AssaultRifle>(DamageType) != None ||
+            class<DamTypeMKb42AssaultRifle>(DamageType) != None ||
+            class<W_M4203_DT_Bullet>(DamageType) != None ||
+            class<W_FNFAL_DT>(DamageType) != None ||
+            class<W_ThompsonDrum_DT>(DamageType) != None ||
+            class<W_ThompsonSMG_DT>(DamageType) != None
+        )
+        {
+            // Do nothing
+        }
 		// Don't reduce the damage so much if its a high headshot damage weapon
-		if( (bIsHeadShot && WeaponDamageType.default.HeadShotDamageMult >= 1.5) || (class<DamTypeCrossbuzzsaw>(DamageType) != None))
+        else if( (bIsHeadShot && WeaponDamageType.default.HeadShotDamageMult >= 1.5) || (class<DamTypeCrossbuzzsaw>(DamageType) != None))
 		{
 			Damage *= 0.75;
 		}
