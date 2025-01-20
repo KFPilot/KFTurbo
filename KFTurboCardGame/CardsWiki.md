@@ -720,7 +720,7 @@
     <tr style="height: 200px;">
       <td style="width: 150px;"><img src="./media/cards/MASS_DETONATION.png" width="128" height="200"></td>
       <td style="width: 150px;">Mass Detonation</td>
-      <td style="width: 200px;">Explosive kills have a 25% chance to trigger explosions that deal 25% of the killed zed's max health.</td>
+      <td style="width: 200px;">Explosive kills have a 25% chance to trigger explosions<br> that deal 25% of the killed zed's max health.</td>
     </tr>
     <tr style="height: 200px;">
       <td style="width: 150px;"><img src="./media/cards/EVERYTHING_MUST_GO.png" width="128" height="200"></td>
