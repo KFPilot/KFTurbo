@@ -109,14 +109,9 @@ simulated function Explode(vector HitLocation, vector HitNormal)
 		Spawn(ExplosionEmitterClass, , , HitLocation + HitNormal * 20, rotator(HitNormal));
 		Spawn(ExplosionDecal, self, , HitLocation, rotator(-HitNormal));
 	}
-
-	if (FlameTrail != None)
-	{
-		FlameTrail.Kill();
-	}
-
+	
 	BlowUp(HitLocation);
-	Destroy();
+	Destroy();	// Trail and FlameTrail are properly destroyed in HuskFireProjectile's Destroyed Function
 
 	// Shake nearby players screens
 	LocalPlayer = Level.GetLocalPlayerController();
