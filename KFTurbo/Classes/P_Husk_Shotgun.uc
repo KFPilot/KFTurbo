@@ -76,6 +76,20 @@ function Died(Controller Killer, class<DamageType> damageType, vector HitLocatio
 	Super.Died(Killer, damageType, HitLocation); // KFMonster
 }
 
+simulated function Destroyed()
+{
+	if (AttachedEmitter != None)
+	{
+		AttachedEmitter.Kill();
+	}
+	if (AttachedEmitter2 != None)
+	{
+		AttachedEmitter2.Kill();
+	}
+
+	Super.Destroyed();
+}
+
 function RangedAttack(Actor A)
 {
 	if (bShotAnim)
