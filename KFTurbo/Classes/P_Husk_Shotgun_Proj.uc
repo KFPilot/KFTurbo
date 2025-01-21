@@ -5,8 +5,7 @@
 class P_Husk_Shotgun_Proj extends HuskFireProjectile;
 
 var byte Bounces; // Amount of times the projectile can bounce
-var Sound BounceSound;
-var string BounceSoundRef; // Sound played when bouncing
+var Sound BounceSound; // Sound played when bouncing
 var class<Emitter> FlameTrailEmitterClass; // Particles spawned constantly while in flight
 var class<Emitter> ImpactEmitterClass; // Particles spawned when bouncing
 var class<Emitter> ExplosionEmitterClass; // Particles spawned when exploding
@@ -16,9 +15,6 @@ var float ProjectileLifeSpan; // How long the projectile is allowed to exist bef
 simulated function PostBeginPlay()
 {
 	SetTimer(ProjectileLifeSpan, false); // Explode this projectile after a while
-
-	// Removed dynamic loading of BounceSound
-	// default.BounceSound=Sound(DynamicLoadObject(BounceSoundRef, class'Sound', true)); // Load Bounce Sound (Zeds don't have PreloadAssets)
 
 	if (Level.NetMode != NM_DedicatedServer)
 	{
@@ -198,7 +194,6 @@ defaultproperties
 	ExplosionDecal = Class'KFTurbo.P_Husk_Shotgun_ExplosionDecal'
 	StaticMesh = StaticMesh'EffectsSM.Weapons.Ger_Tracer_Ball'
 	BounceSound = Sound'KF_FlamethrowerSnd.FireBase.Fire1Shot1' // Use hard reference for BounceSound
-	// BounceSoundRef="KF_FlamethrowerSnd.FireBase.Fire1Shot1" // Removed BounceSoundRef
 	Bounces = 5
 	Damage = 7.000000
 	MomentumTransfer = 31250.000000
