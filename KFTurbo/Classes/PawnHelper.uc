@@ -42,6 +42,7 @@ enum EMonster
 	Gorefast_Assassin,
 	Bloat_Fathead,
 	Siren_Caroler,
+	Husk_Shotgun,
 
 	//Failed to resolve.
 	Unknown
@@ -691,6 +692,7 @@ static final function EMonsterTier GetMonsterTier(class<Monster> MonsterClass)
 
 		case class'P_Crawler_Jumper':
 		case class'P_Gorefast_Assassin':
+		case class'P_Husk_Shotgun':
 		case class'P_Siren_Caroler':
 			return Special;
 		
@@ -775,6 +777,7 @@ static final function EMonster GetMonsterType(class<Monster> MonsterClass)
 		case class'P_Husk_HAL':
 		case class'P_Husk_SUM':
 		case class'P_Husk_XMA':
+		case class'P_Husk_Shotgun':
 			return Husk;
 		
 		case class'P_Siren_STA':
