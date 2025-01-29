@@ -37,13 +37,13 @@ static final function bool IsPerkWeapon( class<KFWeapon> Weapon )
 
 	if (WeaponPickupClass != None)
 	{
-		if(class<W_M4203_Weap>(Weapon) != None || class<W_ThompsonSMG_Weap>(Weapon) != None)
+		if (WeaponPickupClass.default.CorrespondingPerkIndex == default.PerkIndex)
 		{
-			return 3 == default.PerkIndex || WeaponPickupClass.default.CorrespondingPerkIndex == default.PerkIndex;
+			return true;
 		}
-		else
+		else if(default.PerkIndex == 3 && (class<W_M4203_Weap>(Weapon) != None || class<W_ThompsonSMG_Weap>(Weapon) != None))
 		{
-			return WeaponPickupClass.default.CorrespondingPerkIndex == default.PerkIndex;
+			return true;
 		}
 	}
 
