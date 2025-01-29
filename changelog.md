@@ -220,6 +220,7 @@
 
     - **FN FAL** 
         - Now penetrates up to 1 zed with a damage loss of 10% 🆕
+        - Firing type is no longer high RoF ⚠️
         - 13% faster reload speed 🟢
         - 9% cheaper 🟢
         - Headshot bonus damage increased by 80% 🟢
