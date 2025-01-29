@@ -449,7 +449,7 @@
 - Spawns with a MAC-10 and no armor ⚠️
 
 - **Weapons**
-    - **Flamethrower** Reworked ⚠️
+    - **Flamethrower**: Reworked ⚠️
         - Now pierces up to 10 zeds 🆕
         - Hitting a zed the first time causes a small explosion that deals AoE damage 🆕
         - No longer detonates projectiles 🆕
