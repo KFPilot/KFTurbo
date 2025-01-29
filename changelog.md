@@ -225,8 +225,7 @@
         - Headshot bonus damage increased by 80% 🟢
         - 60% tighter spread 🟢
 
-        - Full-auto fire mode removed 🔻
-        - Maximum fire rate reduced by 75% 🔻
+        - 75% slower fire rate 🔻
         - Magazine capacity 20 -> 12 🔻
         - 20% reduced damage 🔻
         - 36% less maximum and starting ammo 🔻
