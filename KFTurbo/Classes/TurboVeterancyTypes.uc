@@ -41,7 +41,7 @@ static final function bool IsPerkWeapon( class<KFWeapon> Weapon )
 		{
 			return true;
 		}
-		else if (default.PerkIndex == 3 && (class<W_M4203_Weap>(Weapon) != None || class<W_ThompsonSMG_Weap>(Weapon) != None))
+		else if (default.PerkIndex == class'V_Commando'.default.PerkIndex && (class<W_M4203_Weap>(Weapon) != None || class<W_ThompsonSMG_Weap>(Weapon) != None))
 		{
 			return true;
 		}
