@@ -164,7 +164,7 @@
 - Thompson Drum bonus magazine size 25% -> 60% 🟢
 - M4 203 bonus magazine size 25% -> 34% 🟢
 - FN FAL bonus magazine size 25% -> 67% 🟢
-- Bullpup, AK47, MKb42,Thompson SMG bonus magazine size 25% -> 20% 🔻
+- Thompson SMG bonus magazine size 25% -> 20% 🔻
 - Spawn with a Bullpup ⚠️
 
 - **Weapons**
@@ -175,12 +175,12 @@
         - 90% tighter spread 🟢
 
         - Horizontal Recoil increased by 133% 🔻
-        - Magazine capacity 40 -> 20 🔻
+        - Magazine capacity 40 -> 30 🔻
         - 25% more expensive 🔻
         - 35% less maximum ammo 🔻
     - **Thompson Drum** 
         - Now penetrates up to 2 zeds with a damage loss of 25% 🆕
-        - 66% more maximum and starting ammo 🟢
+        - 100% more maximum and starting ammo 🟢
         - 20% tighter spread 🟢
 
         - 10% slower reload speed 🔻
@@ -364,8 +364,7 @@
         - Firing type is no longer high RoF ⚠️
 
         - Weight 3 -> 4 🔻
-        - 30% lower maximum healing charge  🔻
-        - 33% slower syringe recovery 🔻
+        - 15% lower maximum healing charge  🔻
         - 50% weaker healing potency 🔻
         - 48% lower fire rate 🔻
     - **M7A3**
