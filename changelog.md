@@ -164,7 +164,7 @@
 - Thompson Drum bonus magazine size 25% -> 60% 🟢
 - M4 203 bonus magazine size 25% -> 34% 🟢
 - FN FAL bonus magazine size 25% -> 67% 🟢
-- Bullpup, AK47, MKb42,Thompson SMG bonus magazine size 25% -> 20% 🔻
+- Thompson SMG bonus magazine size 25% -> 20% 🔻
 - Spawn with a Bullpup ⚠️
 
 - **Weapons**
@@ -175,12 +175,12 @@
         - 90% tighter spread 🟢
 
         - Horizontal Recoil increased by 133% 🔻
-        - Magazine capacity 40 -> 20 🔻
+        - Magazine capacity 40 -> 30 🔻
         - 25% more expensive 🔻
         - 35% less maximum ammo 🔻
     - **Thompson Drum** 
         - Now penetrates up to 2 zeds with a damage loss of 25% 🆕
-        - 66% more maximum and starting ammo 🟢
+        - 100% more maximum and starting ammo 🟢
         - 20% tighter spread 🟢
 
         - 10% slower reload speed 🔻
@@ -220,13 +220,13 @@
 
     - **FN FAL** 
         - Now penetrates up to 1 zed with a damage loss of 10% 🆕
+        - Firing type is no longer high RoF ⚠️
         - 13% faster reload speed 🟢
         - 9% cheaper 🟢
         - Headshot bonus damage increased by 80% 🟢
         - 60% tighter spread 🟢
 
-        - Full-auto fire mode removed 🔻
-        - Maximum fire rate reduced by 75% 🔻
+        - 75% slower fire rate 🔻
         - Magazine capacity 20 -> 12 🔻
         - 20% reduced damage 🔻
         - 36% less maximum and starting ammo 🔻
@@ -364,8 +364,7 @@
         - Firing type is no longer high RoF ⚠️
 
         - Weight 3 -> 4 🔻
-        - 30% lower maximum healing charge  🔻
-        - 33% slower syringe recovery 🔻
+        - 15% lower maximum healing charge  🔻
         - 50% weaker healing potency 🔻
         - 48% lower fire rate 🔻
     - **M7A3**
@@ -450,7 +449,7 @@
 - Spawns with a MAC-10 and no armor ⚠️
 
 - **Weapons**
-    - **Flamethrower** Reworked ⚠️
+    - **Flamethrower**: Reworked ⚠️
         - Now pierces up to 10 zeds 🆕
         - Hitting a zed the first time causes a small explosion that deals AoE damage 🆕
         - No longer detonates projectiles 🆕

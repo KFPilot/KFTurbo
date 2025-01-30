@@ -110,13 +110,16 @@ static function ApplyAdjustedMagCapacityModifier(KFPlayerReplicationInfo KFPRI, 
 			Multiplier *= TurboGameReplicationInfo(KFPRI.Level.GRI).GetCommandoMagazineAmmoMultiplier(KFPRI, Other);
 		}
 
-		if(SCARMK17AssaultRifle(Other) != None)
+		if (IsHighDifficulty(KFPRI))
 		{
-			Multiplier *= 1.2f;
-		}
-		else
-		{
-			Multiplier *= 1.25f;
+			if(SCARMK17AssaultRifle(Other) != None)
+			{
+				Multiplier *= 1.2f;
+			}
+			else
+			{
+				Multiplier *= 1.25f;
+			}
 		}
 	}
 
@@ -131,16 +134,16 @@ static function float GetMagCapacityMod(KFPlayerReplicationInfo KFPRI, KFWeapon 
 	{
 		Multiplier *= LerpStat(KFPRI, 1.f, 1.6f);
 	}
-	else if (Bullpup(Other) != None 
+	else if (Bullpup(Other) != None
 		|| AK47AssaultRifle(Other) != None 
-		|| ThompsonSMG(Other) != None
+		|| SCARMK17AssaultRifle(Other) != None
 		|| MKb42AssaultRifle(Other) != None)
 	{
-		Multiplier *= LerpStat(KFPRI, 1.f, 1.2f);
-	} 
-	else if (SCARMK17AssaultRifle(Other) != None)
-	{
 		Multiplier *= LerpStat(KFPRI, 1.f, 1.25f);
+	} 
+	else if (ThompsonSMG(Other) != None)
+	{
+		Multiplier *= LerpStat(KFPRI, 1.f, 1.2f);
 	}
 	else if (M4AssaultRifle(Other) != None)
 	{
@@ -187,10 +190,7 @@ static function float AddExtraAmmoFor(KFPlayerReplicationInfo KFPRI, class<Ammun
 
 	if (IsPerkAmmunition(AmmoType))
 	{
-		if (AmmoType == class'W_ThompsonDrum_Ammo')
-			Multiplier *= LerpStat(KFPRI, 1.f, 1.4f);
-		else
-			Multiplier *= LerpStat(KFPRI, 1.f, 1.25f);
+		Multiplier *= LerpStat(KFPRI, 1.f, 1.25f);
 	}
 
 	ApplyAdjustedExtraAmmo(KFPRI, AmmoType, Multiplier);

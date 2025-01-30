@@ -15,7 +15,7 @@ simulated function BringUp(optional Weapon PrevWeapon)
 
 defaultproperties
 {
-     MagCapacity=20
+     MagCapacity=30
      ReloadRate=1.966667
      Weight=5.000000
      FireModeClass(0)=Class'KFTurbo.W_Bullpup_Fire'
