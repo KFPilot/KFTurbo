@@ -104,4 +104,5 @@ defaultproperties
     ReplacementList(2)=(TargetParentClass=class'P_Bloat',ReplacementClass=class'P_Bloat_Fathead',ReplacementRate=0.05f)
     ReplacementList(3)=(TargetParentClass=class'P_Siren',ReplacementClass=class'P_Siren_Caroler',ReplacementRate=0.075f)
     ReplacementList(4)=(TargetParentClass=class'P_Gorefast',ReplacementClass=class'P_Gorefast_Classy',ReplacementRate=0.05f)
+    ReplacementList(5)=(TargetParentClass=class'P_Husk',ReplacementClass=class'P_Husk_Shotgun',ReplacementRate=0.05f)
 }
