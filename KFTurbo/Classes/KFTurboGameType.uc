@@ -659,9 +659,9 @@ state MatchInProgress
 
     function OpenShops()
     {
-        if ( WaveCountDown == 59 && WaveNum % 3 == 0)
+        if (WaveCountDown == 59 && WaveNum % 3 == 0)
         {
-            BroadcastLocalizedMessage(class'TurboEndTraderVoteMessage', 0); //EEndTraderVoteMessage.VoteHint
+            BroadcastLocalizedMessage(class'TurboEndTraderVoteMessage', 0);
         }
 
 		if (!HasAnyTraders())
@@ -772,71 +772,6 @@ function bool CheckEndGame(PlayerReplicationInfo Winner, string Reason)
     return bResult;
 }
 
-//Check if enough people have voted to end the trader and end it.
-function AttemptTraderEnd(TurboPlayerController VoteInstigator)
-{
-    local int Index, NumVoters, NumVotes;
-    local TurboPlayerReplicationInfo TPRI;
-    local float VotePercent;
-    local bool bAdminVoted;
-    
-    if (bWaveInProgress || WaveCountDown <= 10)
-	{
-		return;
-	}
-
-    if (StaticIsTestGameType(Self))
-    {
-        return;
-    }
-
-    NumVoters = 0;
-    NumVotes = 0;
-    bAdminVoted = false;
-
-	for (Index = Level.GRI.PRIArray.Length - 1; Index >= 0; Index--)
-	{
-		TPRI = TurboPlayerReplicationInfo(Level.GRI.PRIArray[Index]);
-
-        if (TPRI == None || TPRI.bOnlySpectator)
-        {
-            continue;
-        }
-
-        NumVoters++;
-        
-        if (TPRI.bVotedForTraderEnd)
-        {
-            NumVotes++;
-
-            if (TPRI.bAdmin)
-            {
-                bAdminVoted = true;
-            }
-        }
-    }
-
-    if (NumVoters == 0)
-    {
-        return;
-    }
-
-    VotePercent = float(NumVotes) / float(NumVoters);
-
-    if (bAdminVoted || VotePercent >= 0.51f)
-    {
-        WaveCountDown = Min(WaveCountDown, 10);
-        TurboGameReplicationInfo(GameReplicationInfo).TimeToNextWave = WaveCountDown;
-        return;
-    }
-    
-    //This means someone instigated a vote.
-    if (NumVotes == 1)
-    {
-        BroadcastLocalizedMessage(class'TurboEndTraderVoteMessage', 1, VoteInstigator.PlayerReplicationInfo); //EEndTraderVoteMessage.VoteStarted
-    }
-}
-
 function DoWaveStartForPlayers()
 {
     local int Index;
@@ -850,8 +785,6 @@ function DoWaveStartForPlayers()
         {
             continue;
         }
-
-        TPRI.ClearTraderEndVote();
         
         if (TurboPlayerController(TPRI.Owner) != None)
         {

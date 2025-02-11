@@ -3,43 +3,32 @@
 //For more information see https://github.com/KFPilot/KFTurbo.
 class PlayerBorrowedTimeActor extends Engine.ReplicationInfo;
 
+var TurboServerTimeActor ServerTimeActor;
+
 var int BorrowedTimeStart, BorrowedTimeEnd;
-var int ServerTimeSeconds, LastServerTimeSeconds;
-var float CurrentServerTime;
 var bool bHasExecutedBorrowedTime;
 
 replication
 {
 	reliable if (bNetDirty && Role == ROLE_Authority )
-		BorrowedTimeStart, BorrowedTimeEnd, ServerTimeSeconds;
+		BorrowedTimeStart, BorrowedTimeEnd;
 }
 
 simulated function PostBeginPlay()
 {
     Super.PostBeginPlay();
 
+    if (Role == ROLE_Authority)
+    {
+        ServerTimeActor = TurboGameReplicationInfo(Level.GRI).ServerTimeActor;
+    }
+
     if (Level.NetMode == NM_DedicatedServer)
     {
         return;
     }
 
-    if (Role == ROLE_Authority)
-    {
-        ServerTimeSeconds = Level.TimeSeconds;
-    }
-
     SetTimer(0.1f, false);
-}
-
-simulated function SetServerTimeSeconds(int NewServerTimeSeconds)
-{
-    if (NewServerTimeSeconds == ServerTimeSeconds)
-    {
-        return;
-    }
-
-    ServerTimeSeconds = NewServerTimeSeconds;
-    NetUpdateTime = Level.TimeSeconds - 20.f;
 }
 
 simulated function Timer()
@@ -65,6 +54,16 @@ simulated function bool RegisterToOverlay(PlayerController PlayerController)
 
     CardOverlay.BorrowedTimeActor = Self;
     return true;
+}
+
+simulated final function float GetBorrowedTimeRemaining()
+{
+    if (ServerTimeActor == None || BorrowedTimeEnd < 0.f)
+    {
+        return -1.f;
+    }
+    
+    return ServerTimeActor.GetServerTimeSecondsUntil(BorrowedTimeEnd);
 }
 
 function StartBorrowedTime()
@@ -93,22 +92,7 @@ function StopBorrowedTime()
     BorrowedTimeEnd = -1;
 }
 
-simulated function Tick(float DeltaTime)
-{
-    TickBorrowedTime(DeltaTime);
-
-    //Keep up to date a float server time to use later.
-
-    if (ServerTimeSeconds > LastServerTimeSeconds)
-    {
-        LastServerTimeSeconds = ServerTimeSeconds;
-        CurrentServerTime = float(LastServerTimeSeconds);
-    }
-
-    CurrentServerTime = FMin(CurrentServerTime + (DeltaTime * 0.9f), LastServerTimeSeconds + 1);
-}
-
-function TickBorrowedTime(float DeltaTime)
+function Tick(float DeltaTime)
 {
     local Controller C;
     if (BorrowedTimeEnd < 0)
@@ -125,8 +109,6 @@ function TickBorrowedTime(float DeltaTime)
         StopBorrowedTime();
         return;
     }
-
-    SetServerTimeSeconds(Level.TimeSeconds);
 
     if (BorrowedTimeEnd > Level.TimeSeconds)
     {
@@ -153,8 +135,5 @@ defaultproperties
     BorrowedTimeStart = -1;
     BorrowedTimeEnd = -1;
     bHasExecutedBorrowedTime = false
-
-    ServerTimeSeconds = -1
-    LastServerTimeSeconds = -1
-    CurrentServerTime = -1.f
+    NetUpdateFrequency=0.1f
 }

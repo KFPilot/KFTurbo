@@ -10,7 +10,7 @@ var TurboGameReplicationInfo OwnerGRI;
 
 replication
 {
-    reliable if(bNetInitial && Role == ROLE_Authority)
+    reliable if(Role == ROLE_Authority)
         NextClientModifierLink, OwnerGRI;
 }
 

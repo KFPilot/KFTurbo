@@ -37,42 +37,6 @@ function Timer()
         ShieldStrength = 0.f;
 		HealthMax = 100;
     }
-
-    if (bOnlySpectator && bVotedForTraderEnd)
-    {
-        bVotedForTraderEnd = false;
-    }
-}
-
-function RequestTraderEnd()
-{
-    local KFTurboGameType GameType;
-    GameType = KFTurboGameType(Level.Game);
-    
-    if (GameType == None || GameType.bWaveInProgress || GameType.WaveCountDown <= 10)
-    {
-        return;
-    }
-
-    if (bAdmin)
-    {
-        bVotedForTraderEnd = true;
-        GameType.AttemptTraderEnd(TurboPlayerController(Owner));
-        return;
-    }
-
-    if (bVotedForTraderEnd)
-    {
-        return;
-    }
-
-    bVotedForTraderEnd = true;
-    GameType.AttemptTraderEnd(TurboPlayerController(Owner));
-}
-
-function ClearTraderEndVote()
-{
-    bVotedForTraderEnd = false;
 }
 
 simulated function Destroyed()

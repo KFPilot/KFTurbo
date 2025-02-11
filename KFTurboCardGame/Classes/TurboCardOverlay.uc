@@ -828,15 +828,14 @@ simulated function DrawBorrowedTime(Canvas C)
 	local float TextSizeX, TextSizeY, TextScale;
 	local float SizeX;
 
-	if (BorrowedTimeActor.BorrowedTimeEnd == -1)
+	TimeRemaining = BorrowedTimeActor.GetBorrowedTimeRemaining();
+
+	if (TimeRemaining < 0.f)
 	{
 		bHasPlayedMinuteWarning = false;
 		bHasPlayedThirtySecondsWarning = false;
 		return;
 	}
-
-	TimeRemaining = float(BorrowedTimeActor.BorrowedTimeEnd) - (BorrowedTimeActor.CurrentServerTime);
-	TimeRemaining = FMax(TimeRemaining, 0.f);
 
 	WarnLevel = GetWarningForTime(TimeRemaining);
 	

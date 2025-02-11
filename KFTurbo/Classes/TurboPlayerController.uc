@@ -11,6 +11,7 @@ var class<TurboCommandHandler> TurboCommandHandlerClass; //Can be modified in a 
 var TurboCommandHandler TurboCommandHandler;
 
 var float ClientNextMarkTime, NextMarkTime;
+var float VoteCooldownTime, NextVoteTime;
 
 var bool bInLoginMenu, bHasClosedLoginMenu;
 var float LoginMenuTime;
@@ -32,7 +33,7 @@ replication
 	reliable if( Role < ROLE_Authority )
 		ClientSetPipebombUsesSpecialGroup;
 	reliable if( Role < ROLE_Authority )
-		EndTrader, ServerMarkActor, ServerNotifyShoppingState, ServerNotifyLoginMenuState;
+		Vote, ServerMarkActor, ServerNotifyShoppingState, ServerNotifyLoginMenuState;
 	reliable if( Role < ROLE_Authority )
 		ServerDebugSkipWave, ServerDebugRestartWave, ServerDebugSetWave, ServerDebugPreventGameOver;
 	reliable if( Role < ROLE_Authority )
@@ -262,6 +263,12 @@ exec function Speech( Name Type, int Index, string CallSign )
 		TurboInteraction.CheckForVoiceCommandMark(Type, Index);
 	}
 
+	//Route voice commands for "Yes" and "No" to voting.
+	if (Type == 'ACK' && Index >= 0 && Index < 2)
+	{
+		Vote(Eval(Index == 0, "YES", "NO"));
+	}
+
 	Super.Speech(Type, Index, CallSign);
 }
 
@@ -279,6 +286,30 @@ function bool AllowTextMessage(string Msg)
 	}
 
 	return false;
+}
+
+function ServerSay(string Msg)
+{
+	Super.ServerSay(Msg);
+
+	if (Len(Msg) > 10)
+	{
+		return;
+	}
+
+	Msg = Caps(Msg);
+
+	switch(Msg)
+	{
+		case "YES":
+		case ":YESYES:":
+			Vote("YES");
+			break;
+		case "NO":
+		case ":NONO:":
+			Vote("NO");
+			break;
+	}
 }
 
 function AttemptMarkActor(vector Start, vector End, Actor TargetActor, class<TurboMarkerType> DataClassOverride, int DataOverride, TurboPlayerMarkReplicationInfo.EMarkColor Color)
@@ -731,7 +762,24 @@ exec function EndTrader()
 		return;
 	}
 
-	TurboPlayerReplicationInfo(PlayerReplicationInfo).RequestTraderEnd();
+	Vote(class'TurboGameVoteEndTrader'.static.GetVoteID());
+}
+
+exec function Vote(string VoteString)
+{
+	if (NextVoteTime > Level.TimeSeconds)
+	{
+		return;
+	}
+
+	NextVoteTime = Level.TimeSeconds + VoteCooldownTime;
+
+	if (TurboGameReplicationInfo(Level.GRI).VoteInstance == None)
+	{
+		return;
+	}
+
+	TurboGameReplicationInfo(Level.GRI).PlayerVote(TurboPlayerReplicationInfo(PlayerReplicationInfo), VoteString);
 }
 
 simulated function ClientWeaponSpawned(class<Weapon> WeaponClass, Inventory Inv)
@@ -919,4 +967,6 @@ defaultproperties
 	bInLoginMenu=false
 	bHasClosedLoginMenu=true //Starts as closed.
 	LoginMenuTime=-1.f
+
+	VoteCooldownTime=1.f
 }
