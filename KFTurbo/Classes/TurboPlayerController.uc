@@ -12,6 +12,7 @@ var TurboCommandHandler TurboCommandHandler;
 
 var float ClientNextMarkTime, NextMarkTime;
 var float VoteCooldownTime, NextVoteTime;
+var float NextStartVoteTime;
 
 var bool bInLoginMenu, bHasClosedLoginMenu;
 var float LoginMenuTime;
@@ -631,6 +632,11 @@ simulated function AddExtraOptionConfig(TurboOptionObject Config)
 	ExternalOptionList[ExternalOptionList.Length] = Config;
 }
 
+simulated function bool HasExtraOptions()
+{
+	return ExternalOptionList.Length != 0;
+}
+
 simulated function GenerateExtraOptions(TurboTab_TurboSettings TurboSettings, int TabOrder)
 {
 	local int Index;
@@ -774,12 +780,24 @@ exec function Vote(string VoteString)
 
 	NextVoteTime = Level.TimeSeconds + VoteCooldownTime;
 
-	if (TurboGameReplicationInfo(Level.GRI).VoteInstance == None)
+	if (TurboGameReplicationInfo(Level.GRI).VoteInstance == None && NextStartVoteTime > Level.TimeSeconds)
 	{
 		return;
 	}
 
 	TurboGameReplicationInfo(Level.GRI).PlayerVote(TurboPlayerReplicationInfo(PlayerReplicationInfo), VoteString);
+}
+
+//Immediately creates a test vote. For testing purposes.
+exec function VoteTest()
+{
+	if (Level.NetMode != NM_Standalone && (PlayerReplicationInfo == None || !PlayerReplicationInfo.bAdmin))
+	{
+		return;
+	}
+
+	TurboGameReplicationInfo(Level.GRI).VoteInstance = Spawn(class'TurboGameVoteTest', Self);
+	TurboGameReplicationInfo(Level.GRI).VoteInstance.InitiateVote(TurboPlayerReplicationInfo(PlayerReplicationInfo));
 }
 
 simulated function ClientWeaponSpawned(class<Weapon> WeaponClass, Inventory Inv)

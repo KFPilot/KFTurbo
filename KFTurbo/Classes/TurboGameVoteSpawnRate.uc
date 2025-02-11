@@ -10,7 +10,7 @@ static function bool CanInitiateVote(TurboGameReplicationInfo TGRI, TurboPlayerR
         return false;
     }
 
-    if ((TGRI.Level.Game.GetCurrentWaveNum() < TGRI.Level.Game.GetFinalWaveNum()) || !KFTurboGameType(TGRI.Level.Game).bWaveInProgress || KFTurboGameType(TGRI.Level.Game).TotalMaxMonsters <= 5)
+    if (TGRI.Level.Game.GetCurrentWaveNum() >= TGRI.Level.Game.GetFinalWaveNum())
     {
         return false;
     }
@@ -28,22 +28,6 @@ function OnVoteResult(Name Outcome)
     KFTurboGameType(Level.Game).AdminSpawnRateModifier *= 0.75f;
 }
 
-state VoteInProgress
-{
-Begin:
-    while(true)
-    {
-        if (!KFTurboGameType(Level.Game).bWaveInProgress || VoteEndTime < Level.TimeSeconds)
-        {
-            break;
-        }
-
-        sleep(0.2f);
-    }
-
-    OnVoteExpired();
-}
-
 defaultproperties
 {
     VoteID="SPAWNRATE"
@@ -51,7 +35,11 @@ defaultproperties
     VotePercent=0.51f
     bCanSpectatorsVote=false
 
-    VoteInitiatedString="%k%p%d started a vote to %kincrease spawnrate%d. Type %kvote yes or vote no in console%d to vote."
+    VoteInitiatedString="%k%p%d started a vote to %kincrease spawnrate%d. Type %kvote yes%d or %kvote no%d in %kconsole%d to vote."
+    VoteSucceededVoteString="%kVote%d to %kincrease spawnrate%d has %pksucceeded%d."
+    VoteFailedVoteString="%kVote%d to %kincrease spawnrate%d has %nkfailed%d."
+    VoteExpiredVoteString="%kVote%d to %kincrease spawnrate%d has %akexpired%d."
+
     VoteTitleString="Increase Spawnrate"
-    VoteDescriptionString="Accepting this vote will increase spawnrate for the rest of the game."
+    VoteDescriptionString="Accepting this vote will increase spawnrate by 25% for the rest of the game."
 }

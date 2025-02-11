@@ -22,6 +22,7 @@ var Material MerchantMaterial;
 var Material DefaultTraderMaterial;
 
 var globalconfig bool bShiftOpensTrader;
+var globalconfig bool bF3VotesYes;
 
 var globalconfig bool bPipebombUsesSpecialGroup;
 
@@ -31,9 +32,18 @@ var globalconfig string FontLocale;
 
 simulated function bool KeyEvent( out EInputKey Key, out EInputAction Action, FLOAT Delta )
 {
-	if (Action == IST_Press && Key == IK_Shift && bShiftOpensTrader)
+	if (Action != IST_Press)
+	{
+		return false;
+	}
+
+	if (Key == IK_Shift && bShiftOpensTrader)
 	{
 		Trade();
+	}
+	else if (Key == IK_F3 && bF3VotesYes)
+	{
+		VoteYes();
 	}
 
 	return false;
@@ -78,6 +88,16 @@ exec simulated function Trade()
 
 	ViewportOwner.GUIController.CloseMenu();
 	KFPlayerController(ViewportOwner.Actor).ShowBuyMenu("WeaponLocker", KFHumanPawn(ViewportOwner.Actor.Pawn).MaxCarryWeight);
+}
+
+simulated function VoteYes()
+{
+	if (ViewportOwner == None)
+	{
+		return;
+	}
+
+	TurboPlayerController(ViewportOwner.Actor).Vote("YES");
 }
 
 exec simulated function SetMarkColor(TurboPlayerMarkReplicationInfo.EMarkColor Color)
@@ -348,6 +368,22 @@ static final function bool IsShiftTradeEnabled(TurboPlayerController PlayerContr
 	return false;
 }
 
+simulated function SetF3VoteYesEnabled(bool bNewF3VotesYes)
+{
+	bF3VotesYes = bNewF3VotesYes;
+	SaveConfig();
+}
+
+static final function bool IsF3VoteYesEnabled(TurboPlayerController PlayerController)
+{
+	if (PlayerController != None && PlayerController.TurboInteraction != None)
+	{
+		return PlayerController.TurboInteraction.bF3VotesYes;
+	}
+
+	return false;
+}
+
 simulated function SetPipebombUsesSpecialGroup(bool bNewPipebombUsesSpecialGroup)
 {
 	if (bNewPipebombUsesSpecialGroup == bPipebombUsesSpecialGroup)
@@ -454,6 +490,7 @@ defaultproperties
 	DefaultTraderMaterial=Texture'KF_Soldier_Trip_T.Uniforms.shopkeeper_diff'
 
 	bShiftOpensTrader=true
+	bF3VotesYes=true
 
 	bPipebombUsesSpecialGroup=false
 

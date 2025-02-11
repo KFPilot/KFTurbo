@@ -10,7 +10,7 @@ static function bool CanInitiateVote(TurboGameReplicationInfo TGRI, TurboPlayerR
         return false;
     }
 
-    if ((TGRI.Level.Game.GetCurrentWaveNum() < TGRI.Level.Game.GetFinalWaveNum()) || !KFTurboGameType(TGRI.Level.Game).bWaveInProgress || KFTurboGameType(TGRI.Level.Game).TotalMaxMonsters <= 5)
+    if (TGRI.Level.Game.GetCurrentWaveNum() >= TGRI.Level.Game.GetFinalWaveNum())
     {
         return false;
     }
@@ -28,22 +28,6 @@ function OnVoteResult(Name Outcome)
     KFTurboGameType(Level.Game).AdminMaxMonstersModifier *= 1.25f;
 }
 
-state VoteInProgress
-{
-Begin:
-    while(true)
-    {
-        if (!KFTurboGameType(Level.Game).bWaveInProgress || VoteEndTime < Level.TimeSeconds)
-        {
-            break;
-        }
-
-        sleep(0.2f);
-    }
-
-    OnVoteExpired();
-}
-
 defaultproperties
 {
     VoteID="MAXMONSTERS"
@@ -51,7 +35,11 @@ defaultproperties
     VotePercent=0.51f
     bCanSpectatorsVote=false
 
-    VoteInitiatedString="%k%p%d started a vote to %kincrease max monsters%d. Type %kvote yes or vote no in console%d to vote."
+    VoteInitiatedString="%k%p%d started a vote to %kincrease max monsters%d. Type %kvote yes%d or %kvote no%d in %kconsole%d to vote."
+    VoteSucceededVoteString="%kVote%d to %kincrease max monsters%d has %pksucceeded%d."
+    VoteFailedVoteString="%kVote%d to %kincrease max monsters%d has %nkfailed%d."
+    VoteExpiredVoteString="%kVote%d to %kincrease max monsters%d has %akexpired%d."
+
     VoteTitleString="Increase Max Monsters"
-    VoteDescriptionString="Accepting this vote will increase max monsters for the rest of the game."
+    VoteDescriptionString="Accepting this vote will increase max monsters by 25% for the rest of the game."
 }

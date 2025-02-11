@@ -58,6 +58,14 @@ defaultproperties
     bCanSpectatorsVote=false
 
     VoteInitiatedString="%k%p%d started a vote to %kend trader%d. Type %kEndTrader in console%d to vote."
+    VoteSucceededVoteString="%kVote%d to %kend trader%d has %pksucceeded%d."
+    VoteFailedVoteString="%kVote%d to %kend trader%d has %nkfailed%d."
+    VoteExpiredVoteString=""
+    
+    bBroadcastSucceeded=true
+    bBroadcastFailed=true
+    bBroadcastExpired=false
+
     VoteTitleString="End Trader"
     VoteDescriptionString="Accepting this vote will end trader time."
 }

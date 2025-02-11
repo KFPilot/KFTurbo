@@ -34,6 +34,7 @@ var(Turbo) Vector2D BackplateTextSpacing; //Distance from top and middle.
 //Voting
 var TurboGameVoteBase CurrentVoteInstance;
 var float VoteRatio;
+var float VoteRatioInterpRate;
 var float VoteDurationPercent;
 var float VoteDurationInterpRate;
 var float VoteYesPercent;
@@ -248,7 +249,7 @@ simulated function DrawGameData(Canvas C)
 	CenterX = C.ClipX * 0.5f;
 	TopY = C.ClipY * BackplateSpacing.Y;
 
-	TempX = CenterX - (C.ClipX * (BackplateSpacing.X + BackplateSize.X + BackplateTextSpacing.X));
+	TempX = CenterX - ((C.ClipX * (BackplateSize.X + BackplateTextSpacing.X)) + TopY);
 	TempY = TopY;
 
 	SizeX = C.ClipX * BackplateSize.X;
@@ -261,7 +262,7 @@ simulated function DrawGameData(Canvas C)
 	
 	C.Font = TurboHUD.LoadLargeNumberFont(2 + FontSizeOffset);
 	C.FontScaleX = 1.f;
-	C.FontScaleX = 1.f;
+	C.FontScaleY = 1.f;
 	C.TextSize(TestText, TextSizeX, TextSizeY);
 
 	TextScale = (C.ClipY * (BackplateSize.Y - BackplateTextSpacing.Y)) / TextSizeY;
@@ -458,7 +459,7 @@ simulated function DrawActiveWave(Canvas C)
 	CenterX = C.ClipX * 0.5f;
 	TopY = C.ClipY * BackplateSpacing.Y;
 
-	TempX = CenterX + (C.ClipX * BackplateSpacing.X);
+	TempX = CenterX + TopY;
 	TempY = TopY;
 
 	SizeY = C.ClipY * BackplateSize.Y;
@@ -742,10 +743,6 @@ state WaitingWave
 
 simulated function TickTraderWave(float DeltaTime)
 {
-	local int Index, EndTraderVoteIndex;
-	local TurboPlayerReplicationInfo TPRI;
-	local bool bFoundEntry;
-
 	if (TGRI.TimeToNextWave != WaveTimeSecondsRemaining && Abs(WaveTimeRemaining - float(TGRI.TimeToNextWave)) > 0.15f)
 	{
 		WaveTimeSecondsRemaining = TGRI.TimeToNextWave;
@@ -787,8 +784,8 @@ simulated function DrawTraderWave(Canvas C)
 	local float TextSizeX, TextSizeY, TextScale;
 	local float TempX, TempY, SizeX, SizeY;
 
-	TempX = (C.ClipX * 0.5f) + (C.ClipX * BackplateSpacing.X);
 	TempY = C.ClipY * BackplateSpacing.Y;
+	TempX = (C.ClipX * 0.5f) + TempY;
 
 	SizeX = C.ClipX * BackplateSize.X;
 	SizeY = C.ClipY * BackplateSize.Y;
@@ -1160,11 +1157,11 @@ simulated function DrawBossHealthBar(Canvas C)
 
 simulated function TickVoteInstance(float DeltaTime)
 {
-	if (TGRI.VoteInstance != CurrentVoteInstance)
+	if (TGRI.VoteInstance != CurrentVoteInstance || TGRI.VoteInstance == None || TGRI.VoteInstance.GetVoteState() >= Expired)
 	{
-		VoteRatio -= DeltaTime;
+		VoteRatio = Lerp(DeltaTime * VoteRatioInterpRate, VoteRatio, 0.f);
 
-		if (VoteRatio <= 0.f)
+		if (VoteRatio <= 0.001f)
 		{
 			VoteRatio = 0.f;
 			CurrentVoteInstance = TGRI.VoteInstance;
@@ -1187,9 +1184,9 @@ simulated function TickVoteInstance(float DeltaTime)
 
 	if (VoteRatio <= 1.f)
 	{
-		VoteRatio += DeltaTime;
+		VoteRatio = Lerp(DeltaTime * VoteRatioInterpRate, VoteRatio, 1.f);
 
-		if (VoteRatio >= 1.f)
+		if (VoteRatio >= 0.999f)
 		{
 			VoteRatio = 1.f;
 		}
@@ -1202,16 +1199,40 @@ simulated function TickVoteInstance(float DeltaTime)
 
 simulated function DrawVoteInstance(Canvas C)
 {
-	local float TempX, TempY;
-	local float SizeX, SizeY;
+	local float TempX, TempY, RootTempX;
+	local float SizeX, SizeY, RootSizeX;
 	local float TextSizeX, TextSizeY;
+	local float PaddingPercent;
+	local float VotePercentBarHeight;
 	local string TestText;
+	local Plane OriginalModulate;
+	local Color YesColor, NoColor;
 
-	TestText = GetStringOfZeroes(2);
-	C.Font = TurboHUD.LoadFont(FontSizeOffset + 2);
+	if (VoteRatio <= 0.001f || CurrentVoteInstance == None)
+	{
+		return;
+	}
+
+	OriginalModulate = C.ColorModulate;
+	C.ColorModulate.W = VoteRatio;
+	
+	PaddingPercent = 0.025f;
+
+	TempY = BackplateSpacing.Y * float(C.SizeY);
+	TempX = float(C.SizeX) - (BackplateSpacing.Y * float(C.SizeY));
+
+	TestText = CurrentVoteInstance.GetVoteTitleString();
+	C.Font = TurboHUD.LoadFont(FontSizeOffset + 1);
 	C.FontScaleX = 1.f;
-	C.FontScaleX = 1.f;
+	C.FontScaleY = 1.f;
 	C.TextSize(TestText, TextSizeX, TextSizeY);
+
+	SizeX = TextSizeX + (float(C.SizeY) * PaddingPercent);
+	SizeY = (TextSizeY * 1.5f) + (float(C.SizeY) * PaddingPercent * 0.5f);
+
+	TempX -= VoteRatio * SizeX;
+	RootTempX = TempX;
+	RootSizeX = SizeX;
 
 	if (RoundedContainer != None)
 	{
@@ -1219,6 +1240,59 @@ simulated function DrawVoteInstance(Canvas C)
 		C.SetPos(TempX, TempY);
 		C.DrawTileStretched(RoundedContainer, SizeX, SizeY);
 	}
+
+	TempX += (float(C.SizeY) * PaddingPercent * 0.5f);
+	SizeX -= (float(C.SizeY) * PaddingPercent);
+	
+	TempY += (float(C.SizeY) * PaddingPercent * 0.25f);
+	SizeY -= (float(C.SizeY) * PaddingPercent * 0.5f);
+
+	YesColor = CurrentVoteInstance.GetVoteYesColor();
+	NoColor = CurrentVoteInstance.GetVoteNoColor();
+
+	C.DrawColor = CurrentVoteInstance.GetVoteTitleColor();
+	C.SetPos(TempX + (SizeX * 0.5f - (TextSizeX * 0.5f)), TempY);
+	C.DrawTextClipped(TestText);
+
+	TempY += SizeY;
+
+	C.FontScaleX = 0.5f;
+	C.FontScaleY = 0.5f;
+
+	TestText = CurrentVoteInstance.GetVoteYesString() @ CurrentVoteInstance.GetYesVoteCount();
+	C.TextSize(TestText, TextSizeX, TextSizeY);
+
+	VotePercentBarHeight = TextSizeY * 0.8f;
+	C.DrawColor = YesColor;
+	C.DrawColor.A = float(C.DrawColor.A) * 0.25f;
+	C.SetPos(RootTempX, TempY - (TextSizeY * 0.9f));
+	C.DrawTileStretched(SquareContainer, RootSizeX * VoteYesPercent, VotePercentBarHeight);
+
+	C.DrawColor = NoColor;
+	C.DrawColor.A = float(C.DrawColor.A) * 0.25f;
+	C.SetPos((RootTempX + RootSizeX) - (RootSizeX * VoteNoPercent), TempY - (TextSizeY * 0.9f));
+	C.DrawTileStretched(SquareContainer, RootSizeX * VoteNoPercent, VotePercentBarHeight);
+
+	C.DrawColor = BackplateColor;
+	C.SetPos(TempX + 2.f, (TempY + 2.f) - TextSizeY);
+	C.DrawTextClipped(TestText);
+
+	C.SetPos(TempX, TempY - TextSizeY);
+	C.DrawColor = YesColor;
+	C.DrawTextClipped(TestText);
+
+	TestText = CurrentVoteInstance.GetNoVoteCount() @ CurrentVoteInstance.GetVoteNoString();
+	C.TextSize(TestText, TextSizeX, TextSizeY);
+
+	C.DrawColor = BackplateColor;
+	C.SetPos(((TempX + SizeX) - TextSizeX) + 2.f, (TempY + 2.f) - TextSizeY);
+	C.DrawTextClipped(TestText);
+
+	C.SetPos((TempX + SizeX) - TextSizeX, TempY - TextSizeY);
+	C.DrawColor = NoColor;
+	C.DrawTextClipped(TestText);
+
+	C.ColorModulate = OriginalModulate;
 }
 
 defaultproperties
@@ -1235,6 +1309,7 @@ defaultproperties
 	BossDataFadeOutRate=4.f
 	BossDataHealthInterpRate=8.f
 
+	VoteRatioInterpRate=4.f
 	VoteDurationInterpRate=10.f
 	VoteYesInterpRate=4.f
 	VoteNoInterpRate=4.f

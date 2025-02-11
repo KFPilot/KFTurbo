@@ -1,9 +1,10 @@
 class TurboTab_TurboSettings extends SRTab_Base;
 
-var automated GUISectionBackground LeftSection, RightSection;
+var automated GUISectionBackground LeftSection, RightSection, MiddleSection;
 var automated GUIButton DesiredRankButton;
 var automated moCheckbox MerchantReplacementCheckBox;
 var automated moCheckbox ShiftToTradeCheckBox;
+var automated moCheckbox F3ToVoteYesCheckBox;
 var automated moCheckbox PipebombGroupCheckBox;
 var automated moCheckbox UseBaseGameChatFontBox;
 var automated moComboBox FontLocaleComboBox;
@@ -126,6 +127,8 @@ function InitializePage()
     MerchantReplacementCheckBox.Checked(class'TurboInteraction'.static.UseMerchantReplacement(PlayerController));
     RightSection.ManageComponent(ShiftToTradeCheckBox);
     ShiftToTradeCheckBox.Checked(class'TurboInteraction'.static.IsShiftTradeEnabled(PlayerController));
+    RightSection.ManageComponent(F3ToVoteYesCheckBox);
+    F3ToVoteYesCheckBox.Checked(class'TurboInteraction'.static.IsF3VoteYesEnabled(PlayerController));
     RightSection.ManageComponent(PipebombGroupCheckBox);
     PipebombGroupCheckBox.Checked(class'TurboInteraction'.static.ShouldPipebombUseSpecialGroup(PlayerController));
     RightSection.ManageComponent(UseBaseGameChatFontBox);
@@ -139,7 +142,13 @@ function InitializePage()
     FontLocaleComboBox.SetIndex(GetFontLocaleIndex(class'TurboInteraction'.static.GetFontLocale(PlayerController)));
     FontLocaleComboBox.bIgnoreChange = false;
     
-    PlayerController.GenerateExtraOptions(Self, PipebombGroupCheckBox.TabOrder);
+    if (PlayerController.HasExtraOptions())
+    {
+        MiddleSection.bNoCaption = false;
+        MiddleSection.bVisible = true;
+
+        PlayerController.GenerateExtraOptions(Self, FontLocaleComboBox.TabOrder + 1);
+    }
 }
 
 function UpdatePage()
@@ -200,6 +209,20 @@ function OnShiftToTradeChanged(GUIComponent Sender)
     }
 
     TurboInteraction.SetShiftTradeEnabled(ShiftToTradeCheckBox.IsChecked());
+}
+
+function OnF3ToVoteYesChanged(GUIComponent Sender)
+{
+	local TurboInteraction TurboInteraction;
+
+    TurboInteraction = TurboPlayerController(PlayerOwner()).TurboInteraction;
+
+    if (TurboInteraction == None)
+    {
+        return;
+    }
+
+    TurboInteraction.SetF3VoteYesEnabled(F3ToVoteYesCheckBox.IsChecked());
 }
 
 function OnPipebombGroupChange(GUIComponent Sender)
@@ -282,21 +305,34 @@ defaultproperties
     Begin Object Class=GUISectionBackground Name=BGLeftSection
         bFillClient=True
         Caption="Neon Weapon Tier Limit"
-        WinTop=0.012063
-        WinLeft=0.019240
+        WinTop=0.0125
+        WinLeft=0.02
         WinWidth=0.3
-        WinHeight=0.796032
+        WinHeight=0.825
         OnPreDraw=BGLeftSection.InternalPreDraw
     End Object
     LeftSection=GUISectionBackground'BGLeftSection'
 
+    Begin Object Class=GUISectionBackground Name=BGMiddleSection
+        bFillClient=True
+        bNoCaption=true
+        bVisible=false
+        Caption="Custom Game Settings"
+        WinTop=0.0125
+        WinLeft=0.35
+        WinWidth=0.3
+        WinHeight=0.825
+        OnPreDraw=BGMiddleSection.InternalPreDraw
+    End Object
+    MiddleSection=GUISectionBackground'BGMiddleSection'
+
     Begin Object Class=GUISectionBackground Name=BGRightSection
         bFillClient=True
         Caption="Turbo Settings"
-        WinTop=0.012063
-        WinLeft=0.68076
+        WinTop=0.0125
+        WinLeft=0.68
         WinWidth=0.3
-        WinHeight=0.796032
+        WinHeight=0.825
         OnPreDraw=BGRightSection.InternalPreDraw
     End Object
     RightSection=GUISectionBackground'BGRightSection'
@@ -331,11 +367,20 @@ defaultproperties
     End Object
     ShiftToTradeCheckBox=moCheckBox'ShiftTradeMenu'
 
+    Begin Object Class=moCheckBox Name=F3ToVoteYes
+        Caption="Press F3 To Vote Yes"
+        OnCreateComponent=F3ToVoteYes.InternalOnCreateComponent
+        Hint="Pressing F3 will vote yes."
+        TabOrder=53
+        OnChange=TurboTab_TurboSettings.OnF3ToVoteYesChanged
+    End Object
+    F3ToVoteYesCheckBox=moCheckBox'F3ToVoteYes'
+
     Begin Object Class=moCheckBox Name=PipebombGroupChange
         Caption="Move Pipebomb Special Group"
         OnCreateComponent=PipebombGroupChange.InternalOnCreateComponent
         Hint="Moves the Pipebomb to inventory group 5."
-        TabOrder=53
+        TabOrder=54
         OnChange=TurboTab_TurboSettings.OnPipebombGroupChange
     End Object
     PipebombGroupCheckBox=moCheckBox'PipebombGroupChange'
@@ -344,7 +389,7 @@ defaultproperties
         Caption="Use Base Game Font For Chat"
         OnCreateComponent=UseBaseGameChatFont.InternalOnCreateComponent
         Hint="Chat text will use the base game's font to help with readability in non-english locales."
-        TabOrder=54
+        TabOrder=55
         OnChange=TurboTab_TurboSettings.OnUseBaseGameChatFontChange
     End Object
     UseBaseGameChatFontBox=moCheckBox'UseBaseGameChatFont'
@@ -353,7 +398,7 @@ defaultproperties
         Caption="Font Locale"
         OnCreateComponent=FontLocale.InternalOnCreateComponent
         Hint="Selects which locale font pack to use for UI."
-        TabOrder=55
+        TabOrder=56
         OnChange=TurboTab_TurboSettings.OnFontLocaleChange
     End Object
     FontLocaleComboBox=moComboBox'FontLocale'

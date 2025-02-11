@@ -41,6 +41,7 @@ function PlayerVote(TurboPlayerReplicationInfo Voter, string VoteString)
 {
     local int Index;
     local class<TurboGameVoteBase> VoteClass;
+    local TurboGameVoteBase NewVoteInstance; 
 
     VoteString = Caps(VoteString);
 
@@ -71,17 +72,37 @@ function PlayerVote(TurboPlayerReplicationInfo Voter, string VoteString)
         return;
     }
 
-    VoteInstance = Spawn(VoteClass, Self);
+    NewVoteInstance = Spawn(VoteClass, Self);
 
-    if (VoteInstance != None)
+    if (NewVoteInstance != None)
     {
-        VoteInstance.InitiateVote(Voter);
+        NewVoteInstance.InitiateVote(Voter);
 
         //Votes can instantly complete in some circumstances.
-        if (VoteInstance.GetVoteState() < Expired)
+        if (NewVoteInstance != None && NewVoteInstance.GetVoteState() < Expired)
         {
-            RegisterVoteInstance(VoteInstance);
+            RegisterVoteInstance(NewVoteInstance);
         }
+    }
+}
+
+function PlayerVoteComplete(TurboGameVoteBase CompletedVoteInstance, TurboGameVoteBase.EVotingState VoteState)
+{
+    local TurboPlayerController PlayerController;
+
+    if (VoteState != Succeeded && CompletedVoteInstance != None && CompletedVoteInstance.GetVoteInitiator() != None)
+    {
+        PlayerController = TurboPlayerController(CompletedVoteInstance.GetVoteInitiator().Owner);
+
+        if (PlayerController != None)
+        {
+            PlayerController.NextStartVoteTime = Level.TimeSeconds + CompletedVoteInstance.GetPlayerStartVoteCooldown(PlayerController);
+        }
+    }
+
+    if (CompletedVoteInstance == VoteInstance)
+    {
+        VoteInstance = None;
     }
 }
 

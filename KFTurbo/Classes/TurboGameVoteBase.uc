@@ -10,7 +10,7 @@ var TurboServerTimeActor ServerTimeActor;
 
 var string VoteID; //Used to specify an ID for a given vote instance.
 var protected float VoteDuration; //Duration of this vote. Once this time is reached, the vote will expire.
-var protected float VoteCooldown; //Cooldown of this vote. If the vote fails, this cooldown will be applied.
+var protected float FailedVoteCooldown; //Cooldown of this vote. If the vote fails, this cooldown will be applied.
 var protected float VotePercent; //Percent of the vote required for this vote to pass.
 var protected bool bCanSpectatorsVote; //If true, spectators can vote.
 
@@ -52,9 +52,18 @@ var protected int TotalVoteCount;
 var protected EVote AdminOverrideVote; //Will be set if an admin voted for an option.
 
 var protected class<TurboVoteLocalMessage> TurboVoteLocalMessage;
+var protected bool bBroadcastSucceeded;
+var protected bool bBroadcastFailed;
+var protected bool bBroadcastExpired;
 var protected localized string VoteInitiatedString;
+var protected localized string VoteSucceededVoteString;
+var protected localized string VoteFailedVoteString;
+var protected localized string VoteExpiredVoteString;
+
 var protected localized string VoteTitleString;
 var protected localized string VoteDescriptionString;
+var protected localized string YesString, NoString;
+var protected Color TitleColor;
 
 delegate OnVoteStateChanged(TurboGameVoteBase VoteInstance, EVotingState NewState);
 delegate OnVoteTallyChanged(TurboGameVoteBase VoteInstance, int NewYesVoteCount, int NewNoVoteCount);
@@ -69,7 +78,10 @@ simulated function PreBeginPlay()
 {
     Super.PreBeginPlay();
 
-    OwnerGRI = TurboGameReplicationInfo(Level.GRI);
+    if (Level.GRI != None)
+    {
+        OwnerGRI = TurboGameReplicationInfo(Level.GRI);
+    }
 }
 
 simulated function PostBeginPlay()
@@ -198,27 +210,77 @@ simulated final function float GetVoteDurationPercentRemaining()
 
 //Returns the (localizable) string that is used when a vote is started. Players are specified by %p.
 //The initialize string getters is static because when initialized the local message may arrive before the vote actor is replicated to the remote.
-static simulated function string GetVoteInitiatedString()
+static final simulated function string GetVoteInitiatedString()
 {
     return default.VoteInitiatedString;
 }
 
+static final simulated function string GetVoteSucceededString()
+{
+    return default.VoteSucceededVoteString;
+}
+
+static final simulated function string GetVoteFailedString()
+{
+    return default.VoteFailedVoteString;
+}
+
+static final simulated function string GetVoteExpiredString()
+{
+    return default.VoteExpiredVoteString;
+}
+
 //Returns the (localizable) string that represents the name of this vote.
-simulated function string GetVoteTitleString()
+simulated final function string GetVoteTitleString()
 {
     return VoteTitleString;
 }
 
+//Returns the color that represents the no vote.
+simulated final function Color GetVoteTitleColor()
+{
+    return default.TitleColor;
+}
+
 //Returns the (localizable) string that represents the description of this vote.
-simulated function string GetVoteDescriptionString()
+simulated final function string GetVoteDescriptionString()
 {
     return VoteDescriptionString;
 }
 
+//Returns the (localizable) string that represents the yes vote.
+simulated final function string GetVoteYesString()
+{
+    return YesString;
+}
+
+//Returns the color that represents the no vote.
+simulated final function Color GetVoteYesColor()
+{
+    return class'TurboLocalMessage'.default.PositiveKeywordColor;
+}
+
+//Returns the (localizable) string that represents the no vote.
+simulated final function string GetVoteNoString()
+{
+    return NoString;
+}
+
+//Returns the color that represents the no vote.
+simulated final function Color GetVoteNoColor()
+{
+    return class'TurboLocalMessage'.default.NegativeKeywordColor;
+}
+
 //Returns the player who initiated this vote.
-simulated function TurboPlayerReplicationInfo GetVoteInitiator()
+simulated final function TurboPlayerReplicationInfo GetVoteInitiator()
 {
     return InitiatingPlayer;
+}
+
+function float GetPlayerStartVoteCooldown(TurboPlayerController PlayerController)
+{
+    return FailedVoteCooldown;
 }
 
 //Returns true if the provided player can initiate this vote.
@@ -235,13 +297,13 @@ static function bool CanInitiateVote(TurboGameReplicationInfo TGRI, TurboPlayerR
 //Called when a vote instance is initiated by a specified player.
 function InitiateVote(TurboPlayerReplicationInfo Initiator)
 {    
+    SetVoteState(Initializing);
     InitiatingPlayer = Initiator;
-
-    Level.Game.BroadcastLocalizedMessage(TurboVoteLocalMessage, 0, InitiatingPlayer);
 
     VoteList.Length = 1;
     VoteList[0].TPRI = Initiator;
     VoteList[0].Vote = EVote.Yes;
+    
 
     if (VoteDuration <= 0.f)
     {
@@ -256,6 +318,11 @@ function InitiateVote(TurboPlayerReplicationInfo Initiator)
     
     GotoState('VoteInProgress');
     EvaluateVote('ReceivedVote');
+
+    if (VoteState < Expired)
+    {
+        Level.Game.BroadcastLocalizedMessage(TurboVoteLocalMessage, int(EVotingState.Started), InitiatingPlayer,, Class);
+    }
 }
 
 //Returns true if the specified player is allowed to vote.
@@ -267,6 +334,8 @@ function bool CanPlayerVote(TurboPlayerReplicationInfo TPRI)
 function PlayerVote(TurboPlayerReplicationInfo TPRI, string VoteString)
 {
     local EVote PlayerVote;
+    local bool bUpdatedVote;
+    local int Index;
 
     if (!CanPlayerVote(TPRI))
     {
@@ -296,10 +365,27 @@ function PlayerVote(TurboPlayerReplicationInfo TPRI, string VoteString)
             return;
         }
     }
+
+    bUpdatedVote = false;
     
-    VoteList.Length = VoteList.Length + 1;
-    VoteList[VoteList.Length - 1].TPRI = TPRI;
-    VoteList[VoteList.Length - 1].Vote = PlayerVote;
+    for (Index = VoteList.Length - 1; Index >= 0; Index--)
+    {
+        if (VoteList[Index].TPRI != TPRI)
+        {
+            continue;
+        }
+
+        VoteList[Index].Vote = PlayerVote;
+        bUpdatedVote = true;
+        break;
+    }
+
+    if (!bUpdatedVote)
+    {
+        VoteList.Length = VoteList.Length + 1;
+        VoteList[VoteList.Length - 1].TPRI = TPRI;
+        VoteList[VoteList.Length - 1].Vote = PlayerVote;
+    }
 
     EvaluateVote('ReceivedVote');
 }
@@ -332,9 +418,14 @@ function SetVoteState(EVotingState NewVoteState)
     PostNetReceive();
     ForceNetUpdate();
 
-    if (NewVoteState >= Expired)
+    if (VoteState >= Expired)
     {
+        if ((bBroadcastSucceeded && VoteState == Succeeded) || (bBroadcastFailed && VoteState == Failed) || (bBroadcastExpired && VoteState == Expired))
+        {
+            Level.Game.BroadcastLocalizedMessage(TurboVoteLocalMessage, int(VoteState), InitiatingPlayer,, Class);
+        }
         OnVoteResult(GetResultFromState());
+        TurboGameReplicationInfo(Level.GRI).PlayerVoteComplete(Self, VoteState);
         GotoState('VoteComplete');
     }
 }
@@ -357,7 +448,7 @@ final function Name GetResultFromState()
 function UpdateVoteCounts()
 {
     local int Index;
-    TotalVoterCount = class'TurboGameplayHelper'.static.GetPlayerControllerList(Level, bCanSpectatorsVote).Length;
+    TotalVoterCount = class'TurboGameplayHelper'.static.GetPlayerControllerCount(Level, bCanSpectatorsVote);
 
     AdminOverrideVote = EVote.Unset;
     VoteYesCount = 0;
@@ -445,6 +536,7 @@ state VoteInProgress
     function InitiateVote(TurboPlayerReplicationInfo Initiator) {}
 
 Begin:
+    SetVoteState(Started);
     sleep(VoteDuration);
     OnVoteExpired();
 }
@@ -474,9 +566,16 @@ defaultproperties
     NetUpdateFrequency=0.1f
     bNetNotify=true
 
+    TitleColor=(R=255,G=255,B=255,A=255)
+    YesString="Yes"
+    NoString="No"
+
     VoteDuration=20.f
-    VoteCooldown=5.f
+    FailedVoteCooldown=10.f
     VotePercent=0.51f
 
+    bBroadcastSucceeded=true
+    bBroadcastFailed=true
+    bBroadcastExpired=true
     TurboVoteLocalMessage=class'TurboVoteLocalMessage'
 }
