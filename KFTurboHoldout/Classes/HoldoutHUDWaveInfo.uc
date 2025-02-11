@@ -74,7 +74,7 @@ simulated function DrawGameData(Canvas C)
 
 	C.SetPos(TempX, TempY);
 
-	C.Font = class'KFTurboFontHelper'.static.LoadLargeNumberFont(FontSizeOffset);
+	C.Font = TurboHUD.LoadLargeNumberFont(FontSizeOffset);
 	C.FontScaleX = 1.f;
 	C.FontScaleX = 1.f;
 	C.TextSize(TestText, TextSizeX, TextSizeY);

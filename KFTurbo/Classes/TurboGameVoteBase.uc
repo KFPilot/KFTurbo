@@ -138,10 +138,30 @@ simulated final function int GetYesVoteCount()
     return VoteYesCount;
 }
 
+simulated final function float GetYesVotePercent()
+{
+    if (TotalVoterCount <= 0)
+    {
+        return 0.f;
+    }
+
+    return float(VoteYesCount) / float(TotalVoterCount);
+}
+
 //Returns number of people who have voted no.
 simulated final function int GetNoVoteCount()
 {
     return VoteNoCount;
+}
+
+simulated final function float GetNoVotePercent()
+{
+    if (TotalVoterCount <= 0)
+    {
+        return 0.f;
+    }
+
+    return float(VoteNoCount) / float(TotalVoterCount);
 }
 
 //Returns total duration of the vote. Will return -1.f if the client has yet to receive this value.
@@ -158,12 +178,22 @@ simulated final function float GetVoteDuration()
 //Returns the remaining duration of the vote. Will return -1.f if the client has yet to receive this value.
 simulated final function float GetVoteDurationRemaining()
 {
-    if (VoteStartTime <= 0.f && VoteEndTime <= 0.f)
+    if (ServerTimeActor == None || VoteStartTime <= 0.f || VoteEndTime <= 0.f)
     {
         return -1.f;
     }
 
     return ServerTimeActor.GetServerTimeSecondsUntil(VoteEndTime);
+}
+
+simulated final function float GetVoteDurationPercentRemaining()
+{
+    if (ServerTimeActor == None || VoteStartTime <= 0.f || VoteEndTime <= 0.f || (VoteEndTime - VoteStartTime) <= 0.f)
+    {
+        return -1.f;
+    }
+
+    return ServerTimeActor.GetServerTimeSecondsUntil(VoteEndTime) / (VoteEndTime - VoteStartTime);
 }
 
 //Returns the (localizable) string that is used when a vote is started. Players are specified by %p.

@@ -31,15 +31,15 @@ var(Turbo) Vector2D ActiveBackplateSize;
 var(Turbo) Vector2D BackplateSpacing; //Distance from top and middle.
 var(Turbo) Vector2D BackplateTextSpacing; //Distance from top and middle.
 
-//End Trader Vote
-var localized string EndTraderVoteTitle;
-struct EndTraderVoteEntry
-{
-	var TurboPlayerReplicationInfo PRI;
-	var float Ratio;
-};
-var array<EndTraderVoteEntry> EndTraderVoteList;
-var float EndTraderVoteRatio;
+//Voting
+var TurboGameVoteBase CurrentVoteInstance;
+var float VoteRatio;
+var float VoteDurationPercent;
+var float VoteDurationInterpRate;
+var float VoteYesPercent;
+var float VoteYesInterpRate;
+var float VoteNoPercent;
+var float VoteNoInterpRate;
 
 var Color BackplateColor;
 var Texture RoundedContainer;
@@ -173,6 +173,7 @@ simulated function Tick(float DeltaTime)
 	}
 
 	TickBossData(DeltaTime);
+	TickVoteInstance(DeltaTime);
 }
 
 simulated function TickGameState(float DeltaTime)
@@ -209,6 +210,10 @@ simulated function Render(Canvas C)
 		DrawBossHealthBar(C);
 	}
 
+	class'TurboHUDKillingFloor'.static.ResetCanvas(C);
+
+	DrawVoteInstance(C);
+	
 	class'TurboHUDKillingFloor'.static.ResetCanvas(C);
 }
 
@@ -253,7 +258,8 @@ simulated function DrawGameData(Canvas C)
 
 	C.SetPos(TempX, TempY);
 
-	C.Font = class'KFTurboFontHelper'.static.LoadLargeNumberFont(2 + FontSizeOffset);
+	
+	C.Font = TurboHUD.LoadLargeNumberFont(2 + FontSizeOffset);
 	C.FontScaleX = 1.f;
 	C.FontScaleX = 1.f;
 	C.TextSize(TestText, TextSizeX, TextSizeY);
@@ -355,7 +361,6 @@ state ActiveWave
 	{
 		NumberZedsRemaining = TGRI.MaxMonsters;
 		ActiveWaveFadeRatio = 0.f;
-		EndTraderVoteList.Length = 0;
 	}
 
 	simulated function Tick(float DeltaTime)
@@ -387,6 +392,7 @@ state ActiveWave
 		}
 
 		TickBossData(DeltaTime);
+		TickVoteInstance(DeltaTime);
 	}
 
 	simulated function DrawWaveData(Canvas C)
@@ -461,7 +467,7 @@ simulated function DrawActiveWave(Canvas C)
 
 	C.SetPos(TempX, TempY);
 
-	C.Font = class'KFTurboFontHelper'.static.LoadLargeNumberFont(2 + FontSizeOffset);
+	C.Font = TurboHUD.LoadLargeNumberFont(2 + FontSizeOffset);
 	C.FontScaleX = 1.f;
 	C.FontScaleX = 1.f;
 
@@ -638,7 +644,7 @@ simulated final function DrawKillFeedEntry(Canvas C, out float DrawY, out KillFe
 	//Draw player name if this isn't our entry.
 	if (!Entry.bIsLocalPlayer)
 	{
-		C.Font = class'KFTurboFontHelper'.static.LoadItalicFontStatic(3 + FontSizeOffset);
+		C.Font = TurboHUD.LoadItalicFont(3 + FontSizeOffset);
 		C.FontScaleX = BaseTextScale;
 		C.FontScaleY = BaseTextScale;
 
@@ -694,7 +700,6 @@ state WaitingWave
 	{
 		WaveTimeSecondsRemaining = TGRI.TimeToNextWave;
 		TraderFadeRatio = 0.f;
-		EndTraderVoteList.Length = 0;
 	}
 
 	simulated function Tick(float DeltaTime)
@@ -726,12 +731,12 @@ state WaitingWave
 		}
 
 		TickBossData(DeltaTime);
+		TickVoteInstance(DeltaTime);
 	}
 	
 	simulated function DrawWaveData(Canvas C)
 	{
 		DrawTraderWave(C);
-		DrawTraderEndVote(C);
 	}
 }
 
@@ -749,66 +754,6 @@ simulated function TickTraderWave(float DeltaTime)
 	else
 	{
 		WaveTimeRemaining -= DeltaTime * 0.95f;
-	}
-
-	//Update end trader vote UI.
-
-	for (EndTraderVoteIndex = EndTraderVoteList.Length - 1; EndTraderVoteIndex >= 0; EndTraderVoteIndex--)
-	{
-		if (EndTraderVoteList[EndTraderVoteIndex].PRI == None || EndTraderVoteList[EndTraderVoteIndex].PRI.bOnlySpectator || !EndTraderVoteList[EndTraderVoteIndex].PRI.bVotedForTraderEnd)
-		{
-			EndTraderVoteList.Remove(EndTraderVoteIndex, 1);
-		}
-	}
-
-	if (TGRI.TimeToNextWave <= 10)
-	{
-		for (EndTraderVoteIndex = EndTraderVoteList.Length - 1; EndTraderVoteIndex >= 0; EndTraderVoteIndex--)
-		{
-			EndTraderVoteList[EndTraderVoteIndex].Ratio = Lerp(8.f * DeltaTime, EndTraderVoteList[EndTraderVoteIndex].Ratio, 0.f);
-		}
-
-		EndTraderVoteRatio = Lerp(8.f * DeltaTime, EndTraderVoteRatio, 0.f);
-		return;
-	}
-
-	for (Index = TGRI.PRIArray.Length - 1; Index >= 0; Index--)
-	{
-		TPRI = TurboPlayerReplicationInfo(TGRI.PRIArray[Index]);
-
-		if (TPRI == None || TPRI.bOnlySpectator || !TPRI.bVotedForTraderEnd)
-		{
-			continue;
-		}
-
-		bFoundEntry = false;
-		for (EndTraderVoteIndex = EndTraderVoteList.Length - 1; EndTraderVoteIndex >= 0; EndTraderVoteIndex--) 
-		{
-			if (EndTraderVoteList[EndTraderVoteIndex].PRI == TPRI)
-			{ 
-				bFoundEntry = true;
-				break;
-			}
-		}
-
-		if (bFoundEntry)
-		{
-			continue;
-		}
-
-		EndTraderVoteList.Length = EndTraderVoteList.Length + 1;
-		EndTraderVoteList[EndTraderVoteList.Length - 1].PRI = TPRI;
-		EndTraderVoteList[EndTraderVoteList.Length - 1].Ratio = 0.f;
-	}
-
-	for (EndTraderVoteIndex = EndTraderVoteList.Length - 1; EndTraderVoteIndex >= 0; EndTraderVoteIndex--)
-	{
-		EndTraderVoteList[EndTraderVoteIndex].Ratio = Lerp(4.f * DeltaTime, EndTraderVoteList[EndTraderVoteIndex].Ratio, 1.f);
-	}
-
-	if (EndTraderVoteList.Length != 0)
-	{
-		EndTraderVoteRatio = Lerp(4.f * DeltaTime, EndTraderVoteRatio, 1.f);
 	}
 }
 
@@ -852,7 +797,7 @@ simulated function DrawTraderWave(Canvas C)
 
 	C.SetPos(TempX, TempY);
 
-	C.Font = class'KFTurboFontHelper'.static.LoadLargeNumberFont(2 + FontSizeOffset);
+	C.Font = TurboHUD.LoadLargeNumberFont(2 + FontSizeOffset);
 	C.FontScaleX = 1.f;
 	C.FontScaleX = 1.f;
 	C.TextSize(TraderTime, TextSizeX, TextSizeY);
@@ -905,7 +850,7 @@ simulated function DrawTraderWave(Canvas C)
 	
 	C.FontScaleX = 1.f;
 	C.FontScaleY = 1.f;
-	C.Font = class'KFTurboFontHelper'.static.LoadLargeNumberFont(2 + FontSizeOffset);
+	C.Font = TurboHUD.LoadLargeNumberFont(2 + FontSizeOffset);
 	C.TextSize(GetStringOfZeroes(Len(TraderTime)), TextSizeX, TextSizeY);
 	
 	TextScale = (C.ClipY * BackplateSize.Y) / TextSizeY;
@@ -916,113 +861,6 @@ simulated function DrawTraderWave(Canvas C)
 
 	C.SetPos((TempX + (SizeX * 0.5f)) - (TextSizeX * 0.5f), (TempY + (SizeY * 0.5f)) - (TextSizeY * 0.5f));
 	DrawTextMeticulous(C, TraderTime, TextSizeX);
-}
-
-simulated function DrawTraderEndVote(Canvas C)
-{
-	local int Index;
-	local TurboPlayerReplicationInfo TPRI;
-	local float Ratio;
-	local float TempX, TempY, MinEntrySizeX, EntrySizeY, EntryXOffset;
-	local float TextSizeX, TextSizeY;
-	local bool bHasVotes;
-
-	if (EndTraderVoteRatio < 0.001f)
-	{
-		return;
-	}
-
-	bHasVotes = false;
-	
-	C.Font = TurboHUD.LoadFont(2 + FontSizeOffset);
-	C.FontScaleX = 1.f;
-	C.FontScaleY = 1.f;
-
-	C.TextSize(EndTraderVoteTitle, TextSizeX, TextSizeY);
-
-	C.FontScaleX = FMin((C.ClipY * BackplateSpacing.Y * 1.25f) / TextSizeY, 1.f);
-	C.FontScaleY = C.FontScaleX;
-
-	for (Index = EndTraderVoteList.Length - 1; Index >= 0; Index--)
-	{
-		TPRI = EndTraderVoteList[Index].PRI;
-		if (TPRI == None)
-		{
-			continue;
-		}
-
-		if (!TPRI.bVotedForTraderEnd)
-		{
-			continue;
-		}
-		
-		bHasVotes = true;
-		C.TextSize(TPRI.PlayerName, TextSizeX, TextSizeY);
-		MinEntrySizeX = FMax(TextSizeX, MinEntrySizeX);
-		EntrySizeY = FMax(TextSizeY, EntrySizeY);
-	}
-
-	if (!bHasVotes)
-	{
-		return;
-	}
-
-	MinEntrySizeX += 24.f;
-	EntrySizeY *= 1.1f;
-
-	TempX = C.ClipX;
-	TempY = C.ClipY * 0.1f;
-
-	for (Index = EndTraderVoteList.Length - 1; Index >= 0; Index--)
-	{
-		TPRI = EndTraderVoteList[Index].PRI;
-		if (TPRI == None)
-		{
-			continue;
-		}
-
-		if (!TPRI.bVotedForTraderEnd)
-		{
-			continue;
-		}
-
-		Ratio = EndTraderVoteList[Index].Ratio;
-
-		if (Ratio < 0.001f)
-		{
-			continue;
-		}
-		
-		EntryXOffset = (MinEntrySizeX * Lerp(Ratio, 0.5f, 0.f));
-
-		C.TextSize(TPRI.PlayerName, TextSizeX, TextSizeY);
-
-		if (EdgeContainer != None)
-		{
-			C.SetDrawColor(0, 0, 0);
-			C.DrawColor.A = byte(Ratio * 120.f);
-			C.SetPos((TempX - MinEntrySizeX) + EntryXOffset, TempY);
-			C.DrawTileStretched(EdgeContainer, MinEntrySizeX + 2.f, EntrySizeY); //Avoid seams.
-		}
-
-		C.SetDrawColor(255, 255, 255);
-		C.DrawColor.A = byte(Ratio * 255.f);
-		C.SetPos((TempX - TextSizeX - 8.f) + EntryXOffset, TempY + (EntrySizeY * 0.5f) - (TextSizeY * 0.5f));
-		C.DrawTextClipped(TPRI.PlayerName);
-
-		TempY += EntrySizeY + 2.f;
-	}
-
-	if (bHasVotes)
-	{
-		C.SetDrawColor(255, 255, 255);
-		C.DrawColor.A = byte(EndTraderVoteRatio * 255.f);
-		TempY = C.ClipY * 0.1f;
-		C.TextSize(EndTraderVoteTitle, TextSizeX, TextSizeY);
-
-		C.SetPos(TempX - TextSizeX - 8.f, TempY - (TextSizeY + 8.f));
-		C.DrawTextClipped(EndTraderVoteTitle);
-	}
 }
 
 simulated function RegisterZombieBoss(P_ZombieBoss BossMonster)
@@ -1320,6 +1158,69 @@ simulated function DrawBossHealthBar(Canvas C)
 	}
 }
 
+simulated function TickVoteInstance(float DeltaTime)
+{
+	if (TGRI.VoteInstance != CurrentVoteInstance)
+	{
+		VoteRatio -= DeltaTime;
+
+		if (VoteRatio <= 0.f)
+		{
+			VoteRatio = 0.f;
+			CurrentVoteInstance = TGRI.VoteInstance;
+
+			if (CurrentVoteInstance != None)
+			{
+				VoteDurationPercent = CurrentVoteInstance.GetVoteDurationPercentRemaining();
+				VoteYesPercent = CurrentVoteInstance.GetYesVotePercent();
+				VoteNoPercent = CurrentVoteInstance.GetNoVotePercent();
+			}
+		}
+
+		return;
+	}
+
+	if (TGRI.VoteInstance == None)
+	{
+		return;
+	}
+
+	if (VoteRatio <= 1.f)
+	{
+		VoteRatio += DeltaTime;
+
+		if (VoteRatio >= 1.f)
+		{
+			VoteRatio = 1.f;
+		}
+	}
+
+	VoteDurationPercent = Lerp(DeltaTime * VoteDurationInterpRate, VoteDurationPercent, CurrentVoteInstance.GetVoteDurationPercentRemaining());
+	VoteYesPercent = Lerp(DeltaTime * VoteYesInterpRate, VoteYesPercent, CurrentVoteInstance.GetYesVotePercent());
+	VoteNoPercent = Lerp(DeltaTime * VoteNoInterpRate, VoteNoPercent, CurrentVoteInstance.GetNoVotePercent());
+}
+
+simulated function DrawVoteInstance(Canvas C)
+{
+	local float TempX, TempY;
+	local float SizeX, SizeY;
+	local float TextSizeX, TextSizeY;
+	local string TestText;
+
+	TestText = GetStringOfZeroes(2);
+	C.Font = TurboHUD.LoadFont(FontSizeOffset + 2);
+	C.FontScaleX = 1.f;
+	C.FontScaleX = 1.f;
+	C.TextSize(TestText, TextSizeX, TextSizeY);
+
+	if (RoundedContainer != None)
+	{
+		C.DrawColor = BackplateColor;
+		C.SetPos(TempX, TempY);
+		C.DrawTileStretched(RoundedContainer, SizeX, SizeY);
+	}
+}
+
 defaultproperties
 {
 	bNeedTraderWaveInitialization=true
@@ -1334,6 +1235,10 @@ defaultproperties
 	BossDataFadeOutRate=4.f
 	BossDataHealthInterpRate=8.f
 
+	VoteDurationInterpRate=10.f
+	VoteYesInterpRate=4.f
+	VoteNoInterpRate=4.f
+
 	BossBarSize=(X=0.7f,Y=0.03)
 	BossHealthBarBackplate=Texture'KFTurbo.HUD.ContainerSquare_D'
 	BossHealthBarFill=FinalBlend'KFTurbo.Boss.Bar_FB'
@@ -1347,8 +1252,6 @@ defaultproperties
 	BackplateSize=(X=0.075f,Y=0.05f)
 	BackplateSpacing=(X=0.01f,Y=0.02f)
 	BackplateTextSpacing=(X=0.01f,Y=0.f)
-
-	EndTraderVoteTitle="End Trader Vote:"
 	
 	RoundedContainer=Texture'KFTurbo.HUD.ContainerRounded_D'
 	EdgeContainer=Texture'KFTurbo.HUD.EdgeBackplate_D'
