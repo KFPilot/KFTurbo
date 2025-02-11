@@ -46,6 +46,31 @@ static final function array<TurboPlayerController> GetPlayerControllerList(Level
     return PlayerControllerList;
 }
 
+static final function int GetPlayerControllerCount(LevelInfo Level, optional bool bIncludeSpectators)
+{
+    local Controller Controller;
+    local int FoundControllers;
+
+    FoundControllers = 0;
+
+    for ( Controller = Level.ControllerList; Controller != None; Controller = Controller.NextController )
+    {
+        if (Controller.bDeleteMe || !Controller.bIsPlayer)
+        {
+            continue;
+        }
+
+        if (Controller.PlayerReplicationInfo == None || (Controller.PlayerReplicationInfo.bOnlySpectator && !bIncludeSpectators))
+        {
+            continue;
+        }
+
+        FoundControllers++;
+    }
+
+    return FoundControllers;
+}
+
 static final function array<TurboHumanPawn> GetPlayerPawnList(LevelInfo Level)
 {
     local Controller Controller;
