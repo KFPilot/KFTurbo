@@ -34,7 +34,7 @@ replication
 	reliable if( Role < ROLE_Authority )
 		ClientSetPipebombUsesSpecialGroup;
 	reliable if( Role < ROLE_Authority )
-		Vote, ServerMarkActor, ServerNotifyShoppingState, ServerNotifyLoginMenuState;
+		Vote, VoteTest, ServerMarkActor, ServerNotifyShoppingState, ServerNotifyLoginMenuState;
 	reliable if( Role < ROLE_Authority )
 		ServerDebugSkipWave, ServerDebugRestartWave, ServerDebugSetWave, ServerDebugPreventGameOver;
 	reliable if( Role < ROLE_Authority )
@@ -773,6 +773,11 @@ exec function EndTrader()
 
 exec function Vote(string VoteString)
 {
+	if (Role != ROLE_Authority)
+	{
+		return;
+	}
+
 	if (NextVoteTime > Level.TimeSeconds)
 	{
 		return;
@@ -792,6 +797,11 @@ exec function Vote(string VoteString)
 exec function VoteTest()
 {
 	if (Level.NetMode != NM_Standalone && (PlayerReplicationInfo == None || !PlayerReplicationInfo.bAdmin))
+	{
+		return;
+	}
+
+	if (Role != ROLE_Authority)
 	{
 		return;
 	}

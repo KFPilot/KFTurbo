@@ -29,7 +29,7 @@ simulated final function float GetServerTimeSecondsUntil(float TimeSeconds)
     return FMax(TimeSeconds - ClientServerTimeSeconds, 0.f);
 }
 
-function PostBeginPlay()
+simulated function PostBeginPlay()
 {
     Super.PostBeginPlay();
 
@@ -39,7 +39,7 @@ function PostBeginPlay()
     }
     else
     {
-        GotoState('WaitingForGameReplicationInfo');
+        SetTimer(0.1f, false);
     }
 }
 
@@ -73,17 +73,20 @@ simulated function Tick(float DeltaTime)
     ClientServerTimeSeconds = FMin(ClientServerTimeSeconds + (DeltaTime * ClientDeltaTimeAdjustment), LastServerTimeSeconds + 1.f);
 }
 
-//Client-only state. Awaiting reception of the GRI.
-state WaitingForGameReplicationInfo
+simulated function Timer()
 {
-Begin:
-    while (Level.GRI == None)
+    if (Role == ROLE_Authority)
     {
-        sleep(0.1f);
+        return;
+    }
+    
+    if (Level.GRI == None)
+    {
+        SetTimer(0.1f, false);
+        return;
     }
 
     TurboGameReplicationInfo(Level.GRI).ServerTimeActor = Self;
-    GotoState('');
 }
 
 defaultproperties

@@ -70,7 +70,7 @@ delegate OnVoteTallyChanged(TurboGameVoteBase VoteInstance, int NewYesVoteCount,
 
 replication
 {
-    reliable if(bNetDirty && Role == ROLE_Authority)
+    reliable if(Role == ROLE_Authority)
         InitiatingPlayer, VoteState, VoteYesCount, VoteNoCount, TotalVoterCount, VoteStartTime, VoteEndTime;
 }
 
@@ -93,7 +93,7 @@ simulated function PostBeginPlay()
         return;
     }
     
-    GotoState('WaitingForGameReplicationInfo');
+    SetTimer(0.1f, false);
 }
 
 simulated function PostNetReceive()
@@ -499,35 +499,29 @@ function EvaluateVote(Name Reason)
 //By default called when SetVoteState is set to Expired, Succeeded or Failed and Outcome will be one of those 3 as an FName.
 function OnVoteResult(Name Outcome) {}
 
-//Client-only state. Await reception of the GRI.
-state WaitingForGameReplicationInfo
+simulated function Timer()
 {
-    //Ignore PostNetReceive while we're waiting for the GRI.
-    //EndState() will make sure we get caught up when we're ready.
-    simulated function PostNetReceive() {}
-
-    simulated function EndState()
+    if (Role == ROLE_Authority)
     {
-        UpdateVoteInfo('EndState');
+        return;
     }
 
-Begin:
-    while (Level.GRI == None)
+    if (Level.GRI == None)
     {
-        sleep(0.1f);
+        SetTimer(0.1f, false);
+        return;
     }
 
     OwnerGRI = TurboGameReplicationInfo(Level.GRI);
 
-    while (OwnerGRI.ServerTimeActor == None)
+    if (OwnerGRI.ServerTimeActor == None)
     {
-        sleep(0.1f);
+        SetTimer(0.1f, false);
+        return;
     }
 
     ServerTimeActor = OwnerGRI.ServerTimeActor;
     OwnerGRI.RegisterVoteInstance(Self);
-    
-    GotoState('');
 }
 
 //Server-only state.
