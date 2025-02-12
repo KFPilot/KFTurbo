@@ -1202,7 +1202,7 @@ simulated function DrawVoteInstance(Canvas C)
 	local float TempX, TempY, RootTempX;
 	local float SizeX, SizeY, RootSizeX;
 	local float TextSizeX, TextSizeY;
-	local float PaddingPercent;
+	local float PaddingPercent, TimePercent;
 	local float VotePercentBarHeight;
 	local string TestText;
 	local Plane OriginalModulate;
@@ -1250,8 +1250,20 @@ simulated function DrawVoteInstance(Canvas C)
 	YesColor = CurrentVoteInstance.GetVoteYesColor();
 	NoColor = CurrentVoteInstance.GetVoteNoColor();
 
+	TimePercent = CurrentVoteInstance.GetVoteDurationPercentRemaining();
+	if (TimePercent >= 0.f)
+	{
+		VotePercentBarHeight = TextSizeY * 0.575f;
+		C.SetPos(RootTempX, TempY + (VotePercentBarHeight * 0.2f));
+		C.DrawColor = class'TurboLocalMessage'.default.KeywordColor;
+		C.DrawColor.A = 20;
+		C.DrawTileStretched(SquareContainer, RootSizeX, VotePercentBarHeight);
+		C.DrawColor.A = 40;
+		C.DrawTileStretched(SquareContainer, RootSizeX * TimePercent, VotePercentBarHeight);
+	}
+
 	C.DrawColor = CurrentVoteInstance.GetVoteTitleColor();
-	C.SetPos(TempX + (SizeX * 0.5f - (TextSizeX * 0.5f)), TempY);
+	C.SetPos(TempX + (SizeX * 0.5f - (TextSizeX * 0.5f)), TempY - (float(C.SizeY) * PaddingPercent * 0.25f));
 	C.DrawTextClipped(TestText);
 
 	TempY += SizeY;

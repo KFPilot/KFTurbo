@@ -90,6 +90,7 @@ simulated function PostBeginPlay()
 
     if (Role == ROLE_Authority)
     {
+        ServerTimeActor = OwnerGRI.ServerTimeActor;
         return;
     }
     

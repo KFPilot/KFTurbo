@@ -20,6 +20,6 @@ defaultproperties
     bCanSpectatorsVote=false
 
     VoteInitiatedString="%k%p%d started a %ktest vote%d. Type %kvote yes%d or %kvote no in console%d to vote."
-    VoteTitleString="My Testvote"
+    VoteTitleString="very cool very cool very cool"
     VoteDescriptionString="Testvote description."
 }
