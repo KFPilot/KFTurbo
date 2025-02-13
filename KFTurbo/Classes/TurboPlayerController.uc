@@ -264,13 +264,13 @@ exec function Speech( Name Type, int Index, string CallSign )
 		TurboInteraction.CheckForVoiceCommandMark(Type, Index);
 	}
 
+	Super.Speech(Type, Index, CallSign);
+
 	//Route voice commands for "Yes" and "No" to voting.
-	if (Type == 'ACK' && Index >= 0 && Index < 2)
+	if (Type == 'ACK' && (Index == 0 || Index == 1))
 	{
 		Vote(Eval(Index == 0, "YES", "NO"));
 	}
-
-	Super.Speech(Type, Index, CallSign);
 }
 
 function bool AllowTextMessage(string Msg)
