@@ -1,3 +1,6 @@
+//Killing Floor Turbo KFTurboHoldoutMut
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class KFTurboHoldoutMut extends Mutator;
 
 #exec obj load file="..\Textures\TurboHoldout.utx" package=KFTurboHoldout
