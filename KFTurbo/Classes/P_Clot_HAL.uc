@@ -1,6 +1,6 @@
-//-----------------------------------------------------------
-//
-//-----------------------------------------------------------
+//Killing Floor Turbo P_Clot_HAL
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class P_Clot_HAL extends P_Clot;
 
 var Shader ClotSkins[5];

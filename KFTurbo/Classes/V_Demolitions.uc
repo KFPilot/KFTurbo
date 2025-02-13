@@ -1,3 +1,6 @@
+//Killing Floor Turbo V_Demolitions
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class V_Demolitions extends TurboVeterancyTypes
 	abstract;
 

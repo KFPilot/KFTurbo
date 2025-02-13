@@ -1,3 +1,6 @@
+//Killing Floor Turbo TurboInvasionLoginMenu
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 Class TurboInvasionLoginMenu extends SRInvasionLoginMenu;
 
 function InitComponent(GUIController MyController, GUIComponent MyOwner)

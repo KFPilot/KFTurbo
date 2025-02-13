@@ -1,3 +1,6 @@
+//Killing Floor Turbo W_Bullpup_Fire
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class W_Bullpup_Fire extends BullpupFire;
 
 function DoFireEffect()

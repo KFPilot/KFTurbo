@@ -1,3 +1,6 @@
+//Killing Floor Turbo TurboTab_MidGamePerks
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class TurboTab_MidGamePerks extends SRTab_MidGamePerks;
 
 function bool OnSaveButtonClicked(GUIComponent Sender)

@@ -1,4 +1,7 @@
+//Killing Floor Turbo VP_FlamethrowerDamage
 //Represents a user's vanilla stat value for this progress type.
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class VP_FlamethrowerDamage extends SRCustomProgressInt;
 
 //Hook into killing crawlers as a Firebug here and provide bonus EXP.

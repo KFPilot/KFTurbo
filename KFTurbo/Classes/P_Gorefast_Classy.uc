@@ -1,3 +1,6 @@
+//Killing Floor Turbo P_Gorefast_Classy
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class P_Gorefast_Classy extends P_Gorefast;
 
 #exec OBJ LOAD FILE=KF_BaseGorefast_xmas.uax

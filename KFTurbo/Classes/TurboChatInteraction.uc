@@ -1,3 +1,6 @@
+//Killing Floor Turbo TurboChatInteraction
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class TurboChatInteraction extends Engine.Interaction;
 
 simulated function bool KeyEvent( out EInputKey Key, out EInputAction Action, FLOAT Delta )

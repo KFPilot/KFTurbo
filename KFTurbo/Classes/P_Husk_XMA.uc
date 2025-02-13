@@ -1,6 +1,6 @@
-//-----------------------------------------------------------
-//
-//-----------------------------------------------------------
+//Killing Floor Turbo P_Husk_XMA
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class P_Husk_XMA extends P_Husk;
 
 #exec OBJ LOAD FILE=KF_EnemiesFinalSnd_Xmas.uax

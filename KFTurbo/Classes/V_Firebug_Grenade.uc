@@ -1,6 +1,6 @@
-//=============================================================================
-// Firebug Nade
-//=============================================================================
+//Killing Floor Turbo V_Firebug_Grenade
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class V_Firebug_Grenade extends KFMod.FlameNade;
 
 function TakeDamage( int Damage, Pawn InstigatedBy, Vector Hitlocation, Vector Momentum, class<DamageType> DamageType, optional int HitIndex)

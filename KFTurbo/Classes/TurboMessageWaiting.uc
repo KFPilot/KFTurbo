@@ -1,3 +1,6 @@
+//Killing Floor Turbo TurboMessageWaiting
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class TurboMessageWaiting extends KFMod.WaitingMessage;
 
 static function int GetFontSize(int Switch, PlayerReplicationInfo RelatedPRI1, PlayerReplicationInfo RelatedPRI2, PlayerReplicationInfo LocalPlayer)

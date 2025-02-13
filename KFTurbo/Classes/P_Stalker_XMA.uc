@@ -1,3 +1,6 @@
+//Killing Floor Turbo P_Stalker_XMA
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class P_Stalker_XMA extends P_Stalker;
 
 #exec OBJ LOAD FILE=KF_EnemiesFinalSnd_Xmas.uax

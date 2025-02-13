@@ -1,3 +1,6 @@
+//Killing Floor Turbo TurboTab_Profile
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class TurboTab_Profile extends SRTab_Profile;
 
 function OnPerkSelected(GUIComponent Sender)

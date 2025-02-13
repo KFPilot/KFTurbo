@@ -1,4 +1,4 @@
-//Killing Floor Turbo TurboHealEventHandler
+//Killing Floor Turbo TurboPlayerStatsHealEventHandler
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
 class TurboPlayerStatsHealEventHandler extends TurboHealEventHandler;

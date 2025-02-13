@@ -1,3 +1,6 @@
+//Killing Floor Turbo P_Fleshpound_SUM
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class P_Fleshpound_SUM extends P_Fleshpound;
 
 #exec OBJ LOAD FILE=KF_EnemiesFinalSnd_CIRCUS.uax

@@ -1,3 +1,6 @@
+//Killing Floor Turbo P_Stalker_STA
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class P_Stalker_STA extends P_Stalker;
 
 defaultproperties

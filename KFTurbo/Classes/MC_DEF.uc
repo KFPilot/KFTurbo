@@ -1,3 +1,6 @@
+//Killing Floor Turbo MC_DEF
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class MC_DEF extends KFMonstersCollection;
 
 defaultproperties

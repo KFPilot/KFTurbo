@@ -1,3 +1,6 @@
+//Killing Floor Turbo TurboTab_EmoteList_VertList
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class TurboTab_EmoteList_VertList extends GUIVertList;
 
 var Texture IconBackground;

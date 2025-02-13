@@ -1,3 +1,6 @@
+//Killing Floor Turbo P_Siren_Caroler_Scream
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class P_Siren_Caroler_Scream extends SirenScream;
 
 defaultproperties

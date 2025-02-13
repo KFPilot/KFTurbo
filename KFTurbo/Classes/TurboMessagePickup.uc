@@ -1,5 +1,7 @@
+//Killing Floor Turbo TurboMessagePickup
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class TurboMessagePickup extends UnrealGame.PickupMessagePlus;
-
 
 static function RenderComplexMessage(
 	Canvas Canvas,

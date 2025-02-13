@@ -1,3 +1,6 @@
+//Killing Floor Turbo P_Gorefast_Assassin
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class P_Gorefast_Assassin extends P_GoreFast_SUM;
 
 simulated function PostBeginPlay()

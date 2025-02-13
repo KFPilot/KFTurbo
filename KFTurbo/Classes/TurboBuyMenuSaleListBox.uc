@@ -1,3 +1,6 @@
+//Killing Floor Turbo TurboBuyMenuSaleListBox
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class TurboBuyMenuSaleListBox extends SRBuyMenuSaleListBox;
 
 delegate OnSaleItemClicked(TurboGUIBuyable SelectedSaleItem);

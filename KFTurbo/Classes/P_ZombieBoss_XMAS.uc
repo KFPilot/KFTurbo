@@ -1,3 +1,6 @@
+//Killing Floor Turbo P_ZombieBoss_XMAS
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class P_ZombieBoss_XMAS extends P_ZombieBoss;
 
 // Speech notifies called from the anims

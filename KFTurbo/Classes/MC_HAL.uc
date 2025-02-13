@@ -1,3 +1,6 @@
+//Killing Floor Turbo MC_HAL
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class MC_HAL extends KFMonstersCollection;
 
 defaultproperties

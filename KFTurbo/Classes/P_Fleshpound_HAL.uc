@@ -1,3 +1,6 @@
+//Killing Floor Turbo P_Fleshpound_HAL
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class P_Fleshpound_HAL extends P_Fleshpound;
 
 #exec OBJ LOAD FILE=KF_EnemiesFinalSnd_HALLOWEEN.uax

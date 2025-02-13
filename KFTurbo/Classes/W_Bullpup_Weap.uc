@@ -1,3 +1,6 @@
+//Killing Floor Turbo W_Bullpup_Weap
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class W_Bullpup_Weap extends Bullpup;
 
 simulated function AddReloadedAmmo()

@@ -1,6 +1,8 @@
+//Killing Floor Turbo V_Commando
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class V_Commando extends TurboVeterancyTypes
 	abstract;
-
 
 static function AddCustomStats(ClientPerkRepLink Other)
 {

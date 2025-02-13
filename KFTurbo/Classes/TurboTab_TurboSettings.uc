@@ -1,3 +1,6 @@
+//Killing Floor Turbo TurboTab_TurboSettings
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class TurboTab_TurboSettings extends SRTab_Base;
 
 var automated GUISectionBackground LeftSection, RightSection, MiddleSection;

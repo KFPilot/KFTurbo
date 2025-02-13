@@ -1,4 +1,7 @@
-// Base class for basic, wave-based spawning setups.
+//Killing Floor Turbo TurboMonsterCollection
+//Base class for basic, wave-based spawning setups.
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class TurboMonsterCollectionWaveBase extends TurboMonsterCollection
      editinlinenew;
 
