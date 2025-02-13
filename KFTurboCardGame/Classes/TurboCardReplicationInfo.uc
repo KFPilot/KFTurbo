@@ -310,7 +310,7 @@ function InitializeCardDecks()
         ProConGameDeck.Destroy();
     }
 
-    if (EvilTurboDeckClass != None)
+    if (EvilGameDeck != None)
     {
         EvilGameDeck.Destroy();
     }
