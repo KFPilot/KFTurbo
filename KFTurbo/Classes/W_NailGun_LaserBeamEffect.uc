@@ -1,3 +1,6 @@
+//Killing Floor Turbo W_NailGun_LaserBeamEffect
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class W_NailGun_LaserBeamEffect extends LaserBeamEffect;
 
 simulated function Tick(float dt)

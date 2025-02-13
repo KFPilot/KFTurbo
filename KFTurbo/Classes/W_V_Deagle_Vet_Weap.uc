@@ -1,3 +1,6 @@
+//Killing Floor Turbo W_V_Deagle_Vet_Weap
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class W_V_Deagle_Vet_Weap extends W_Deagle_Weap;
 
 var byte WeaponTier, PreviousWeaponTier;

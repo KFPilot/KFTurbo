@@ -1,3 +1,6 @@
+//Killing Floor Turbo W_MedicGun_Proj
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class W_MedicGun_Proj extends HealingProjectile;
 
 var KFHumanPawn HitHumanPawn;

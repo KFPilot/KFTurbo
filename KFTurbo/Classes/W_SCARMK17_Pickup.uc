@@ -1,3 +1,6 @@
+//Killing Floor Turbo W_SCARMK17_Pickup
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class W_SCARMK17_Pickup extends SCARMK17Pickup;
 
 function Destroyed()

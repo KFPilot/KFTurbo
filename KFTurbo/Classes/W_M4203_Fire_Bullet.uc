@@ -1,3 +1,6 @@
+//Killing Floor Turbo W_M4203_Fire_Bullet
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class W_M4203_Fire_Bullet extends KFFire;
 
 function DoFireEffect()

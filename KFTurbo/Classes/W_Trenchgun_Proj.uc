@@ -1,3 +1,6 @@
+//Killing Floor Turbo W_Trenchgun_Proj
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class W_Trenchgun_Proj extends TrenchgunBullet;
 
 var int FireModeHitRegisterCount; //HitRegisterCount associated with this projectile.

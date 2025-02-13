@@ -1,3 +1,6 @@
+//Killing Floor Turbo W_M32_Pickup
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class W_M32_Pickup extends M32Pickup;
 
 function Destroyed()

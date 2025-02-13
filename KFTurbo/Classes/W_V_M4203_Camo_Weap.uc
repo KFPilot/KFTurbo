@@ -1,3 +1,6 @@
+//Killing Floor Turbo W_V_M4203_Camo_Weap
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class W_V_M4203_Camo_Weap extends W_M4203_Weap;
 
 defaultproperties
