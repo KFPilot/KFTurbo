@@ -246,6 +246,11 @@ function InitializeCardDecks()
     local class<TurboCardDeck> ProConTurboDeckClass;
     local class<TurboCardDeck> EvilTurboDeckClass;
 
+    if (Level.bLevelChange)
+    {
+        return;
+    }
+
     GoodTurboDeckClass = class'TurboCardDeck_Good';
 	if (OwnerMutator.TurboGoodDeckClassOverrideString != "")
 	{
@@ -290,10 +295,30 @@ function InitializeCardDecks()
         }
 	}
 
-    GoodGameDeck = new(Self) GoodTurboDeckClass;
-    SuperGameDeck = new(Self) SuperTurboDeckClass;
-    ProConGameDeck = new(Self) ProConTurboDeckClass;
-    EvilGameDeck = new(Self) EvilTurboDeckClass;
+    if (GoodGameDeck != None)
+    {
+        GoodGameDeck.Destroy();
+    }
+
+    if (SuperGameDeck != None)
+    {
+        SuperGameDeck.Destroy();
+    }
+
+    if (ProConGameDeck != None)
+    {
+        ProConGameDeck.Destroy();
+    }
+
+    if (EvilTurboDeckClass != None)
+    {
+        EvilGameDeck.Destroy();
+    }
+
+    GoodGameDeck = Spawn(GoodTurboDeckClass, self);
+    SuperGameDeck = Spawn(SuperTurboDeckClass, self);
+    ProConGameDeck = Spawn(ProConTurboDeckClass, self);
+    EvilGameDeck = Spawn(EvilTurboDeckClass, self);
 
     GoodGameDeck.InitializeDeck();
     SuperGameDeck.InitializeDeck();
@@ -362,6 +387,11 @@ function SendVoteResult(TurboCard SelectedCard)
 function SelectCard(TurboCard SelectedCard, optional bool bFromVote)
 {
     local int Index;
+
+    if (Level.bLevelChange)
+    {
+        return;
+    }
     
     if (SelectedCard == None)
     {
@@ -416,6 +446,11 @@ function StartSelection(int WaveNumber)
 {
     local TurboCardDeck Deck;
     local int Count;
+
+    if (Level.bLevelChange)
+    {
+        return;
+    }
 
     ClearSelection();
 

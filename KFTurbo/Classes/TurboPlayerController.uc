@@ -809,6 +809,11 @@ exec function VoteTest()
 
 	TurboGameReplicationInfo(Level.GRI).VoteInstance = Spawn(class'TurboGameVoteTest', Self);
 	TurboGameReplicationInfo(Level.GRI).VoteInstance.InitiateVote(TurboPlayerReplicationInfo(PlayerReplicationInfo));
+	
+	if (TurboGameReplicationInfo(Level.GRI).VoteInstance != None && TurboGameReplicationInfo(Level.GRI).VoteInstance.GetVoteState() < Expired)
+	{
+		TurboGameReplicationInfo(Level.GRI).RegisterVoteInstance(TurboGameReplicationInfo(Level.GRI).VoteInstance);
+	}
 }
 
 simulated function ClientWeaponSpawned(class<Weapon> WeaponClass, Inventory Inv)

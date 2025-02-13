@@ -41,6 +41,8 @@ var float VoteYesPercent;
 var float VoteYesInterpRate;
 var float VoteNoPercent;
 var float VoteNoInterpRate;
+var Sound VoteStartSound;
+var Sound VoteTallyChangeSound;
 
 var Color BackplateColor;
 var Texture RoundedContainer;
@@ -136,8 +138,7 @@ simulated function Initialize(TurboHUDKillingFloor OwnerHUD)
 	
 	Super.Initialize(OwnerHUD);
 
-	TGRI = TurboGameReplicationInfo(Level.GRI);
-	bIsTestGameMode = class'KFTurboGameType'.static.StaticIsTestGameType(Self);
+	InitializeGRI(TurboGameReplicationInfo(Level.GRI));
 
 	ActiveBackplateSize = BackplateSize;
 
@@ -147,18 +148,50 @@ simulated function Initialize(TurboHUDKillingFloor OwnerHUD)
 	}
 }
 
+simulated function OnVoteInstanceTallyChanged(TurboGameVoteBase VoteInstance, int NewYesVoteCount, int NewNoVoteCount)
+{
+	if (VoteRatio < 0.5f)
+	{
+		return;
+	}
+
+	TurboHUD.PlayerOwner.ClientPlaySound(VoteTallyChangeSound, true, 2.5f, SLOT_None);
+}
+
+simulated function OnVoteInstanceChanged(TurboGameVoteBase VoteInstance)
+{
+	if (VoteInstance == None || VoteInstance.GetVoteState() >= Expired)
+	{
+		return;
+	}
+
+	TurboHUD.PlayerOwner.ClientPlaySound(VoteStartSound, true, 1.25f, SLOT_None);
+}
+
+simulated function InitializeGRI(TurboGameReplicationInfo InTGRI)
+{
+	TGRI = TurboGameReplicationInfo(Level.GRI);
+
+	if (TGRI == None)
+	{
+		return;
+	}
+
+	bIsTestGameMode = class'KFTurboGameType'.static.StaticIsTestGameType(Self);
+
+	TGRI.OnVoteInstanceTallyChanged = OnVoteInstanceTallyChanged;
+}
+
 simulated function Tick(float DeltaTime)
 {
 	if (TGRI == None)
 	{
-		TGRI = TurboGameReplicationInfo(Level.GRI);
+		InitializeGRI(TurboGameReplicationInfo(Level.GRI));
 
 		if (TGRI == None)
 		{
 			return;
 		}
-
-		bIsTestGameMode = class'KFTurboGameType'.static.StaticIsTestGameType(Self);
 	}
 
 	TickGameState(DeltaTime);
@@ -368,14 +401,12 @@ state ActiveWave
 	{
 		if (TGRI == None)
 		{
-			TGRI = TurboGameReplicationInfo(Level.GRI);
+			InitializeGRI(TurboGameReplicationInfo(Level.GRI));
 
 			if (TGRI == None)
 			{
 				return;
 			}
-
-			bIsTestGameMode = class'KFTurboGameType'.static.StaticIsTestGameType(Self);
 		}
 
 		TickGameState(DeltaTime);
@@ -707,14 +738,12 @@ state WaitingWave
 	{
 		if (TGRI == None)
 		{
-			TGRI = TurboGameReplicationInfo(Level.GRI);
+			InitializeGRI(TurboGameReplicationInfo(Level.GRI));
 
 			if (TGRI == None)
 			{
 				return;
 			}
-
-			bIsTestGameMode = class'KFTurboGameType'.static.StaticIsTestGameType(Self);
 		}
 
 		TickGameState(DeltaTime);
@@ -1168,6 +1197,7 @@ simulated function TickVoteInstance(float DeltaTime)
 
 			if (CurrentVoteInstance != None)
 			{
+				OnVoteInstanceChanged(CurrentVoteInstance);
 				VoteDurationPercent = CurrentVoteInstance.GetVoteDurationPercentRemaining();
 				VoteYesPercent = CurrentVoteInstance.GetYesVotePercent();
 				VoteNoPercent = CurrentVoteInstance.GetNoVotePercent();
@@ -1325,6 +1355,8 @@ defaultproperties
 	VoteDurationInterpRate=10.f
 	VoteYesInterpRate=4.f
 	VoteNoInterpRate=4.f
+	VoteStartSound=Sound'Steamland_SND.UI_NewObjective'
+	VoteTallyChangeSound=Sound'Steamland_SND.Safe_WheelClick'
 
 	BossBarSize=(X=0.7f,Y=0.03)
 	BossHealthBarBackplate=Texture'KFTurbo.HUD.ContainerSquare_D'
