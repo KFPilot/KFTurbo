@@ -1,6 +1,6 @@
-// Killing Floor Turbo KFTurboGameTypePlus
-// Distributed under the terms of the MIT License.
-// For more information see https://github.com/KFPilot/KFTurbo.
+//Killing Floor Turbo KFTurboGameTypePlus
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class KFTurboGameTypePlus extends KFTurboGameType;
 
 var TurboMonsterCollection TurboMonsterCollection;

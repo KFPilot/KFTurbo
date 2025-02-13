@@ -1,4 +1,4 @@
-//Killing Floor Turbo WeaponHelper
+//Killing Floor Turbo VetWeaponHelper
 //Anti redundancy class. Handles skin logic for vet weapons.
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.

@@ -1,4 +1,7 @@
+//Killing Floor Turbo W_Frag_Proj_Shrapnel
 //Custom shrapnel class - does no damage.
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class W_Frag_Proj_Shrapnel extends KFMod.KFShrapnel;
 
 simulated function ProcessTouch(Actor Other, vector HitLocation)
