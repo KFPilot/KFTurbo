@@ -44,8 +44,14 @@ function PlayerVote(TurboPlayerReplicationInfo Voter, string VoteString)
     local TurboGameVoteBase NewVoteInstance;
     local string VoteID, VoteValue;
 
-    Divide(VoteString, " ", VoteID, VoteValue);
-    VoteID = Caps(VoteID);
+    if (Divide(VoteString, " ", VoteID, VoteValue))
+    {
+        VoteID = Caps(VoteID);
+    }
+    else
+    {
+        VoteID = Caps(VoteString);
+    }
 
     if (VoteInstance != None)
     {
