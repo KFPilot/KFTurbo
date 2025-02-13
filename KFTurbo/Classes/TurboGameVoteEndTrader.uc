@@ -3,10 +3,10 @@
 //For more information see https://github.com/KFPilot/KFTurbo.
 class TurboGameVoteEndTrader extends TurboGameVoteBase;
 
-static function bool CanInitiateVote(TurboGameReplicationInfo TGRI, TurboPlayerReplicationInfo Initiator)
+static function bool CanInitiateVote(TurboGameReplicationInfo TGRI, TurboPlayerReplicationInfo Initiator, string VoteString)
 {
     local KFTurboGameType GameType;
-    if (!Super.CanInitiateVote(TGRI, Initiator))
+    if (!Super.CanInitiateVote(TGRI, Initiator, VoteString))
     {
         return false;
     }

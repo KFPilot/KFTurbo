@@ -232,7 +232,7 @@ static final simulated function string GetVoteExpiredString()
 }
 
 //Returns the (localizable) string that represents the name of this vote.
-simulated final function string GetVoteTitleString()
+simulated function string GetVoteTitleString()
 {
     return VoteTitleString;
 }
@@ -284,8 +284,13 @@ function float GetPlayerStartVoteCooldown(TurboPlayerController PlayerController
     return FailedVoteCooldown;
 }
 
+function int GetBroadcastDataForState(EVotingState State)
+{
+    return int(State);
+}
+
 //Returns true if the provided player can initiate this vote.
-static function bool CanInitiateVote(TurboGameReplicationInfo TGRI, TurboPlayerReplicationInfo Initiator)
+static function bool CanInitiateVote(TurboGameReplicationInfo TGRI, TurboPlayerReplicationInfo Initiator, string VoteString)
 {
     if (TGRI == None || Initiator.bOnlySpectator && !default.bCanSpectatorsVote)
     {
@@ -296,7 +301,7 @@ static function bool CanInitiateVote(TurboGameReplicationInfo TGRI, TurboPlayerR
 }
 
 //Called when a vote instance is initiated by a specified player.
-function InitiateVote(TurboPlayerReplicationInfo Initiator)
+function InitiateVote(TurboPlayerReplicationInfo Initiator, optional string VoteString)
 {    
     SetVoteState(Initializing);
     InitiatingPlayer = Initiator;
@@ -305,7 +310,6 @@ function InitiateVote(TurboPlayerReplicationInfo Initiator)
     VoteList[0].TPRI = Initiator;
     VoteList[0].Vote = EVote.Yes;
     
-
     if (VoteDuration <= 0.f)
     {
         VoteStartTime = -1.f;
@@ -322,7 +326,7 @@ function InitiateVote(TurboPlayerReplicationInfo Initiator)
 
     if (VoteState < Expired)
     {
-        Level.Game.BroadcastLocalizedMessage(TurboVoteLocalMessage, int(EVotingState.Started), InitiatingPlayer,, Class);
+        Level.Game.BroadcastLocalizedMessage(TurboVoteLocalMessage, GetBroadcastDataForState(EVotingState.Started), InitiatingPlayer,, Class);
     }
 }
 
@@ -332,7 +336,7 @@ function bool CanPlayerVote(TurboPlayerReplicationInfo TPRI)
     return !TPRI.bOnlySpectator || default.bCanSpectatorsVote;
 }
 
-function PlayerVote(TurboPlayerReplicationInfo TPRI, string VoteString)
+function PlayerVote(TurboPlayerReplicationInfo TPRI, optional string VoteString)
 {
     local EVote PlayerVote;
     local bool bUpdatedVote;
@@ -423,7 +427,7 @@ function SetVoteState(EVotingState NewVoteState)
     {
         if ((bBroadcastSucceeded && VoteState == Succeeded) || (bBroadcastFailed && VoteState == Failed) || (bBroadcastExpired && VoteState == Expired))
         {
-            Level.Game.BroadcastLocalizedMessage(TurboVoteLocalMessage, int(VoteState), InitiatingPlayer,, Class);
+            Level.Game.BroadcastLocalizedMessage(TurboVoteLocalMessage, GetBroadcastDataForState(VoteState), InitiatingPlayer,, Class);
         }
         OnVoteResult(GetResultFromState());
         TurboGameReplicationInfo(Level.GRI).PlayerVoteComplete(Self, VoteState);
@@ -528,7 +532,7 @@ simulated function Timer()
 //Server-only state.
 state VoteInProgress
 {
-    function InitiateVote(TurboPlayerReplicationInfo Initiator) {}
+    function InitiateVote(TurboPlayerReplicationInfo Initiator, optional string VoteString) {}
 
 Begin:
     SetVoteState(Started);
@@ -539,7 +543,7 @@ Begin:
 state VoteComplete
 {
     //The vote is over. Nothing should be interacting with this vote instance now but, if they do, we're going to ignore them.
-    function InitiateVote(TurboPlayerReplicationInfo Initiator) {}
+    function InitiateVote(TurboPlayerReplicationInfo Initiator, optional string VoteString) {}
     function ReceivedVote(TurboPlayerReplicationInfo TPRI, EVote Vote) {}
     function SetVoteState(EVotingState NewVoteState) {}
     function EvaluateVote(Name Reason) {}

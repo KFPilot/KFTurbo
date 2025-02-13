@@ -1,11 +1,11 @@
 //Killing Floor Turbo TurboGameVoteSpawnRate
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class TurboGameVoteSpawnRate extends TurboGameVoteBase;
+class TurboGameVoteSpawnRate extends TurboGameVoteFloatValue;
 
-static function bool CanInitiateVote(TurboGameReplicationInfo TGRI, TurboPlayerReplicationInfo Initiator)
+static function bool CanInitiateVote(TurboGameReplicationInfo TGRI, TurboPlayerReplicationInfo Initiator, string VoteString)
 {
-    if (!Super.CanInitiateVote(TGRI, Initiator))
+    if (!Super.CanInitiateVote(TGRI, Initiator, VoteString))
     {
         return false;
     }
@@ -25,7 +25,7 @@ function OnVoteResult(Name Outcome)
         return;
     }
 
-    KFTurboGameType(Level.Game).AdminSpawnRateModifier *= 0.75f;
+    KFTurboGameType(Level.Game).AdminSpawnRateModifier = VoteFloatValue;
 }
 
 defaultproperties
@@ -35,11 +35,11 @@ defaultproperties
     VotePercent=0.51f
     bCanSpectatorsVote=false
 
-    VoteInitiatedString="%k%p%d started a vote to %kincrease spawnrate%d. Type %kvote yes%d or %kvote no%d in %kconsole%d to vote."
-    VoteSucceededVoteString="%kVote%d to %kincrease spawnrate%d has %pksucceeded%d."
-    VoteFailedVoteString="%kVote%d to %kincrease spawnrate%d has %nkfailed%d."
-    VoteExpiredVoteString="%kVote%d to %kincrease spawnrate%d has %akexpired%d."
+    VoteInitiatedString="%k%p%d started a vote to %kset spawn rate%d to %k%fx%d. Type %kvote yes%d or %kvote no%d in %kconsole%d to vote."
+    VoteSucceededVoteString="%kVote%d to %kset spawn rate%d to %k%fx%d has %pksucceeded%d."
+    VoteFailedVoteString="%kVote%d to %kset spawn rate%d to %k%fx%d has %nkfailed%d."
+    VoteExpiredVoteString="%kVote%d to %kset spawn rate%d to %k%fx%d has %akexpired%d."
 
-    VoteTitleString="Increase Spawnrate"
-    VoteDescriptionString="Accepting this vote will increase spawnrate by 25% for the rest of the game."
+    VoteTitleString="%fx Spawn Rate"
+    VoteDescriptionString="Accepting this vote will change spawn rate for the rest of the game."
 }

@@ -15,7 +15,7 @@ static function string GetString(optional int Switch, optional PlayerReplication
     local TurboGameVoteBase.EVotingState VotingState;
     local string ResolvedString;
     
-    VotingState = EVotingState(Switch);
+    VotingState = EVotingState(Switch & 255);
 
     if (class<TurboGameVoteBase>(OptionalObject) != None)
     {

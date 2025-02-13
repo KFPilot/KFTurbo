@@ -1,11 +1,11 @@
 //Killing Floor Turbo TurboGameVoteMaxMonsters
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class TurboGameVoteMaxMonsters extends TurboGameVoteBase;
+class TurboGameVoteMaxMonsters extends TurboGameVoteFloatValue;
 
-static function bool CanInitiateVote(TurboGameReplicationInfo TGRI, TurboPlayerReplicationInfo Initiator)
+static function bool CanInitiateVote(TurboGameReplicationInfo TGRI, TurboPlayerReplicationInfo Initiator, string VoteString)
 {
-    if (!Super.CanInitiateVote(TGRI, Initiator))
+    if (!Super.CanInitiateVote(TGRI, Initiator, VoteString))
     {
         return false;
     }
@@ -25,7 +25,7 @@ function OnVoteResult(Name Outcome)
         return;
     }
 
-    KFTurboGameType(Level.Game).AdminMaxMonstersModifier *= 1.25f;
+    KFTurboGameType(Level.Game).AdminMaxMonstersModifier = VoteFloatValue;
 }
 
 defaultproperties
@@ -35,11 +35,11 @@ defaultproperties
     VotePercent=0.51f
     bCanSpectatorsVote=false
 
-    VoteInitiatedString="%k%p%d started a vote to %kincrease max monsters%d. Type %kvote yes%d or %kvote no%d in %kconsole%d to vote."
-    VoteSucceededVoteString="%kVote%d to %kincrease max monsters%d has %pksucceeded%d."
-    VoteFailedVoteString="%kVote%d to %kincrease max monsters%d has %nkfailed%d."
-    VoteExpiredVoteString="%kVote%d to %kincrease max monsters%d has %akexpired%d."
+    VoteInitiatedString="%k%p%d started a vote to %kset max monsters%d to %k%fx%d. Type %kvote yes%d or %kvote no%d in %kconsole%d to vote."
+    VoteSucceededVoteString="%kVote%d to %kset max monsters%d to %k%fx%d has %pksucceeded%d."
+    VoteFailedVoteString="%kVote%d to %kset max monsters%d to %k%fx%d has %nkfailed%d."
+    VoteExpiredVoteString="%kVote%d to %kset max monsters%d to %k%fx%d has %akexpired%d."
 
-    VoteTitleString="Increase Max Monsters"
-    VoteDescriptionString="Accepting this vote will increase max monsters by 25% for the rest of the game."
+    VoteTitleString="%fx Max Monsters"
+    VoteDescriptionString="Accepting this vote will change max monsters for the rest of the game."
 }

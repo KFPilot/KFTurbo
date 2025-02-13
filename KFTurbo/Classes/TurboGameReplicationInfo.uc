@@ -41,9 +41,11 @@ function PlayerVote(TurboPlayerReplicationInfo Voter, string VoteString)
 {
     local int Index;
     local class<TurboGameVoteBase> VoteClass;
-    local TurboGameVoteBase NewVoteInstance; 
+    local TurboGameVoteBase NewVoteInstance;
+    local string VoteID, VoteValue;
 
-    VoteString = Caps(VoteString);
+    Divide(VoteString, " ", VoteID, VoteValue);
+    VoteID = Caps(VoteID);
 
     if (VoteInstance != None)
     {
@@ -58,7 +60,7 @@ function PlayerVote(TurboPlayerReplicationInfo Voter, string VoteString)
 
     for (Index = VoteClassList.Length - 1; Index >= 0; Index--)
     {
-        if (VoteClassList[Index].static.GetVoteID() != VoteString)
+        if (VoteClassList[Index].static.GetVoteID() != VoteID)
         {
             continue;
         }
@@ -67,7 +69,7 @@ function PlayerVote(TurboPlayerReplicationInfo Voter, string VoteString)
         break;
     }
 
-    if (VoteClass == None || !VoteClass.static.CanInitiateVote(Self, Voter))
+    if (VoteClass == None || !VoteClass.static.CanInitiateVote(Self, Voter, VoteString))
     {
         return;
     }
@@ -76,7 +78,7 @@ function PlayerVote(TurboPlayerReplicationInfo Voter, string VoteString)
 
     if (NewVoteInstance != None)
     {
-        NewVoteInstance.InitiateVote(Voter);
+        NewVoteInstance.InitiateVote(Voter, VoteString);
 
         //Votes can instantly complete in some circumstances.
         if (NewVoteInstance != None && NewVoteInstance.GetVoteState() < Expired)
@@ -246,4 +248,6 @@ defaultproperties
     VoteClassList(0)=class'TurboGameVoteEndTrader'
     VoteClassList(1)=class'TurboGameVoteSpawnRate'
     VoteClassList(2)=class'TurboGameVoteMaxMonsters'
+    VoteClassList(3)=class'TurboGameVoteFakedPlayers'
+    VoteClassList(4)=class'TurboGameVotePlayerHealth'
 }
