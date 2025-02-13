@@ -98,7 +98,7 @@ function PlayerVoteComplete(TurboGameVoteBase CompletedVoteInstance, TurboGameVo
 {
     local TurboPlayerController PlayerController;
 
-    if (VoteState != Succeeded && CompletedVoteInstance != None && CompletedVoteInstance.GetVoteInitiator() != None)
+    if (VoteState == Failed && CompletedVoteInstance != None && CompletedVoteInstance.GetVoteInitiator() != None)
     {
         PlayerController = TurboPlayerController(CompletedVoteInstance.GetVoteInitiator().Owner);
 

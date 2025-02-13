@@ -569,7 +569,7 @@ defaultproperties
     YesString="Yes"
     NoString="No"
 
-    VoteDuration=20.f
+    VoteDuration=30.f
     FailedVoteCooldown=10.f
     VotePercent=0.51f
 
