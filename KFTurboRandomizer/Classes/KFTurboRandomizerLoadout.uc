@@ -13,6 +13,8 @@ var() bool bSyringe;
 var() bool bWelder;
 var() bool bKnife;
 
+var int DefaultIndex; //Index of this loadout in its loadout collection.
+
 final function bool HasWeapon(class<KFWeapon> WeaponClass)
 {
     local int Index;
