@@ -1,3 +1,6 @@
+//Killing Floor Turbo MassDetonationExplosion_Medium
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class MassDetonationExplosion_Medium extends MassDetonationExplosion;
 
 defaultproperties
