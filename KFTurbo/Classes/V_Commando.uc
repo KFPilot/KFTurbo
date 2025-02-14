@@ -114,7 +114,7 @@ static function ApplyAdjustedMagCapacityModifier(KFPlayerReplicationInfo KFPRI, 
 
 		if (IsHighDifficulty(KFPRI))
 		{
-			if(SCARMK17AssaultRifle(Other) != None)
+			if(SCARMK17AssaultRifle(Other) != None || W_FNFAL_Weap(Other) != None)
 			{
 				Multiplier *= 1.2f;
 			}
@@ -153,7 +153,7 @@ static function float GetMagCapacityMod(KFPlayerReplicationInfo KFPRI, KFWeapon 
 	}
 	else if (W_FNFAL_Weap(Other) != None)
 	{
-		Multiplier *= LerpStat(KFPRI, 1.f, 1.67f);
+		Multiplier *= LerpStat(KFPRI, 1.f, 2.08f);
 	}
 
 	ApplyAdjustedMagCapacityModifier(KFPRI, Other, Multiplier);
