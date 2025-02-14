@@ -757,14 +757,9 @@ exec function AdminShowSettings()
 
 exec function FreeCamera(bool bFreeCamera) {}
 
-exec function EndTrader()
+exec simulated function EndTrader()
 {
-	if (KFGameType(Level.Game) == None || KFGameType(Level.Game).bWaveInProgress)
-	{
-		return;
-	}
-
-	if (TurboPlayerReplicationInfo(PlayerReplicationInfo) == None)
+	if (Level.NetMode == NM_DedicatedServer)
 	{
 		return;
 	}
