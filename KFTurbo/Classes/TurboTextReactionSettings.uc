@@ -52,19 +52,21 @@ simulated function ReceivedMessage(TurboPlayerController PlayerController, strin
                 }
             }
 
-            if (TextSoundList[Index].CooldownTime > PlayerController.Level.TimeSeconds)
+            if (PRI.bAdmin)
             {
-                return;
-            }
+                if (TextSoundList[Index].CooldownTime > PlayerController.Level.TimeSeconds)
+                {
+                    return;
+                }
 
-
-            if (TextSoundList[Index].bFullCooldown)
-            {
-                TextSoundList[Index].CooldownTime = PlayerController.Level.TimeSeconds + TextSoundList[Index].Sound.Duration + 0.5f;
-            }
-            else
-            {
-                TextSoundList[Index].CooldownTime = PlayerController.Level.TimeSeconds + (TextSoundList[Index].Sound.Duration * 0.5f) + 0.5f;
+                if (TextSoundList[Index].bFullCooldown)
+                {
+                    TextSoundList[Index].CooldownTime = PlayerController.Level.TimeSeconds + TextSoundList[Index].Sound.Duration + 0.5f;
+                }
+                else
+                {
+                    TextSoundList[Index].CooldownTime = PlayerController.Level.TimeSeconds + (TextSoundList[Index].Sound.Duration * 0.5f) + 0.5f;
+                }
             }
 
             PlayLocalSound(PlayerController, TextSoundList[Index].Sound);
