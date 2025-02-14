@@ -5,6 +5,6 @@ class W_Crossbuzzsaw_Ammo extends CrossbuzzsawAmmo;
 
 defaultproperties
 {
-     MaxAmmo=10
-     InitialAmount=5
+     MaxAmmo=12
+     InitialAmount=6
 }
