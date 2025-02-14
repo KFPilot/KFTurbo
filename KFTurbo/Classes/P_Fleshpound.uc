@@ -78,7 +78,7 @@ function TakeDamage( int Damage, Pawn InstigatedBy, Vector Hitlocation, Vector M
 
         bIsHeadShot = IsHeadShot(Hitlocation, normal(Momentum), HeadShotCheckScale);
         // Commando weapons don't get the damage reduction
-		if (class'V_Commando'.static.IsPerkDamageType(WeaponDamageType))
+		if (bIsHeadShot && class'V_Commando'.static.IsPerkDamageType(WeaponDamageType))
         {
             // Do nothing
         }
@@ -87,14 +87,18 @@ function TakeDamage( int Damage, Pawn InstigatedBy, Vector Hitlocation, Vector M
 		{
 			Damage *= 0.75;
 		}
-		else if (class<DamTypeM99SniperRifle>(DamageType) != none)
+		else if (class<DamTypeM99SniperRifle>(DamageType) != None)
 		{
 			Damage *= 0.525;
 		}
-		else if ( Level.Game.GameDifficulty >= 5.0 && bIsHeadshot && class<DamTypeCrossbow>(DamageType) != none )
+		else if (Level.Game.GameDifficulty >= 5.0 && bIsHeadshot && class<DamTypeCrossbow>(DamageType) != None)
 		{
 			Damage *= 0.35; // was 0.3 in Balance Round 1, then 0.4 in Round 2, then 0.3 in Round 3/4, and 0.35 in Round 5
 		}
+        else if (class<DamTypeCrossbuzzsaw>(DamageType) != None)
+        {
+            Damage *= 0.62f;
+        }
 		else
 		{
 			Damage *= 0.5;
