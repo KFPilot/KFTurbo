@@ -670,7 +670,7 @@ simulated final function DrawBackplates(Canvas C, out Vector2D BackplateACenter,
 
 	if (CurrentHealingRatio > 0.f)
 	{
-		C.DrawColor = MakeColor(200, 255, 150, CurrentHealingRatio * 20.f);
+		C.DrawColor = MakeColor(200, 255, 150, CurrentHealingRatio * 48.f);
 		
 		C.SetPos(TempX + (C.ClipY * HealthBackplateSize.X * 0.025f), TempY);
 		C.DrawTileClipped(HealingMaterial, C.ClipY * HealthBackplateSize.X * 0.95f, C.ClipY * HealthBackplateSize.Y, 0.f, 0.f,
