@@ -953,23 +953,34 @@ simulated function DrawTypingPrompt(Canvas C, String Text, optional int Pos)
 	}
 }
 
-static final function bool CheckEmotePrompt(string EmoteText, out int LastColon)
+//Returns index where the emote starts in the string. Returns -1 if no emote was present.
+static final function int CheckEmotePrompt(string EmoteText)
 {
 	local int Index, StringSize;
-	local int ColonCount;
-	local int LastSpace;
+	local int ColonCount, LastColonIndex;
 	local string Char;
- 
-	Index = 0;
+	local bool bIsSay;
+	bIsSay = false;
+
+	if (StrCmp(EmoteText, "Say ", 4) == 0)
+	{
+		bIsSay = true;
+		Index = 4;
+	}
+	else if(StrCmp(EmoteText, "TeamSay ", 8) == 0)
+	{
+		bIsSay = true;
+		Index = 8;
+	}
+
+	if (!bIsSay)
+	{
+		return -1;
+	}
+	
 	StringSize = Len(EmoteText);
 	ColonCount = 0;
-	LastColon = -1;
-	LastSpace = -1;
-
-	if (StrCmp(EmoteText, "TeamSay ", Len("TeamSay ")) != 0 && StrCmp(EmoteText, "Say ", Len("Say ")) != 0)
-	{
-		return false;
-	}
+	LastColonIndex = -1;
 
 	while(Index < StringSize)
 	{
@@ -977,31 +988,25 @@ static final function bool CheckEmotePrompt(string EmoteText, out int LastColon)
 		if (Char == ":")
 		{
 			ColonCount++;
-			LastColon = Index;
+			LastColonIndex = Index;
 		}
 		else if (Char == " ")
 		{
 			ColonCount = 0;
-			LastSpace = Index;
 		}
 
 		Index++;
 	}
 
-	if (ColonCount % 2 == 0)
+	if (ColonCount == 0 || (ColonCount & 1) == 0)
 	{
-		return false;
+		return -1;
 	}
 
-	if (LastSpace > LastColon)
-	{
-		return false;
-	}
-
-	return true;
+	return LastColonIndex;
 }
 
-static final function bool GetHintList(string EmoteText, out array<SmileyMessageType> EmoteList, out array<string> HintList)
+static final function bool GetHintList(string EmoteText, array<SmileyMessageType> EmoteList, out array<string> HintList)
 {
 	local int Index, LastAllocatedIndex;
 	local int EmoteTextLength;
@@ -1054,7 +1059,8 @@ simulated function DrawEmoteHintPrompt(Canvas C, String Text, float DrawX, float
 	local float TextSizeX, TextSizeY;
 	local float LargestTextSizeX, TotalTextSizeY;
 
-	if (!CheckEmotePrompt(Text, LastColonIndex))
+	LastColonIndex = CheckEmotePrompt(Text);
+	if (LastColonIndex == -1)
 	{
 		return;
 	}
