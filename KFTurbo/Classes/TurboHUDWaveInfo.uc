@@ -314,7 +314,7 @@ simulated function DrawGameData(Canvas C)
 	
 	C.DrawColor = C.MakeColor(255, 255, 255, 255);
 	TestText = FillStringWithZeroes(string(Min(TGRI.WaveNumber + 1, 99)), 2);
-	TestText = TestText $ "/";
+	TestText = TestText $ "|";
 	TestText = TestText $ FillStringWithZeroes(string(Min(TGRI.FinalWave, 99)), 2);
 	C.SetPos((TempX + (SizeX * 0.5f)) - (TextSizeX * 0.5f), (TempY + (SizeY * 0.5f)) - (TextSizeY * 0.5f));
 	DrawTextMeticulous(C, TestText, TextSizeX);

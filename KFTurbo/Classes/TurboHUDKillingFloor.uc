@@ -881,11 +881,11 @@ function DisplayMessages(Canvas C)
 		}
 
 		C.DrawColor = C.MakeColor(0, 0, 0, 120);
-		C.SetPos(XPos + 1.f, YPos + 1.f);
+		C.SetPos(XPos + 2.f, YPos + 2.f);
 		if( TextMessages[i].PRI!=None )
 		{
-			XL = Class'SRScoreBoard'.Static.DrawCountryName(C,TextMessages[i].PRI,XPos + 1.f,YPos + 1.f);
-			C.SetPos( XPos + XL + 1.f, YPos + 1.f );
+			XL = Class'SRScoreBoard'.Static.DrawCountryName(C,TextMessages[i].PRI,XPos + 2.f,YPos + 2.f);
+			C.SetPos( XPos + XL + 2.f, YPos + 2.f );
 		}
 
 		if( SmileyMsgs.Length!=0 )
@@ -901,7 +901,7 @@ function DisplayMessages(Canvas C)
 		YYL = 0;
 		XXL = 0;
 		
-		C.SetPos( XPos, YPos );
+		C.SetPos(XPos, YPos);
 		if( TextMessages[i].PRI!=None )
 		{
 			XL = Class'SRScoreBoard'.Static.DrawCountryName(C,TextMessages[i].PRI,XPos,YPos);
@@ -935,7 +935,6 @@ simulated function DrawTypingPrompt(Canvas C, String Text, optional int Pos)
 		C.Font = GetConsoleFont(C);
 	}
     C.Style = ERenderStyle.STY_Alpha;
-    C.SetDrawColor(255, 255, 255, 255);
 
     C.TextSize("A", XL, YL);
 
@@ -944,6 +943,10 @@ simulated function DrawTypingPrompt(Canvas C, String Text, optional int Pos)
 
 	PromptText = "(>"@Left(Text, Pos)$chr(4)$Eval(Pos < Len(Text), Mid(Text, Pos), "_");
 
+    C.SetDrawColor(0, 0, 0, 120);
+    C.SetPos(XPos + 2.f, YPos + 2.f);
+    C.DrawTextClipped(PromptText, true);
+    C.SetDrawColor(255, 255, 255, 255);
     C.SetPos(XPos, YPos);
     C.DrawTextClipped(PromptText, true);
 

@@ -1118,11 +1118,11 @@ simulated final function DrawWeight(Canvas C, Vector2D LeftAnchor)
 	C.FontScaleX = 1.f;
 	C.FontScaleY = 1.f;
 	C.Font = TurboHUD.LoadLargeNumberFont(BaseFontSize + 3);
-	C.TextSize(GetStringOfZeroes(Len("00/00")), TextSizeX, TextSizeY);
+	C.TextSize(GetStringOfZeroes(Len("00|00")), TextSizeX, TextSizeY);
 	C.FontScaleX = WeightTextSpaceX / TextSizeX;
 	C.FontScaleY = C.FontScaleX;
 
-	WeightString = FillStringWithZeroes(Min(CurrentWeight,99), 2) $ "/" $ FillStringWithZeroes(Min(MaxCarryWeight,99), 2);
+	WeightString = FillStringWithZeroes(Min(CurrentWeight,99), 2) $ "|" $ FillStringWithZeroes(Min(MaxCarryWeight,99), 2);
 	C.TextSize(GetStringOfZeroes(Len(WeightString)), TextSizeX, TextSizeY);
 
 	C.SetPos(BackplateCenterX + (BackplateTextSizeX * 0.5f) - (WeightTextSpaceX), BackplateCenterY - (TextSizeY * 0.5f));
