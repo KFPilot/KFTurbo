@@ -31,6 +31,8 @@ function OnVoteResult(Name Outcome)
 defaultproperties
 {
     VoteID="MAXMONSTERS"
+    MinVoteFloatValue=1.f
+    MaxVoteFloatValue=2.f
 
     VotePercent=0.51f
     bCanSpectatorsVote=false
