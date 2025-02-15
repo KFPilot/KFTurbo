@@ -20,7 +20,7 @@ static function int GetValueFromVoteString(string VoteString)
     
     if (!Divide(VoteString, " ", VoteString, ValueString))
     {
-        return -1.f;
+        return -1;
     }
 
     return Clamp(Round(int(ValueString)), default.MinVoteIntValue, default.MaxVoteIntValue);
@@ -38,12 +38,14 @@ function int GetBroadcastDataForState(EVotingState State)
 
 static function bool CanInitiateVote(TurboGameReplicationInfo TGRI, TurboPlayerReplicationInfo Initiator, string VoteString)
 {
+    local int Value;
     if (!Super.CanInitiateVote(TGRI, Initiator, VoteString))
     {
         return false;
     }
 
-    if (TGRI.Level.Game.GetCurrentWaveNum() >= TGRI.Level.Game.GetFinalWaveNum())
+    Value = GetValueFromVoteString(VoteString);
+    if (Value < 0)
     {
         return false;
     }

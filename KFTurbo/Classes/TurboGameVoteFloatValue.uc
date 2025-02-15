@@ -23,7 +23,7 @@ static function float GetValueFromVoteString(string VoteString)
         return -1.f;
     }
 
-    return float(ValueString);
+    return Clamp(float(ValueString), default.MinVoteFloatValue, default.MaxVoteFloatValue);
 }
 
 simulated function string GetVoteTitleString()
@@ -45,7 +45,7 @@ static function bool CanInitiateVote(TurboGameReplicationInfo TGRI, TurboPlayerR
     }
 
     Value = GetValueFromVoteString(VoteString);
-    if (Value < default.MinVoteFloatValue || Value > default.MaxVoteFloatValue)
+    if (Value < 0.f)
     {
         return false;
     }
