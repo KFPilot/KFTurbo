@@ -43,7 +43,7 @@ const MAX_FORCED_PLAYER_HEALTH = 6; //Used to keep monster health at 6 players o
 Delegate OnStatsAndAchievementsDisabled();
 Delegate LockPerkSelection(bool bLock);
 
-event InitGame( string Options, out string Error )
+event InitGame(string Options, out string Error)
 {
     Super.InitGame(Options, Error);
 
@@ -51,7 +51,7 @@ event InitGame( string Options, out string Error )
     InitializeMapConfigurationObject();
 }
 
-function ProcessServerTravel( string URL, bool bItems )
+function ProcessServerTravel(string URL, bool bItems)
 {
     MapConfigurationObject = None;
 

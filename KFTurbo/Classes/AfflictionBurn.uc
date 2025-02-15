@@ -34,9 +34,9 @@ var float BurnMonsterDamageModifier;
 var bool bBlockPlayHit;
 var class<DamageType> LastBurnDamageType;
 
-simulated function PreTick(float DeltaTime)
+simulated function PreTick(KFMonster Monster, float DeltaTime)
 {
-    if(OwningMonster == None || !OwningMonster.bBurnified)
+    if(Monster == None || !Monster.bBurnified)
     {
 		return;
     }
@@ -63,7 +63,7 @@ simulated function PreTick(float DeltaTime)
 	}
 }
 
-simulated function TakeDamage(int Damage, Pawn InstigatedBy, Vector HitLocation, Vector Momentum, class<DamageType> DamageType, int HitIndex)
+simulated function TakeDamage(KFMonster Monster, int Damage, Pawn InstigatedBy, Vector HitLocation, Vector Momentum, class<DamageType> DamageType, int HitIndex)
 {
 	UpdateBurnData(DamageType);
 }

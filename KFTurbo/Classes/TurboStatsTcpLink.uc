@@ -120,7 +120,7 @@ state ConnectionReady
 
     function FlushData()
     {
-        GotoState('FlushData');
+        GotoState('FlushAllData');
     }
 
 Begin:

@@ -6,30 +6,29 @@ class AfflictionBase extends Object
 	instanced
 	abstract;
 
-var KFMonster OwningMonster;
 var float CachedMovementSpeedModifier;
 
 simulated function Initialize(KFMonster Monster)
 {
-	OwningMonster = Monster;
+
 }
 
-simulated function OnDeath()
-{
-	OwningMonster = None;
-}
-
-simulated function PreTick(float DeltaTime)
+simulated function OnDeath(KFMonster Monster)
 {
 
 }
 
-simulated function Tick(float DeltaTime)
+simulated function PreTick(KFMonster Monster, float DeltaTime)
 {
 
 }
 
-simulated function TakeDamage(int Damage, Pawn InstigatedBy, Vector HitLocation, Vector Momentum, class<DamageType> DamageType, int HitIndex)
+simulated function Tick(KFMonster Monster, float DeltaTime)
+{
+
+}
+
+simulated function TakeDamage(KFMonster Monster, int Damage, Pawn InstigatedBy, Vector HitLocation, Vector Momentum, class<DamageType> DamageType, int HitIndex)
 {
 
 }

@@ -72,6 +72,14 @@ event InitGame( string Options, out string Error )
     Super.InitGame(Options, Error);
 }
 
+function ProcessServerTravel(string URL, bool bItems)
+{
+    TurboMonsterCollection = None;
+    CurrentSquad = None;
+
+    Super.ProcessServerTravel(URL, bItems);
+}
+
 function DistributeCash(TurboPlayerController ExitingPlayer) {} // Don't do this on Turbo+.
 
 // State to handle match progress

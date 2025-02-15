@@ -827,6 +827,9 @@ function DisplayMessages(Canvas C)
 {
 	local int i, j, XPos, YPos,MessageCount;
 	local float XL, YL, XXL, YYL;
+	local float InitialClip;
+	InitialClip = C.ClipX;
+	C.ClipX = C.SizeX;
 
 	for( i = 0; i < ConsoleMessageCount; i++ )
 	{
@@ -918,6 +921,8 @@ function DisplayMessages(Canvas C)
 		}
 		YPos += (YL+YYL);
 	}
+	
+	C.ClipX = InitialClip;
 }
 
 simulated function DrawTypingPrompt(Canvas C, String Text, optional int Pos)

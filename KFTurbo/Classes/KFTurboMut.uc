@@ -369,6 +369,8 @@ function ServerTraveling(string URL, bool bItems)
 
 	if (KFGameReplicationInfo(Level.GRI) == None || KFGameReplicationInfo(Level.GRI).EndGameType != 0)
 	{
+		StatsTcpLink.Close();
+		StatsTcpLink.Destroy();
 		return;
 	}
 

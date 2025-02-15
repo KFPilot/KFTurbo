@@ -5,9 +5,9 @@ class AfflictionHarpoon extends AfflictionBase;
 
 var float HarpoonSpeedModifier;
 
-simulated function PreTick(float DeltaTime)
+simulated function PreTick(KFMonster Monster, float DeltaTime)
 {
-	if (OwningMonster == None || OwningMonster.bHarpoonStunned)
+	if (Monster == None || Monster.bHarpoonStunned)
 	{
 		CachedMovementSpeedModifier = HarpoonSpeedModifier;
 	}

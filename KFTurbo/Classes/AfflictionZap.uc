@@ -10,16 +10,16 @@ var float ZapDischargeDelay; //How long to wait before losing charge.
 var float ZapDischargeRate; //How fast to lose charge after delay.
 var float ZappedModifier; //How much to reduce ground speed by when zapped. (Not hooked up yet.)
 
-simulated function PreTick(float DeltaTime)
+simulated function PreTick(KFMonster Monster, float DeltaTime)
 {
-	if (OwningMonster == None)
+	if (Monster == None)
 	{
 		return;
 	}
 
-	CachedTotalZap = OwningMonster.TotalZap;
+	CachedTotalZap = Monster.TotalZap;
 
-	if (OwningMonster.bZapped)
+	if (Monster.bZapped)
 	{
 		CachedMovementSpeedModifier = ZappedModifier;
 	}
@@ -29,9 +29,9 @@ simulated function PreTick(float DeltaTime)
 	}
 }
 
-simulated function Tick(float DeltaTime)
+simulated function Tick(KFMonster Monster, float DeltaTime)
 {
-	if (OwningMonster == None)
+	if (Monster == None)
 	{
 		return;
 	}
@@ -41,11 +41,11 @@ simulated function Tick(float DeltaTime)
 		return;
 	}
 
-	OwningMonster.TotalZap = CachedTotalZap;
+	Monster.TotalZap = CachedTotalZap;
 
-	if( !OwningMonster.bZapped && OwningMonster.TotalZap > 0 && ((OwningMonster.Level.TimeSeconds - OwningMonster.LastZapTime) > ZapDischargeDelay)  )
+	if (!Monster.bZapped && Monster.TotalZap > 0 && ((Monster.Level.TimeSeconds - Monster.LastZapTime) > ZapDischargeDelay))
 	{
-		OwningMonster.TotalZap -= DeltaTime * ZapDischargeRate;
+		Monster.TotalZap -= DeltaTime * ZapDischargeRate;
 	}
 }
 

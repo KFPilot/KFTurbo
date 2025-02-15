@@ -19,7 +19,7 @@ function Reset() {}
 
 function TurboMonsterSquad GetNextMonsterSquad()
 {
-     return None;
+    return None;
 }
 
 //Appends a list of monsters to spawn to OutNextSpawnSquad given a Final Squad Number (typically represents heal count for boss) and a Player Count.
@@ -67,7 +67,7 @@ static final function float GetPlayerCountModifier(int PlayerCount)
             return 4.5f;
     }
 
-    return float(PlayerCount) *0.8f;
+    return float(PlayerCount) * 0.8f;
 }
 
 //Gets the initial total monsters for a wave.
