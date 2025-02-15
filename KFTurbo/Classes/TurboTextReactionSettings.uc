@@ -52,7 +52,7 @@ simulated function ReceivedMessage(TurboPlayerController PlayerController, strin
                 }
             }
 
-            if (PRI.bAdmin)
+            if (!PRI.bAdmin)
             {
                 if (TextSoundList[Index].CooldownTime > PlayerController.Level.TimeSeconds)
                 {
