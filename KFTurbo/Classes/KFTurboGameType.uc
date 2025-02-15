@@ -36,6 +36,7 @@ var array< class<TurboWaveSpawnEventHandler> > WaveSpawnEventHandlerList;
 var MapConfigurationObject MapConfigurationObject; //MapConfigurationObject associated with the current map.
 
 var protected int FakedPlayerCount; //Faked player count. Used to make wave size larger.
+const MAX_FAKED_PLAYERS = 12; //Used to keep faked player count equal to or less than 12.
 var protected int ForcedPlayerHealthCount; //Forced player health count. Used to scale up monster health.
 const MAX_FORCED_PLAYER_HEALTH = 6; //Used to keep monster health at 6 players or fewer.
 
@@ -111,7 +112,7 @@ final function int GetAlivePlayerCount()
 //Player count to use when calculating MaxMonsters. Handles faked players.
 final function int GetMaxMonsterPlayerCount()
 {
-    return Min(Max(NumPlayers, FakedPlayerCount), MaxPlayers);
+    return Min(NumPlayers + FakedPlayerCount, MAX_FAKED_PLAYERS);
 }
 
 //Player count to use when calculating monster health. Handles forced player monster health. KFTurbo caps this to 6.
@@ -122,7 +123,7 @@ final function int GetMonsterHealthPlayerCount()
 
 function int SetFakedPlayerCount(int NewFakedPlayerCount)
 {
-    FakedPlayerCount = Min(Max(NewFakedPlayerCount, 0), MaxPlayers);
+    FakedPlayerCount = Min(Max(NewFakedPlayerCount, 0), MAX_FAKED_PLAYERS - 1);
     return FakedPlayerCount;
 }
 
