@@ -35,6 +35,7 @@ function OnVoteResult(Name Outcome)
 state VoteInProgress
 {
 Begin:
+    sleep(0.25f);
     while(true)
     {
         if (KFTurboGameType(Level.Game).bWaveInProgress || KFTurboGameType(Level.Game).WaveCountDown <= 10)
@@ -42,7 +43,7 @@ Begin:
             break;
         }
         
-        sleep(1.f);
+        sleep(0.25f);
     }
 
     OnVoteExpired();
