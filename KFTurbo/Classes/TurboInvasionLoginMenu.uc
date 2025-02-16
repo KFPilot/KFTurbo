@@ -1,7 +1,9 @@
 //Killing Floor Turbo TurboInvasionLoginMenu
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-Class TurboInvasionLoginMenu extends SRInvasionLoginMenu;
+class TurboInvasionLoginMenu extends SRInvasionLoginMenu;
+
+var automated GUIButton b_PlayerChat;
 
 function InitComponent(GUIController MyController, GUIComponent MyOwner)
 {
@@ -211,9 +213,35 @@ function Closed(GUIComponent Sender, bool bCancelled)
     }
 }
 
+simulated function bool OpenPlayerChat(GUIComponent Sender)
+{
+	if (Controller == None || Controller.Master == None || Controller.Master.Console == None)
+	{
+		return false;
+	}
+
+	Controller.CloseMenu();
+	Controller.OpenMenu(ExtendedConsole(Controller.Master.Console).ChatMenuClass);
+	return true;
+}
+
 defaultproperties
 {
 	Panels(0)=(Caption="Info",Hint="Information about KFTurbo.")
     Panels(3)=(ClassName="KFTurbo.TurboTab_EmoteList",Caption="Emotes",Hint="List of emotes.")
     Panels(4)=(ClassName="KFTurbo.TurboTab_TurboSettings",Caption="Settings",Hint="KFTurbo settings.")
+
+	Begin Object Class=GUIButton Name=PlayerChatButton
+		Caption="Show Chat"
+		WinTop=0.900000
+		WinLeft=0.194420
+		WinWidth=0.147268
+		WinHeight=0.035000
+		TabOrder=0
+		bBoundToParent=True
+		bScaleToParent=True
+		OnClick=TurboInvasionLoginMenu.OpenPlayerChat
+		OnKeyEvent=PlayerChatButton.InternalOnKeyEvent
+	End Object
+	b_PlayerChat=GUIButton'PlayerChatButton'
 }
