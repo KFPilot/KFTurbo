@@ -15,6 +15,8 @@ var float ClientNextMarkTime, NextMarkTime;
 var float VoteCooldownTime, NextVoteTime;
 var float NextStartVoteTime;
 
+var float NextSpectateUseTargetTime, SpectateUseTargetCooldown;
+
 var bool bInLoginMenu, bHasClosedLoginMenu;
 var float LoginMenuTime;
 
@@ -919,6 +921,53 @@ function BecomeActivePlayer()
 	}
 }
 
+function ServerUse()
+{
+	Super.ServerUse();
+
+	if (Role == ROLE_Authority && Pawn == None)
+	{
+		SpectateUseTarget();
+	}
+}
+
+function SpectateUseTarget() {}
+
+state Spectating
+{
+	function SpectateUseTarget()
+	{
+		local Vector XAxis, YAxis, ZAxis;
+		local Pawn HitPawn;
+		
+		if (!(ViewTarget == None || ViewTarget == Self))
+		{
+			return;
+		}
+
+		if (Level.TimeSeconds < NextSpectateUseTargetTime)
+		{
+			return;
+		}
+
+		NextSpectateUseTargetTime = Level.TimeSeconds + SpectateUseTargetCooldown;
+
+		GetAxes(Rotation, XAxis, YAxis, ZAxis);
+		HitPawn = Pawn(Trace(YAxis, ZAxis, Location + (XAxis * 500.f), Location, true, vect(16, 16, 16)));
+
+		if (HitPawn == None)
+		{
+			return;
+		}
+
+		SetViewTarget(HitPawn);
+		ClientSetViewTarget(HitPawn);
+
+		bBehindView = true;
+    	ClientSetBehindView(bBehindView);
+	}
+}
+
 simulated function SetPipebombUsesSpecialGroup(bool bNewPipebombUsesSpecialGroup)
 {
 	local W_Pipebomb_Weap Pipebomb;
@@ -1003,4 +1052,5 @@ defaultproperties
 	LoginMenuTime=-1.f
 
 	VoteCooldownTime=1.f
+	SpectateUseTargetCooldown=0.1f
 }
