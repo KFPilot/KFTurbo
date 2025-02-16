@@ -536,8 +536,11 @@ state VoteInProgress
 
 Begin:
     SetVoteState(Started);
-    sleep(VoteDuration);
-    OnVoteExpired();
+    if (VoteDuration > 0.f)
+    {
+        sleep(VoteDuration);
+        OnVoteExpired();
+    }
 }
 
 state VoteComplete
