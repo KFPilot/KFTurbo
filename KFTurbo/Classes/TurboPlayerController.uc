@@ -817,6 +817,11 @@ simulated function ClientWeaponSpawned(class<Weapon> WeaponClass, Inventory Inv)
 	local class<KFWeaponAttachment> KFAttachmentClass;
 	local bool bNeedsWeaponLoad, bNeedsAttachmentLoad;
 
+	if (Level.NetMode == NM_DedicatedServer)
+	{
+		return;
+	}
+
 	KFWeaponClass = class<KFWeapon>(WeaponClass);
 
 	if (KFWeaponClass == None)

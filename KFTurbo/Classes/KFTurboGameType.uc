@@ -55,6 +55,10 @@ event InitGame(string Options, out string Error)
 function ProcessServerTravel(string URL, bool bItems)
 {
     MapConfigurationObject = None;
+    EventHandlerList.Length = 0;
+    HealEventHandlerList.Length = 0;
+    WaveEventHandlerList.Length = 0;
+    WaveSpawnEventHandlerList.Length = 0;
 
     Super.ProcessServerTravel(URL, bItems);
 }
