@@ -938,7 +938,7 @@ state Spectating
 	function SpectateUseTarget()
 	{
 		local Vector XAxis, YAxis, ZAxis;
-		local Pawn HitPawn;
+		local Actor HitActor;
 		
 		if (!(ViewTarget == None || ViewTarget == Self))
 		{
@@ -953,15 +953,20 @@ state Spectating
 		NextSpectateUseTargetTime = Level.TimeSeconds + SpectateUseTargetCooldown;
 
 		GetAxes(Rotation, XAxis, YAxis, ZAxis);
-		HitPawn = Pawn(Trace(YAxis, ZAxis, Location + (XAxis * 500.f), Location, true, vect(16, 16, 16)));
+		HitActor = Trace(YAxis, ZAxis, Location + (XAxis * 500.f), Location, true, vect(16, 16, 16));
 
-		if (HitPawn == None)
+		if (HitActor == None)
 		{
 			return;
 		}
 
-		SetViewTarget(HitPawn);
-		ClientSetViewTarget(HitPawn);
+		if (Pawn(HitActor.Base) != None)
+		{
+			HitActor = HitActor.Base;
+		}
+
+		SetViewTarget(HitActor);
+		ClientSetViewTarget(HitActor);
 
 		bBehindView = true;
     	ClientSetBehindView(bBehindView);
