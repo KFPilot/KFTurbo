@@ -37,7 +37,7 @@ state VoteInProgress
 Begin:
     while(true)
     {
-        if (KFTurboGameType(Level.Game).bWaveInProgress || KFTurboGameType(Level.Game).WaveCountDown <= 11)
+        if (KFTurboGameType(Level.Game).bWaveInProgress || KFTurboGameType(Level.Game).WaveCountDown <= 10)
         {
             break;
         }
