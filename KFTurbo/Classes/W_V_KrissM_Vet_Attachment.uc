@@ -34,11 +34,7 @@ simulated function PostNetReceive()
 function ApplyPlayerWeaponTier()
 {
      WeaponTier = class'VetWeaponHelper'.static.GetPlayerWeaponTier(Pawn(Owner), class'V_FieldMedic');
-
-     if (Level.NetMode != NM_DedicatedServer)
-     {
-          UpdateWeaponTier(WeaponTier);
-     }
+     UpdateWeaponTier(WeaponTier);
 }
 
 function SetWeaponTier(byte NewWeaponTier)

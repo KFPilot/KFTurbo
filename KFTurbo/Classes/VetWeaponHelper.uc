@@ -44,6 +44,11 @@ static final function byte GetPlayerWeaponTier(Pawn Pawn, class<TurboVeterancyTy
 
 static final function UpdateWeaponAttachmentTier(KFWeaponAttachment Attachment, byte WeaponTier, byte PreviousWeaponTier, array<string> SkinRefList, out array<Material> LoadedSkinList)
 {
+    if (Attachment == None || Attachment.bDeleteMe || Attachment.Level.NetMode == NM_DedicatedServer)
+    {
+        return;
+    }
+
     WeaponTier = Clamp(WeaponTier, 0, LoadedSkinList.Length);
 
     if (WeaponTier == PreviousWeaponTier)
