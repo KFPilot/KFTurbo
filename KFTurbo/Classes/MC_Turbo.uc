@@ -26,6 +26,7 @@ defaultproperties
      MonsterClasses(12)=(MClassName="KFTurbo.P_Gorefast_Assassin",Mid="M")
      MonsterClasses(13)=(MClassName="KFTurbo.P_Bloat_Fathead",Mid="N")
      MonsterClasses(14)=(MClassName="KFTurbo.P_Siren_Caroler",Mid="O")
+     MonsterClasses(15)=(MClassName="KFTurbo.P_Husk_Shotgun",Mid="P")
 
      //Clear all these lists out - they won't be used anyways.
      StandardMonsterClasses=()
