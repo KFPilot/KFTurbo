@@ -221,7 +221,7 @@ simulated function bool OpenPlayerChat(GUIComponent Sender)
 	}
 
 	Controller.CloseMenu();
-	Controller.OpenMenu(ExtendedConsole(Controller.Master.Console).ChatMenuClass);
+	Controller.OpenMenu("KFTurbo.TurboInGameChat");
 	return true;
 }
 
