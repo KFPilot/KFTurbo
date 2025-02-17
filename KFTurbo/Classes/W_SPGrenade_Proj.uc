@@ -1,3 +1,6 @@
+//Killing Floor Turbo W_SPGrenade_Proj
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class W_SPGrenade_Proj extends SPGrenadeProjectile;
 
 var int TrickBounceCount;
@@ -9,6 +12,16 @@ var float CurrentCoefficient;
 function TakeDamage( int Damage, Pawn InstigatedBy, Vector Hitlocation, Vector Momentum, class<DamageType> damageType, optional int HitIndex)
 {
     class'WeaponHelper'.static.SPGrenadeProjTakeDamage(self, Damage, InstigatedBy, Hitlocation, Momentum, DamageType, HitIndex);
+}
+
+simulated function Explode(vector HitLocation, vector HitNormal)
+{
+	if (bHasExploded)
+	{
+		return;
+	}
+
+	Super.Explode(HitLocation, HitNormal);
 }
 
 simulated function ProcessTouch(Actor Other, Vector HitLocation)

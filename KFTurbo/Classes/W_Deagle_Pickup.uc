@@ -1,9 +1,24 @@
+//Killing Floor Turbo W_Deagle_Pickup
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class W_Deagle_Pickup extends DeaglePickup;
 
 function Inventory SpawnCopy(pawn Other)
 {
 	class'WeaponHelper'.static.SingleWeaponSpawnCopy(Self, Other, class'W_DualDeagle_Weap');
 	Return Super(KFWeaponPickup).SpawnCopy(Other);
+}
+
+function Destroyed()
+{
+	if (Inventory != None)
+	{
+		Super.Destroyed();
+	}
+	else
+	{
+		Super(WeaponPickup).Destroyed();
+	}
 }
 
 defaultproperties

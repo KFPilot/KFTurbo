@@ -1,3 +1,6 @@
+//Killing Floor Turbo W_Katana_Weap
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class W_Katana_Weap extends Katana;
 
 //Fix for bloody material being forced to be a combiner in KFMeleeGun.

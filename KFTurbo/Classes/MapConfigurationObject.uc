@@ -1,6 +1,6 @@
 //Killing Floor Turbo MapConfigurationObject
 //Per-map object that allows for modifications of defined maps' spawn rates/max zeds/etc without needing to alter the map file.
-//Distributed under the terms of the GPL-2.0 License.
+//Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
 Class MapConfigurationObject extends Object
 	PerObjectConfig
@@ -12,8 +12,7 @@ var config float WaveSpawnRateMultiplier;
 var config float WaveMaxMonstersMultiplier;
 var config float ZombieVolumeCanRespawnTimeMultiplier;
 var config float ZombieVolumeMinDistanceToPlayerMultiplier;
-//TODO: Maybe something that lets zeds skip the hunting/stake out behaviour they do?
-//This behaviour can exacerbate the slow spawn issues on larger maps.
+var config bool bSkipInitialMonsterWander;
 
 defaultproperties
 {
@@ -23,4 +22,5 @@ defaultproperties
 	WaveMaxMonstersMultiplier=1.f
 	ZombieVolumeCanRespawnTimeMultiplier=1.f
 	ZombieVolumeMinDistanceToPlayerMultiplier=1.f
+	bSkipInitialMonsterWander=false
 }

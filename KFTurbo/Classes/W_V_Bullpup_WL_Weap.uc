@@ -1,3 +1,6 @@
+//Killing Floor Turbo W_V_Bullpup_WL_Weap
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class W_V_Bullpup_WL_Weap extends W_Bullpup_Weap;
 
 defaultproperties

@@ -1,3 +1,6 @@
+//Killing Floor Turbo W_Crossbow_Fire
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class W_Crossbow_Fire extends CrossbowFire;
 
 function DoFireEffect()

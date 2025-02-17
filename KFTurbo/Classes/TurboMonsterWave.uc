@@ -1,3 +1,6 @@
+//Killing Floor Turbo TurboMonsterWave
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class TurboMonsterWave extends Object
      editinlinenew;
 
@@ -32,7 +35,7 @@ var int MaxMixInSquadCount;
 //Number of Beat squads to use for beats between sequences.
 var int BeatSize;
 
-final function Initialize(TurboMonsterCollection TurboCollection)
+function Initialize(TurboMonsterCollection TurboCollection)
 {
      local int Index;
 

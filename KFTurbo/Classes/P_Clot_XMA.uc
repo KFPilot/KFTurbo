@@ -1,6 +1,6 @@
-//-----------------------------------------------------------
-//
-//-----------------------------------------------------------
+//Killing Floor Turbo P_Clot_XMA
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class P_Clot_XMA extends P_Clot;
 
 #exec OBJ LOAD FILE=KF_EnemiesFinalSnd_Xmas.uax

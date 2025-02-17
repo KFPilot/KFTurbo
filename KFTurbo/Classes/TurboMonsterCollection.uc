@@ -1,3 +1,6 @@
+//Killing Floor Turbo TurboMonsterCollection
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class TurboMonsterCollection extends Object
      editinlinenew;
 
@@ -12,10 +15,12 @@ function InitializeForWave(int WaveNumber) {}
 //Prepares a sequence of squads to spawn.
 function PrepareSequence() {}
 
+function Reset() {}
+
 function TurboMonsterSquad GetNextMonsterSquad()
 {
-     return None;
-} 
+    return None;
+}
 
 //Appends a list of monsters to spawn to OutNextSpawnSquad given a Final Squad Number (typically represents heal count for boss) and a Player Count.
 function ApplyFinalSquad(int FinalSquadNumber, int PlayerCount, out array< class<KFMonster> > OutNextSpawnSquad) {}
@@ -62,7 +67,7 @@ static final function float GetPlayerCountModifier(int PlayerCount)
             return 4.5f;
     }
 
-    return float(PlayerCount) *0.8f;
+    return float(PlayerCount) * 0.8f;
 }
 
 //Gets the initial total monsters for a wave.

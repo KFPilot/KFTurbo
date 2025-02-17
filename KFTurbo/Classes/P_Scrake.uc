@@ -1,5 +1,5 @@
 //Killing Floor Turbo P_Scrake
-//Distributed under the terms of the GPL-2.0 License.
+//Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
 class P_Scrake extends ZombieScrake
     abstract
@@ -66,7 +66,7 @@ function TakeDamage(int Damage, Pawn InstigatedBy, Vector HitLocation, Vector Mo
 
 	if (Role == ROLE_Authority)
 	{
-		class'PawnHelper'.static.TakeDamage(Damage, InstigatedBy, HitLocation, Momentum, DamageType, HitIndex, AfflictionData);
+		class'PawnHelper'.static.TakeDamage(Self, Damage, InstigatedBy, HitLocation, Momentum, DamageType, HitIndex, AfflictionData);
 	}
 
 	bIsHeadShot = IsHeadShot(Hitlocation, normal(Momentum), 1.0);
@@ -119,11 +119,11 @@ function bool MeleeDamageTarget(int HitDamage, vector PushDirection)
 
 simulated function Tick(float DeltaTime)
 {
-    class'PawnHelper'.static.PreTickAfflictionData(DeltaTime, self, AfflictionData);
+    class'PawnHelper'.static.PreTickAfflictionData(Self, DeltaTime, self, AfflictionData);
     
     Super.Tick(DeltaTime);
 
-    class'PawnHelper'.static.TickAfflictionData(DeltaTime, self, AfflictionData);
+    class'PawnHelper'.static.TickAfflictionData(Self, DeltaTime, self, AfflictionData);
 
     TickStunTime();
 }
@@ -193,6 +193,11 @@ simulated function float GetOriginalGroundSpeed()
     return Super.GetOriginalGroundSpeed() * class'PawnHelper'.static.GetSpeedMultiplier(AfflictionData);
 }
 
+function OldPlayHit(float Damage, Pawn InstigatedBy, vector HitLocation, class<DamageType> DamageType, vector Momentum, optional int HitIndex)
+{    
+    Super.OldPlayHit(Damage, InstigatedBy, HitLocation, DamageType, Momentum, HitIndex);
+}
+
 function PlayTakeHit(vector HitLocation, int Damage, class<DamageType> DamageType)
 {
 	if( Level.TimeSeconds - LastPainAnim < MinTimeBetweenPainAnims )
@@ -206,7 +211,7 @@ function PlayTakeHit(vector HitLocation, int Damage, class<DamageType> DamageTyp
         {
             PlayDirectionalHit(HitLocation);
         }
-
+        
         LastPainAnim = Level.TimeSeconds;
     }
 
@@ -242,7 +247,7 @@ simulated function UnSetBurningBehavior()
 {
     class'PawnHelper'.static.UnSetBurningBehavior(self, AfflictionData);
 
-    if (!IsInState('SawingLoop'))
+    if (Role == ROLE_Authority && Controller != None && !IsInState('SawingLoop'))
     {
         if (CanAttack(Controller.Enemy))
         {

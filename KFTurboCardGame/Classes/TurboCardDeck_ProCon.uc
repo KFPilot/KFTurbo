@@ -1,25 +1,74 @@
 //Killing Floor Turbo TurboCardDeck_ProCon
-//Distributed under the terms of the GPL-2.0 License.
+//Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
 class TurboCardDeck_ProCon extends TurboCardDeck;
 
-//This is sorta weird but this is how I imagine we'll handle 
+//We need a better way to handle conditional cards. This is annoying.
 var bool bCanUseTradeIn, bHasUsedTradeIn;
 var TurboCard TradeInCard;
+
+var bool bCanUseSoulForASoul, bHasUsedSoulForASoul;
+var TurboCard SoulForASoulCard;
+
+function InitializeDeck()
+{
+    local int Index;
+
+    Super.InitializeDeck();
+
+    Index = DeckCardObjectList.Length;
+
+    InitializeCard(TradeInCard, Index);
+    Index++;
+
+    InitializeCard(SoulForASoulCard, Index);
+    Index++;
+}
+
+static function TurboCard GetCardFromReference(TurboCardReplicationInfo.CardReference Reference)
+{
+    if (Reference.Deck != default.Class)
+    {
+        return None;
+    }
+
+    if (Reference.CardIndex == default.DeckCardObjectList.Length)
+    {
+        return default.TradeInCard;
+    }
+    else if (Reference.CardIndex == default.DeckCardObjectList.Length + 1)
+    {
+        return default.SoulForASoulCard;
+    }
+
+    return Super.GetCardFromReference(Reference);
+}
 
 function TurboCard DrawRandomCard()
 {
     local int EffectiveDeckSize;
-
     EffectiveDeckSize = DeckCardObjectList.Length;
+    
     if (!bHasUsedTradeIn && bCanUseTradeIn)
     {
         EffectiveDeckSize++;
-        if (FRand() < (1.f / float(EffectiveDeckSize)))
-        {
-            bHasUsedTradeIn = true;
-            return TradeInCard;
-        }
+    }
+
+    if (!bCanUseSoulForASoul && bHasUsedSoulForASoul)
+    {
+        EffectiveDeckSize++;
+    }
+
+    if (!bHasUsedTradeIn && bCanUseTradeIn && FRand() < (1.f / float(EffectiveDeckSize)))
+    {
+        bHasUsedTradeIn = true;
+        return TradeInCard;
+    }     
+
+    if (!bCanUseSoulForASoul && bHasUsedSoulForASoul && FRand() < (1.f / float(EffectiveDeckSize)))
+    {
+        bHasUsedSoulForASoul = true;
+        return SoulForASoulCard;
     }
 
     return Super.DrawRandomCard();
@@ -30,6 +79,7 @@ function OnDeckDraw(TurboCardReplicationInfo TCRI)
     local int GoodCardCount, SuperCardCount, ProConCardCount, EvilCardCount;
     TCRI.GetActiveCardCounts(GoodCardCount, SuperCardCount, ProConCardCount, EvilCardCount);
     bCanUseTradeIn = GoodCardCount >= 3;
+    bCanUseSoulForASoul = SuperCardCount > 0 && EvilCardCount > 0;
 }
 
 function ActivateTradeIn(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
@@ -492,6 +542,19 @@ function ActivateRiskyRegen(TurboCardGameplayManager GameplayManager, TurboCard 
     Card.UpdateModifier(GameplayManager.PlayerMaxHealthModifier, 0.9f, bActivate);
 }
 
+function ActivateSoulForASoul(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
+{
+    GameplayManager.RemoveRandomSuperCard();
+    GameplayManager.RemoveRandomEvilCard();
+}
+
+function ActivateDilutedHeal(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
+{
+    Card.UpdateModifier(GameplayManager.PlayerNonMedicHealPotencyModifier, 0.85f, bActivate);
+    Card.UpdateModifier(GameplayManager.PlayerMedicHealPotencyModifier, 0.85f, bActivate);
+    Card.UpdateModifier(GameplayManager.PlayerHealRechargeModifier, 1.15f, bActivate);
+}
+
 defaultproperties
 {
     Begin Object Name=TradeIn Class=TurboCard_ProConStrange
@@ -504,6 +567,18 @@ defaultproperties
         CardID="PROCON_TRADEIN"
     End Object
     TradeInCard=TurboCard'TradeIn'
+    
+    Begin Object Name=SoulForASoul Class=TurboCard_ProConStrange
+        CardName(0)="A Soul For"
+        CardName(1)="A Soul"
+        CardDescriptionList(0)="Removes a random"
+        CardDescriptionList(1)="super card and"
+        CardDescriptionList(2)="removes a random"
+        CardDescriptionList(3)="evil card."
+        OnActivateCard=ActivateSoulForASoul
+        CardID="PROCON_SOULFORSOUL"
+    End Object
+    SoulForASoulCard=TurboCard'SoulForASoul'
 
     Begin Object Name=ExtraMoneyTraderTime Class=TurboCard_ProCon
         CardName(0)="Short Term"
@@ -931,4 +1006,17 @@ defaultproperties
         CardID="PROCON_RISKYREGEN"
     End Object
     DeckCardObjectList(34)=TurboCard'RiskyRegen'
+    
+    Begin Object Name=DilutedHeal Class=TurboCard_ProCon
+        CardName(0)="Diluted"
+        CardName(1)="Healing"
+        CardDescriptionList(0)="Reduces heal"
+        CardDescriptionList(1)="potency by 15%"
+        CardDescriptionList(2)="but increases"
+        CardDescriptionList(3)="heal charge"
+        CardDescriptionList(4)="rate by 15%."
+        OnActivateCard=ActivateDilutedHeal
+        CardID="PROCON_DILUTEDHEALING"
+    End Object
+    DeckCardObjectList(35)=TurboCard'DilutedHeal'
 }

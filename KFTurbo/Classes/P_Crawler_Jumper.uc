@@ -1,3 +1,6 @@
+//Killing Floor Turbo P_Crawler_Jumper
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class P_Crawler_Jumper extends P_Crawler_SUM;
 
 var float PounceWindupDuration;

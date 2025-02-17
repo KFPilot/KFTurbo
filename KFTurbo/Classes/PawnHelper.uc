@@ -1,6 +1,6 @@
 //Killing Floor Turbo PawnHelper
 //Anti redundancy class. Handles logic for zeds.
-//Distributed under the terms of the GPL-2.0 License.
+//Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
 class PawnHelper extends Object;
 
@@ -355,11 +355,11 @@ static final function float GetSpeedMultiplier(AfflictionData AD)
 	return Multiplier;
 }
 
-static final simulated function TakeDamage(int Damage, Pawn InstigatedBy, Vector HitLocation, Vector Momentum, class<DamageType> DamageType, int HitIndex, out AfflictionData AD)
+static final simulated function TakeDamage(KFMonster Monster, int Damage, Pawn InstigatedBy, Vector HitLocation, Vector Momentum, class<DamageType> DamageType, int HitIndex, out AfflictionData AD)
 {
 	if (AD.Burn != None)
 	{
-		AD.Burn.TakeDamage(Damage, InstigatedBy, HitLocation, Momentum, DamageType, HitIndex);
+		AD.Burn.TakeDamage(Monster, Damage, InstigatedBy, HitLocation, Momentum, DamageType, HitIndex);
 	}
 }
 
@@ -416,35 +416,16 @@ static final function TakeFireDamage(KFMonster Monster, int Damage, Pawn Instiga
 	}
 }
 
-static final function int GetFakedPlayerAdjustedCount(LevelInfo Level)
+static final function int GetMonsterHealthPlayerCount(LevelInfo Level)
 {
-	local Controller C;
-	local int FakedPlayers;
-	local int PlayerCount;
-	FakedPlayers = 0;
-	PlayerCount = 0;
-
-	if(KFTurboGameTypePlus(Level.Game) != None)
-	{
-		FakedPlayers = KFTurboGameTypePlus(Level.Game).FAKED_P_HEALTH;
-	}
-
-	for( C=Level.ControllerList; C!=None; C=C.NextController )
-    {
-        if( C.bIsPlayer && C.Pawn!=None && C.Pawn.Health > 0 )
-        {
-            PlayerCount++;
-        }
-    }
-
-	return Max(FakedPlayers, PlayerCount);
+	return KFTurboGameType(Level.Game).GetMonsterHealthPlayerCount();
 }
 
 static final function float GetBodyHealthModifier(KFMonster KFM, LevelInfo Level)
 {
 	local int AdjustedPlayerCount;
     local float AdjustedModifier;
-	AdjustedPlayerCount = GetFakedPlayerAdjustedCount(Level);
+	AdjustedPlayerCount = GetMonsterHealthPlayerCount(Level);
     AdjustedModifier = 1.f;
 
     if( AdjustedPlayerCount > 1 )
@@ -460,7 +441,7 @@ static final function float GetHeadHealthModifier(KFMonster KFM, LevelInfo Level
 	local int AdjustedPlayerCount;
 	local float AdjustedModifier;
 
-	AdjustedPlayerCount = GetFakedPlayerAdjustedCount(Level);
+	AdjustedPlayerCount = GetMonsterHealthPlayerCount(Level);
     AdjustedModifier = 1.f;
 
     if( AdjustedPlayerCount > 1 )
@@ -471,7 +452,7 @@ static final function float GetHeadHealthModifier(KFMonster KFM, LevelInfo Level
     return AdjustedModifier;
 }
 
-static final function PreTickAfflictionData(float DeltaTime, KFMonster KFM, out AfflictionData AD)
+static final function PreTickAfflictionData(KFMonster Monster, float DeltaTime, KFMonster KFM, out AfflictionData AD)
 {
 	if (KFM == None)
 	{
@@ -480,21 +461,21 @@ static final function PreTickAfflictionData(float DeltaTime, KFMonster KFM, out 
 
 	if (AD.Burn != None)
 	{
-		AD.Burn.PreTick(DeltaTime);
+		AD.Burn.PreTick(Monster, DeltaTime);
 	}
 
 	if (AD.Zap != None)
 	{
-		AD.Zap.PreTick(DeltaTime);
+		AD.Zap.PreTick(Monster, DeltaTime);
 	}
 
 	if (AD.Harpoon != None)
 	{
-		AD.Harpoon.PreTick(DeltaTime);
+		AD.Harpoon.PreTick(Monster, DeltaTime);
 	}
 }
 
-static final function TickAfflictionData(float DeltaTime, KFMonster KFM, out AfflictionData AD)
+static final function TickAfflictionData(KFMonster Monster, float DeltaTime, KFMonster KFM, out AfflictionData AD)
 {
 	if (KFM == None)
 	{
@@ -503,17 +484,17 @@ static final function TickAfflictionData(float DeltaTime, KFMonster KFM, out Aff
 
 	if (AD.Burn != None)
 	{
-		AD.Burn.Tick(DeltaTime);
+		AD.Burn.Tick(Monster, DeltaTime);
 	}
 
 	if (AD.Zap != None)
 	{
-		AD.Zap.Tick(DeltaTime);
+		AD.Zap.Tick(Monster, DeltaTime);
 	}
 
 	if (AD.Harpoon != None)
 	{
-		AD.Harpoon.Tick(DeltaTime);
+		AD.Harpoon.Tick(Monster, DeltaTime);
 	}
 }
 
@@ -528,19 +509,19 @@ static final function MonsterDied(KFMonster Monster, out AfflictionData AD)
 
 	if (AD.Burn != None)
 	{
-		AD.Burn.OnDeath();
+		AD.Burn.OnDeath(Monster);
 		AD.Burn = None;
 	}
 
 	if (AD.Zap != None)
 	{
-		AD.Zap.OnDeath();
+		AD.Zap.OnDeath(Monster);
 		AD.Zap = None;
 	}
 
 	if (AD.Harpoon != None)
 	{
-		AD.Harpoon.OnDeath();
+		AD.Harpoon.OnDeath(Monster);
 		AD.Harpoon = None;
 	}
 }

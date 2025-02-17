@@ -1,3 +1,6 @@
+//Killing Floor Turbo W_FlareRevolver_Nade
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class W_FlareRevolver_Nade extends M79GrenadeProjectile;
 
 

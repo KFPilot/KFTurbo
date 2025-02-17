@@ -1,5 +1,5 @@
 //Killing Floor Turbo TurboCardClientModifierRepLink
-//Distributed under the terms of the GPL-2.0 License.
+//Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
 class TurboCardClientModifierRepLink extends TurboClientModifierReplicationLink
     hidecategories(Advanced,Display,Events,Object,Sound);
@@ -108,7 +108,7 @@ simulated function ApplyHeadSizeModification(KFMonster Monster)
 {
     local float ExtCollisionHeightScale, ExtCollisionRadiusScale;
 
-    if (Monster.MyExtCollision.Role != ROLE_Authority && MonsterHeadSizeModifier > 1.f && Monster.MyExtCollision != None)
+    if (Monster.MyExtCollision != None && Monster.MyExtCollision.Role != ROLE_Authority && MonsterHeadSizeModifier > 1.f)
     {
         ExtCollisionHeightScale = ((MonsterHeadSizeModifier - 1.f) * 0.5f) + 1.f;
         ExtCollisionRadiusScale = ((MonsterHeadSizeModifier - 1.f) * 0.25f) + 1.f;

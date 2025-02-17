@@ -1,5 +1,5 @@
 //Killing Floor Turbo TurboGUIHTMLTextBox
-//Distributed under the terms of the GPL-2.0 License.
+//Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
 class TurboGUIHTMLTextBox extends ServerPerks.GUIHTMLTextBox;
 
@@ -8,6 +8,13 @@ protected function TurboInitHTMLArea( Canvas C )
 {
 	local float XS,YS;
 	local int i,j,X,Y,iStart,BestHeight,FontSize,PrevY,Remain,iLastWord,iLen,z,ImgHeight;
+	local TurboHUDKillingFloor TurboHUD;
+	TurboHUD = TurboHUDKillingFloor(PlayerOwner().myHUD);
+
+	if (TurboHUD == None)
+	{
+		return;
+	}
 
 	// Used to detect resolution changes when text needs realignment.
 	OldXSize = ActualWidth(WinWidth);
@@ -101,8 +108,8 @@ protected function TurboInitHTMLArea( Canvas C )
 				BestHeight = 0;
 			}
 			if( Lines[i].FontSize>=247 )
-				Lines[i].Font = Class'TurboHUDKillingFloor'.Static.LoadFontStatic(Lines[i].FontSize-247);
-			else Lines[i].Font = Class'TurboHUDKillingFloor'.Static.LoadFontStatic(Clamp(8-(FontSize+Lines[i].FontSize),0,8));
+				Lines[i].Font = TurboHUD.LoadFont(Lines[i].FontSize-247);
+			else Lines[i].Font = TurboHUD.LoadFont(Clamp(8-(FontSize+Lines[i].FontSize),0,8));
 			C.Font = Lines[i].Font;
 			if( Lines[i].Text=="" )
 			{

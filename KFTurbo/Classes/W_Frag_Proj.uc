@@ -1,3 +1,6 @@
+//Killing Floor Turbo W_Frag_Proj
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class W_Frag_Proj extends KFMod.Nade;
 
 var float SharpnelDamageAdjustment;
@@ -15,6 +18,16 @@ simulated function ProcessTouch( actor Other, vector HitLocation )
 	}
 
 	Super.ProcessTouch(Other, HitLocation);
+}
+
+simulated function Explode(vector HitLocation, vector HitNormal)
+{
+	if (bHasExploded)
+	{
+		return;
+	}
+
+	Super.Explode(HitLocation, HitNormal);
 }
 
 simulated function bool CanDamageTarget(Actor Target)

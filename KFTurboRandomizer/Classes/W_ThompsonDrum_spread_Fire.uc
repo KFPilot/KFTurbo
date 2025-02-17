@@ -1,3 +1,6 @@
+//Killing Floor Turbo W_ThompsonDrum_spread_Fire
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class W_ThompsonDrum_spread_Fire extends W_ThompsonDrum_Fire;
 
 defaultproperties

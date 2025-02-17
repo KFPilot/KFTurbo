@@ -1,6 +1,6 @@
-//Killing Floor Turbo WeaponHelper
+//Killing Floor Turbo VetWeaponHelper
 //Anti redundancy class. Handles skin logic for vet weapons.
-//Distributed under the terms of the GPL-2.0 License.
+//Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
 class VetWeaponHelper extends Object;
 
@@ -44,6 +44,11 @@ static final function byte GetPlayerWeaponTier(Pawn Pawn, class<TurboVeterancyTy
 
 static final function UpdateWeaponAttachmentTier(KFWeaponAttachment Attachment, byte WeaponTier, byte PreviousWeaponTier, array<string> SkinRefList, out array<Material> LoadedSkinList)
 {
+    if (Attachment == None || Attachment.bDeleteMe || Attachment.Level.NetMode == NM_DedicatedServer)
+    {
+        return;
+    }
+
     WeaponTier = Clamp(WeaponTier, 0, LoadedSkinList.Length);
 
     if (WeaponTier == PreviousWeaponTier)

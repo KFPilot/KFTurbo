@@ -22,17 +22,40 @@ var Material MerchantMaterial;
 var Material DefaultTraderMaterial;
 
 var globalconfig bool bShiftOpensTrader;
+var globalconfig bool bF3VotesYes;
 
 var globalconfig bool bPipebombUsesSpecialGroup;
 
+var globalconfig bool bUseBaseGameFontForChat;
+
+var globalconfig string FontLocale;
+
 simulated function bool KeyEvent( out EInputKey Key, out EInputAction Action, FLOAT Delta )
 {
-	if (Action == IST_Press && Key == IK_Shift && bShiftOpensTrader)
+	if (Action != IST_Press)
+	{
+		return false;
+	}
+
+	if (Key == IK_Shift && bShiftOpensTrader)
 	{
 		Trade();
 	}
+	else if (Key == IK_F3 && bF3VotesYes)
+	{
+		VoteYes();
+	}
 
 	return false;
+}
+
+simulated function OnInteractionCreated()
+{
+	//Update the ExtendedConsole's In-Game Chat class so it's not competing with us for the chat delegate binding.
+	if (ViewportOwner != None && ExtendedConsole(ViewportOwner.Console) != None)
+	{
+		ExtendedConsole(ViewportOwner.Console).ChatMenuClass = string(class'KFTurbo.TurboInGameChat');
+	}
 }
 
 simulated function InitializeTurboInteraction()
@@ -46,6 +69,16 @@ simulated function InitializeTurboInteraction()
 	InitializeVeterancyTierPreferences();
 	UpdateMerchant();
 	InitializePipebombUsesSpecialGroup();
+	UpdateUseBaseGameFontForChat();
+	UpdateFontLocale();
+}
+
+simulated function NotifyLevelChange()
+{
+	if (ViewportOwner != None && ExtendedConsole(ViewportOwner.Console) != None)
+	{
+		ExtendedConsole(ViewportOwner.Console).ChatMenuClass = ExtendedConsole(ViewportOwner.Console).default.ChatMenuClass;
+	}
 }
 
 exec simulated function Trade()
@@ -72,6 +105,16 @@ exec simulated function Trade()
 
 	ViewportOwner.GUIController.CloseMenu();
 	KFPlayerController(ViewportOwner.Actor).ShowBuyMenu("WeaponLocker", KFHumanPawn(ViewportOwner.Actor.Pawn).MaxCarryWeight);
+}
+
+simulated function VoteYes()
+{
+	if (ViewportOwner == None)
+	{
+		return;
+	}
+
+	TurboPlayerController(ViewportOwner.Actor).Vote("YES");
 }
 
 exec simulated function SetMarkColor(TurboPlayerMarkReplicationInfo.EMarkColor Color)
@@ -342,6 +385,22 @@ static final function bool IsShiftTradeEnabled(TurboPlayerController PlayerContr
 	return false;
 }
 
+simulated function SetF3VoteYesEnabled(bool bNewF3VotesYes)
+{
+	bF3VotesYes = bNewF3VotesYes;
+	SaveConfig();
+}
+
+static final function bool IsF3VoteYesEnabled(TurboPlayerController PlayerController)
+{
+	if (PlayerController != None && PlayerController.TurboInteraction != None)
+	{
+		return PlayerController.TurboInteraction.bF3VotesYes;
+	}
+
+	return false;
+}
+
 simulated function SetPipebombUsesSpecialGroup(bool bNewPipebombUsesSpecialGroup)
 {
 	if (bNewPipebombUsesSpecialGroup == bPipebombUsesSpecialGroup)
@@ -369,6 +428,66 @@ simulated function InitializePipebombUsesSpecialGroup()
 	TurboPlayerController(ViewportOwner.Actor).SetPipebombUsesSpecialGroup(bPipebombUsesSpecialGroup);
 }
 
+simulated function SetUseBaseGameFontForChat(bool bNewUseBaseGameFontForChat)
+{
+	if (bNewUseBaseGameFontForChat == bUseBaseGameFontForChat)
+	{
+		return;
+	}
+
+	bUseBaseGameFontForChat = bNewUseBaseGameFontForChat;
+	UpdateUseBaseGameFontForChat();
+	SaveConfig();
+}
+
+static final function bool ShouldUseBaseGameFontForChat(TurboPlayerController PlayerController)
+{
+	if (PlayerController != None && PlayerController.TurboInteraction != None)
+	{
+		return PlayerController.TurboInteraction.bUseBaseGameFontForChat;
+	}
+
+	return false;
+}
+
+simulated function UpdateUseBaseGameFontForChat()
+{
+	if (ViewportOwner.Actor != None && TurboHUDKillingFloor(ViewportOwner.Actor.myHUD) != None)
+	{
+		TurboHUDKillingFloor(ViewportOwner.Actor.myHUD).bUseBaseGameFontForChat = bUseBaseGameFontForChat;
+	}
+}
+
+simulated function SetFontLocale(string NewFontLocale)
+{
+	if (NewFontLocale == FontLocale)
+	{
+		return;
+	}
+
+	FontLocale = NewFontLocale;
+	UpdateFontLocale();
+	SaveConfig();
+}
+
+static final function string GetFontLocale(TurboPlayerController PlayerController)
+{
+	if (PlayerController != None && PlayerController.TurboInteraction != None)
+	{
+		return PlayerController.TurboInteraction.FontLocale;
+	}
+
+	return "ENG";
+}
+
+simulated function UpdateFontLocale()
+{
+	if (ViewportOwner.Actor != None && TurboHUDKillingFloor(ViewportOwner.Actor.myHUD) != None)
+	{
+		TurboHUDKillingFloor(ViewportOwner.Actor.myHUD).SetFontLocale(FontLocale);
+	}
+}
+
 defaultproperties
 {
 	bHasInitializedInteraction=false
@@ -384,10 +503,13 @@ defaultproperties
 	bReplaceTraderWithMerchant=false
 	MerchantMeshRef="KFTurbo.Merchant_Trip"
 	MerchantAnimRef="KFTurbo.Merchant_anim"
-	MerchantMaterialRef="KFTurboExtra.Merchant.Merchant_D"
+	MerchantMaterialRef="KFTurbo.Merchant.Merchant_D"
 	DefaultTraderMaterial=Texture'KF_Soldier_Trip_T.Uniforms.shopkeeper_diff'
 
 	bShiftOpensTrader=true
+	bF3VotesYes=true
 
 	bPipebombUsesSpecialGroup=false
+
+	FontLocale="ENG"
 }

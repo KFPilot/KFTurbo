@@ -1,6 +1,6 @@
 //Killing Floor Turbo TurboDoorManager
 //Monitors doors and makes sure any door pairs are not bugged (only one is broken).
-//Distributed under the terms of the GPL-2.0 License.
+//Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
 class TurboDoorManager extends Info;
 
@@ -164,7 +164,6 @@ final function bool IsPartiallyOpen(KFUseTrigger UseTrigger)
     local int DoorIndex;
     local bool bHasOpenDoor;
     local bool bHasClosedDoor;
-    local Mover Follower;
 
     bHasOpenDoor = false;
     bHasClosedDoor = false;
@@ -178,24 +177,6 @@ final function bool IsPartiallyOpen(KFUseTrigger UseTrigger)
         else
         {
             bHasOpenDoor = true;
-        }
-
-        Follower = UseTrigger.DoorOwners[DoorIndex].Follower;
-        while(Follower != None)
-        {
-            if (KFDoorMover(Follower) != None)
-            {
-                if (Follower.bClosed)
-                {
-                    bHasClosedDoor = true;
-                }
-                else
-                {
-                    bHasOpenDoor = true;
-                }
-            }
-
-            Follower = Follower.Follower;
         }
     }
 

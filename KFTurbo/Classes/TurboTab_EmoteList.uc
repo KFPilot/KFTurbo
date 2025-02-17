@@ -1,3 +1,6 @@
+//Killing Floor Turbo TurboTab_EmoteList
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class TurboTab_EmoteList extends SRTab_Base;
 
 var automated GUISectionBackground ContainerTitle;

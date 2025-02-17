@@ -1,5 +1,5 @@
 //Killing Floor Turbo TurboCardDeck_Evil
-//Distributed under the terms of the GPL-2.0 License.
+//Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
 class TurboCardDeck_Evil extends TurboCardDeck;
 
@@ -420,6 +420,16 @@ function ActivateUnfortunateUpgrade(TurboCardGameplayManager GameplayManager, Tu
     Card.UpdateFlag(GameplayManager.MonsterUpgradeFlag, bActivate);
 }
 
+function ActivateDoubleTime(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
+{
+    Card.UpdateModifier(GameplayManager.TraderTimeModifier, 0.5f, bActivate);
+}
+
+function ActivateBadBlood(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
+{
+    Card.UpdateModifier(GameplayManager.PlayerMaxHealthModifier, 0.8f, bActivate);
+}
+
 defaultproperties
 {
     Begin Object Name=Hyperbloats Class=TurboCard_Evil
@@ -567,8 +577,8 @@ defaultproperties
     Begin Object Name=LightWeightPlayers Class=TurboCard_Evil
         CardName(0)="Lethal"
         CardName(1)="Specimens"
-        CardDescriptionList(0)="Zeds deal"
-        CardDescriptionList(1)="50% more damage"
+        CardDescriptionList(0)="Zeds deal 50%"
+        CardDescriptionList(1)="more melee damage"
         CardDescriptionList(2)="and knockback is"
         CardDescriptionList(3)="increased by 200%."
         CardID="EVIL_LETHALSPEC"
@@ -646,7 +656,7 @@ defaultproperties
         CardDescriptionList(2)="based on wave"
         CardDescriptionList(3)="size. All players"
         CardDescriptionList(4)="die when time"
-        CardDescriptionList(5)="runs outs."
+        CardDescriptionList(5)="runs out."
         CardID="EVIL_BORROWEDTIME"
         OnActivateCard=ActivateBorrowedTime
     End Object
@@ -803,4 +813,24 @@ defaultproperties
         OnActivateCard=ActivateUnfortunateUpgrade
     End Object
     DeckCardObjectList(34)=TurboCard'UnfortunateUpgrade'
+    
+    Begin Object Name=DoubleTime Class=TurboCard_Evil
+        CardName(0)="Double"
+        CardName(1)="Time It"
+        CardDescriptionList(0)="Reduces trader"
+        CardDescriptionList(1)="time by 50%."
+        CardID="EVIL_DOUBLETIME"
+        OnActivateCard=ActivateDoubleTime
+    End Object
+    DeckCardObjectList(35)=TurboCard'DoubleTime'
+    
+    Begin Object Name=BadBlood Class=TurboCard_Evil
+        CardName(0)="Bad Blood"
+        CardDescriptionList(0)="Decreases max"
+        CardDescriptionList(1)="health for all"
+        CardDescriptionList(2)="players by 20%."
+        CardID="EVIL_BADBLOOD"
+        OnActivateCard=ActivateBadBlood
+    End Object
+    DeckCardObjectList(36)=TurboCard'BadBlood'
 }

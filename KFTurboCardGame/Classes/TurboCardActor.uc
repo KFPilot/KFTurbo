@@ -1,6 +1,6 @@
 //Killing Floor Turbo TurboCardActor
 //Client-only actor. Responsible for doing CardScriptedTexture rendering so that the UI can use it.
-//Distributed under the terms of the GPL-2.0 License.
+//Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
 class TurboCardActor extends Info;
 
@@ -112,24 +112,28 @@ simulated event Destroyed()
 	{
 		CardScriptedTexture.Reset();
 		Level.ObjectPool.FreeObject(CardScriptedTexture);
+		CardScriptedTexture = None;
 	}
 
 	if (CardOpacity != None)
 	{
 		CardOpacity.Reset();
 		Level.ObjectPool.FreeObject(CardOpacity);
+		CardOpacity = None;
 	}
 
 	if (CardDiffuse != None)
 	{
 		CardDiffuse.Reset();
 		Level.ObjectPool.FreeObject(CardDiffuse);
+		CardDiffuse = None;
 	}
 
 	if (CardShader != None)
 	{
 		CardShader.Reset();
 		Level.ObjectPool.FreeObject(CardShader);
+		CardShader = None;
 	}
 
 	Super.Destroyed();

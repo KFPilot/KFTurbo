@@ -1,4 +1,19 @@
+//Killing Floor Turbo W_FNFAL_Pickup
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class W_FNFAL_Pickup extends FNFAL_ACOG_Pickup;
+
+function Destroyed()
+{
+	if (Inventory != None)
+	{
+		Super.Destroyed();
+	}
+	else
+	{
+		Super(WeaponPickup).Destroyed();
+	}
+}
 
 defaultproperties
 {

@@ -1,6 +1,6 @@
 //Killing Floor Turbo TurboClientModifierReplicationLink
 //Linked list of client modifications. Forwards mutator-like events but for things only the client cares about.
-//Distributed under the terms of the GPL-2.0 License.
+//Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
 class TurboClientModifierReplicationLink extends ReplicationInfo
     abstract;
@@ -10,7 +10,7 @@ var TurboGameReplicationInfo OwnerGRI;
 
 replication
 {
-    reliable if(bNetInitial && Role == ROLE_Authority)
+    reliable if(Role == ROLE_Authority)
         NextClientModifierLink, OwnerGRI;
 }
 

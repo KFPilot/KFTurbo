@@ -1,5 +1,5 @@
 //Killing Floor Turbo KFTurboGameType
-//Distributed under the terms of the GPL-2.0 License.
+//Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
 class KFTurboGameType extends KFGameType;
 
@@ -15,9 +15,9 @@ var protected int FinalWaveOverride;
 var protected bool bHasAttemptedToApplyFinalWaveOverride;
  
 //Whatever spawn rate is set as, make sure it gets multiplied by these.
-var float GameWaveSpawnRateModifier, MapWaveSpawnRateModifier;
+var float GameWaveSpawnRateModifier, MapWaveSpawnRateModifier, AdminSpawnRateModifier;
 //Whatever max monsters is set as, make sure it gets multiplied by these.
-var float GameMaxMonstersModifier, MapMaxMonstersModifier;
+var float GameMaxMonstersModifier, MapMaxMonstersModifier, AdminMaxMonstersModifier;
 //Whatever total monsters is set as, make sure it gets multiplied by this.
 var float GameTotalMonstersModifier;
 //Whatever trader time is set as, make sure it gets multiplied by this.
@@ -35,15 +35,32 @@ var array< class<TurboWaveSpawnEventHandler> > WaveSpawnEventHandlerList;
 
 var MapConfigurationObject MapConfigurationObject; //MapConfigurationObject associated with the current map.
 
+var protected int FakedPlayerCount; //Faked player count. Used to make wave size larger.
+const MAX_FAKED_PLAYERS = 12; //Used to keep faked player count equal to or less than 12.
+var protected int ForcedPlayerHealthCount; //Forced player health count. Used to scale up monster health.
+const MAX_FORCED_PLAYER_HEALTH = 6; //Used to keep monster health at 6 players or fewer.
+
 //Events that KFTurboServerMut binds to for bridging communication with ServerPerksMut.
 Delegate OnStatsAndAchievementsDisabled();
 Delegate LockPerkSelection(bool bLock);
 
-event InitGame( string Options, out string Error )
+event InitGame(string Options, out string Error)
 {
     Super.InitGame(Options, Error);
 
+    bNoLateJoiners = false;
     InitializeMapConfigurationObject();
+}
+
+function ProcessServerTravel(string URL, bool bItems)
+{
+    MapConfigurationObject = None;
+    EventHandlerList.Length = 0;
+    HealEventHandlerList.Length = 0;
+    WaveEventHandlerList.Length = 0;
+    WaveSpawnEventHandlerList.Length = 0;
+
+    Super.ProcessServerTravel(URL, bItems);
 }
 
 function InitializeMapConfigurationObject()
@@ -79,7 +96,154 @@ function InitializeMapConfigurationObject()
         ZedSpawnList[Index].MinDistanceToPlayer *= MapConfigurationObject.ZombieVolumeMinDistanceToPlayerMultiplier;
     }
 }
- 
+
+final function int GetAlivePlayerCount()
+{
+    local Controller C;
+    local int PlayerCount;
+    PlayerCount = 0;
+	for (C = Level.ControllerList; C != None; C = C.NextController)
+    {
+        if (C.bIsPlayer && C.Pawn!=None && C.Pawn.Health > 0)
+        {
+            PlayerCount++;
+        }
+    }
+
+    return PlayerCount;
+}
+
+//Player count to use when calculating MaxMonsters. Handles faked players.
+final function int GetMaxMonsterPlayerCount()
+{
+    return Min(NumPlayers + FakedPlayerCount, MAX_FAKED_PLAYERS);
+}
+
+//Player count to use when calculating monster health. Handles forced player monster health. KFTurbo caps this to 6.
+final function int GetMonsterHealthPlayerCount()
+{
+    return Min(Max(GetAlivePlayerCount(), ForcedPlayerHealthCount), MAX_FORCED_PLAYER_HEALTH);
+}
+
+function int SetFakedPlayerCount(int NewFakedPlayerCount)
+{
+    FakedPlayerCount = Min(Max(NewFakedPlayerCount, 0), MAX_FAKED_PLAYERS - 1);
+    return FakedPlayerCount;
+}
+
+final function int GetFakedPlayerCount()
+{
+    return FakedPlayerCount;
+}
+
+function int SetForcedPlayerHealthCount(int NewForcedPlayerHealthCount)
+{
+    NewForcedPlayerHealthCount = Clamp(NewForcedPlayerHealthCount, 0, MAX_FORCED_PLAYER_HEALTH);
+    ForcedPlayerHealthCount = NewForcedPlayerHealthCount;
+    return ForcedPlayerHealthCount;
+}
+
+final function int GetForcedPlayerHealthCount()
+{
+    return ForcedPlayerHealthCount;
+}
+
+function float SetAdminSpawnRateModifier(float NewAdminSpawnRateModifier)
+{
+    NewAdminSpawnRateModifier = FClamp(NewAdminSpawnRateModifier, 1.f, 100.f);
+    AdminSpawnRateModifier = FMax(NewAdminSpawnRateModifier, 1.f);
+    return AdminSpawnRateModifier;
+}
+
+function float SetAdminMaxMonstersModifier(float NewAdminMaxMonstersModifier)
+{
+    NewAdminMaxMonstersModifier = FClamp(NewAdminMaxMonstersModifier, 1.f, 100.f);
+    NewAdminMaxMonstersModifier = FMax(NewAdminMaxMonstersModifier, 1.f);
+    AdminMaxMonstersModifier = NewAdminMaxMonstersModifier;
+    return AdminMaxMonstersModifier;
+}
+
+event PlayerController Login(string Portal, string Options, out string Error)
+{
+    local PlayerController PlayerController;
+    local bool bJoinedAsSpectatorOnly;
+
+    PlayerController = Super.Login(Portal, Options, Error);
+
+    if (Level.bLevelChange)
+    {
+        return PlayerController;
+    }
+
+    if (PlayerController == None)
+    {
+        return None;
+    }
+
+    bJoinedAsSpectatorOnly = PlayerController.PlayerReplicationInfo.bOnlySpectator;
+
+    if (!bJoinedAsSpectatorOnly)
+    {
+        PlayerController.PlayerReplicationInfo.Score = GetPlayerStartingCash();
+    }
+
+    if (bJoinedAsSpectatorOnly && bWaveInProgress)
+    {
+        TurboPlayerController(PlayerController).bWasSpectatingWave = true;
+    }
+
+    return PlayerController;
+}
+
+function Logout(Controller Exiting)
+{
+    if (!Level.bLevelChange && TurboPlayerController(Exiting) != None)
+    {
+        DistributeCash(TurboPlayerController(Exiting));
+    }
+
+    Super.Logout(Exiting);
+}
+
+function DistributeCash(TurboPlayerController ExitingPlayer)
+{
+	local int Index;
+	local float Score;
+	local array<TurboPlayerController> PlayerList;
+
+	PlayerList = class'TurboGameplayHelper'.static.GetPlayerControllerList(Level);
+    
+    if (PlayerList.Length == 0)
+    {
+        return;
+    }
+
+	Score = ExitingPlayer.PlayerReplicationInfo.Score;
+	Score -= float(GetPlayerStartingCash());
+	Score = Score / float(PlayerList.Length);
+
+	if (Score < 1.f)
+	{
+		return;
+	}
+
+	for (Index = PlayerList.Length - 1; Index >= 0; Index--)
+	{
+        if (ExitingPlayer == PlayerList[Index])
+        {
+            continue;
+        }
+
+		PlayerList[Index].PlayerReplicationInfo.Score += Score;
+		PlayerList[Index].PlayerReplicationInfo.NetUpdateTime = Level.TimeSeconds - ((1.f / PlayerList[Index].PlayerReplicationInfo.NetUpdateFrequency) + 1.f);
+	}
+}
+
+function int GetPlayerStartingCash()
+{
+    return StartingCash;
+}
+
 //Provide full context on something dying to TurboGameRules.
 function Killed(Controller Killer, Controller Killed, Pawn KilledPawn, class<DamageType> DamageType)
 {
@@ -390,14 +554,70 @@ function SetupWave()
 {
 	Super.SetupWave();
 
-    MaxMonsters = float(MaxMonsters) * GameMaxMonstersModifier * MapMaxMonstersModifier;
+    MaxMonsters = float(MaxMonsters) * GameMaxMonstersModifier * MapMaxMonstersModifier * AdminMaxMonstersModifier;
 
-    TotalMaxMonsters = float(TotalMaxMonsters) * GameTotalMonstersModifier;
+    TotalMaxMonsters = CalculateTotalMaxMonster();
     KFGameReplicationInfo(Level.Game.GameReplicationInfo).MaxMonsters = TotalMaxMonsters;
 	
-    ClearTraderEndVotes();
+    DoWaveStartForPlayers();
+
     class'KFTurboMut'.static.FindMutator(Self).OnWaveStart();
 	class'TurboWaveEventHandler'.static.BroadcastWaveStarted(Self, WaveNum);
+}
+
+function int CalculateTotalMaxMonster()
+{
+    local int NewTotalMaxMonsters;
+    local float Modifier;
+    NewTotalMaxMonsters = Waves[WaveNum].WaveMaxMonsters;
+    Modifier = 1.f;
+
+    if (GameDifficulty >= 7.0)
+    {
+        Modifier *= 1.7f;
+    }
+    else if (GameDifficulty >= 5.0)
+    {
+        Modifier *= 1.5f;
+    }
+    else if (GameDifficulty >= 4.0)
+    {
+        Modifier *= 1.3f;
+    }
+    else if (GameDifficulty >= 2.0)
+    {
+        Modifier *= 1.f;
+    }
+    else
+    {
+        Modifier *= 0.7f;
+    }
+
+    switch (GetMaxMonsterPlayerCount())
+    {
+        case 1:
+            Modifier *= 1.f;
+            break;
+        case 2:
+            Modifier *= 2.f;
+            break;
+        case 3:
+            Modifier *= 2.75f;
+            break;
+        case 4:
+            Modifier *= 3.5f;
+            break;
+        case 5:
+            Modifier *= 4.f;
+            break;
+        case 6:
+            Modifier *= 4.5f;
+            break;
+        default:
+            Modifier *= float(GetMaxMonsterPlayerCount()) * 0.8f;
+    }
+
+    return float(NewTotalMaxMonsters) * Modifier * GameTotalMonstersModifier;
 }
 
 //Function needs to be declared outside of state scope if it wants to be called outside of the state's scope...
@@ -409,11 +629,22 @@ state MatchInProgress
 {
     function BeginState()
     {
+        local KFTurboMut KFTurboMut;
+
         Super.BeginState();
 
-        if (class'KFTurboMut'.static.HasVersionUpdate(Self))
+        KFTurboMut = class'KFTurboMut'.static.FindMutator(Self);
+        if (KFTurboMut != None)
         {
-            BroadcastLocalized(Level.GRI, class'TurboVersionLocalMessage');
+            if (KFTurboMut.HasVersionUpdate())
+            {
+                BroadcastLocalized(Level.GRI, class'TurboVersionLocalMessage');
+            }
+
+            if (MapConfigurationObject != None && MapConfigurationObject.bSkipInitialMonsterWander)
+            {
+                KFTurboMut.bSkipInitialMonsterWander = true;
+            }
         }
 
         NotifyTurboMutatorGameStart();
@@ -433,9 +664,9 @@ state MatchInProgress
 
     function OpenShops()
     {
-        if ( WaveCountDown == 59 && WaveNum % 3 == 0)
+        if (WaveCountDown == 59 && WaveNum % 3 == 0)
         {
-            BroadcastLocalizedMessage(class'TurboEndTraderVoteMessage', 0); //EEndTraderVoteMessage.VoteHint
+            BroadcastLocalizedMessage(class'TurboEndTraderVoteMessage', 0);
         }
 
 		if (!HasAnyTraders())
@@ -462,7 +693,7 @@ state MatchInProgress
 
 	function float CalcNextSquadSpawnTime()
 	{
-		return Super.CalcNextSquadSpawnTime() / (GameWaveSpawnRateModifier * MapWaveSpawnRateModifier);
+		return Super.CalcNextSquadSpawnTime() / (GameWaveSpawnRateModifier * MapWaveSpawnRateModifier * AdminSpawnRateModifier);
 	}
 	
 	function StartWaveBoss()
@@ -510,6 +741,7 @@ state MatchInProgress
         }
 
         InvasionGameReplicationInfo(GameReplicationInfo).WaveNumber = WaveNum;
+        class'KFTurboMut'.static.FindMutator(Self).OnWaveEnd();
 		class'TurboWaveEventHandler'.static.BroadcastWaveEnded(Self, WaveNum - 1);
 	}
 }
@@ -540,78 +772,12 @@ function bool CheckEndGame(PlayerReplicationInfo Winner, string Reason)
     if (!bGameIsOver && KFGameReplicationInfo(GameReplicationInfo).EndGameType != 0)
     {
 		class'TurboWaveEventHandler'.static.BroadcastGameEnded(Self, KFGameReplicationInfo(GameReplicationInfo).EndGameType);
-        NotifyTurboMutatorGameEnd(KFGameReplicationInfo(GameReplicationInfo).EndGameType);
     }
 
     return bResult;
 }
 
-//Check if enough people have voted to end the trader and end it.
-function AttemptTraderEnd(TurboPlayerController VoteInstigator)
-{
-    local int Index, NumVoters, NumVotes;
-    local TurboPlayerReplicationInfo TPRI;
-    local float VotePercent;
-    local bool bAdminVoted;
-    
-    if (bWaveInProgress || WaveCountDown <= 10)
-	{
-		return;
-	}
-
-    if (StaticIsTestGameType(Self))
-    {
-        return;
-    }
-
-    NumVoters = 0;
-    NumVotes = 0;
-    bAdminVoted = false;
-
-	for (Index = Level.GRI.PRIArray.Length - 1; Index >= 0; Index--)
-	{
-		TPRI = TurboPlayerReplicationInfo(Level.GRI.PRIArray[Index]);
-
-        if (TPRI == None || TPRI.bOnlySpectator)
-        {
-            continue;
-        }
-
-        NumVoters++;
-        
-        if (TPRI.bVotedForTraderEnd)
-        {
-            NumVotes++;
-
-            if (TPRI.bAdmin)
-            {
-                bAdminVoted = true;
-            }
-        }
-    }
-
-    if (NumVoters == 0)
-    {
-        return;
-    }
-
-    VotePercent = float(NumVotes) / float(NumVoters);
-
-    if (bAdminVoted || VotePercent >= 0.51f)
-    {
-        WaveCountDown = Min(WaveCountDown, 10);
-        TurboGameReplicationInfo(GameReplicationInfo).TimeToNextWave = WaveCountDown;
-        return;
-    }
-    
-    //This means someone instigated a vote.
-    if (NumVotes == 1)
-    {
-        BroadcastLocalizedMessage(class'TurboEndTraderVoteMessage', 1, VoteInstigator.PlayerReplicationInfo); //EEndTraderVoteMessage.VoteStarted
-    }
-}
-
-function ClearTraderEndVotes()
+function DoWaveStartForPlayers()
 {
     local int Index;
     local TurboPlayerReplicationInfo TPRI;
@@ -624,8 +790,11 @@ function ClearTraderEndVotes()
         {
             continue;
         }
-
-        TPRI.ClearTraderEndVote();
+        
+        if (TurboPlayerController(TPRI.Owner) != None)
+        {
+            TurboPlayerController(TPRI.Owner).bWasSpectatingWave = TPRI.bOnlySpectator;
+        }
     }
 }
 
@@ -634,13 +803,6 @@ function NotifyTurboMutatorGameStart()
     local KFTurboMut TurboMut;
     TurboMut = class'KFTurboMut'.static.FindMutator(Self);
     TurboMut.OnGameStart();
-}
-
-function NotifyTurboMutatorGameEnd(int Result)
-{
-    local KFTurboMut TurboMut;
-    TurboMut = class'KFTurboMut'.static.FindMutator(Self);
-    TurboMut.OnGameEnd(Result);
 }
 
 defaultproperties
@@ -654,8 +816,12 @@ defaultproperties
 
 	GameWaveSpawnRateModifier=1.f
     MapWaveSpawnRateModifier=1.f
+    AdminSpawnRateModifier=1.f
+
     GameMaxMonstersModifier=1.f
     MapMaxMonstersModifier=1.f
+    AdminMaxMonstersModifier=1.f
+
     GameTotalMonstersModifier=1.f
     GameTraderTimeModifier=1.f
     bHasSpawnedBoss=false
@@ -678,10 +844,15 @@ defaultproperties
 
 	GameReplicationInfoClass=Class'KFTurbo.TurboGameReplicationInfo'
 	
+    MapPrefix="KF"
+    BeaconName="KF"
+    Acronym="KF"
+    
     GameName="Killing Floor Turbo Game Type"
     Description="KF Turbo version of default Killing Floor Game Type."
     ScreenShotName="KFTurbo.Generic.KFTurbo_FB"
 
+    HUDType="KFTurbo.TurboHUDKillingFloor"
 	ScoreBoardType="KFTurbo.TurboHUDScoreboard"
 
     Waves(0)=(WaveMask=196611,WaveMaxMonsters=20,WaveDuration=255,WaveDifficulty=0.100000)

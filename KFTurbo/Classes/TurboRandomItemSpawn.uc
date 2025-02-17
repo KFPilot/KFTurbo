@@ -1,3 +1,6 @@
+//Killing Floor Turbo TurboRandomItemSpawn
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class TurboRandomItemSpawn extends KFMod.KFRandomItemSpawn;
 
 defaultproperties

@@ -1,6 +1,6 @@
 //Killing Floor Turbo TurboHealEventHandler
 //Base class for heal events in KFTurbo. See TurboHealEventHandlerImpl for example implementation.
-//Distributed under the terms of the GPL-2.0 License.
+//Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
 class TurboHealEventHandler extends Object;
 

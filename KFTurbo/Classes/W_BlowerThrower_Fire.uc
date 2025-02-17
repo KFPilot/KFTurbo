@@ -1,3 +1,6 @@
+//Killing Floor Turbo W_BlowerThrower_Fire
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class W_BlowerThrower_Fire extends BlowerThrowerFire;
 
 var int FireEffectCount;

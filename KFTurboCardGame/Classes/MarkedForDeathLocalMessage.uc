@@ -1,5 +1,5 @@
 //Killing Floor Turbo MarkedForDeathLocalMessage
-//Distributed under the terms of the GPL-2.0 License.
+//Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
 class MarkedForDeathLocalMessage extends TurboLocalMessage;
 
@@ -20,4 +20,6 @@ defaultproperties
     Lifetime=10
 
     MarkedForDeathString="%k%player%d has been %kmarked for death%d this wave!"
+    
+    bRelevantToInGameChat=true
 }

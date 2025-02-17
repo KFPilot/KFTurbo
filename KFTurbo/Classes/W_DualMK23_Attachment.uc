@@ -1,3 +1,6 @@
+//Killing Floor Turbo W_DualMK23_Attachment
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class W_DualMK23_Attachment extends DualMK23Attachment;
 
 var	array<string> SkinRefs;

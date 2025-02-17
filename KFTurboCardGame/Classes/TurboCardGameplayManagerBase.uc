@@ -2,7 +2,7 @@
 //Handles all modifications, deltas and flags that Card Game is applying.
 //Responsible for setting these values elsewhere/spinning up actors to handle the actual gameplay changes.
 //Also has a bunch of convenience functions to help debloat TurboCardGameplayManager.
-//Distributed under the terms of the GPL-2.0 License.
+//Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
 class TurboCardGameplayManagerBase extends Engine.Info;
 

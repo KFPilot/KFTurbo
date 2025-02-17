@@ -1,5 +1,5 @@
 //Killing Floor Turbo TurboVeterancyTypes
-//Distributed under the terms of the GPL-2.0 License.
+//Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
 class TurboVeterancyTypes extends SRVeterancyTypes
 	abstract;
@@ -26,14 +26,25 @@ static final function bool IsHighDifficulty( Actor Actor )
 
 static final function bool IsPerkWeapon( class<KFWeapon> Weapon )
 {
+	local class<KFWeaponPickup> WeaponPickupClass;
+
 	if (Weapon == None || default.PerkIndex == 255)
 	{
 		return false;
 	}
 
-	if (class<KFWeaponPickup>(Weapon.default.PickupClass) != none)
+	WeaponPickupClass = class<KFWeaponPickup>(Weapon.default.PickupClass);
+
+	if (WeaponPickupClass != None)
 	{
-		return class<KFWeaponPickup>(Weapon.default.PickupClass).default.CorrespondingPerkIndex == default.PerkIndex;
+		if (WeaponPickupClass.default.CorrespondingPerkIndex == default.PerkIndex)
+		{
+			return true;
+		}
+		else if (default.PerkIndex == class'V_Commando'.default.PerkIndex && (class<W_M4203_Weap>(Weapon) != None || class<W_ThompsonSMG_Weap>(Weapon) != None))
+		{
+			return true;
+		}
 	}
 
 	return false;

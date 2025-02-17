@@ -1,3 +1,6 @@
+//Killing Floor Turbo W_V_MK23_Cyber_Pickup
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class W_V_MK23_Cyber_Pickup extends W_MK23_Pickup;
 
 function inventory SpawnCopy( pawn Other )

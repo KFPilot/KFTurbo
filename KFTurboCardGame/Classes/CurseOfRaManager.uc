@@ -1,5 +1,5 @@
 //Killing Floor Turbo CurseOfRaManager
-//Distributed under the terms of the GPL-2.0 License.
+//Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
 class CurseOfRaManager extends Engine.Info;
 
@@ -207,7 +207,7 @@ function RandomlyRageFleshpound()
 
     Fleshpound.StartCharging();
     Fleshpound.bFrustrated = true;
-    AI_Fleshpound(Fleshpound.Controller).bForcedRage = true;
+    AI_Fleshpound(Fleshpound.Controller).bForcedRage = FRand() > 0.5f;
 }
 
 function RandomlySetOffNearbyPipebomb()

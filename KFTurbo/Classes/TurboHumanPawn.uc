@@ -1,5 +1,5 @@
 //Killing Floor Turbo TurboHumanPawn
-//Distributed under the terms of the GPL-2.0 License.
+//Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
 class TurboHumanPawn extends SRHumanPawn;
 
@@ -241,7 +241,7 @@ simulated function SpotCloakedMonsters()
 {
 	local KFMonster Monster;
 	local float SpottingRange;
-	SpottingRange = 1600.f;
+	SpottingRange = 2000.f;
 
 	if (NextCloakCheckTime > Level.TimeSeconds)
 	{
@@ -834,11 +834,47 @@ function ServerSellWeapon( Class<Weapon> WClass )
 	}
 }
 
+function AddDefaultInventory()
+{
+	Super.AddDefaultInventory();
+
+	if (W_Frag_Weap(Weapon) != None)
+	{
+		EquipAnythingButGrenade();
+	}
+}
+
+function EquipAnythingButGrenade()
+{
+	local Weapon OtherWeapon;
+	local float Rating;
+	OtherWeapon = Inventory.RecommendWeapon(Rating);
+
+	if (OtherWeapon == None)
+	{
+		OtherWeapon = Weapon(FindInventoryType(class'KFTurbo.W_Knife_Weap'));
+
+		if (OtherWeapon == None)
+		{
+			return;
+		}
+	}
+
+	Weapon = OtherWeapon;
+	PendingWeapon = None;
+	Weapon.BringUp();
+}
+
 function TossWeapon(Vector TossVel)
 {
 	local Vector X,Y,Z;
 	local Inventory WeaponToToss;
 	local float Rating;
+
+	if (Level.bLevelChange)
+	{
+		return;
+	}
 
 	if (Health > 0)
 	{
@@ -913,4 +949,5 @@ defaultproperties
 	RequiredEquipment(1)="KFTurbo.W_9MM_Weap"
 	RequiredEquipment(2)="KFTurbo.W_Frag_Weap"
     RequiredEquipment(3)="KFTurbo.W_Syringe_Weap"
+	RequiredEquipment(4)="KFMod.Welder"
 }

@@ -1,3 +1,6 @@
+//Killing Floor Turbo W_SeekerSix_Seeking_Proj
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class W_SeekerSix_Seeking_Proj extends W_SeekerSix_Proj;
 
 var Actor Seeking;

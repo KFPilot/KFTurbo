@@ -1,5 +1,5 @@
 //Killing Floor Turbo P_Fleshpound
-//Distributed under the terms of the GPL-2.0 License.
+//Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
 class P_Fleshpound extends ZombieFleshpound
     abstract
@@ -41,7 +41,7 @@ function TakeDamage( int Damage, Pawn InstigatedBy, Vector Hitlocation, Vector M
 
 	if (Role == ROLE_Authority)
 	{
-		class'PawnHelper'.static.TakeDamage(Damage, InstigatedBy, HitLocation, Momentum, DamageType, HitIndex, AfflictionData);
+		class'PawnHelper'.static.TakeDamage(Self, Damage, InstigatedBy, HitLocation, Momentum, DamageType, HitIndex, AfflictionData);
 	}
 
     if (DamageType == class 'DamTypeVomit')
@@ -77,20 +77,28 @@ function TakeDamage( int Damage, Pawn InstigatedBy, Vector Hitlocation, Vector M
         }
 
         bIsHeadShot = IsHeadShot(Hitlocation, normal(Momentum), HeadShotCheckScale);
-
+        // Commando weapons don't get the damage reduction
+		if (bIsHeadShot && class'V_Commando'.static.IsPerkDamageType(WeaponDamageType))
+        {
+            // Do nothing
+        }
 		// Don't reduce the damage so much if its a high headshot damage weapon
-		if( (bIsHeadShot && WeaponDamageType.default.HeadShotDamageMult >= 1.5) || (class<DamTypeCrossbuzzsaw>(DamageType) != None))
+        else if( (bIsHeadShot && WeaponDamageType.default.HeadShotDamageMult >= 1.5) || (class<DamTypeCrossbuzzsaw>(DamageType) != None))
 		{
 			Damage *= 0.75;
 		}
-		else if (class<DamTypeM99SniperRifle>(DamageType) != none)
+		else if (class<DamTypeM99SniperRifle>(DamageType) != None)
 		{
 			Damage *= 0.525;
 		}
-		else if ( Level.Game.GameDifficulty >= 5.0 && bIsHeadshot && class<DamTypeCrossbow>(DamageType) != none )
+		else if (Level.Game.GameDifficulty >= 5.0 && bIsHeadshot && class<DamTypeCrossbow>(DamageType) != None)
 		{
 			Damage *= 0.35; // was 0.3 in Balance Round 1, then 0.4 in Round 2, then 0.3 in Round 3/4, and 0.35 in Round 5
 		}
+        else if (class<DamTypeCrossbuzzsaw>(DamageType) != None)
+        {
+            Damage *= 0.62f;
+        }
 		else
 		{
 			Damage *= 0.5;
@@ -148,11 +156,11 @@ function bool MeleeDamageTarget(int HitDamage, vector PushDirection)
 
 simulated function Tick(float DeltaTime)
 {
-    class'PawnHelper'.static.PreTickAfflictionData(DeltaTime, self, AfflictionData);
+    class'PawnHelper'.static.PreTickAfflictionData(Self, DeltaTime, self, AfflictionData);
 
     Super.Tick(DeltaTime);
 
-    class'PawnHelper'.static.TickAfflictionData(DeltaTime, self, AfflictionData);
+    class'PawnHelper'.static.TickAfflictionData(Self, DeltaTime, self, AfflictionData);
 
     if(bSTUNNED && bUnstunTimeReady && UnstunTime < Level.TimeSeconds)
     {

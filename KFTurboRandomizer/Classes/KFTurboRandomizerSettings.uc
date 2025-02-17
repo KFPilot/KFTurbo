@@ -1,6 +1,6 @@
 //Killing Floor Turbo KFTurboRandomizerSettings
 //Configures the randomizer. Allows for modular implementations for the randomizer.
-//Distributed under the terms of the GPL-2.0 License.
+//Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
 class KFTurboRandomizerSettings extends Object;
 
@@ -22,122 +22,64 @@ var class<KFWeapon> SyringeWeaponClass;
 var class<KFWeapon> WelderWeaponClass;
 var class<KFWeapon> KnifeWeaponClass;
 
-var array<KFTurboRandomizerLoadout> UsedEarlyWaveLoadoutList;
-
-var array<KFTurboRandomizerLoadout> UsedFleshpoundLoadoutList;
-var array<KFTurboRandomizerLoadout> UsedScrakeLoadoutList;
-
-var array<KFTurboRandomizerLoadout> UsedMiscLoadoutList;
-var array<KFTurboRandomizerLoadout> UsedFunnyLoadoutList;
-
-var array<KFTurboRandomizerLoadout> UsedPatriarchTypeALoadoutList;
-var array<KFTurboRandomizerLoadout> UsedPatriarchTypeBLoadoutList;
-var array<KFTurboRandomizerLoadout> UsedPatriarchFunnyLoadoutList;
-
-static final function RestoreLoadoutCollection(KFTurboRandomizerLoadoutCollection LoadoutCollection, out array<KFTurboRandomizerLoadout> UsedLoadoutList)
+function InitializeCollection()
 {
-    local int LoadoutIndex, UsedLoadoutIndex;
-    local bool bFoundLoadout;
+    EarlyWaveLoadout.InitializeCollection();
 
-    //Reset the loadout collection list.
-    LoadoutCollection.LoadoutList = LoadoutCollection.default.LoadoutList;
+    FleshpoundLoadout.InitializeCollection();
+    ScrakeLoadout.InitializeCollection();
+    
+    MiscLoadout.InitializeCollection();
+    FunnyLoadout.InitializeCollection();
 
-    //Go through the used loadouts for this loadout collection and remove the ones we've used.
-    for (LoadoutIndex = LoadoutCollection.LoadoutList.Length - 1; LoadoutIndex >= 0; LoadoutIndex--)
-    {
-        //Get rid of any accidentally empty elements.
-        if (LoadoutCollection.LoadoutList[LoadoutIndex] == None)
-        {
-            LoadoutCollection.LoadoutList.Remove(LoadoutIndex, 1);
-            continue;
-        }
-
-        bFoundLoadout = false;
-        for (UsedLoadoutIndex = UsedLoadoutList.Length - 1; UsedLoadoutIndex >= 0; UsedLoadoutIndex--)
-        {
-            if (LoadoutCollection.LoadoutList[LoadoutIndex] != UsedLoadoutList[UsedLoadoutIndex])
-            {
-                continue;
-            }
-
-            bFoundLoadout = true;
-            break;
-        }
-
-        if (!bFoundLoadout)
-        {
-            continue;
-        }
-
-        LoadoutCollection.LoadoutList.Remove(LoadoutIndex, 1);
-    }
-
-    //Empty the used loadout list.
-    UsedLoadoutList.Length = 0;
-}
-
-static final function KFTurboRandomizerLoadout TakeLoadout(int Index, KFTurboRandomizerLoadoutCollection LoadoutCollection, out array<KFTurboRandomizerLoadout> UsedLoadoutList)
-{
-    local KFTurboRandomizerLoadout Loadout;
-    Loadout = LoadoutCollection.LoadoutList[Index];
-    LoadoutCollection.LoadoutList.Remove(Index, 1);
-    UsedLoadoutList[UsedLoadoutList.Length] = Loadout;
-    return Loadout;
+    PatriarchTypeALoadout.InitializeCollection();
+    PatriarchTypeBLoadout.InitializeCollection();
+    PatriarchFunnyLoadout.InitializeCollection();
 }
 
 function PrepareRandomization()
 {
-    RestoreLoadoutCollection(EarlyWaveLoadout, UsedEarlyWaveLoadoutList);
 
-    RestoreLoadoutCollection(FleshpoundLoadout, UsedFleshpoundLoadoutList);
-    RestoreLoadoutCollection(ScrakeLoadout,  UsedScrakeLoadoutList);
-    
-    RestoreLoadoutCollection(MiscLoadout, UsedMiscLoadoutList);
-    RestoreLoadoutCollection(FunnyLoadout,  UsedFunnyLoadoutList);
-
-    RestoreLoadoutCollection(PatriarchTypeALoadout, UsedPatriarchTypeALoadoutList);
-    RestoreLoadoutCollection(PatriarchTypeBLoadout, UsedPatriarchTypeBLoadoutList);
-    RestoreLoadoutCollection(PatriarchFunnyLoadout, UsedPatriarchFunnyLoadoutList);
 }
 
 function KFTurboRandomizerLoadout GetRandomFleshpoundLoadout()
 {
-    return TakeLoadout(FleshpoundLoadout.GetRandomIndex(), FleshpoundLoadout, UsedFleshpoundLoadoutList);
+    return FleshpoundLoadout.GetRandomLoadout();
 }
 
 function KFTurboRandomizerLoadout GetRandomScrakeLoadout()
 {
-    return TakeLoadout(ScrakeLoadout.GetRandomIndex(), ScrakeLoadout, UsedScrakeLoadoutList);
+    return ScrakeLoadout.GetRandomLoadout();
 }
 
 function KFTurboRandomizerLoadout GetRandomEarlyWaveLoadout()
 {
-    return TakeLoadout(EarlyWaveLoadout.GetRandomIndex(), EarlyWaveLoadout, UsedEarlyWaveLoadoutList);
+    return EarlyWaveLoadout.GetRandomLoadout();
 }
 
 final function KFTurboRandomizerLoadout GetRandomMiscLoadout()
 {
-    return TakeLoadout(MiscLoadout.GetRandomIndex(), MiscLoadout, UsedMiscLoadoutList);
+    return MiscLoadout.GetRandomLoadout();
 }
 
 final function KFTurboRandomizerLoadout GetRandomFunnyLoadout()
 {
-    return TakeLoadout(FunnyLoadout.GetRandomIndex(), FunnyLoadout, UsedFunnyLoadoutList);
+    return FunnyLoadout.GetRandomLoadout();
 }
 
 final function KFTurboRandomizerLoadout GetRandomPatriarchTypeALoadout()
 {
-    return TakeLoadout(PatriarchTypeALoadout.GetRandomIndex(), PatriarchTypeALoadout, UsedPatriarchTypeALoadoutList);
+    return PatriarchTypeALoadout.GetRandomLoadout();
 }
 
 final function KFTurboRandomizerLoadout GetRandomPatriarchTypeBLoadout()
 {
-    return TakeLoadout(PatriarchTypeBLoadout.GetRandomIndex(), PatriarchTypeBLoadout, UsedPatriarchTypeBLoadoutList);
+    return PatriarchTypeBLoadout.GetRandomLoadout();
 }
 
 final function KFTurboRandomizerLoadout GetRandomPatriarchFunnyLoadout()
 {
-    return TakeLoadout(PatriarchFunnyLoadout.GetRandomIndex(), PatriarchFunnyLoadout, UsedPatriarchFunnyLoadoutList);
+    return PatriarchFunnyLoadout.GetRandomLoadout();
 }
 
 defaultproperties

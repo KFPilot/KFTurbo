@@ -1,3 +1,6 @@
+//Killing Floor Turbo TurboBuyMenuInvListBox
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class TurboBuyMenuInvListBox extends SRKFBuyMenuInvListBox;
 
 delegate OnInvItemClicked(GUIBuyable SelectedInvItem);

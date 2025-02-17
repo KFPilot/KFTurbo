@@ -1,3 +1,6 @@
+//Killing Floor Turbo W_M4203_Fire_Bullet
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class W_M4203_Fire_Bullet extends KFFire;
 
 function DoFireEffect()
@@ -8,7 +11,7 @@ function DoFireEffect()
 
 function DoTrace(Vector Start, Rotator Direction)
 {
-	class'WeaponHelper'.static.PenetratingWeaponTrace(Start, Direction, KFWeapon(Weapon), self, 0, 0.0);
+	class'WeaponHelper'.static.PenetratingWeaponTrace(Start, Direction, KFWeapon(Weapon), self, 2, 0.5);
 }
 
 defaultproperties

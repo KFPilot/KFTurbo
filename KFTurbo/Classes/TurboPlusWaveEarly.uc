@@ -1,3 +1,6 @@
+//Killing Floor Turbo TurboPlusWaveEarly
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class TurboPlusWaveEarly extends TurboMonsterWave;
 
 static final function float GetPlayerCountMaxMonstersModifier(int PlayerCount)

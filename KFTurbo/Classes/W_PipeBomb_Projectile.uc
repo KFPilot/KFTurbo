@@ -1,3 +1,6 @@
+//Killing Floor Turbo W_PipeBomb_Projectile
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class W_PipeBomb_Projectile extends PipeBombProjectile;
 
 var Sound DeflectSound;
@@ -17,6 +20,16 @@ static function bool UnloadAssets()
     default.DeflectSound = None;
 
 	return true;
+}
+
+simulated function PostBeginPlay()
+{
+    Super.PostBeginPlay();
+
+    if (Level.NetMode == NM_DedicatedServer)
+    {
+        ExplodeSounds[0] = None;
+    }
 }
 
 function TakeDamage( int Damage, Pawn InstigatedBy, Vector Hitlocation, Vector Momentum, class<DamageType> DamageType, optional int HitIndex)

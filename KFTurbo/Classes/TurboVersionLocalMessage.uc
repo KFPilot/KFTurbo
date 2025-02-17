@@ -1,6 +1,6 @@
 //Killing Floor Turbo TurboVersionLocalMessage
 //Message to say there's an update available.
-//Distributed under the terms of the GPL-2.0 License.
+//Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
 class TurboVersionLocalMessage extends TurboLocalMessage;
 

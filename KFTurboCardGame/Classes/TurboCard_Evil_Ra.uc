@@ -1,5 +1,5 @@
 //Killing Floor Turbo TurboCard_Evil_Ra
-//Distributed under the terms of the GPL-2.0 License.
+//Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
 class TurboCard_Evil_Ra extends TurboCard_Evil;
 

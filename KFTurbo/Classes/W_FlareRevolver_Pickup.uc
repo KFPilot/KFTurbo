@@ -1,26 +1,26 @@
+//Killing Floor Turbo W_FlareRevolver_Pickup
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class W_FlareRevolver_Pickup extends FlareRevolverPickup;
 
 function inventory SpawnCopy( pawn Other )
 {
-	local Inventory I;
-
-	for ( I = Other.Inventory; I != none; I = I.Inventory )
-	{
-		if ( FlareRevolver(I) != none )
-		{
-			if( Inventory != none )
-				Inventory.Destroy();
-			InventoryType = Class'W_DualFlare_Weap';
-            AmmoAmount[0] += FlareRevolver(I).AmmoAmount(0);
-            MagAmmoRemaining += FlareRevolver(I).MagAmmoRemaining;
-			I.Destroyed();
-			I.Destroy();
-			Return Super(KFWeaponPickup).SpawnCopy(Other);
-		}
-	}
-	InventoryType = Default.InventoryType;
-	Return Super(KFWeaponPickup).SpawnCopy(Other);
+	class'WeaponHelper'.static.SingleWeaponSpawnCopy(Self, Other, class'W_DualFlare_Weap');
+	return Super(KFWeaponPickup).SpawnCopy(Other);
 }
+
+function Destroyed()
+{
+	if (Inventory != None)
+	{
+		Super.Destroyed();
+	}
+	else
+	{
+		Super(WeaponPickup).Destroyed();
+	}
+}
+
 defaultproperties
 {
      InventoryType=Class'KFTurbo.W_FlareRevolver_Weap'

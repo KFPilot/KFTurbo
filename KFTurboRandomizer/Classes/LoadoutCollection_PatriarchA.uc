@@ -1,6 +1,6 @@
 //Killing Floor Turbo LoadoutCollection_PatriarchA
 //Represents Patriarch melee locking loadouts
-//Distributed under the terms of the GPL-2.0 License.
+//Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
 class LoadoutCollection_PatriarchA extends KFTurboRandomizerLoadoutCollection;
 

@@ -1,5 +1,5 @@
 //Killing Floor Turbo TurboTextReactionSettings
-//Distributed under the terms of the GPL-2.0 License.
+//Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
 class TurboTextReactionSettings extends TextReactionSettings;
 
@@ -9,6 +9,7 @@ struct TextSoundMap
     var string SoundRef;
     var Sound Sound;
     var float CooldownTime;
+    var bool bFullCooldown;
 };
 
 var array<TextSoundMap> TextSoundList;
@@ -51,12 +52,23 @@ simulated function ReceivedMessage(TurboPlayerController PlayerController, strin
                 }
             }
 
-            if (TextSoundList[Index].CooldownTime > PlayerController.Level.TimeSeconds)
+            if (!PRI.bAdmin)
             {
-                return;
+                if (TextSoundList[Index].CooldownTime > PlayerController.Level.TimeSeconds)
+                {
+                    return;
+                }
+
+                if (TextSoundList[Index].bFullCooldown)
+                {
+                    TextSoundList[Index].CooldownTime = PlayerController.Level.TimeSeconds + TextSoundList[Index].Sound.Duration + 0.5f;
+                }
+                else
+                {
+                    TextSoundList[Index].CooldownTime = PlayerController.Level.TimeSeconds + (TextSoundList[Index].Sound.Duration * 0.5f) + 0.5f;
+                }
             }
 
-            TextSoundList[Index].CooldownTime = PlayerController.Level.TimeSeconds + TextSoundList[Index].Sound.Duration + 0.5f;
             PlayLocalSound(PlayerController, TextSoundList[Index].Sound);
             return;
         }
@@ -67,9 +79,10 @@ defaultproperties
 {
     TextSoundList(0)=(Text=":goosecooked:",SoundRef="KFTurbo.UI.goosecooked")
     TextSoundList(1)=(Text=":plink:",SoundRef="KFTurbo.UI.plink")
-    TextSoundList(2)=(Text=":nervous:",SoundRef="KFTurbo.UI.NervousTerran")
+    TextSoundList(2)=(Text=":nervous:",SoundRef="KFTurbo.UI.NervousTerran",bFullCooldown=true)
     TextSoundList(3)=(Text=":peasant:",SoundRef="KFTurbo.UI.Peasant")
-    TextSoundList(4)=(Text=":shame:",SoundRef="KFTurbo.UI.WhatAShame")
+    TextSoundList(4)=(Text=":shame:",SoundRef="KFTurbo.UI.WhatAShame",bFullCooldown=true)
     TextSoundList(5)=(Text=":abouttime:",SoundRef="KFTurbo.UI.abouttime")
-    TextSoundList(6)=(Text=":thatsterror:",SoundRef="KFTurbo.UI.ThatsTerror")
+    TextSoundList(6)=(Text=":thatsterror:",SoundRef="KFTurbo.UI.ThatsTerror",bFullCooldown=true)
+    TextSoundList(7)=(Text=":metalpipe:",SoundRef="KFTurbo.UI.MetalPipe")
 }

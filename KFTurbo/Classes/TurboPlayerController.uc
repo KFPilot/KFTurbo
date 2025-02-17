@@ -1,4 +1,5 @@
 //Killing Floor Turbo TurboPlayerController
+//Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
 class TurboPlayerController extends KFPCServ;
 
@@ -7,8 +8,14 @@ var private TurboRepLink TurboRepLink;
 var class<WeaponRemappingSettings> WeaponRemappingSettings;
 var TurboInteraction TurboInteraction;
 var TurboChatInteraction TurboChatInteraction;
+var class<TurboCommandHandler> TurboCommandHandlerClass; //Can be modified in a Mutator's CheckReplacement() within a submodule. 
+var TurboCommandHandler TurboCommandHandler;
 
 var float ClientNextMarkTime, NextMarkTime;
+var float VoteCooldownTime, NextVoteTime;
+var float NextStartVoteTime;
+
+var float NextSpectateUseTargetTime, SpectateUseTargetCooldown;
 
 var bool bInLoginMenu, bHasClosedLoginMenu;
 var float LoginMenuTime;
@@ -19,6 +26,10 @@ var bool bPipebombUsesSpecialGroup;
 
 var array< class<PerkLockTurboLocalMessage> > PerkChangeLockList;
 
+var protected array<TurboOptionObject> ExternalOptionList;
+
+var bool bWasSpectatingWave;
+
 replication
 {
 	reliable if( Role == ROLE_Authority )
@@ -26,9 +37,11 @@ replication
 	reliable if( Role < ROLE_Authority )
 		ClientSetPipebombUsesSpecialGroup;
 	reliable if( Role < ROLE_Authority )
-		EndTrader, ServerMarkActor, ServerNotifyShoppingState, ServerNotifyLoginMenuState;
+		Vote, VoteTest, ServerMarkActor, ServerNotifyShoppingState, ServerNotifyLoginMenuState;
 	reliable if( Role < ROLE_Authority )
-		ServerDebugSkipWave, ServerDebugRestartWave, ServerDebugSetWave, ServerDebugPreventGameOver, AdminSetTraderTime, AdminSetMaxPlayers;
+		ServerDebugSkipWave, ServerDebugRestartWave, ServerDebugSetWave, ServerDebugPreventGameOver;
+	reliable if( Role < ROLE_Authority )
+		AdminSetTraderTime, AdminSetMaxPlayers, AdminSetFakedPlayer, AdminSetPlayerHealth, AdminSetSpawnRate, AdminSetMaxMonsters, AdminShowSettings;
 }
 
 simulated function PostBeginPlay()
@@ -47,18 +60,43 @@ simulated function PostBeginPlay()
 		Spawn(class'TurboRepLinkFix', Self);
 	}
 
-	if (Role == ROLE_Authority)
+	if (Role == ROLE_Authority && !Level.bLevelChange)
 	{
 		class'TurboPlayerEventHandler'.static.RegisterPlayerEventHandler(Self, class'TurboPlayerStatsEventHandler');
 		class'TurboHealEventHandler'.static.RegisterHealHandler(Self, class'TurboPlayerStatsHealEventHandler');
+		CreateCommandHandler();
 	}
+}
+
+simulated function CreateCommandHandler()
+{
+	if (TurboCommandHandlerClass == None)
+	{
+		TurboCommandHandlerClass = class'TurboCommandHandler';
+	}
+
+	TurboCommandHandler = Spawn(TurboCommandHandlerClass, Self);
 }
 
 simulated function InitInputSystem()
 {
 	Super.InitInputSystem();
 
-	SetupTurboInteraction();
+	if (!Level.bLevelChange)
+	{
+		SetupTurboInteraction();
+	}
+}
+
+exec function ChangeCharacter(string newCharacter, optional string inClass)
+{
+	Super.ChangeCharacter(newCharacter,inClass);
+
+	if (Level.NetMode == NM_Standalone && xPawn(Pawn) != None && PawnSetupRecord.Species != None)
+	{
+		xPawn(Pawn).bAlreadySetup = false;
+		PawnSetupRecord.Species.static.Setup(Pawn, PawnSetupRecord);
+	}
 }
 
 simulated function Tick(float DeltaTime)
@@ -112,6 +150,11 @@ simulated function SetupTurboInteraction()
 	if (TurboInteraction == None)
 	{
 		TurboInteraction = TurboInteraction(Player.InteractionMaster.AddInteraction("KFTurbo.TurboInteraction", Player));
+
+		if (TurboInteraction != None)
+		{
+			TurboInteraction.OnInteractionCreated();
+		}
 	}
 
 	if (TurboChatInteraction == None)
@@ -156,14 +199,12 @@ function ServerNotifyLoginMenuState(bool bNewLoginMenuState)
 
 simulated function ClientSetHUD(class<HUD> newHUDClass, class<Scoreboard> newScoringClass )
 {
-	if (class'KFTurboMut'.static.GetHUDReplacementClass(string(newHUDClass)) ~= string(class'KFTurbo.TurboHUDKillingFloor'))
+	if (class<TurboHUDKillingFloor>(newHUDClass) == None)
 	{
 		Super.ClientSetHUD(class'KFTurbo.TurboHUDKillingFloor', newScoringClass);
 	}
-	else
-	{
-		Super.ClientSetHUD(newHUDClass, newScoringClass);
-	}
+
+	Super.ClientSetHUD(newHUDClass, newScoringClass);
 }
 
 event ClientOpenMenu(string Menu, optional bool bDisconnect,optional string Msg1, optional string Msg2)
@@ -184,6 +225,14 @@ event ClientOpenMenu(string Menu, optional bool bDisconnect,optional string Msg1
 
 simulated event ReceiveLocalizedMessage(class<LocalMessage> Message, optional int Switch, optional PlayerReplicationInfo RelatedPRI_1, optional PlayerReplicationInfo RelatedPRI_2, optional Object OptionalObject )
 {
+	local class<TurboLocalMessage> TurboLocalMessage;
+	local string LocalMessageString;
+
+	if (Level.NetMode == NM_DedicatedServer || GameReplicationInfo == None)
+	{
+		return;
+	}
+
 	switch(Message)
 	{
 		case class'KFMod.WaitingMessage':
@@ -197,12 +246,31 @@ simulated event ReceiveLocalizedMessage(class<LocalMessage> Message, optional in
 			break;
 	}
 
-	if (class<TurboLocalMessage>(Message) != None && class<TurboLocalMessage>(Message).static.IgnoreLocalMessage(Self, Switch, RelatedPRI_1, RelatedPRI_2, OptionalObject))
+	TurboLocalMessage = class<TurboLocalMessage>(Message);
+
+	if (TurboLocalMessage != None && TurboLocalMessage.static.IgnoreLocalMessage(Self, Switch, RelatedPRI_1, RelatedPRI_2, OptionalObject))
 	{
 		return;
 	}
+
+    Message.Static.ClientReceive( Self, Switch, RelatedPRI_1, RelatedPRI_2, OptionalObject );
 	
-	Super.ReceiveLocalizedMessage(Message, Switch, RelatedPRI_1, RelatedPRI_2, OptionalObject);
+	if (Player == None || Player.Console == None)
+	{
+		return;
+	}
+
+	LocalMessageString = Message.Static.GetString(Switch, RelatedPRI_1, RelatedPRI_2, OptionalObject);
+
+	if (Message.static.IsConsoleMessage(Switch))
+	{
+		Player.Console.Message(LocalMessageString, 0);
+	}
+	
+	if (TurboLocalMessage != None && TurboLocalMessage.static.IsRelevantToInGameChat(Self, Switch, RelatedPRI_1, RelatedPRI_2, OptionalObject) && ExtendedConsole(Player.Console) != None)
+	{
+		ExtendedConsole(Player.Console).OnChat(LocalMessageString, 0);
+	}
 }
 
 function ClientLocationalVoiceMessage(PlayerReplicationInfo Sender, PlayerReplicationInfo Recipient, name MessageType, byte MessageIndex, optional Pawn SoundSender, optional vector SenderLocation)
@@ -232,6 +300,12 @@ exec function Speech( Name Type, int Index, string CallSign )
 	}
 
 	Super.Speech(Type, Index, CallSign);
+
+	//Route voice commands for "Yes" and "No" to voting.
+	if (Type == 'ACK' && (Index == 0 || Index == 1))
+	{
+		Vote(Eval(Index == 0, "YES", "NO"));
+	}
 }
 
 function bool AllowTextMessage(string Msg)
@@ -248,6 +322,89 @@ function bool AllowTextMessage(string Msg)
 	}
 
 	return false;
+}
+
+function ServerSay(string Msg)
+{
+	Super.ServerSay(Msg);
+
+	if (Len(Msg) > 10)
+	{
+		return;
+	}
+
+	Msg = Caps(Msg);
+
+	switch(Msg)
+	{
+		case "YES":
+		case ":YESYES:":
+			Vote("YES");
+			break;
+		case "NO":
+		case ":NONO:":
+			Vote("NO");
+			break;
+	}
+}
+
+event TeamMessage(PlayerReplicationInfo PRI, coerce string Message, name Type)
+{
+	local string MessagePrefix;
+	local string RedColorString, WhiteColorString;
+
+	if (Level.NetMode == NM_DedicatedServer || GameReplicationInfo == None)
+	{
+		return;
+	}
+
+	if (AllowTextToSpeech(PRI, Type))
+	{
+		TextToSpeech(Message, TextToSpeechVoiceVolume);
+	}
+
+	if (Type == 'TeamSayQuiet')
+	{
+		Type = 'TeamSay';
+	}
+
+	if (myHUD != None)
+	{
+		myHUD.Message(PRI, MessagePrefix $ Message, Type);
+	}
+
+	if (Player == None || Player.Console == None)
+	{
+		return;
+	}
+
+	RedColorString = chr(27)$chr(200)$chr(1)$chr(1);
+	WhiteColorString = chr(27)$chr(255)$chr(255)$chr(255);
+
+	if (Type != 'TRADER' && PRI != None && PRI.Team != None && GameReplicationInfo.bTeamGame && PRI.Team.TeamIndex == 0)
+	{
+		MessagePrefix = RedColorString;
+	}
+	else
+	{
+		MessagePrefix = WhiteColorString;
+	}
+
+	//Trader should be prefixed with trader, not the client's PlayerName.
+	if (Type == 'TRADER')
+	{
+		MessagePrefix = MessagePrefix $ class'HUDKillingFloor'.default.TraderString $ ": ";
+	}
+	else if (PRI != None)
+	{
+		MessagePrefix = MessagePrefix $ PRI.PlayerName $ ": " ;
+	}
+	else
+	{
+		MessagePrefix = "";
+	}
+
+	Player.Console.Chat(MessagePrefix $ WhiteColorString $ class'GUIComponent'.static.StripColorCodes(Message), 6.0, PRI);
 }
 
 function AttemptMarkActor(vector Start, vector End, Actor TargetActor, class<TurboMarkerType> DataClassOverride, int DataOverride, TurboPlayerMarkReplicationInfo.EMarkColor Color)
@@ -513,6 +670,76 @@ function SelectVeterancy(class<KFVeterancyTypes> VetSkill, optional bool bForceC
 	Super.SelectVeterancy(VetSkill, bForceChange);
 }
 
+function KFClientSwitchToBestWeapon()
+{
+	SwitchToBestWeapon();
+}
+
+exec function SwitchToBestWeapon()
+{
+	local float Rating;
+
+	if (Pawn == None || Pawn.Inventory == None)
+	{
+		return;
+	}
+
+    if (Pawn.PendingWeapon == None)
+    {
+	    Pawn.PendingWeapon = Pawn.Inventory.RecommendWeapon(Rating);
+
+		if (Pawn.PendingWeapon == None || W_Frag_Weap(Pawn.PendingWeapon) != None)
+		{
+			Pawn.PendingWeapon = Weapon(Pawn.FindInventoryType(class'KFTurbo.W_Knife_Weap'));
+		}
+
+	    if (Pawn.PendingWeapon == Pawn.Weapon)
+		{
+		    Pawn.PendingWeapon = None;
+		}
+
+	    if (Pawn.PendingWeapon == None)
+		{
+    		return;
+		}
+    }
+
+	StopFiring();
+
+	if (Pawn.Weapon == None)
+	{
+		Pawn.ChangedWeapon();
+	}
+	else if (Pawn.Weapon != Pawn.PendingWeapon)
+    {
+		Pawn.Weapon.PutDown();
+    }
+}
+
+simulated function AddExtraOptionConfig(TurboOptionObject Config)
+{
+	if (Config == None)
+	{
+		return;
+	}
+
+	ExternalOptionList[ExternalOptionList.Length] = Config;
+}
+
+simulated function bool HasExtraOptions()
+{
+	return ExternalOptionList.Length != 0;
+}
+
+simulated function GenerateExtraOptions(TurboTab_TurboSettings TurboSettings, int TabOrder)
+{
+	local int Index;
+	for (Index = 0; Index < ExternalOptionList.Length; Index++)
+	{
+		ExternalOptionList[Index].GenerateOptions(TurboSettings, TabOrder + Index);
+	}
+}
+
 exec function GetWeapon(class<Weapon> NewWeaponClass )
 {
 	if (WeaponRemappingSettings != None)
@@ -523,222 +750,158 @@ exec function GetWeapon(class<Weapon> NewWeaponClass )
 	Super.GetWeapon(NewWeaponClass);
 }
 
+final function bool HasPermissionForCommand(optional bool bIsDifficultyCommand)
+{
+	if (bIsDifficultyCommand && !class'KFTurboMut'.default.bRequireAdminForDifficultyCommands)
+	{
+		return true;
+	}
+
+	return PlayerReplicationInfo != None && (Level.NetMode == NM_Standalone || PlayerReplicationInfo.bAdmin);
+}
+
 exec function ServerDebugSkipWave()
 {
-	local KFTurboGameType TurboGameType;
-
-	if (Role != ROLE_Authority)
+	if (TurboCommandHandler != None)
 	{
-		return;
+		TurboCommandHandler.SkipWave(Self);
 	}
-
-	if (PlayerReplicationInfo == None || (Level.NetMode != NM_Standalone && !PlayerReplicationInfo.bAdmin))
-	{
-		return;
-	}
-
-	TurboGameType = KFTurboGameType(Level.Game);
-
-	if (TurboGameType == None || !TurboGameType.bWaveInProgress)
-	{
-		return;
-	}
-
-	class'KFTurboGameType'.static.StaticDisableStatsAndAchievements(Self);
-
-	TurboGameType.TotalMaxMonsters = 0;
-	TurboGameType.NextSpawnSquad.Length = 0;
-	TurboGameType.KillZeds();
-	
-	//TurboGameType.ClearEndGame();
-
-	Level.Game.BroadcastLocalized(Level.GRI, class'TurboAdminLocalMessage', 0, PlayerReplicationInfo); //EAdminCommand.AC_SkipWave
 }
 
 exec function ServerDebugRestartWave()
 {
-	local KFTurboGameType TurboGameType;
-
-	if (Role != ROLE_Authority)
+	if (TurboCommandHandler != None)
 	{
-		return;
+		TurboCommandHandler.RestartWave(Self);
 	}
-
-	if (PlayerReplicationInfo == None || (Level.NetMode != NM_Standalone && !PlayerReplicationInfo.bAdmin))
-	{
-		return;
-	}
-
-	TurboGameType = KFTurboGameType(Level.Game);
-
-	if (TurboGameType == None || !TurboGameType.bWaveInProgress)
-	{
-		return;
-	}
-
-	class'KFTurboGameType'.static.StaticDisableStatsAndAchievements(Self);
-
-	TurboGameType.WaveNum = TurboGameType.WaveNum - 1;
-
-	TurboGameType.TotalMaxMonsters = 0;
-	TurboGameType.NextSpawnSquad.Length = 0;
-	TurboGameType.KillZeds();
-	
-	TurboGameType.ClearEndGame();
-	
-	Level.Game.BroadcastLocalized(Level.GRI, class'TurboAdminLocalMessage', 1, PlayerReplicationInfo); //EAdminCommand.AC_RestartWave
 }
 
 exec function ServerDebugSetWave(int NewWaveNum)
 {
-	local KFTurboGameType TurboGameType;
-
-	if (Role != ROLE_Authority)
+	if (TurboCommandHandler != None)
 	{
-		return;
+		TurboCommandHandler.SetWave(Self, NewWaveNum);
 	}
-
-	if (PlayerReplicationInfo == None || (Level.NetMode != NM_Standalone && !PlayerReplicationInfo.bAdmin))
-	{
-		return;
-	}
-
-	TurboGameType = KFTurboGameType(Level.Game);
-
-	if (TurboGameType == None)
-	{
-		return;
-	}
-
-	NewWaveNum = Max(NewWaveNum - 1, 0);
-
-	class'KFTurboGameType'.static.StaticDisableStatsAndAchievements(Self);
-	
-	if (TurboGameType.bWaveInProgress)
-	{
-		TurboGameType.WaveNum = NewWaveNum - 1;
-        InvasionGameReplicationInfo(GameReplicationInfo).WaveNumber = NewWaveNum;
-
-		TurboGameType.TotalMaxMonsters = 0;
-		TurboGameType.NextSpawnSquad.Length = 0;
-		TurboGameType.KillZeds();
-	}
-	else
-	{
-		TurboGameType.WaveNum = NewWaveNum;
-        InvasionGameReplicationInfo(GameReplicationInfo).WaveNumber = NewWaveNum;
-	}
-
-	TurboGameType.ClearEndGame();
-	
-	//Encode the wave number into the switch value.
-	Level.Game.BroadcastLocalized(Level.GRI, class'TurboAdminLocalMessage', (2 | ((NewWaveNum + 1) << 8)), PlayerReplicationInfo); //EAdminCommand.AC_SetWave
 }
 
 exec function ServerDebugPreventGameOver()
 {
-	local KFTurboGameType TurboGameType;
-
-	if (Role != ROLE_Authority)
+	if (TurboCommandHandler != None)
 	{
-		return;
+		TurboCommandHandler.PreventGameOver(Self);
 	}
-
-	if (PlayerReplicationInfo == None || (Level.NetMode != NM_Standalone && !PlayerReplicationInfo.bAdmin))
-	{
-		return;
-	}
-
-	TurboGameType = KFTurboGameType(Level.Game);
-
-	if (TurboGameType == None || TurboGameType.IsPreventGameOverEnabled())
-	{
-		return;
-	}
-
-	class'KFTurboGameType'.static.StaticDisableStatsAndAchievements(Self);
-
-	KFTurboGameType(Level.Game).PreventGameOver();
-	
-	Level.Game.BroadcastLocalized(Level.GRI, class'TurboAdminLocalMessage', 5, PlayerReplicationInfo); //EAdminCommand.AC_PreventGameOver
 }
 
 exec function AdminSetTraderTime(int Time)
 {
-	local KFTurboGameType TurboGameType;
-
-	if (Role != ROLE_Authority)
+	if (TurboCommandHandler != None)
 	{
-		return;
+		TurboCommandHandler.SetTraderTime(Self, Time);
 	}
-
-	if (PlayerReplicationInfo == None || (Level.NetMode != NM_Standalone && !PlayerReplicationInfo.bAdmin))
-	{
-		return;
-	}
-
-	TurboGameType = KFTurboGameType(Level.Game);
-
-	if (TurboGameType == None || TurboGameType.bWaveInProgress)
-	{
-		return;
-	}
-
-	Time = Max(10, Time);
-	Time = Min(99999, Time);
-
-	TurboGameType.WaveCountDown = Time;
-	if (KFGameReplicationInfo(Level.GRI) != None)
-	{
-		KFGameReplicationInfo(Level.GRI).TimeToNextWave = TurboGameType.WaveCountDown;
-	}
-	
-	Level.Game.BroadcastLocalized(Level.GRI, class'TurboAdminLocalMessage', (3 | ((Time) << 8)), PlayerReplicationInfo); //EAdminCommand.AC_SetTraderTime
 }
 
 exec function AdminSetMaxPlayers(int PlayerCount)
 {
-	local KFTurboGameType TurboGameType;
+	if (TurboCommandHandler != None)
+	{
+		TurboCommandHandler.SetMaxPlayers(Self, PlayerCount);
+	}
+}
+
+exec function AdminSetFakedPlayer(int FakedPlayerCount)
+{
+	if (TurboCommandHandler != None)
+	{
+		TurboCommandHandler.SetFakedPlayer(Self, FakedPlayerCount);
+	}
+}
+
+exec function AdminSetPlayerHealth(int PlayerHealthCount)
+{
+	if (TurboCommandHandler != None)
+	{
+		TurboCommandHandler.SetPlayerHealth(Self, PlayerHealthCount);
+	}
+}
+
+exec function AdminSetSpawnRate(float SpawnRateModifier)
+{
+	if (TurboCommandHandler != None)
+	{
+		TurboCommandHandler.SetSpawnRate(Self, SpawnRateModifier);
+	}
+}
+
+exec function AdminSetMaxMonsters(float MaxMonstersModifier)
+{
+	if (TurboCommandHandler != None)
+	{
+		TurboCommandHandler.SetMaxMonsters(Self, MaxMonstersModifier);
+	}
+}
+
+exec function AdminShowSettings()
+{
+	if (TurboCommandHandler != None)
+	{
+		TurboCommandHandler.ShowSettings(Self);
+	}
+}
+
+exec function FreeCamera(bool bFreeCamera) {}
+
+exec simulated function EndTrader()
+{
+	if (Level.NetMode == NM_DedicatedServer)
+	{
+		return;
+	}
+
+	Vote(class'TurboGameVoteEndTrader'.static.GetVoteID());
+}
+
+exec function Vote(string VoteString)
+{
+	if (Role != ROLE_Authority)
+	{
+		return;
+	}
+
+	if (NextVoteTime > Level.TimeSeconds)
+	{
+		return;
+	}
+
+	NextVoteTime = Level.TimeSeconds + VoteCooldownTime;
+
+	if (TurboGameReplicationInfo(Level.GRI).VoteInstance == None && NextStartVoteTime > Level.TimeSeconds)
+	{
+		return;
+	}
+
+	TurboGameReplicationInfo(Level.GRI).PlayerVote(TurboPlayerReplicationInfo(PlayerReplicationInfo), VoteString);
+}
+
+//Immediately creates a test vote. For testing purposes.
+exec function VoteTest()
+{
+	if (Level.NetMode != NM_Standalone && (PlayerReplicationInfo == None || !PlayerReplicationInfo.bAdmin))
+	{
+		return;
+	}
 
 	if (Role != ROLE_Authority)
 	{
 		return;
 	}
 
-	if (PlayerReplicationInfo == None || (Level.NetMode != NM_Standalone && !PlayerReplicationInfo.bAdmin))
-	{
-		return;
-	}
-
-	PlayerCount = Max(1, PlayerCount);
-	PlayerCount = Min(12, PlayerCount);
-
-	TurboGameType = KFTurboGameType(Level.Game);
-
-	if (TurboGameType == None || TurboGameType.bWaveInProgress)
-	{
-		return;
-	}
-
- 	TurboGameType.MaxPlayers = PlayerCount;
-    TurboGameType.default.MaxPlayers = PlayerCount;
+	TurboGameReplicationInfo(Level.GRI).VoteInstance = Spawn(class'TurboGameVoteTest', Self);
+	TurboGameReplicationInfo(Level.GRI).VoteInstance.InitiateVote(TurboPlayerReplicationInfo(PlayerReplicationInfo));
 	
-	Level.Game.BroadcastLocalized(Level.GRI, class'TurboAdminLocalMessage', (4 | ((PlayerCount) << 8)), PlayerReplicationInfo); //EAdminCommand.AC_SetMaxPlayers
-}
-
-exec function EndTrader()
-{
-	if (KFGameType(Level.Game) == None || KFGameType(Level.Game).bWaveInProgress)
+	if (TurboGameReplicationInfo(Level.GRI).VoteInstance != None && TurboGameReplicationInfo(Level.GRI).VoteInstance.GetVoteState() < Expired)
 	{
-		return;
+		TurboGameReplicationInfo(Level.GRI).RegisterVoteInstance(TurboGameReplicationInfo(Level.GRI).VoteInstance);
 	}
-
-	if (TurboPlayerReplicationInfo(PlayerReplicationInfo) == None)
-	{
-		return;
-	}
-
-	TurboPlayerReplicationInfo(PlayerReplicationInfo).RequestTraderEnd();
 }
 
 simulated function ClientWeaponSpawned(class<Weapon> WeaponClass, Inventory Inv)
@@ -746,6 +909,11 @@ simulated function ClientWeaponSpawned(class<Weapon> WeaponClass, Inventory Inv)
 	local class<KFWeapon> KFWeaponClass;
 	local class<KFWeaponAttachment> KFAttachmentClass;
 	local bool bNeedsWeaponLoad, bNeedsAttachmentLoad;
+
+	if (Level.NetMode == NM_DedicatedServer)
+	{
+		return;
+	}
 
 	KFWeaponClass = class<KFWeapon>(WeaponClass);
 
@@ -798,6 +966,102 @@ simulated function rotator RecoilHandler(rotator NewRotation, float DeltaTime)
     }
 
 	return NewRotation;
+}
+
+function BecomeSpectator()
+{
+	if (PlayerReplicationInfo == None || PlayerReplicationInfo.bOnlySpectator)
+	{
+		Super.BecomeActivePlayer();
+		return;
+	}
+
+	Super.BecomeSpectator();
+
+	if (PlayerReplicationInfo.bOnlySpectator && KFTurboGameType(Level.Game).bWaveInProgress)
+	{
+		bWasSpectatingWave = true;
+	}
+}
+
+function BecomeActivePlayer()
+{
+	if (PlayerReplicationInfo == None || !PlayerReplicationInfo.bOnlySpectator)
+	{
+		Super.BecomeActivePlayer();
+		return;
+	}
+
+	Super.BecomeActivePlayer();
+
+	if (Level.Game.bDelayedStart && bWasSpectatingWave && !PlayerReplicationInfo.bOnlySpectator && Pawn == None)
+	{
+		bWasSpectatingWave = false;
+		PlayerReplicationInfo.bOutOfLives = false;
+		PlayerReplicationInfo.NumLives = 0;
+		
+		if (!KFTurboGameType(Level.Game).bWaveInProgress)
+		{
+			SetViewTarget(Self);
+			ClientSetBehindView(false);
+			bBehindView = False;
+			ClientSetViewTarget(Pawn); //TWI calls this for some reason but pawn would be None at this point...
+
+			ServerReStartPlayer();	
+		}
+	}
+}
+
+function ServerUse()
+{
+	Super.ServerUse();
+
+	if (Role == ROLE_Authority && Pawn == None)
+	{
+		SpectateUseTarget();
+	}
+}
+
+function SpectateUseTarget() {}
+
+state Spectating
+{
+	function SpectateUseTarget()
+	{
+		local Vector XAxis, YAxis, ZAxis;
+		local Actor HitActor;
+		
+		if (!(ViewTarget == None || ViewTarget == Self))
+		{
+			return;
+		}
+
+		if (Level.TimeSeconds < NextSpectateUseTargetTime)
+		{
+			return;
+		}
+
+		NextSpectateUseTargetTime = Level.TimeSeconds + SpectateUseTargetCooldown;
+
+		GetAxes(Rotation, XAxis, YAxis, ZAxis);
+		HitActor = Trace(YAxis, ZAxis, Location + (XAxis * 500.f), Location, true, vect(16, 16, 16));
+
+		if (HitActor == None)
+		{
+			return;
+		}
+
+		if (Pawn(HitActor.Base) != None)
+		{
+			HitActor = HitActor.Base;
+		}
+
+		SetViewTarget(HitActor);
+		ClientSetViewTarget(HitActor);
+
+		bBehindView = true;
+    	ClientSetBehindView(bBehindView);
+	}
 }
 
 simulated function SetPipebombUsesSpecialGroup(bool bNewPipebombUsesSpecialGroup)
@@ -882,4 +1146,7 @@ defaultproperties
 	bInLoginMenu=false
 	bHasClosedLoginMenu=true //Starts as closed.
 	LoginMenuTime=-1.f
+
+	VoteCooldownTime=1.f
+	SpectateUseTargetCooldown=0.1f
 }

@@ -1,6 +1,8 @@
+//Killing Floor Turbo TurboMonsterSquad
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class TurboMonsterSquad extends Object
      editinlinenew;
-
 
 struct SquadEntry
 {

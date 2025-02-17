@@ -1,3 +1,6 @@
+//Killing Floor Turbo TurboHUDMarkInfo
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class TurboHUDMarkInfo extends TurboHUDOverlay;
 
 struct MarkInfoData
@@ -175,12 +178,12 @@ simulated final function DrawMarkInfo(Canvas C, out MarkInfoData MarkInfo, float
 	TempX = ScreenLocX;
 	TempY = ScreenLocY;
 	
-	C.Font = TurboHUD.LoadFontStatic(Min(8,BeaconScale + 1));
+	C.Font = TurboHUD.LoadFont(Min(8,BeaconScale + 1));
 	C.TextSize(DistanceString, XL, YL);
 	TempY -= YL;
 	BackplateSize = YL * 2.f;
 
-	C.Font = TurboHUD.LoadFontStatic(Min(8,BeaconScale));
+	C.Font = TurboHUD.LoadFont(Min(8,BeaconScale));
 	C.TextSize(MarkInfo.TurboMarkPRI.MarkDisplayString, XL, YL);
 	TempY -= YL * 0.25f;
 	BackplateSize += YL;
@@ -192,7 +195,7 @@ simulated final function DrawMarkInfo(Canvas C, out MarkInfoData MarkInfo, float
 	C.DrawTile(MarkBackplate, BackplateSize, BackplateSize, 0, 0, MarkBackplate.MaterialUSize(), MarkBackplate.MaterialVSize());	
 
 	//Draw distance.
-	C.Font = TurboHUD.LoadFontStatic(Min(8,BeaconScale + 1));
+	C.Font = TurboHUD.LoadFont(Min(8,BeaconScale + 1));
 	C.TextSize(DistanceString, XL, YL);
 	TempX = ScreenLocX - (XL * 0.5);
 	TempY = ScreenLocY - (YL * 1.f);
@@ -212,7 +215,7 @@ simulated final function DrawMarkInfo(Canvas C, out MarkInfoData MarkInfo, float
 	C.DrawTextClipped(DistanceString, false);
 
 	//Draw mark name.
-	C.Font = TurboHUD.LoadFontStatic(Min(8,BeaconScale));
+	C.Font = TurboHUD.LoadFont(Min(8,BeaconScale));
 	C.TextSize(MarkInfo.TurboMarkPRI.MarkDisplayString, XL, YL);
 
 	TempX = ScreenLocX - (XL * 0.5);
@@ -231,7 +234,7 @@ simulated final function DrawMarkInfo(Canvas C, out MarkInfoData MarkInfo, float
 	C.DrawTextClipped(MarkInfo.TurboMarkPRI.MarkDisplayString, false);
 
 	//Draw mark instigator.
-	C.Font = TurboHUD.LoadFontStatic(Min(8,BeaconScale + 1));
+	C.Font = TurboHUD.LoadFont(Min(8,BeaconScale + 1));
 	C.TextSize(MarkInfo.PRI.PlayerName, XL, YL);
 
 	TempX = ScreenLocX - (XL * 0.5);

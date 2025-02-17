@@ -1,6 +1,6 @@
 //Killing Floor Turbo TurboHUDWaveInfo
 //Handles wave info-related UI such as wave number, remaining monsters/trader time, monster kill feed.
-//Distributed under the terms of the GPL-2.0 License.
+//Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
 class TurboHUDWaveInfo extends TurboHUDOverlay
     hidecategories(Advanced,Collision,Display,Events,Force,Karma,LightColor,Lighting,Movement,Object,Sound);
@@ -31,15 +31,18 @@ var(Turbo) Vector2D ActiveBackplateSize;
 var(Turbo) Vector2D BackplateSpacing; //Distance from top and middle.
 var(Turbo) Vector2D BackplateTextSpacing; //Distance from top and middle.
 
-//End Trader Vote
-var localized string EndTraderVoteTitle;
-struct EndTraderVoteEntry
-{
-	var TurboPlayerReplicationInfo PRI;
-	var float Ratio;
-};
-var array<EndTraderVoteEntry> EndTraderVoteList;
-var float EndTraderVoteRatio;
+//Voting
+var TurboGameVoteBase CurrentVoteInstance;
+var float VoteRatio;
+var float VoteRatioInterpRate;
+var float VoteDurationPercent;
+var float VoteDurationInterpRate;
+var float VoteYesPercent;
+var float VoteYesInterpRate;
+var float VoteNoPercent;
+var float VoteNoInterpRate;
+var Sound VoteStartSound;
+var Sound VoteTallyChangeSound;
 
 var Color BackplateColor;
 var Texture RoundedContainer;
@@ -54,6 +57,56 @@ var bool bIsTestGameMode;
 var bool bIsGameOver;
 
 var int FontSizeOffset;
+
+struct BossHitData
+{
+	var float HitAmount;
+	var float Ratio;
+	var float FadeRate;
+};
+
+struct BossSyringeEntry
+{
+	var float FadeRatio;
+};
+
+struct BossEntry
+{
+	var P_ZombieBoss BossMonster;
+	var class<P_ZombieBoss> BossClass;
+	var float PlayInRatio;
+	var float PlayOutRatio;
+	
+	var float CurrentHealth;
+	var float LastCheckedHealth;
+	var float PreviousHealth;
+	var float LastLowestRecordedHealth;
+
+	var float HealthMax;
+	
+	var BossHitData LastHit;
+
+	var float CurrentHealToHealth;
+	var float PreviousHealToHealth;
+
+	var int CurrentSyringeCount;
+
+	var BossSyringeEntry SyringeList[3];
+};
+
+var BossEntry BossData;
+var array<P_ZombieBoss> BossList;
+
+var float BossDataFadeInRate;
+var float BossDataFadeOutRate;
+var float BossDataHealthInterpRate;
+var Material BossHealthBarBackplate;
+var Material BossHealthBarFill;
+var Material BossHealthDamageBarFill;
+var Texture BossSyringeIcon;
+var Texture BossSyringeBackplateIcon;
+
+var(Turbo) Vector2D BossBarSize;
 
 //Kill Feed
 struct KillFeedEntry
@@ -72,28 +125,73 @@ var array<KillFeedEntry> KillFeedList;
 var float TrashMonsterKillLifeTime, TrashMonsterKillCountExtension;
 var float EliteMonsterKillLifeTime, EliteMonsterKillCountExtension;
 
+static final function TurboHUDWaveInfo FindWaveInfoOverlay(PlayerController PlayerController)
+{
+	local TurboHUDKillingFloor TurboHUD;
+	TurboHUD = TurboHUDKillingFloor(PlayerController.myHUD);
+	return TurboHUD.WaveInfoHUD;
+}
+
 simulated function Initialize(TurboHUDKillingFloor OwnerHUD)
 {
+	local P_ZombieBoss BossMonster;
+	
 	Super.Initialize(OwnerHUD);
 
-	TGRI = TurboGameReplicationInfo(Level.GRI);
-	bIsTestGameMode = class'KFTurboGameType'.static.StaticIsTestGameType(Self);
+	InitializeGRI(TurboGameReplicationInfo(Level.GRI));
 
 	ActiveBackplateSize = BackplateSize;
+
+	foreach DynamicActors(class'P_ZombieBoss', BossMonster)
+	{
+		RegisterZombieBoss(BossMonster);
+	}
+}
+
+simulated function OnVoteInstanceTallyChanged(TurboGameVoteBase VoteInstance, int NewYesVoteCount, int NewNoVoteCount)
+{
+	if (VoteRatio < 0.5f)
+	{
+		return;
+	}
+
+	TurboHUD.PlayerOwner.ClientPlaySound(VoteTallyChangeSound, true, 2.5f, SLOT_None);
+}
+
+simulated function OnVoteInstanceChanged(TurboGameVoteBase VoteInstance)
+{
+	if (VoteInstance == None || VoteInstance.GetVoteState() >= Expired)
+	{
+		return;
+	}
+
+	TurboHUD.PlayerOwner.ClientPlaySound(VoteStartSound, true, 1.25f, SLOT_None);
+}
+
+simulated function InitializeGRI(TurboGameReplicationInfo InTGRI)
+{
+	TGRI = TurboGameReplicationInfo(Level.GRI);
+
+	if (TGRI == None)
+	{
+		return;
+	}
+
+	bIsTestGameMode = class'KFTurboGameType'.static.StaticIsTestGameType(Self);
+
+	TGRI.OnVoteInstanceTallyChanged = OnVoteInstanceTallyChanged;
 }
 
 simulated function Tick(float DeltaTime)
 {
 	if (TGRI == None)
 	{
-		TGRI = TurboGameReplicationInfo(Level.GRI);
+		InitializeGRI(TurboGameReplicationInfo(Level.GRI));
 
 		if (TGRI == None)
 		{
 			return;
 		}
-
-		bIsTestGameMode = class'KFTurboGameType'.static.StaticIsTestGameType(Self);
 	}
 
 	TickGameState(DeltaTime);
@@ -106,7 +204,10 @@ simulated function Tick(float DeltaTime)
 	else if (!TGRI.bWaveInProgress && !IsInState('WaitingWave'))
 	{
 		GotoState('WaitingWave');
-	}	
+	}
+
+	TickBossData(DeltaTime);
+	TickVoteInstance(DeltaTime);
 }
 
 simulated function TickGameState(float DeltaTime)
@@ -135,6 +236,17 @@ simulated function Render(Canvas C)
 	}
 	
 	DrawKillFeed(C);
+	
+	class'TurboHUDKillingFloor'.static.ResetCanvas(C);
+
+	if ((BossData.BossMonster != None || BossData.PlayOutRatio > 0.f) && BossData.PlayOutRatio < 1.f)
+	{
+		DrawBossHealthBar(C);
+	}
+
+	class'TurboHUDKillingFloor'.static.ResetCanvas(C);
+
+	DrawVoteInstance(C);
 	
 	class'TurboHUDKillingFloor'.static.ResetCanvas(C);
 }
@@ -170,7 +282,7 @@ simulated function DrawGameData(Canvas C)
 	CenterX = C.ClipX * 0.5f;
 	TopY = C.ClipY * BackplateSpacing.Y;
 
-	TempX = CenterX - (C.ClipX * (BackplateSpacing.X + BackplateSize.X + BackplateTextSpacing.X));
+	TempX = CenterX - ((C.ClipX * (BackplateSize.X + BackplateTextSpacing.X)) + TopY);
 	TempY = TopY;
 
 	SizeX = C.ClipX * BackplateSize.X;
@@ -180,9 +292,10 @@ simulated function DrawGameData(Canvas C)
 
 	C.SetPos(TempX, TempY);
 
-	C.Font = class'KFTurboFontHelper'.static.LoadLargeNumberFont(2 + FontSizeOffset);
+	
+	C.Font = TurboHUD.LoadLargeNumberFont(2 + FontSizeOffset);
 	C.FontScaleX = 1.f;
-	C.FontScaleX = 1.f;
+	C.FontScaleY = 1.f;
 	C.TextSize(TestText, TextSizeX, TextSizeY);
 
 	TextScale = (C.ClipY * (BackplateSize.Y - BackplateTextSpacing.Y)) / TextSizeY;
@@ -201,7 +314,7 @@ simulated function DrawGameData(Canvas C)
 	
 	C.DrawColor = C.MakeColor(255, 255, 255, 255);
 	TestText = FillStringWithZeroes(string(Min(TGRI.WaveNumber + 1, 99)), 2);
-	TestText = TestText $ "/";
+	TestText = TestText $ "|";
 	TestText = TestText $ FillStringWithZeroes(string(Min(TGRI.FinalWave, 99)), 2);
 	C.SetPos((TempX + (SizeX * 0.5f)) - (TextSizeX * 0.5f), (TempY + (SizeY * 0.5f)) - (TextSizeY * 0.5f));
 	DrawTextMeticulous(C, TestText, TextSizeX);
@@ -282,21 +395,18 @@ state ActiveWave
 	{
 		NumberZedsRemaining = TGRI.MaxMonsters;
 		ActiveWaveFadeRatio = 0.f;
-		EndTraderVoteList.Length = 0;
 	}
 
 	simulated function Tick(float DeltaTime)
 	{
 		if (TGRI == None)
 		{
-			TGRI = TurboGameReplicationInfo(Level.GRI);
+			InitializeGRI(TurboGameReplicationInfo(Level.GRI));
 
 			if (TGRI == None)
 			{
 				return;
 			}
-
-			bIsTestGameMode = class'KFTurboGameType'.static.StaticIsTestGameType(Self);
 		}
 
 		TickGameState(DeltaTime);
@@ -312,6 +422,9 @@ state ActiveWave
 		{
 			TickActiveFadeIn(DeltaTime);
 		}
+
+		TickBossData(DeltaTime);
+		TickVoteInstance(DeltaTime);
 	}
 
 	simulated function DrawWaveData(Canvas C)
@@ -377,7 +490,7 @@ simulated function DrawActiveWave(Canvas C)
 	CenterX = C.ClipX * 0.5f;
 	TopY = C.ClipY * BackplateSpacing.Y;
 
-	TempX = CenterX + (C.ClipX * BackplateSpacing.X);
+	TempX = CenterX + TopY;
 	TempY = TopY;
 
 	SizeY = C.ClipY * BackplateSize.Y;
@@ -386,7 +499,7 @@ simulated function DrawActiveWave(Canvas C)
 
 	C.SetPos(TempX, TempY);
 
-	C.Font = class'KFTurboFontHelper'.static.LoadLargeNumberFont(2 + FontSizeOffset);
+	C.Font = TurboHUD.LoadLargeNumberFont(2 + FontSizeOffset);
 	C.FontScaleX = 1.f;
 	C.FontScaleX = 1.f;
 
@@ -499,11 +612,11 @@ simulated final function DrawKillFeedEntry(Canvas C, out float DrawY, out KillFe
 
 	if (bIsElite)
 	{
-		C.Font = class'KFTurboFontHelper'.static.LoadBoldItalicFontStatic(0 + FontSizeOffset);
+		C.Font = TurbohUD.LoadBoldItalicFont(0 + FontSizeOffset);
 	}
 	else
 	{
-		C.Font = class'KFTurboFontHelper'.static.LoadItalicFontStatic(1 + FontSizeOffset);
+		C.Font = TurboHUD.LoadItalicFont(1 + FontSizeOffset);
 	}
 	
 	C.FontScaleX = 1.f;
@@ -563,7 +676,7 @@ simulated final function DrawKillFeedEntry(Canvas C, out float DrawY, out KillFe
 	//Draw player name if this isn't our entry.
 	if (!Entry.bIsLocalPlayer)
 	{
-		C.Font = class'KFTurboFontHelper'.static.LoadItalicFontStatic(3 + FontSizeOffset);
+		C.Font = TurboHUD.LoadItalicFont(3 + FontSizeOffset);
 		C.FontScaleX = BaseTextScale;
 		C.FontScaleY = BaseTextScale;
 
@@ -619,21 +732,18 @@ state WaitingWave
 	{
 		WaveTimeSecondsRemaining = TGRI.TimeToNextWave;
 		TraderFadeRatio = 0.f;
-		EndTraderVoteList.Length = 0;
 	}
 
 	simulated function Tick(float DeltaTime)
 	{
 		if (TGRI == None)
 		{
-			TGRI = TurboGameReplicationInfo(Level.GRI);
+			InitializeGRI(TurboGameReplicationInfo(Level.GRI));
 
 			if (TGRI == None)
 			{
 				return;
 			}
-
-			bIsTestGameMode = class'KFTurboGameType'.static.StaticIsTestGameType(Self);
 		}
 
 		TickGameState(DeltaTime);
@@ -649,21 +759,19 @@ state WaitingWave
 		{
 			TickTraderFadeIn(DeltaTime);
 		}
+
+		TickBossData(DeltaTime);
+		TickVoteInstance(DeltaTime);
 	}
 	
 	simulated function DrawWaveData(Canvas C)
 	{
 		DrawTraderWave(C);
-		DrawTraderEndVote(C);
 	}
 }
 
 simulated function TickTraderWave(float DeltaTime)
 {
-	local int Index, EndTraderVoteIndex;
-	local TurboPlayerReplicationInfo TPRI;
-	local bool bFoundEntry;
-
 	if (TGRI.TimeToNextWave != WaveTimeSecondsRemaining && Abs(WaveTimeRemaining - float(TGRI.TimeToNextWave)) > 0.15f)
 	{
 		WaveTimeSecondsRemaining = TGRI.TimeToNextWave;
@@ -672,66 +780,6 @@ simulated function TickTraderWave(float DeltaTime)
 	else
 	{
 		WaveTimeRemaining -= DeltaTime * 0.95f;
-	}
-
-	//Update end trader vote UI.
-
-	for (EndTraderVoteIndex = EndTraderVoteList.Length - 1; EndTraderVoteIndex >= 0; EndTraderVoteIndex--)
-	{
-		if (EndTraderVoteList[EndTraderVoteIndex].PRI == None || EndTraderVoteList[EndTraderVoteIndex].PRI.bOnlySpectator || !EndTraderVoteList[EndTraderVoteIndex].PRI.bVotedForTraderEnd)
-		{
-			EndTraderVoteList.Remove(EndTraderVoteIndex, 1);
-		}
-	}
-
-	if (TGRI.TimeToNextWave <= 10)
-	{
-		for (EndTraderVoteIndex = EndTraderVoteList.Length - 1; EndTraderVoteIndex >= 0; EndTraderVoteIndex--)
-		{
-			EndTraderVoteList[EndTraderVoteIndex].Ratio = Lerp(8.f * DeltaTime, EndTraderVoteList[EndTraderVoteIndex].Ratio, 0.f);
-		}
-
-		EndTraderVoteRatio = Lerp(8.f * DeltaTime, EndTraderVoteRatio, 0.f);
-		return;
-	}
-
-	for (Index = TGRI.PRIArray.Length - 1; Index >= 0; Index--)
-	{
-		TPRI = TurboPlayerReplicationInfo(TGRI.PRIArray[Index]);
-
-		if (TPRI == None || TPRI.bOnlySpectator || !TPRI.bVotedForTraderEnd)
-		{
-			continue;
-		}
-
-		bFoundEntry = false;
-		for (EndTraderVoteIndex = EndTraderVoteList.Length - 1; EndTraderVoteIndex >= 0; EndTraderVoteIndex--) 
-		{
-			if (EndTraderVoteList[EndTraderVoteIndex].PRI == TPRI)
-			{ 
-				bFoundEntry = true;
-				break;
-			}
-		}
-
-		if (bFoundEntry)
-		{
-			continue;
-		}
-
-		EndTraderVoteList.Length = EndTraderVoteList.Length + 1;
-		EndTraderVoteList[EndTraderVoteList.Length - 1].PRI = TPRI;
-		EndTraderVoteList[EndTraderVoteList.Length - 1].Ratio = 0.f;
-	}
-
-	for (EndTraderVoteIndex = EndTraderVoteList.Length - 1; EndTraderVoteIndex >= 0; EndTraderVoteIndex--)
-	{
-		EndTraderVoteList[EndTraderVoteIndex].Ratio = Lerp(4.f * DeltaTime, EndTraderVoteList[EndTraderVoteIndex].Ratio, 1.f);
-	}
-
-	if (EndTraderVoteList.Length != 0)
-	{
-		EndTraderVoteRatio = Lerp(4.f * DeltaTime, EndTraderVoteRatio, 1.f);
 	}
 }
 
@@ -765,8 +813,8 @@ simulated function DrawTraderWave(Canvas C)
 	local float TextSizeX, TextSizeY, TextScale;
 	local float TempX, TempY, SizeX, SizeY;
 
-	TempX = (C.ClipX * 0.5f) + (C.ClipX * BackplateSpacing.X);
 	TempY = C.ClipY * BackplateSpacing.Y;
+	TempX = (C.ClipX * 0.5f) + TempY;
 
 	SizeX = C.ClipX * BackplateSize.X;
 	SizeY = C.ClipY * BackplateSize.Y;
@@ -775,7 +823,7 @@ simulated function DrawTraderWave(Canvas C)
 
 	C.SetPos(TempX, TempY);
 
-	C.Font = class'KFTurboFontHelper'.static.LoadLargeNumberFont(2 + FontSizeOffset);
+	C.Font = TurboHUD.LoadLargeNumberFont(2 + FontSizeOffset);
 	C.FontScaleX = 1.f;
 	C.FontScaleX = 1.f;
 	C.TextSize(TraderTime, TextSizeX, TextSizeY);
@@ -828,7 +876,7 @@ simulated function DrawTraderWave(Canvas C)
 	
 	C.FontScaleX = 1.f;
 	C.FontScaleY = 1.f;
-	C.Font = class'KFTurboFontHelper'.static.LoadLargeNumberFont(2 + FontSizeOffset);
+	C.Font = TurboHUD.LoadLargeNumberFont(2 + FontSizeOffset);
 	C.TextSize(GetStringOfZeroes(Len(TraderTime)), TextSizeX, TextSizeY);
 	
 	TextScale = (C.ClipY * BackplateSize.Y) / TextSizeY;
@@ -841,111 +889,452 @@ simulated function DrawTraderWave(Canvas C)
 	DrawTextMeticulous(C, TraderTime, TextSizeX);
 }
 
-simulated function DrawTraderEndVote(Canvas C)
+simulated function RegisterZombieBoss(P_ZombieBoss BossMonster)
 {
 	local int Index;
-	local TurboPlayerReplicationInfo TPRI;
-	local float Ratio;
-	local float TempX, TempY, MinEntrySizeX, EntrySizeY, EntryXOffset;
-	local float TextSizeX, TextSizeY;
-	local bool bHasVotes;
 
-	if (EndTraderVoteRatio < 0.001f)
+	if (bIsTestGameMode)
 	{
 		return;
 	}
 
-	bHasVotes = false;
+	for (Index = 0; Index < BossList.Length; Index++)
+	{
+		if (BossList[Index] == BossMonster)
+		{
+			return;
+		}
+	}
+
+	BossList[BossList.Length] = BossMonster;
+
+	//There's already a boss monster using the boss UI. Currently we only want one at a time.
+	if (BossData.BossMonster != None)
+	{
+		return;
+	}
+
+	InitializeBossData(BossMonster);
+}
+
+simulated function InitializeBossData(P_ZombieBoss BossMonster)
+{
+	local int Index;
+
+	BossData.BossMonster = BossMonster;
+	BossData.BossClass = BossMonster.Class;
+	BossData.PlayInRatio = 0.f;
+	BossData.PlayOutRatio = 0.f;
 	
-	C.Font = class'KFTurboFontHelper'.static.LoadFontStatic(2 + FontSizeOffset);
+	BossData.CurrentHealth = float(BossMonster.Health) / BossMonster.BossHealthMax;
+	BossData.LastCheckedHealth = BossData.CurrentHealth;
+	BossData.PreviousHealth = BossData.CurrentHealth;
+	BossData.LastLowestRecordedHealth = 1.f;
+	
+	BossData.HealthMax = BossMonster.BossHealthMax;
+
+	BossData.LastHit.HitAmount = 0.f;
+	BossData.LastHit.Ratio = 1.f;
+
+	BossData.CurrentHealToHealth = 0;
+	BossData.PreviousHealToHealth = 0;
+
+	BossData.CurrentSyringeCount = 3 - BossMonster.SyringeCount;
+
+	BossData.SyringeList[0].FadeRatio = 0.f;
+	BossData.SyringeList[1].FadeRatio = 0.f;
+	BossData.SyringeList[2].FadeRatio = 0.f;
+
+	Index = 3;
+	while (Index > BossData.CurrentSyringeCount && Index - 1 >= 0)
+	{
+		BossData.SyringeList[Index - 1].FadeRatio = 1.f;
+		Index--;
+	}
+}
+
+simulated function OnPlayOutComplete()
+{
+	local int Index;
+
+	if (BossList.Length == 0)
+	{
+		BossData.BossMonster = None;
+		BossData.BossClass = None;
+
+		BossData.PlayInRatio = 0.f;
+		BossData.PlayOutRatio = 0.f;
+
+		return;
+	}
+
+	for (Index = BossList.Length - 1; Index >= 0; Index--)
+	{
+		if (BossList[Index] == None || BossList[Index] == BossData.BossMonster)
+		{
+			BossList.Remove(Index, 1);
+		}
+	}
+
+	BossData.BossMonster = None;
+	BossData.BossClass = None;
+
+	BossData.PlayInRatio = 0.f;
+	BossData.PlayOutRatio = 0.f;
+
+	if (BossList.Length == 0)
+	{
+		return;
+	}
+
+	InitializeBossData(BossList[0]);
+}
+
+simulated function TickBossData(float DeltaTime)
+{
+	local P_ZombieBoss BossMonster;
+	local float NewHealthPercent, NewLowestHealthPercent;
+	local int SyringeIndex;
+
+	if (bIsTestGameMode)
+	{
+		return;
+	}
+
+	//No boss monster and we're not playing out a boss monster.
+	if (BossData.BossClass == None || (BossData.BossMonster == None && BossData.PlayOutRatio <= 0.f))
+	{
+		return;
+	}
+
+	if (BossData.PlayOutRatio > 0.f)
+	{
+		BossData.PlayOutRatio = Lerp(DeltaTime * BossDataFadeOutRate, BossData.PlayOutRatio, 0.f);
+
+		if (Abs(BossData.PlayOutRatio) < 0.001f)
+		{
+			OnPlayOutComplete();
+		}
+	}
+
+	if (BossData.PlayInRatio < 1.f)
+	{
+		BossData.PlayInRatio = Lerp(DeltaTime * BossDataFadeInRate, BossData.PlayInRatio, 1.f);
+
+		if (Abs(BossData.PlayInRatio - 1.f) < 0.0001f)
+		{
+			BossData.PlayInRatio = 1.f;
+		}
+	}
+
+	if (BossData.LastHit.Ratio < 1.f)
+	{
+		BossData.LastHit.Ratio += BossData.LastHit.FadeRate * DeltaTime;
+		BossData.LastHit.Ratio = FMin(BossData.LastHit.Ratio, 1.f);
+	}
+
+	BossMonster = BossData.BossMonster;
+	NewHealthPercent = (float(BossMonster.Health) / BossMonster.BossHealthMax);
+	NewLowestHealthPercent = (BossMonster.LowestHealth / BossMonster.BossHealthMax);
+
+	BossData.CurrentSyringeCount = 3 - BossMonster.SyringeCount;
+
+	if (NewHealthPercent != BossData.LastCheckedHealth)
+	{
+		BossData.CurrentHealth = NewHealthPercent;
+	
+		if (NewHealthPercent < BossData.LastCheckedHealth && BossData.PlayInRatio > 0.9f)
+		{
+			InitializeHitData(BossData);
+		}
+		
+		BossData.LastCheckedHealth = NewHealthPercent;
+
+		if (NewHealthPercent <= 0.f)
+		{
+			BossData.PlayOutRatio = 1.f;
+		}
+	}
+		
+	if (BossData.CurrentHealth < BossData.PreviousHealth)
+	{
+		BossData.PreviousHealth = Lerp(BossDataHealthInterpRate * DeltaTime, BossData.PreviousHealth, BossData.CurrentHealth);
+	}
+	else if (BossData.CurrentHealth > BossData.PreviousHealth)
+	{
+		BossData.PreviousHealth = Lerp(BossDataHealthInterpRate * DeltaTime * 4.f, BossData.PreviousHealth, BossData.CurrentHealth);
+		BossData.LastHit.HitAmount = 0.f;
+		BossData.LastHit.Ratio = 1.f;
+	}
+
+	if (BossData.LastHit.HitAmount > 0.f)
+	{
+		BossData.LastHit.HitAmount = Lerp(DeltaTime * BossData.LastHit.FadeRate, BossData.LastHit.HitAmount, BossData.CurrentHealth);
+		BossData.LastHit.Ratio = Lerp(DeltaTime * BossData.LastHit.FadeRate, BossData.LastHit.Ratio, 1.f);
+	}
+
+	if (NewLowestHealthPercent != BossData.LastLowestRecordedHealth)
+	{
+		//On lowest recorded health update... do something cool I guess?
+		BossData.LastLowestRecordedHealth = NewLowestHealthPercent;
+	}
+
+	SyringeIndex = 2;
+	while (SyringeIndex >= 0)
+	{
+		if (SyringeIndex + 1 <= BossData.CurrentSyringeCount)
+		{
+			break;
+		}
+
+		BossData.SyringeList[SyringeIndex].FadeRatio = FMin(BossData.SyringeList[SyringeIndex].FadeRatio + DeltaTime, 1.f);
+		SyringeIndex--;
+	}
+}
+
+simulated final function InitializeHitData(out BossEntry BossInfo)
+{	
+	BossInfo.LastHit.HitAmount = FMax(BossInfo.CurrentHealth, BossInfo.LastHit.HitAmount);
+	BossInfo.LastHit.FadeRate = 0.5f;
+	BossInfo.LastHit.Ratio = 0.f;
+}
+
+simulated function DrawBossHealthBar(Canvas C)
+{
+	local float TempX, TempY;
+	local float SizeX, SizeY;
+	local float TextSizeX, TextSizeY;
+	local float FadeRatio;
+	local float HealthPercent, DamagePercent;
+	local Color BarBackplateColor, FillColor;
+	local int SyringeIndex;
+	local float SyringeFadeRatio;
+
+	if (bIsTestGameMode)
+	{
+		return;
+	}
+
+	if (BossData.PlayOutRatio <= 0.f)
+	{
+		FadeRatio = FClamp(BossData.PlayInRatio, 0.f, 1.f);
+	}
+	else
+	{
+		FadeRatio = FClamp(BossData.PlayInRatio * BossData.PlayOutRatio, 0.f, 1.f);
+	}
+
+	HealthPercent = FClamp(BossData.PreviousHealth * BossData.PlayInRatio, 0.f, 1.f);
+	DamagePercent = FMax(BossData.LastHit.HitAmount - HealthPercent, 0.f);
+
+	SizeX = float(C.SizeX) * BossBarSize.X;
+	SizeY = float(C.SizeY) * BossBarSize.Y;
+
+	TempX = float(C.SizeX) * (0.5f - (BossBarSize.X / 2.f));
+	TempY = (float(C.SizeY) * ((BackplateSpacing.Y * 2.f) + BackplateSize.Y)) + ((1.f - FadeRatio) * SizeY * 2.f);
+
+	BarBackplateColor = MakeColor(0, 0, 0, FadeRatio * 180.f);
+	FillColor = MakeColor(255, 255, 255, FadeRatio * 255.f);
+
+	C.SetPos(TempX, TempY);
+
+	C.DrawColor = BarBackplateColor;
+	C.DrawTileStretched(BossHealthBarBackplate, SizeX, SizeY);
+
+	if (BossData.PlayInRatio > 0.9f && DamagePercent > 0.f && BossData.LastHit.Ratio < 1.f)
+	{
+		C.SetPos(TempX + (SizeX * HealthPercent), TempY);
+		C.DrawColor = MakeColor(255, 255, 255, FadeRatio * FMin((1.f - BossData.LastHit.Ratio) * 2.f, 1.f) * 255.f);
+		C.DrawTileClipped(BossHealthDamageBarFill, SizeX * DamagePercent, SizeY, 0, 0, SizeX * DamagePercent, BossHealthBarFill.MaterialVSize());
+	}
+	
+	C.SetPos(TempX, TempY);
+	C.DrawColor = FillColor;
+	C.DrawTileClipped(BossHealthBarFill, SizeX * HealthPercent, SizeY, 0, 0, SizeX * HealthPercent, BossHealthBarFill.MaterialVSize());
+
+	TempY += SizeY * 1.1f;
+	C.SetPos(TempX, TempY);
+	C.Font = TurboHUD.LoadFont(3 + FontSizeOffset);
+	C.TextSize("P", TextSizeX, TextSizeY);
+	C.DrawText(BossData.BossClass.default.MenuName);
+
+	TempX += SizeX;
+	TempY -= SizeY * 0.33f;
+	SyringeIndex = 0;
+	while(SyringeIndex < 3)
+	{
+		TempX -= TextSizeY;
+		C.DrawColor = BarBackplateColor;
+		C.SetPos(TempX, TempY);
+		C.DrawRect(BossSyringeBackplateIcon, TextSizeY, TextSizeY);
+
+		SyringeFadeRatio = BossData.SyringeList[SyringeIndex].FadeRatio;
+		SyringeIndex++;
+		if (SyringeFadeRatio >= 1.f)
+		{
+			TempX -= TextSizeY * 0.125f;
+			continue;
+		}
+		
+		FillColor.A = FadeRatio * 255.f * (1.f - SyringeFadeRatio);
+		C.DrawColor = FillColor;
+		C.SetPos(TempX - (TextSizeY * 0.125f), TempY - (TextSizeY * 0.125f));
+		C.DrawRect(BossSyringeIcon, TextSizeY, TextSizeY);
+		TempX -= TextSizeY * 0.125f;
+	}
+}
+
+simulated function TickVoteInstance(float DeltaTime)
+{
+	if (TGRI.VoteInstance != CurrentVoteInstance || TGRI.VoteInstance == None || TGRI.VoteInstance.GetVoteState() >= Expired)
+	{
+		VoteRatio = Lerp(DeltaTime * VoteRatioInterpRate, VoteRatio, 0.f);
+
+		if (VoteRatio <= 0.001f)
+		{
+			VoteRatio = 0.f;
+			CurrentVoteInstance = TGRI.VoteInstance;
+
+			if (CurrentVoteInstance != None)
+			{
+				OnVoteInstanceChanged(CurrentVoteInstance);
+				VoteDurationPercent = CurrentVoteInstance.GetVoteDurationPercentRemaining();
+				VoteYesPercent = CurrentVoteInstance.GetYesVotePercent();
+				VoteNoPercent = CurrentVoteInstance.GetNoVotePercent();
+			}
+		}
+
+		return;
+	}
+
+	if (TGRI.VoteInstance == None)
+	{
+		return;
+	}
+
+	if (VoteRatio <= 1.f)
+	{
+		VoteRatio = Lerp(DeltaTime * VoteRatioInterpRate, VoteRatio, 1.f);
+
+		if (VoteRatio >= 0.999f)
+		{
+			VoteRatio = 1.f;
+		}
+	}
+
+	VoteDurationPercent = Lerp(DeltaTime * VoteDurationInterpRate, VoteDurationPercent, CurrentVoteInstance.GetVoteDurationPercentRemaining());
+	VoteYesPercent = Lerp(DeltaTime * VoteYesInterpRate, VoteYesPercent, CurrentVoteInstance.GetYesVotePercent());
+	VoteNoPercent = Lerp(DeltaTime * VoteNoInterpRate, VoteNoPercent, CurrentVoteInstance.GetNoVotePercent());
+}
+
+simulated function DrawVoteInstance(Canvas C)
+{
+	local float TempX, TempY, RootTempX;
+	local float SizeX, SizeY, RootSizeX;
+	local float TextSizeX, TextSizeY;
+	local float PaddingPercent, TimePercent;
+	local float VotePercentBarHeight;
+	local string TestText;
+	local Plane OriginalModulate;
+	local Color YesColor, NoColor;
+
+	if (VoteRatio <= 0.001f || CurrentVoteInstance == None)
+	{
+		return;
+	}
+
+	OriginalModulate = C.ColorModulate;
+	C.ColorModulate.W = VoteRatio;
+	
+	PaddingPercent = 0.025f;
+
+	TempY = BackplateSpacing.Y * float(C.SizeY);
+	TempX = float(C.SizeX) - (BackplateSpacing.Y * float(C.SizeY));
+
+	TestText = CurrentVoteInstance.GetVoteTitleString();
+	C.Font = TurboHUD.LoadFont(FontSizeOffset + 1);
 	C.FontScaleX = 1.f;
 	C.FontScaleY = 1.f;
+	C.TextSize(TestText, TextSizeX, TextSizeY);
 
-	C.TextSize(EndTraderVoteTitle, TextSizeX, TextSizeY);
+	SizeX = TextSizeX + (float(C.SizeY) * PaddingPercent);
+	SizeY = (TextSizeY * 1.5f) + (float(C.SizeY) * PaddingPercent * 0.5f);
 
-	C.FontScaleX = FMin((C.ClipY * BackplateSpacing.Y * 1.25f) / TextSizeY, 1.f);
-	C.FontScaleY = C.FontScaleX;
+	TempX -= VoteRatio * SizeX;
+	RootTempX = TempX;
+	RootSizeX = SizeX;
 
-	for (Index = EndTraderVoteList.Length - 1; Index >= 0; Index--)
+	if (RoundedContainer != None)
 	{
-		TPRI = EndTraderVoteList[Index].PRI;
-		if (TPRI == None)
-		{
-			continue;
-		}
-
-		if (!TPRI.bVotedForTraderEnd)
-		{
-			continue;
-		}
-		
-		bHasVotes = true;
-		C.TextSize(TPRI.PlayerName, TextSizeX, TextSizeY);
-		MinEntrySizeX = FMax(TextSizeX, MinEntrySizeX);
-		EntrySizeY = FMax(TextSizeY, EntrySizeY);
+		C.DrawColor = BackplateColor;
+		C.SetPos(TempX, TempY);
+		C.DrawTileStretched(RoundedContainer, SizeX, SizeY);
 	}
 
-	if (!bHasVotes)
+	TempX += (float(C.SizeY) * PaddingPercent * 0.5f);
+	SizeX -= (float(C.SizeY) * PaddingPercent);
+	
+	TempY += (float(C.SizeY) * PaddingPercent * 0.25f);
+	SizeY -= (float(C.SizeY) * PaddingPercent * 0.5f);
+
+	YesColor = CurrentVoteInstance.GetVoteYesColor();
+	NoColor = CurrentVoteInstance.GetVoteNoColor();
+
+	TimePercent = CurrentVoteInstance.GetVoteDurationPercentRemaining();
+	if (TimePercent >= 0.f)
 	{
-		return;
+		VotePercentBarHeight = TextSizeY * 0.575f;
+		C.SetPos(RootTempX, TempY + (VotePercentBarHeight * 0.2f));
+		C.DrawColor = class'TurboLocalMessage'.default.KeywordColor;
+		C.DrawColor.A = 20;
+		C.DrawTileStretched(SquareContainer, RootSizeX, VotePercentBarHeight);
+		C.DrawColor.A = 40;
+		C.DrawTileStretched(SquareContainer, RootSizeX * TimePercent, VotePercentBarHeight);
 	}
 
-	MinEntrySizeX += 24.f;
-	EntrySizeY *= 1.1f;
+	C.DrawColor = CurrentVoteInstance.GetVoteTitleColor();
+	C.SetPos(TempX + (SizeX * 0.5f - (TextSizeX * 0.5f)), TempY - (float(C.SizeY) * PaddingPercent * 0.25f));
+	C.DrawTextClipped(TestText);
 
-	TempX = C.ClipX;
-	TempY = C.ClipY * 0.1f;
+	TempY += SizeY;
 
-	for (Index = EndTraderVoteList.Length - 1; Index >= 0; Index--)
-	{
-		TPRI = EndTraderVoteList[Index].PRI;
-		if (TPRI == None)
-		{
-			continue;
-		}
+	C.FontScaleX = 0.5f;
+	C.FontScaleY = 0.5f;
 
-		if (!TPRI.bVotedForTraderEnd)
-		{
-			continue;
-		}
+	TestText = CurrentVoteInstance.GetVoteYesString() @ CurrentVoteInstance.GetYesVoteCount();
+	C.TextSize(TestText, TextSizeX, TextSizeY);
 
-		Ratio = EndTraderVoteList[Index].Ratio;
+	VotePercentBarHeight = TextSizeY * 0.8f;
+	C.DrawColor = YesColor;
+	C.DrawColor.A = float(C.DrawColor.A) * 0.25f;
+	C.SetPos(RootTempX, TempY - (TextSizeY * 0.9f));
+	C.DrawTileStretched(SquareContainer, RootSizeX * VoteYesPercent, VotePercentBarHeight);
 
-		if (Ratio < 0.001f)
-		{
-			continue;
-		}
-		
-		EntryXOffset = (MinEntrySizeX * Lerp(Ratio, 0.5f, 0.f));
+	C.DrawColor = NoColor;
+	C.DrawColor.A = float(C.DrawColor.A) * 0.25f;
+	C.SetPos((RootTempX + RootSizeX) - (RootSizeX * VoteNoPercent), TempY - (TextSizeY * 0.9f));
+	C.DrawTileStretched(SquareContainer, RootSizeX * VoteNoPercent, VotePercentBarHeight);
 
-		C.TextSize(TPRI.PlayerName, TextSizeX, TextSizeY);
+	C.DrawColor = BackplateColor;
+	C.SetPos(TempX + 2.f, (TempY + 2.f) - TextSizeY);
+	C.DrawTextClipped(TestText);
 
-		if (EdgeContainer != None)
-		{
-			C.SetDrawColor(0, 0, 0);
-			C.DrawColor.A = byte(Ratio * 120.f);
-			C.SetPos((TempX - MinEntrySizeX) + EntryXOffset, TempY);
-			C.DrawTileStretched(EdgeContainer, MinEntrySizeX + 2.f, EntrySizeY); //Avoid seams.
-		}
+	C.SetPos(TempX, TempY - TextSizeY);
+	C.DrawColor = YesColor;
+	C.DrawTextClipped(TestText);
 
-		C.SetDrawColor(255, 255, 255);
-		C.DrawColor.A = byte(Ratio * 255.f);
-		C.SetPos((TempX - TextSizeX - 8.f) + EntryXOffset, TempY + (EntrySizeY * 0.5f) - (TextSizeY * 0.5f));
-		C.DrawTextClipped(TPRI.PlayerName);
+	TestText = CurrentVoteInstance.GetNoVoteCount() @ CurrentVoteInstance.GetVoteNoString();
+	C.TextSize(TestText, TextSizeX, TextSizeY);
 
-		TempY += EntrySizeY + 2.f;
-	}
+	C.DrawColor = BackplateColor;
+	C.SetPos(((TempX + SizeX) - TextSizeX) + 2.f, (TempY + 2.f) - TextSizeY);
+	C.DrawTextClipped(TestText);
 
-	if (bHasVotes)
-	{
-		C.SetDrawColor(255, 255, 255);
-		C.DrawColor.A = byte(EndTraderVoteRatio * 255.f);
-		TempY = C.ClipY * 0.1f;
-		C.TextSize(EndTraderVoteTitle, TextSizeX, TextSizeY);
+	C.SetPos((TempX + SizeX) - TextSizeX, TempY - TextSizeY);
+	C.DrawColor = NoColor;
+	C.DrawTextClipped(TestText);
 
-		C.SetPos(TempX - TextSizeX - 8.f, TempY - (TextSizeY + 8.f));
-		C.DrawTextClipped(EndTraderVoteTitle);
-	}
+	C.ColorModulate = OriginalModulate;
 }
 
 defaultproperties
@@ -958,13 +1347,30 @@ defaultproperties
 	ActiveWaveSizeRate=4.f
 	NumberZedsInterpRate=2.f
 
+	BossDataFadeInRate=1.f
+	BossDataFadeOutRate=4.f
+	BossDataHealthInterpRate=8.f
+
+	VoteRatioInterpRate=4.f
+	VoteDurationInterpRate=10.f
+	VoteYesInterpRate=4.f
+	VoteNoInterpRate=4.f
+	VoteStartSound=Sound'Steamland_SND.UI_NewObjective'
+	VoteTallyChangeSound=Sound'Steamland_SND.Safe_WheelClick'
+
+	BossBarSize=(X=0.7f,Y=0.03)
+	BossHealthBarBackplate=Texture'KFTurbo.HUD.ContainerSquare_D'
+	BossHealthBarFill=FinalBlend'KFTurbo.Boss.Bar_FB'
+	BossHealthDamageBarFill=Texture'KFTurbo.Boss.DamageBar_D'
+
+	BossSyringeIcon=Texture'KFTurbo.Boss.Syringe_D'
+	BossSyringeBackplateIcon=Texture'KFTurbo.Boss.SyringeBack_D'
+
 	BackplateColor=(R=0,G=0,B=0,A=140)
 
 	BackplateSize=(X=0.075f,Y=0.05f)
 	BackplateSpacing=(X=0.01f,Y=0.02f)
 	BackplateTextSpacing=(X=0.01f,Y=0.f)
-
-	EndTraderVoteTitle="End Trader Vote:"
 	
 	RoundedContainer=Texture'KFTurbo.HUD.ContainerRounded_D'
 	EdgeContainer=Texture'KFTurbo.HUD.EdgeBackplate_D'

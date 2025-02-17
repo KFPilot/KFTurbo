@@ -1,3 +1,6 @@
+//Killing Floor Turbo P_Husk_Weak
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class P_Husk_Weak extends P_Husk_STA;
 
 simulated function PostBeginPlay()

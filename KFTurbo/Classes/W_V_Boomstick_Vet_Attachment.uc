@@ -1,3 +1,6 @@
+//Killing Floor Turbo W_V_Boomstick_Vet_Attachment
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class W_V_Boomstick_Vet_Attachment extends BoomStickAttachment;
 
 var byte WeaponTier, PreviousTier;
@@ -31,11 +34,7 @@ simulated function PostNetReceive()
 function ApplyPlayerWeaponTier()
 {
      WeaponTier = class'VetWeaponHelper'.static.GetPlayerWeaponTier(Pawn(Owner), class'V_SupportSpec');
-
-     if (Level.NetMode != NM_DedicatedServer)
-     {
-          UpdateWeaponTier(WeaponTier);
-     }
+     UpdateWeaponTier(WeaponTier);
 }
 
 function SetWeaponTier(byte NewWeaponTier)

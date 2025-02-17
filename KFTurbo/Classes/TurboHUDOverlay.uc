@@ -1,3 +1,6 @@
+//Killing Floor Turbo TurboHUDOverlay
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class TurboHUDOverlay extends HudOverlay;
 
 struct Vector2D
@@ -165,4 +168,15 @@ static final function DrawCounterTextMeticulous(Canvas C, String String, float S
 		C.CurY = RootY;
 		String = Right(String, Len(String) - 1);
 	}
+}
+
+static final function Color MakeColor(byte R, byte G, byte B, optional byte A)
+{
+	local Color C;
+
+	C.R = R;
+	C.G = G;
+	C.B = B;
+	C.A = A;
+	return C;
 }

@@ -90,9 +90,13 @@ function string GetPlayerName()
 	return PlayerTPRI.PlayerName;
 }
 
-simulated function Destoryed()
+simulated function Destroyed()
 {
-	Unregister();
+	if (!Level.bLevelChange)
+	{
+		Unregister();
+	}
+	
 	Super.Destroyed();
 }
 

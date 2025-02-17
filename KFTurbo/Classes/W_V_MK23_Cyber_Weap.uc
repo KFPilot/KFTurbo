@@ -1,3 +1,6 @@
+//Killing Floor Turbo W_V_MK23_Cyber_Weap
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class W_V_MK23_Cyber_Weap extends W_MK23_Weap;
 
 var array<Material> LoadedStateMaterialList;

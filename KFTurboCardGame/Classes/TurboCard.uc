@@ -1,6 +1,6 @@
 //Killing Floor Turbo TurboCard
 //Base class for selectable cards.
-//Distributed under the terms of the GPL-2.0 License.
+//Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
 class TurboCard extends Object
 	instanced;
@@ -139,7 +139,7 @@ function SetupScriptedTexture(ScriptedTexture Tex)
 	ApplyDescription(Tex);
 
 	FullTitleString = Caps(FullTitleString@"| Killing Floor Turbo");
-	TextFont = class'KFTurboFontHelper'.static.LoadFontStatic(GetSubTitleFontSize(Tex));
+	TextFont = TurboHUDKillingFloor(Tex.RenderViewport.Actor.myHUD).LoadFont(GetSubTitleFontSize(Tex));
 	Tex.TextSize(FullTitleString, TextFont, TextSizeX, TextSizeY);
 	TempX = (SizeX * 0.92f) - TextSizeX;
 	TempY = (SizeY * 0.8835f) - (TextSizeY);
@@ -180,7 +180,7 @@ function string ApplyTitle(ScriptedTexture Tex)
 
 	if (FullTitleString.Length != 0)
 	{
-		TextFont = class'KFTurboFontHelper'.static.LoadBoldFontStatic(GetTitleFontSize(Tex));
+		TextFont = TurboHUDKillingFloor(Tex.RenderViewport.Actor.myHUD).LoadBoldFont(GetTitleFontSize(Tex));
 		Tex.TextSize(FullTitleString[0], TextFont, TextSizeX, TextSizeY);
 
 		//Space from top of texture to top of card + card margin + half of card header size
@@ -235,7 +235,7 @@ function ApplyDescription(ScriptedTexture Tex)
 
 	if (FullDescriptionString.Length != 0)
 	{
-		TextFont = class'KFTurboFontHelper'.static.LoadFontStatic(GetTextFontSize(Tex));
+		TextFont = TurboHUDKillingFloor(Tex.RenderViewport.Actor.myHUD).LoadFont(GetTextFontSize(Tex));
 		Tex.TextSize(FullDescriptionString[0], TextFont, TextSizeX, TextSizeY);
 
 		//Space from top of texture to top of card + card margin + half of card header size

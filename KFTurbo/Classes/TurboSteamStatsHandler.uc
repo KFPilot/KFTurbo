@@ -1,3 +1,6 @@
+//Killing Floor Turbo TurboSteamStatsHandler
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 Class TurboSteamStatsHandler extends Engine.Info
 	transient;
 

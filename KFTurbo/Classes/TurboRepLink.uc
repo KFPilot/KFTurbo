@@ -1,3 +1,6 @@
+//Killing Floor Turbo TurboRepLink
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class TurboRepLink extends LinkedReplicationInfo
     dependson(TurboVeterancyTypes);
 
@@ -223,28 +226,8 @@ Begin:
     {
         stop;
     }
-
-    CachePlayerStats();
-    GotoState('');
-}
-
-simulated function CachePlayerStats()
-{
-    local ClientPerkRepLink CPRL;
-
-    if (OwningController == None)
-    {
-        return;
-    }
-
-    CPRL = class'ClientPerkRepLink'.static.FindStats(OwningController);
     
-    if (CPRL == None)
-    {
-        return;
-    }
-
-    //Add way to cache perk values here and then provide bonuses to them later.
+    GotoState('');
 }
 
 simulated function bool IsClientPerkRepLinkReady()
@@ -427,7 +410,14 @@ simulated function UpdateVariantStatus()
         return;
     }
 
-    SetupPlayerInfo();
+    if (OwningController != None && Viewport(OwningController.Player) != None)
+    {
+        SetupPlayerInfo();
+    }
+    else
+    {
+        bHasPerformedSetup = true;
+    }
 
     if (bHasPerformedVariantStatusUpdate)
     {
@@ -435,7 +425,11 @@ simulated function UpdateVariantStatus()
     }
 
     bHasPerformedVariantStatusUpdate = true;
-    Spawn(Class'TurboSteamStatsGet', Owner).Link = Self;
+
+    if (OwningController != None && Viewport(OwningController.Player) != None)
+    {
+        Spawn(Class'TurboSteamStatsGet', Owner).Link = Self;
+    }
 }
 
 simulated function DebugVariantInfo(bool bFilterStatus)

@@ -1,5 +1,5 @@
 //Killing Floor Turbo KFTurboMasterServerUplink
-//Distributed under the terms of the GPL-2.0 License.
+//Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
 class KFTurboMasterServerUplink extends IpDrv.MasterServerUplink
 	config(KFTurboServer);
@@ -7,6 +7,7 @@ class KFTurboMasterServerUplink extends IpDrv.MasterServerUplink
 var config string ServerColorString;
 var config int BlueGradientSteps;
 var config array<string> BlueStringGradient;
+var config bool bApplyVersionNumberToServerName;
 
 function PostBeginPlay()
 {
@@ -62,6 +63,11 @@ function PerformUpdate()
 		if (ServerColorString != "")
 		{
 			FullCachedServerState.ServerName = ServerColorString;
+
+			if (bApplyVersionNumberToServerName)
+			{
+				FullCachedServerState.ServerName = Repl(FullCachedServerState.ServerName, "%v", class'KFTurboMut'.static.GetTurboVersionID());
+			}
 		}
 
 		FullCachedServerState.MapName = ApplyGradientToString(FullCachedServerState.MapName);
@@ -86,7 +92,7 @@ function PerformUpdate()
 		Level.Game.GetServerPlayers(FullCachedServerState);
 
 		ServerState 		= FullCachedServerState;
-		CacheRefreshTime 	= Level.TimeSeconds + 19.f; //Reduced interval
+		CacheRefreshTime 	= Level.TimeSeconds + 9.f; //Reduced interval
 		bInitialStateCached = false;
 	}
 	else if (Level.Game.GetNumPlayers() != CachePlayerCount)
@@ -215,6 +221,10 @@ function AppendGameModeInfo(out GameInfo.ServerResponseLine ServerState)
 		{
 			GameTypeString = "Turbo Randomizer Game Mode";
 		}
+		else if (IsPlayingHoldout())
+		{
+			GameTypeString = "Turbo Holdout Game Mode";
+		}
 		else
 		{
 			GameTypeString = "Turbo Game Mode";
@@ -232,6 +242,11 @@ function bool IsPlayingCardGame()
 function bool IsPlayingRandomizer()
 {
     return HasMutatorFromGroup("KF-Randomizer");
+}
+
+function bool IsPlayingHoldout()
+{
+    return HasMutatorFromGroup("KF-Holdout");
 }
 
 function bool HasMutatorFromGroup(string GroupName)

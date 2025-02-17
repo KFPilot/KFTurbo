@@ -1,6 +1,6 @@
 //Killing Floor Turbo TurboStatsTcpLink
-//Sends data regarding player stats to a specified place.
-//Distributed under the terms of the GPL-2.0 License.
+//Sends analytics data to a specified endpoint. All content is deferred over multiple frames.
+//Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
 class TurboStatsTcpLink extends TcpLink
     config(KFTurbo);
@@ -13,6 +13,11 @@ var globalconfig string StatsTcpLinkClassOverride;
 var IpAddr StatsAddress;
 
 var string CRLF;
+
+var array<string> DeferredDataList;
+var int DeferredDataIndex;
+
+var int MaxRetryCount;
 
 static function bool ShouldBroadcastAnalytics()
 {
@@ -44,25 +49,29 @@ static final function TurboStatsTcpLink FindStats(GameInfo GameInfo)
 
 function PostBeginPlay()
 {
-    log("KFTurbo is starting up stats TCP link!", 'KFTurbo');
+    log("KFTurbo has created a stats TCP link!", 'KFTurbo');
 
 	CRLF = Chr(13) $ Chr(10);
 
     LinkMode = MODE_Text;
     ReceiveMode = RMODE_Event;
+}
+
+function OnGameStart()
+{
     BindPort();
     Resolve(StatsDomain);
 }
 
 event Resolved(IpAddr ResolvedAddress)
 {
-    log("Resolved domain"@StatsDomain$".", 'KFTurbo');
+    log("Resolved domain stats domain"@StatsDomain$".", 'KFTurbo');
     StatsAddress = ResolvedAddress;
     StatsAddress.Port = StatsPort;
 
     if (!OpenNoSteam(StatsAddress))
     {
-        log("OpenNoSteam failed for"@StatsDomain$"!", 'KFTurbo');
+        log("OpenNoSteam failed for stats domain"@StatsDomain$"!", 'KFTurbo');
         Close();
         LifeSpan = 1.f;
     }
@@ -78,7 +87,123 @@ event ResolveFailed()
 
 function Opened()
 {
-    log("Connection to"@StatsDomain@"opened.", 'KFTurbo');
+    log("Connection to stats domain "@StatsDomain@"opened. Sending game start payload.", 'KFTurbo');
+
+    DeferredDataList.Insert(0, 1);
+    DeferredDataList[0] = BuildGameStartPayload(); //Make sure this is the first thing we send out.
+    GotoState('ConnectionReady');
+}
+
+function SendData(string Data)
+{
+    DeferredDataList[DeferredDataList.Length] = Data;
+}
+
+function FlushData() {}
+
+state ConnectionReady
+{
+    function BeginState()
+    {
+        SetTimer(9.f, true);
+    }
+
+    function EndState()
+    {
+        SetTimer(0.f, false);
+    }
+
+    function Timer()
+    {
+        SendData("keepalive");
+    }
+
+    function FlushData()
+    {
+        GotoState('FlushAllData');
+    }
+
+Begin:
+    while (true)
+    {
+        Sleep(0.15f);
+
+        if (DeferredDataList.Length == 0)
+        {
+            continue;
+        }
+
+        SendText(DeferredDataList[0]);
+        DeferredDataList.Remove(0, 1);
+    }
+}
+
+function Closed()
+{
+    log("Connection to stats domain"@StatsDomain@"closed.", 'KFTurbo');
+    GotoState('ConnectionClosed');
+}
+
+//Will attempt to re-establish the connection to the stats server.
+state ConnectionClosed
+{
+Begin:
+    if (MaxRetryCount <= 0)
+    {
+        log("Connection to stats domain"@StatsDomain@"failed"@default.MaxRetryCount@"times. Stopping reconnection attempts.", 'KFTurbo');
+        GotoState('ConnectionFailed');
+        stop;
+    }
+
+    MaxRetryCount--;
+
+    Sleep(1.f);
+    Close();
+    Sleep(1.f);
+    BindPort();
+    Resolve(StatsDomain);
+}
+
+//Game ended. Get all this data out asap.
+state FlushAllData
+{
+    function OnGameStart() {}
+    function Opened() {}
+
+    function Closed()
+    {
+        GotoState('ConnectionFailed');
+    }
+
+Begin:
+    while (true)
+    {
+        Sleep(0.1f);
+
+        if (DeferredDataList.Length == 0)
+        {
+            break;
+        }
+
+		if(Level.bLevelChange)
+        {
+			Level.NextSwitchCountdown = FMax(Level.NextSwitchCountdown, 1.f);
+        }
+
+        SendText(DeferredDataList[0]);
+        DeferredDataList.Remove(0, 1);
+    }
+
+    Sleep(0.1f);
+    Close();
+}
+
+state ConnectionFailed
+{
+    function OnGameStart() {}
+    function Resolved(IpAddr ResolvedAddress) {}
+    function Opened() { Close(); }
+    function Closed() {}
 }
 
 /*
@@ -96,11 +221,6 @@ version - The KFTurbo version currently running.
 session - The session ID for this game."
 gametype - The type of game being played. Can be "turbo", "turbocardgame", "turborandomizer", "turboplus".
 */
-
-function SendGameStart()
-{
-    SendText(BuildGameStartPayload());
-}
 
 final function string BuildGameStartPayload()
 {
@@ -137,7 +257,8 @@ result - The result of the game. Can be "won", "lost", "aborted". Aborted refers
 
 function SendGameEnd(int Result)
 {
-    SendText(BuildGameEndPayload(Level.Game.GetCurrentWaveNum(), GetResultName(Result)));
+    SendData(BuildGameEndPayload(Level.Game.GetCurrentWaveNum(), GetResultName(Result)));
+    FlushData();
 }
 
 final function string BuildGameEndPayload(int WaveNum, string Result)
@@ -160,7 +281,7 @@ final function string BuildGameEndPayload(int WaveNum, string Result)
 Data payload for a wave starting looks like the following;
 
 {
-    "type": "gameend",
+    "type": "wavestart",
     "version": "5.2.2",
     "session": "<session ID>",
     "wavenum" : 2,
@@ -176,7 +297,7 @@ playerlist - The Steam IDs of the players in the game at the wave start.
 
 function SendWaveStart()
 {
-    SendText(BuildWaveStartPayload(Level.Game.GetCurrentWaveNum()));
+    SendData(BuildWaveStartPayload(Level.Game.GetCurrentWaveNum()));
 }
 
 final function string BuildWaveStartPayload(int WaveNum)
@@ -190,6 +311,41 @@ final function string BuildWaveStartPayload(int WaveNum)
     Payload $= "%qsession%q:%q"$Mutator.GetSessionID()$"%q,";
     Payload $= "%qwavenum%q:"$WaveNum$",";
     Payload $= "%qplayerlist%q:["$GetPlayerList()$"]}";
+    
+    Payload = Repl(Payload, "%q", Chr(34));
+    return Payload;
+}
+
+/*
+Data payload for a wave ending looks like the following;
+
+{
+    "type": "waveend",
+    "version": "5.2.2",
+    "session": "<session ID>",
+    "wavenum" : 2
+}
+
+type - refers to the type of payload this is.
+version - The KFTurbo version currently running.
+session - The session ID for this game."
+wavenum - The wave that started.
+*/
+
+function SendWaveEnd()
+{
+    SendData(BuildWaveEndPayload(Level.Game.GetCurrentWaveNum() - 1));
+}
+
+final function string BuildWaveEndPayload(int WaveNum)
+{
+    local string Payload;
+    local KFTurboMut Mutator;
+    Mutator = class'KFTurboMut'.static.FindMutator(Level.Game);
+
+    Payload = "{%qtype%q:%qwaveend%q,";
+    Payload $= "%qversion%q:%q"$Mutator.GetTurboVersionID()$"%q,";
+    Payload $= "%qsession%q:%q"$Mutator.GetSessionID()$"%q}";
     
     Payload = Repl(Payload, "%q", Chr(34));
     return Payload;
@@ -233,7 +389,7 @@ function SendWaveStats(TurboWavePlayerStatCollector Stats)
         return;
     }
 
-    SendText(BuildWaveStatsPayload(Stats));
+    SendData(BuildWaveStatsPayload(Stats));
 }
 
 final function string BuildWaveStatsPayload(TurboWavePlayerStatCollector Stats)
@@ -328,9 +484,9 @@ static final function string GetResultName(int GameResult)
 {
     switch(GameResult)
     {
-        case 1:
-            return "won";
         case 2:
+            return "won";
+        case 1:
             return "lost";
     }
 
@@ -369,4 +525,6 @@ defaultproperties
     StatsDomain="";
     StatsPort=-1;
     StatsTcpLinkClassOverride=""
+
+    MaxRetryCount=5
 }

@@ -1,5 +1,5 @@
 //Killing Floor Turbo CheatDeathLocalMessage
-//Distributed under the terms of the GPL-2.0 License.
+//Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
 class CheatDeathLocalMessage extends TurboLocalMessage;
 
@@ -20,4 +20,5 @@ defaultproperties
     Lifetime=10
 
     CheatDeathString="%k%player%d has %kcheated death%d!"
+    bRelevantToInGameChat=true
 }

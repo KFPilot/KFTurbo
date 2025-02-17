@@ -1,4 +1,7 @@
+//Killing Floor Turbo TurboRepLinkFix
 //Fixes up CPRLs that get broken due to replication quirks
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class TurboRepLinkFix extends Info;
 
 var int VerifyCount;

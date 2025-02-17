@@ -1,3 +1,6 @@
+//Killing Floor Turbo TurboPerkSelectList
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class TurboPerkSelectList extends SRPerkSelectList;
 
 function InitList(KFSteamStatsAndAchievements StatsAndAchievements)

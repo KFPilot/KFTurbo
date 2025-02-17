@@ -1,3 +1,6 @@
+//Killing Floor Turbo W_M4203_Weap
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class W_M4203_Weap extends M4203AssaultRifle
 	dependson(W_M4203_Fire);
 

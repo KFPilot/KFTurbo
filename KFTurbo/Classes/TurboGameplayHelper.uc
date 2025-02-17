@@ -1,8 +1,12 @@
+//Killing Floor Turbo TurboGameplayHelper
+//Helpful gameplay statics.
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class TurboGameplayHelper extends Object;
 
 const ASSUMED_PLAYER_COUNT = 6;
 
-static final function array<TurboPlayerController> GetPlayerControllerList(LevelInfo Level)
+static final function array<TurboPlayerController> GetPlayerControllerList(LevelInfo Level, optional bool bIncludeSpectators)
 {
     local Controller Controller;
     local TurboPlayerController TurboPlayerController;
@@ -19,7 +23,7 @@ static final function array<TurboPlayerController> GetPlayerControllerList(Level
             continue;
         }
 
-        if (Controller.PlayerReplicationInfo == None || Controller.PlayerReplicationInfo.bOnlySpectator)
+        if (Controller.PlayerReplicationInfo == None || (Controller.PlayerReplicationInfo.bOnlySpectator && !bIncludeSpectators))
         {
             continue;
         }
@@ -44,6 +48,31 @@ static final function array<TurboPlayerController> GetPlayerControllerList(Level
     }
 
     return PlayerControllerList;
+}
+
+static final function int GetPlayerControllerCount(LevelInfo Level, optional bool bIncludeSpectators)
+{
+    local Controller Controller;
+    local int FoundControllers;
+
+    FoundControllers = 0;
+
+    for ( Controller = Level.ControllerList; Controller != None; Controller = Controller.NextController )
+    {
+        if (Controller.bDeleteMe || !Controller.bIsPlayer)
+        {
+            continue;
+        }
+
+        if (Controller.PlayerReplicationInfo == None || (Controller.PlayerReplicationInfo.bOnlySpectator && !bIncludeSpectators))
+        {
+            continue;
+        }
+
+        FoundControllers++;
+    }
+
+    return FoundControllers;
 }
 
 static final function array<TurboHumanPawn> GetPlayerPawnList(LevelInfo Level)

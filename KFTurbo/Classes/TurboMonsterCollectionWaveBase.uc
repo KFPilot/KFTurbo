@@ -1,4 +1,7 @@
-// Base class for basic, wave-based spawning setups.
+//Killing Floor Turbo TurboMonsterCollectionWaveBase
+//Base class for basic, wave-based spawning setups.
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class TurboMonsterCollectionWaveBase extends TurboMonsterCollection
      editinlinenew;
 
@@ -159,6 +162,15 @@ final function TurboMonsterSquad GetBeatSquad()
      RemainingBeatSquadList.Remove(Index, 1);
 
      return Squad;
+}
+
+function Reset()
+{
+     CurrentSequence.Length = 0;
+     CurrentBeat.Length = 0;
+     RemainingRegularSquadList = RegularSquadList;
+     RemainingMixInSquadList = MixInSquadList;
+     RemainingBeatSquadList = BeatSquadList;
 }
 
 //Prepares a sequence of squads to spawn - [Regular Sequence Squads with Mix Ins] followed by [Beat Squads]

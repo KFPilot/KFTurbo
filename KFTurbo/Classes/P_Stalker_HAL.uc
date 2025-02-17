@@ -1,3 +1,6 @@
+//Killing Floor Turbo P_Stalker_HAL
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class P_Stalker_HAL extends P_Stalker;
 
 #exec OBJ LOAD FILE=KF_EnemiesFinalSnd_HALLOWEEN.uax

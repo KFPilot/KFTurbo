@@ -1,13 +1,13 @@
 //Killing Floor Turbo AfflictionHarpoon
-//Distributed under the terms of the GPL-2.0 License.
+//Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
 class AfflictionHarpoon extends AfflictionBase;
 
 var float HarpoonSpeedModifier;
 
-simulated function PreTick(float DeltaTime)
+simulated function PreTick(KFMonster Monster, float DeltaTime)
 {
-	if (OwningMonster == None || OwningMonster.bHarpoonStunned)
+	if (Monster == None || Monster.bHarpoonStunned)
 	{
 		CachedMovementSpeedModifier = HarpoonSpeedModifier;
 	}

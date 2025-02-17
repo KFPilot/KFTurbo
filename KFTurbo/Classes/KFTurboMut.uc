@@ -1,6 +1,6 @@
 //Killing Floor Turbo KFTurboMut
 //Core of the KFTurbo mod.
-//Distributed under the terms of the GPL-2.0 License.
+//Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
 class KFTurboMut extends Mutator
 	config(KFTurbo);
@@ -26,6 +26,10 @@ var protected string SessionID;
 var protected string GameStartTime;
 var protected string GameType;
 
+var globalconfig bool bRequireAdminForDifficultyCommands;
+
+var bool bSkipInitialMonsterWander;
+
 delegate SetPerkSwitchEnabled(bool bEnable);
 
 simulated function PostBeginPlay()
@@ -34,6 +38,8 @@ simulated function PostBeginPlay()
 
 	//Make sure fonts are added to server packages.
 	AddToPackageMap("KFTurboFonts");
+	AddToPackageMap("KFTurboFontsJP");
+	AddToPackageMap("KFTurboFontsCY");
 
 	if(Role != ROLE_Authority)
 	{
@@ -130,11 +136,12 @@ function TurboStatsTcpLink SetupStatTcpLink()
 
 static function string GetHUDReplacementClass(string HUDClassString)
 {
-	if (HUDClassString ~= string(Class'ServerPerks.SRHUDKillingFloor')
-		|| HUDClassString ~= Class'KFGameType'.Default.HUDType
-		|| HUDClassString ~= Class'KFStoryGameInfo'.Default.HUDType)
+	local class<HUD> HUDClass;
+	HUDClass = class<HUD>(DynamicLoadObject(HUDClassString, class'class'));
+
+	if (class<TurboHUDKillingFloor>(HUDClass) == None)
 	{
-		HUDClassString = string(class'KFTurbo.TurboHUDKillingFloor');
+		return string(class'KFTurbo.TurboHUDKillingFloor');
 	}
 
 	return HUDClassString;
@@ -142,6 +149,11 @@ static function string GetHUDReplacementClass(string HUDClassString)
 
 function bool CheckReplacement(Actor Other, out byte bSuperRelevant)
 {
+	if (Level.bLevelChange)
+	{
+		return true;
+	}
+
 	if (KFPlayerReplicationInfo(Other) != None)
 	{
 		AddTurboPlayerMarkReplicationInfo(KFPlayerReplicationInfo(Other));
@@ -152,11 +164,23 @@ function bool CheckReplacement(Actor Other, out byte bSuperRelevant)
 		ReplaceWith(Other, string(class'KFTurbo.TurboRandomItemSpawn'));
 		return false;
 	}
-	else if(Controller(Other) != None && Controller(Other).PlayerReplicationInfo != None && TurboPlayerReplicationInfo(Controller(Other).PlayerReplicationInfo) == None)
+	else if (Controller(Other) != None)
 	{
-		Controller(Other).PlayerReplicationInfoClass = Class'TurboPlayerReplicationInfo';
-	}
+		if (Controller(Other).PlayerReplicationInfoClass != None && class<TurboPlayerReplicationInfo>(Controller(Other).PlayerReplicationInfoClass) == None)
+		{
+			Controller(Other).PlayerReplicationInfoClass = Class'TurboPlayerReplicationInfo';
+		}
 
+		if (bSkipInitialMonsterWander && KFMonsterController(Other) != None)
+		{
+			KFMonsterController(Other).PathFindState = 2;
+		}
+	}
+	else if (WeaponAttachment(Other) != None)
+	{
+		Other.NetPriority = FMax(Other.NetPriority, 1.5f);
+	}
+ 
 	return true;
 }
 
@@ -260,11 +284,9 @@ final function bool CheckIfNewerVersion(string LatestVersion)
 	return false;
 }
 
-static final function bool HasVersionUpdate(GameInfo Game)
+final function bool HasVersionUpdate()
 {
-    local KFTurboMut Mutator;
-    Mutator = class'KFTurboMut'.static.FindMutator(Game);
-	return Mutator.bHasVersionUpdate;
+	return bHasVersionUpdate;
 }
 
 simulated function String GetHumanReadableName()
@@ -318,18 +340,7 @@ function OnGameStart()
 
 	if (StatsTcpLink != None)
 	{
-		StatsTcpLink.SendGameStart();
-	}
-}
-
-function OnGameEnd(int Result)
-{
-	if (StatsTcpLink != None)
-	{
-		if (!Level.Game.bWaitingToStartMatch)
-		{
-			StatsTcpLink.SendGameEnd(Result);
-		}
+		StatsTcpLink.OnGameStart();
 	}
 }
 
@@ -338,6 +349,14 @@ function OnWaveStart()
 	if (StatsTcpLink != None)
 	{
 		StatsTcpLink.SendWaveStart();
+	}
+}
+
+function OnWaveEnd()
+{
+	if (StatsTcpLink != None)
+	{
+		StatsTcpLink.SendWaveEnd();
 	}
 }
 
@@ -350,6 +369,8 @@ function ServerTraveling(string URL, bool bItems)
 
 	if (KFGameReplicationInfo(Level.GRI) == None || KFGameReplicationInfo(Level.GRI).EndGameType != 0)
 	{
+		StatsTcpLink.Close();
+		StatsTcpLink.Destroy();
 		return;
 	}
 
@@ -366,8 +387,12 @@ defaultproperties
 	bDebugClientPerkRepLink=false
 
 	bCheckLatestTurboVersion=true
-	TurboVersion="5.3.3"
+	TurboVersion="6.2.0"
 	bHasVersionUpdate=false
 
+	bRequireAdminForDifficultyCommands=true
+
 	GameType="turbo"
+
+	bSkipInitialMonsterWander=false
 }

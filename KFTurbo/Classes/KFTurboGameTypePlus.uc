@@ -1,6 +1,6 @@
-// Killing Floor Turbo KFTurboGameTypePlus
-// Distributed under the terms of the GPL-2.0 License.
-// For more information see https://github.com/KFPilot/KFTurbo.
+//Killing Floor Turbo KFTurboGameTypePlus
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class KFTurboGameTypePlus extends KFTurboGameType;
 
 var TurboMonsterCollection TurboMonsterCollection;
@@ -13,8 +13,6 @@ var float WaveNextSquadSpawnTime;
 const INITIAL_CASH = 42069;
 const MIN_SPAWN_TIME = 0.01f;
 const WAVE_COUNTDOWN = 60;
-const STD_MAX_ZOMBIES = 48;
-const FAKED_P_HEALTH = 0; // Currently not being used but maybe in the future? Force to 6p?
 
 // Function called before the game begins
 function PreBeginPlay()
@@ -63,25 +61,41 @@ function PostBeginPlay()
 
     StartingCash = INITIAL_CASH;
     MinRespawnCash = INITIAL_CASH;
-    StandardMaxZombiesOnce = STD_MAX_ZOMBIES;
     WaveNextSquadSpawnTime = MIN_SPAWN_TIME;
 }
 
 event InitGame( string Options, out string Error )
 {
     SetFinalWaveOverride(7);
+    KFGameLength = GL_Long;
 
     Super.InitGame(Options, Error);
 }
+
+function ProcessServerTravel(string URL, bool bItems)
+{
+    TurboMonsterCollection = None;
+    CurrentSquad = None;
+
+    Super.ProcessServerTravel(URL, bItems);
+}
+
+function DistributeCash(TurboPlayerController ExitingPlayer) {} // Don't do this on Turbo+.
 
 // State to handle match progress
 State MatchInProgress
 {
     function BeginState()
     {
-	    class'KFTurboMut'.static.FindMutator(Level.Game).SetGameType(Self, "turboplus");
-
+        local KFTurboMut KFTurboMut;
         Super.BeginState();
+
+        KFTurboMut = class'KFTurboMut'.static.FindMutator(Self);
+        if (KFTurboMut != None)
+        {
+            KFTurboMut.SetGameType(Self, "turboplus");
+            KFTurboMut.bSkipInitialMonsterWander = true;
+        }
 
         WaveCountDown = WAVE_COUNTDOWN;
         
@@ -98,8 +112,9 @@ State MatchInProgress
         {
             WaveNextSquadSpawnTime = MIN_SPAWN_TIME;
         }
-
-        return WaveNextSquadSpawnTime / (GameWaveSpawnRateModifier * MapWaveSpawnRateModifier);
+        WaveNextSquadSpawnTime /= (GameWaveSpawnRateModifier * MapWaveSpawnRateModifier* AdminSpawnRateModifier);
+        
+        return WaveNextSquadSpawnTime;
     }
 
     function OpenShops()
@@ -149,7 +164,49 @@ State MatchInProgress
     function CloseShops()
     {
         Super.CloseShops();
+        FillPlayerAmmo();
     }
+}
+
+function FillPlayerAmmo()
+{
+	local array<TurboHumanPawn> PlayerList;
+	local int Index;
+
+	PlayerList = class'TurboGameplayHelper'.static.GetPlayerPawnList(Level);
+    for (Index = 0; Index < PlayerList.Length; Index++)
+    {
+        FillUpAmmo(PlayerList[Index]);
+    }
+}
+
+final function FillUpAmmo(TurboHumanPawn HumanPawn)
+{
+	local Inventory Inv;
+	local KFWeapon Weapon;
+	local float MaxAmmo, CurAmmo;
+
+	for(Inv = HumanPawn.Inventory; Inv != None; Inv = Inv.Inventory)
+	{
+		Weapon = KFWeapon(Inv);
+		
+		if(Weapon == None)
+		{
+			continue;
+		}
+
+	    Weapon.GetAmmoCount(MaxAmmo, CurAmmo);
+		Weapon.AddAmmo(int(MaxAmmo) - int(CurAmmo), 0);
+
+		if(!Weapon.bHasSecondaryAmmo)
+		{
+			continue;
+		}
+
+		MaxAmmo = Weapon.MaxAmmo(1);
+		CurAmmo = Weapon.AmmoAmount(1);
+		Weapon.AddAmmo(MaxAmmo - CurAmmo, 1);
+	}
 }
 
 function ResetZombieVolumes()
@@ -180,20 +237,19 @@ function SetupWave()
     WaveMonsters = 0;
     WaveNumClasses = 0;
 
-    MaxMonsters = TurboMonsterCollection.GetWaveMaxMonsters(WaveNum, GameDifficulty, NumPlayers + NumBots);
-    MaxMonsters = float(MaxMonsters) * GameMaxMonstersModifier * MapMaxMonstersModifier;
+    MaxMonsters = TurboMonsterCollection.GetWaveMaxMonsters(WaveNum, GameDifficulty, NumPlayers);
+    MaxMonsters = float(MaxMonsters) * GameMaxMonstersModifier * MapMaxMonstersModifier * AdminMaxMonstersModifier;
 
-    TotalMaxMonsters = TurboMonsterCollection.GetWaveTotalMonsters(WaveNum, GameDifficulty, NumPlayers + NumBots);
-    TotalMaxMonsters = float(TotalMaxMonsters) * GameTotalMonstersModifier;
+    TotalMaxMonsters = CalculateTotalMaxMonster();
+    KFGameReplicationInfo(Level.Game.GameReplicationInfo).MaxMonsters = TotalMaxMonsters;
+    KFGameReplicationInfo(Level.Game.GameReplicationInfo).MaxMonstersOn = true;
 
-    WaveNextSquadSpawnTime = TurboMonsterCollection.GetNextSquadSpawnTime(WaveNum, NumPlayers + NumBots);
+    WaveNextSquadSpawnTime = TurboMonsterCollection.GetNextSquadSpawnTime(WaveNum, NumPlayers);
     if (WaveNextSquadSpawnTime < MIN_SPAWN_TIME)
     {
         WaveNextSquadSpawnTime = MIN_SPAWN_TIME;
     }
-
-    KFGameReplicationInfo(Level.Game.GameReplicationInfo).MaxMonsters = TotalMaxMonsters;
-    KFGameReplicationInfo(Level.Game.GameReplicationInfo).MaxMonstersOn = true;
+    WaveNextSquadSpawnTime /= (GameWaveSpawnRateModifier * MapWaveSpawnRateModifier * AdminSpawnRateModifier);
 
     WaveEndTime = Level.TimeSeconds + 255;
     AdjustedDifficulty = GameDifficulty + TurboMonsterCollection.GetWaveDifficulty(WaveNum);
@@ -205,9 +261,14 @@ function SetupWave()
 
     BuildNextSquad();
     
-    ClearTraderEndVotes();
+    DoWaveStartForPlayers();
     class'KFTurboMut'.static.FindMutator(Self).OnWaveStart();
 	class'TurboWaveEventHandler'.static.BroadcastWaveStarted(Self, WaveNum);
+}
+
+function int CalculateTotalMaxMonster()
+{
+    return float(TurboMonsterCollection.GetWaveTotalMonsters(WaveNum, GameDifficulty, GetMaxMonsterPlayerCount())) * GameTotalMonstersModifier;
 }
 
 function AddSpecialSquad()
@@ -318,6 +379,10 @@ defaultproperties
     SpecialEventMonsterCollections(1)=Class'KFTurbo.MC_Turbo'
     SpecialEventMonsterCollections(2)=Class'KFTurbo.MC_Turbo'
     SpecialEventMonsterCollections(3)=Class'KFTurbo.MC_Turbo'
+
+    MapPrefix="KF"
+    BeaconName="KF"
+    Acronym="KF"
 
     GameName = "Killing Floor Turbo+ Game Type"
     Description = "Turbo+ mode of the Killing Floor Game Type."

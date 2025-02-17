@@ -1,5 +1,7 @@
+//Killing Floor Turbo TurboMessagePickup
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class TurboMessagePickup extends UnrealGame.PickupMessagePlus;
-
 
 static function RenderComplexMessage(
 	Canvas Canvas,
@@ -12,7 +14,10 @@ static function RenderComplexMessage(
 	optional Object OptionalObject
 	)
 {
-	Canvas.Font = class'KFTurboFontHelper'.static.LoadFontStatic(default.FontSize);
+	local TurboHUDKillingFloor TurboHUD;
+	TurboHUD = TurboHUDKillingFloor(Canvas.Viewport.Actor.myHUD);
+
+	Canvas.Font = TurboHUD.LoadFont(default.FontSize);
 	Canvas.FontScaleX = FMax(Canvas.ClipY / 2160.f, 0.5f);
 	Canvas.FontScaleY = Canvas.FontScaleX;
 

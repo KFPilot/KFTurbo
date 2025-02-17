@@ -104,6 +104,8 @@ State MatchInProgress {
 	}
 }
 
+function DistributeCash(TurboPlayerController ExitingPlayer) {}
+
 defaultproperties
 {
 	bIsTestGameType=true

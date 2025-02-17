@@ -1,4 +1,19 @@
+//Killing Floor Turbo W_M99_Pickup
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class W_M99_Pickup extends M99Pickup;
+
+function Destroyed()
+{
+	if (Inventory != None)
+	{
+		Super.Destroyed();
+	}
+	else
+	{
+		Super(WeaponPickup).Destroyed();
+	}
+}
 
 defaultproperties
 {

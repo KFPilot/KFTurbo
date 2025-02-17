@@ -1,4 +1,4 @@
-class KFTTProjBaiBai extends PTProjBase;
+class KFTTProjBaiBai extends KFTTProjBase;
      
 var() KFTTHumanPawn HitPawn;
 
@@ -24,8 +24,8 @@ simulated function ProcessTouch(Actor Other, Vector HitLocation)
 	if (HitPawn == None || HitPawn.Controller == None)
 		log("Hello, yes, this is projectile. We've missed.");
 	if (HitPawn != None && HitPawn.Controller != None){
-		log("About to run the console command 'disconnect'. Pawn named"@HitPawn.PlayerReplicationInfo.PlayerName@"is trying to be kicked.");
-		HitPawn.Controller.ConsoleCommand("disconnect");
+		log("Pawn named"@HitPawn.PlayerReplicationInfo.PlayerName@"is trying to be kicked.");
+		HitPawn.Controller.Destroy();
 	}
 	Destroy();
 }

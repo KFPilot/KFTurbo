@@ -1,5 +1,5 @@
 //Killing Floor Turbo CardGameWaveEventHandler
-//Distributed under the terms of the GPL-2.0 License.
+//Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
 class CardGameWaveEventHandler extends KFTurbo.TurboWaveEventHandler;
 
@@ -30,7 +30,7 @@ static function OnGameEnded(KFTurboGameType GameType, int Result)
         return;
     }
 
-    StatsTcpLink.OnGameEnd(CardGameMut.TurboCardReplicationInfo.GetActiveCardList());
+    StatsTcpLink.OnGameEnd(Result, CardGameMut.TurboCardReplicationInfo.GetActiveCardList());
 }
 
 static function OnWaveStarted(KFTurboGameType GameType, int StartedWave)

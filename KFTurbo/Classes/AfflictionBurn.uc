@@ -1,5 +1,5 @@
 //Killing Floor Turbo AfflictionBurn
-//Distributed under the terms of the GPL-2.0 License.
+//Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
 class AfflictionBurn extends AfflictionBase;
 
@@ -34,9 +34,9 @@ var float BurnMonsterDamageModifier;
 var bool bBlockPlayHit;
 var class<DamageType> LastBurnDamageType;
 
-simulated function PreTick(float DeltaTime)
+simulated function PreTick(KFMonster Monster, float DeltaTime)
 {
-    if(OwningMonster == None || !OwningMonster.bBurnified)
+    if(Monster == None || !Monster.bBurnified)
     {
 		return;
     }
@@ -63,7 +63,7 @@ simulated function PreTick(float DeltaTime)
 	}
 }
 
-simulated function TakeDamage(int Damage, Pawn InstigatedBy, Vector HitLocation, Vector Momentum, class<DamageType> DamageType, int HitIndex)
+simulated function TakeDamage(KFMonster Monster, int Damage, Pawn InstigatedBy, Vector HitLocation, Vector Momentum, class<DamageType> DamageType, int HitIndex)
 {
 	UpdateBurnData(DamageType);
 }
@@ -113,9 +113,9 @@ defaultproperties
 
 	FirePriorityList(0)=(DamageType=Class'KFMod.DamTypeHuskGun',Parameters=(BurnPrimaryModifier=0.250000,BurnSecondaryModifier=0.500000,BurnDuration=6.000000,Priority=6))
 	FirePriorityList(1)=(DamageType=Class'KFTurbo.W_Trenchgun_DT',Parameters=(BurnPrimaryModifier=0.300000,BurnSecondaryModifier=0.600000,BurnDuration=5.500000,Priority=5))
-	FirePriorityList(2)=(DamageType=Class'KFTurbo.W_FlareRevolver_Impact_DT',Parameters=(BurnPrimaryModifier=0.800000,BurnSecondaryModifier=0.900000,BurnDuration=4.500000,Priority=4))
-	FirePriorityList(3)=(DamageType=Class'KFTurbo.W_ThompsonSMG_DT',Parameters=(BurnPrimaryModifier=0.850000,BurnSecondaryModifier=0.950000,BurnDuration=4.250000,Priority=3))
-	FirePriorityList(4)=(DamageType=Class'KFTurbo.W_MAC10_DT',Parameters=(BurnPrimaryModifier=0.850000,BurnSecondaryModifier=0.950000,BurnDuration=4.250000,Priority=2))
-	FirePriorityList(5)=(DamageType=Class'KFTurbo.W_Flamethrower_DT',Parameters=(BurnPrimaryModifier=0.900000,BurnSecondaryModifier=1.000000,BurnDuration=4.000000,Priority=1))
+	FirePriorityList(2)=(DamageType=Class'KFTurbo.W_Flamethrower_DT',Parameters=(BurnPrimaryModifier=0.500000,BurnSecondaryModifier=0.600000,BurnDuration=6.000000,Priority=4))
+	FirePriorityList(3)=(DamageType=Class'KFTurbo.W_FlareRevolver_Impact_DT',Parameters=(BurnPrimaryModifier=0.800000,BurnSecondaryModifier=0.900000,BurnDuration=4.500000,Priority=3))
+	FirePriorityList(4)=(DamageType=Class'KFTurbo.W_ThompsonSMG_DT',Parameters=(BurnPrimaryModifier=0.850000,BurnSecondaryModifier=0.950000,BurnDuration=4.250000,Priority=2))
+	FirePriorityList(5)=(DamageType=Class'KFTurbo.W_MAC10_DT',Parameters=(BurnPrimaryModifier=0.850000,BurnSecondaryModifier=0.950000,BurnDuration=4.250000,Priority=1))
 	FirePriorityList(6)=(DamageType=Class'KFMod.DamTypeBurned',Parameters=(BurnPrimaryModifier=0.900000,BurnSecondaryModifier=1.000000,BurnDuration=4.000000,Priority=0))
 }

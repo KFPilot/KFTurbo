@@ -1,3 +1,6 @@
+//Killing Floor Turbo W_ThompsonDrum_Fire
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class W_ThompsonDrum_Fire extends ThompsonDrumFire;
 
 function DoFireEffect()
@@ -8,7 +11,7 @@ function DoFireEffect()
 
 function DoTrace(Vector Start, Rotator Direction)
 {
-	class'WeaponHelper'.static.PenetratingWeaponTrace(Start, Direction, KFWeapon(Weapon), self, 0, 0.0);
+	class'WeaponHelper'.static.PenetratingWeaponTrace(Start, Direction, KFWeapon(Weapon), self, 2, 0.75);
 }
 
 defaultproperties

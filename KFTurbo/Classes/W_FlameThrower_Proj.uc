@@ -1,3 +1,6 @@
+//Killing Floor Turbo W_FlameThrower_Proj
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class W_FlameThrower_Proj extends FlameTendril;
 
 var int BaseTime;
@@ -215,7 +218,7 @@ defaultproperties
 	MyDamageType=Class'W_FlameThrower_DT'
 	ExplosionDecal=Class'W_FlameThrower_BurnMark'
 	BaseTime=2
-	Damage=8.000000
+	Damage=10.000000
 	DamageRadius=100
 	MaxPenetrations=10
 }

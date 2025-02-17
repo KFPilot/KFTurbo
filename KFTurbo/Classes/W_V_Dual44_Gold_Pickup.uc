@@ -1,3 +1,6 @@
+//Killing Floor Turbo W_V_Dual44_Gold_Pickup
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class W_V_Dual44_Gold_Pickup extends W_Dual44_Pickup;
 
 defaultproperties

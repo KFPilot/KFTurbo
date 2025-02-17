@@ -1,35 +1,11 @@
+//Killing Floor Turbo MassDetonationExplosion_Small
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class MassDetonationExplosion_Small extends MassDetonationExplosion;
 
 defaultproperties
 {
     ExplosionVolume=1.f
-
-    Begin Object Class=SpriteEmitter Name=SpriteEmitter0
-        RespawnDeadParticles=False
-        SpinParticles=True
-        UseSizeScale=True
-        UseRegularSizeScale=False
-        UniformSize=True
-        AutomaticInitialSpawning=False
-        BlendBetweenSubdivisions=True
-        ColorScale(0)=(Color=(B=255,G=255,R=255,A=255))
-        ColorScale(1)=(RelativeTime=1.000000,Color=(B=255,G=255,R=255,A=255))
-        FadeOutFactor=(W=0.000000,X=0.000000,Y=0.000000,Z=0.000000)
-        FadeOutStartTime=5.000000
-        SpinsPerSecondRange=(Y=(Min=0.050000,Max=0.100000),Z=(Min=0.050000,Max=0.100000))
-        StartSpinRange=(X=(Min=-0.500000,Max=0.500000),Y=(Max=1.000000),Z=(Max=1.000000))
-        SizeScale(0)=(RelativeSize=0.2500000)
-        SizeScale(1)=(RelativeTime=1.000000,RelativeSize=1.250000)
-        StartSizeRange=(X=(Min=20.000000,Max=20.000000),Y=(Min=20.000000,Max=20.000000),Z=(Min=20.000000,Max=20.000000))
-        InitialParticlesPerSecond=5000.000000
-        DrawStyle=PTDS_AlphaBlend
-        Texture=Texture'kf_fx_trip_t.Misc.smoke_animated'
-        TextureUSubdivisions=8
-        TextureVSubdivisions=8
-        StartVelocityRange=(X=(Min=-750.000000,Max=750.000000),Y=(Min=-750.000000,Max=750.000000))
-        VelocityLossRange=(X=(Min=10.000000,Max=10.000000),Y=(Min=10.000000,Max=10.000000),Z=(Min=10.000000,Max=10.000000))
-    End Object
-    Emitters(0)=SpriteEmitter'SpriteEmitter0'
 
     Begin Object Class=SpriteEmitter Name=SpriteEmitter1
         RespawnDeadParticles=False
@@ -57,7 +33,7 @@ defaultproperties
         TextureVSubdivisions=8
         VelocityLossRange=(X=(Min=10.000000,Max=10.000000),Y=(Min=10.000000,Max=10.000000),Z=(Min=10.000000,Max=10.000000))
     End Object
-    Emitters(1)=SpriteEmitter'SpriteEmitter1'
+    Emitters(0)=SpriteEmitter'SpriteEmitter1'
 
     Begin Object Class=SpriteEmitter Name=SpriteEmitter2
         RespawnDeadParticles=False
@@ -86,7 +62,7 @@ defaultproperties
         StartVelocityRange=(X=(Min=-100.000000,Max=100.000000),Y=(Min=-100.000000,Max=100.000000),Z=(Min=750.000000,Max=750.000000))
         VelocityLossRange=(X=(Min=8.000000,Max=8.000000),Y=(Min=8.000000,Max=8.000000),Z=(Min=8.000000,Max=8.000000))
     End Object
-    Emitters(2)=SpriteEmitter'SpriteEmitter2'
+    Emitters(1)=SpriteEmitter'SpriteEmitter2'
 
     Begin Object Class=SpriteEmitter Name=SpriteEmitter86
         FadeOut=True
@@ -114,7 +90,7 @@ defaultproperties
         LifetimeRange=(Min=0.100000,Max=0.100000)
         StartVelocityRange=(Z=(Min=10.000000,Max=10.000000))
     End Object
-    Emitters(3)=SpriteEmitter'SpriteEmitter86'
+    Emitters(2)=SpriteEmitter'SpriteEmitter86'
 
     Begin Object Class=SpriteEmitter Name=SpriteEmitter87
         UseCollision=True
@@ -152,5 +128,5 @@ defaultproperties
         LifetimeRange=(Min=2.000000,Max=2.000000)
         StartVelocityRange=(X=(Min=-500.000000,Max=500.000000),Y=(Min=-500.000000,Max=500.000000),Z=(Min=100.000000,Max=500.000000))
     End Object
-    Emitters(4)=SpriteEmitter'SpriteEmitter87'
+    Emitters(3)=SpriteEmitter'SpriteEmitter87'
 }

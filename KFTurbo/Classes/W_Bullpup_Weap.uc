@@ -1,3 +1,6 @@
+//Killing Floor Turbo W_Bullpup_Weap
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class W_Bullpup_Weap extends Bullpup;
 
 simulated function AddReloadedAmmo()
@@ -15,7 +18,7 @@ simulated function BringUp(optional Weapon PrevWeapon)
 
 defaultproperties
 {
-     MagCapacity=20
+     MagCapacity=30
      ReloadRate=1.966667
      Weight=5.000000
      FireModeClass(0)=Class'KFTurbo.W_Bullpup_Fire'

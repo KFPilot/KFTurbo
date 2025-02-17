@@ -1,3 +1,6 @@
+//Killing Floor Turbo W_M79_Proj
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class W_M79_Proj extends KFMod.M79GrenadeProjectile;
 
 function TakeDamage( int Damage, Pawn InstigatedBy, Vector Hitlocation, Vector Momentum, class<DamageType> DamageType, optional int HitIndex)
@@ -59,6 +62,16 @@ simulated function ProcessTouch(Actor Other, Vector HitLocation)
 			class'TurboPlayerEventHandler'.static.BroadcastPlayerFireHit(Owner.Instigator.Controller, Weapon(Owner).GetFireMode(0), HitData);	
 		}
 	}
+}
+
+simulated function Explode(vector HitLocation, vector HitNormal)
+{
+	if (bHasExploded)
+	{
+		return;
+	}
+
+	Super.Explode(HitLocation, HitNormal);
 }
 
 defaultproperties

@@ -30,7 +30,12 @@ replication {
 		ClientClearLevel, AddDamageMessage, SetDamageLifeTime, ClearDamageMessages;
 	
 	reliable if (Role < ROLE_Authority)
-		ServerSetPerk, SetHealth, SetGameSpeed, ClearLevel, ClearZeds, ServerSetKeepWeapons, ServerSetDrawHitboxes, Whoosh, GodMode, ViewZeds, ViewSelf, ForceRadial, SpawnProj;
+		ServerSetPerk, SetHealth, SetGameSpeed, ClearLevel, ClearZeds, ServerSetKeepWeapons, ServerSetDrawHitboxes, Whoosh, GodMode, ViewZeds, ViewSelf, ForceRadial, Poof, BaiBai;
+
+	reliable if (Role == ROLE_Authority)
+		ClientShowWaveControlUI;
+	reliable if (Role < ROLE_Authority)
+		ServerApplyWaveControlSettings;
 }
 
 /* OVERRIDEN FUNCTIONS */
@@ -134,7 +139,15 @@ function ReceiveDamageMessages() {
 	else if (LastDamagedZed != None) {
 		if (ZombieBoss(LastDamagedZed) == None) {
 			headHealth = int(LastDamagedZed.default.headHealth * LastDamagedZed.DifficultyHealthModifer() * Mut.HealthModifer(LastDamagedZed.PlayerNumHeadHealthScale));
-			AddDamageMessage("Head health:" @ int(LastDamagedZed.headHealth) @ "/" @ headHealth);
+
+			if (LastDamagedZed.headHealth < 10.f)
+			{
+				AddDamageMessage("Head health:" @ LastDamagedZed.headHealth @ "/" @ headHealth);
+			}
+			else
+			{
+				AddDamageMessage("Head health:" @ int(LastDamagedZed.headHealth) @ "/" @ headHealth);
+			}
 		}
 		
 		bodyHealth = int(LastDamagedZed.default.health * LastDamagedZed.DifficultyHealthModifer() * Mut.HealthModifer(LastDamagedZed.PlayerCountHealthScale));
@@ -559,6 +572,16 @@ exec function Poof() {
 	SpawnProj(class'KFTurboTestMut.KFTTProjPoof');
 }
 
+exec function BaiBai()
+{
+	if (PlayerReplicationInfo == None || !PlayerReplicationInfo.bAdmin)
+	{
+		return;
+	}
+
+	SpawnProj(class'KFTurboTestMut.KFTTProjBaiBai');
+}
+
 /* STATES */
 
 auto state PlayerWaiting {
@@ -691,6 +714,41 @@ state Spectating {
 	exec function ForceRadial() {
 		ClientMessage(MSG_Spec);
 	}
+}
+
+simulated function ClientShowWaveControlUI(TestLaneWaveManager Manager)
+{
+	local GUIController PlayerGUIController;
+	local TestWaveConfigWindow ConfigMenu;
+	if (Manager == None || Player == None)
+	{
+		return;
+	}
+
+	PlayerGUIController = GUIController(Player.GUIController);
+
+	if (PlayerGUIController == None)
+	{
+		return;
+	}
+
+	if (!PlayerGUIController.OpenMenu("KFTurboTestMut.TestWaveConfigWindow"))
+	{
+		return;
+	}
+
+	ConfigMenu = TestWaveConfigWindow(PlayerGUIController.FindMenuByClass(Class'TestWaveConfigWindow'));
+	ConfigMenu.Update(Manager);
+}
+
+simulated function ServerApplyWaveControlSettings(TestLaneWaveManager Manager, int WaveNumber, int PlayerCount, int PlayerHealth)
+{
+	if (Manager == None)
+	{
+		return;
+	}
+
+	Manager.SetWaveConfig(WaveNumber, PlayerCount, PlayerHealth);
 }
 
 defaultproperties

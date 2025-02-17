@@ -1,3 +1,6 @@
+//Killing Floor Turbo CriticalHitEffect
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class CriticalHitEffect extends Emitter;
 
 #exec OBJ LOAD FILE=Steamland_SND.uax

@@ -1,6 +1,11 @@
+//Killing Floor Turbo TurboHUDScoreboard
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class TurboHUDScoreboard extends SRScoreBoard
 	dependson(TurboHUDOverlay)
     hidecategories(Advanced,Display,Events,Object,Sound);
+
+var TurboHUDKillingFloor TurboHUD;
 
 var(Layout) TurboHUDOverlay.Vector2D ScoreboardHeaderSize;
 var(Layout) TurboHUDOverlay.Vector2D ScoreboardSize;
@@ -67,6 +72,16 @@ simulated function UpdateScoreBoard(Canvas Canvas)
 		return;
 	}
 
+	if (TurboHUD == None)
+	{
+		TurboHUD = TurboHUDKillingFloor(PlayerController(Owner).myHUD);
+
+		if (TurboHUD == None)
+		{
+			return;
+		}
+	}
+
 	class'TurboHUDKillingFloor'.static.ResetCanvas(Canvas);
 
 	PlayerCount = 0;
@@ -126,7 +141,7 @@ simulated final function DrawScoreboardHeader(Canvas Canvas, float CenterY, floa
 	//Draw Difficulty
 	Canvas.FontScaleX = 1.f;
 	Canvas.FontScaleY = 1.f;
-	Canvas.Font = class'KFTurboFontHelper'.static.LoadFontStatic(2);
+	Canvas.Font = TurboHUD.LoadFont(2);
 	DrawString = SkillLevel[Clamp(InvasionGameReplicationInfo(GRI).BaseDifficulty, 0, 7)];
 	Canvas.TextSize(DrawString, TextSizeX, TextSizeY);
 	Canvas.FontScaleY = (SizeY * 0.125f) / (TextSizeY * 0.5f);
@@ -250,7 +265,7 @@ simulated final function DrawPlayerEntry(Canvas Canvas, TurboPlayerReplicationIn
 
 	DrawText = "000";
 
-	Canvas.Font = class'KFTurboFontHelper'.static.LoadFontStatic(2);
+	Canvas.Font = TurboHUD.LoadFont(2);
 	Canvas.FontScaleX = 1.f;
 	Canvas.FontScaleY = 1.f;
 	Canvas.TextSize(DrawText, TextSizeX, TextSizeY);
@@ -366,7 +381,7 @@ simulated final function DrawPlayerEntry(Canvas Canvas, TurboPlayerReplicationIn
 		Canvas.DrawColor = Canvas.MakeColor(255, 0, 0, 255);
 		Canvas.FontScaleX = 1.f;
 		Canvas.FontScaleY = 1.f;
-		Canvas.Font = class'KFTurboFontHelper'.static.LoadFontStatic(6);
+		Canvas.Font = TurboHUD.LoadFont(6);
 		Canvas.TextSize(DrawText, TextSizeX, TextSizeY);
 		Canvas.FontScaleX = (SizeY * 0.5f) / TextSizeY;
 		Canvas.FontScaleY = Canvas.FontScaleX;

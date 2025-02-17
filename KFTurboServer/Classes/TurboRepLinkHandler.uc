@@ -1,5 +1,5 @@
 //Killing Floor Turbo TurboRepLinkHandler
-//Distributed under the terms of the GPL-2.0 License.
+//Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
 class TurboRepLinkHandler extends Info;
 
@@ -51,8 +51,14 @@ function Timer()
             break;
     }
     
-    for(i = (PendingReplicationLinkList.Length - 1); i>=0; --i)
+    for (i = (PendingReplicationLinkList.Length - 1); i >= 0; --i)
     {
+        if (PendingReplicationLinkList[i] == None)
+        {
+            PendingReplicationLinkList.Remove(i, 1);
+            continue;
+        }
+
         CurrentPlayerController = KFPlayerController(PendingReplicationLinkList[i].Owner);
 
         if (CurrentPlayerController == none)
@@ -71,14 +77,13 @@ function Timer()
         }
 
         LastLinkedReplicationInfo = CurrentPlayerController.PlayerReplicationInfo.CustomReplicationInfo;
+        NewRepLink = Spawn(class'TurboRepLink', CurrentPlayerController);
+        NewRepLink.KFTurboMutator = KFTurboMutator;
+        NewRepLink.OwningController = CurrentPlayerController;
+        NewRepLink.OwningReplicationInfo = KFPlayerReplicationInfo(CurrentPlayerController.PlayerReplicationInfo);
 
         if (LastLinkedReplicationInfo == none)
         {
-            NewRepLink = Spawn(class'TurboRepLink', CurrentPlayerController);
-            NewRepLink.KFTurboMutator = KFTurboMutator;
-            NewRepLink.OwningController = CurrentPlayerController;
-            NewRepLink.OwningReplicationInfo = KFPlayerReplicationInfo(CurrentPlayerController.PlayerReplicationInfo);
-
             CurrentPlayerController.PlayerReplicationInfo.CustomReplicationInfo = NewRepLink;
         }
         else
@@ -87,11 +92,6 @@ function Timer()
             {
                 LastLinkedReplicationInfo = LastLinkedReplicationInfo.NextReplicationInfo;
             }
-
-            NewRepLink = Spawn(class'TurboRepLink', CurrentPlayerController);
-            NewRepLink.KFTurboMutator = KFTurboMutator;
-            NewRepLink.OwningController = CurrentPlayerController;
-            NewRepLink.OwningReplicationInfo = KFPlayerReplicationInfo(CurrentPlayerController.PlayerReplicationInfo);
 
             LastLinkedReplicationInfo.NextReplicationInfo = NewRepLink;
         }

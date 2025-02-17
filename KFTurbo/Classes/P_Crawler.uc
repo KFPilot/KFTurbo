@@ -1,5 +1,5 @@
 //Killing Floor Turbo P_Crawler
-//Distributed under the terms of the GPL-2.0 License.
+//Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
 class P_Crawler extends ZombieCrawler DependsOn(PawnHelper);
 
@@ -19,7 +19,7 @@ function TakeDamage(int Damage, Pawn InstigatedBy, Vector HitLocation, Vector Mo
 {
 	if (Role == ROLE_Authority)
 	{
-		class'PawnHelper'.static.TakeDamage(Damage, InstigatedBy, HitLocation, Momentum, DamageType, HitIndex, AfflictionData);
+		class'PawnHelper'.static.TakeDamage(Self, Damage, InstigatedBy, HitLocation, Momentum, DamageType, HitIndex, AfflictionData);
 	}
 
 	Super.TakeDamage(Damage, InstigatedBy, HitLocation, Momentum, DamageType, HitIndex);
@@ -42,11 +42,11 @@ function bool MeleeDamageTarget(int HitDamage, vector PushDirection)
 
 simulated function Tick(float DeltaTime)
 {
-    class'PawnHelper'.static.PreTickAfflictionData(DeltaTime, self, AfflictionData);
+    class'PawnHelper'.static.PreTickAfflictionData(Self, DeltaTime, self, AfflictionData);
 
     Super.Tick(DeltaTime);
 
-    class'PawnHelper'.static.TickAfflictionData(DeltaTime, self, AfflictionData);
+    class'PawnHelper'.static.TickAfflictionData(Self, DeltaTime, self, AfflictionData);
 
     if(bSTUNNED && bUnstunTimeReady && UnstunTime < Level.TimeSeconds)
     {
@@ -147,6 +147,15 @@ simulated event SetHeadScale(float NewScale)
 
 defaultproperties
 {
+    DoubleJumpAnims(0)="ZombieSpring"
+    DoubleJumpAnims(1)="ZombieSpring"
+    DoubleJumpAnims(2)="ZombieSpring"
+    DoubleJumpAnims(3)="ZombieSpring"
+    DodgeAnims(0)="ZombieSpring"
+    DodgeAnims(1)="ZombieSpring"
+    DodgeAnims(2)="ZombieSpring"
+    DodgeAnims(3)="ZombieSpring"
+
     Begin Object Class=AfflictionBurn Name=BurnAffliction
         BurnDurationModifier=1.f
     End Object

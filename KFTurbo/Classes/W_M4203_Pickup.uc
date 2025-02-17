@@ -1,3 +1,6 @@
+//Killing Floor Turbo W_M4203_Pickup
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class W_M4203_Pickup extends M4203Pickup;
 
 var W_M4203_Weap.ELoadState SecondaryLoadState;
@@ -40,6 +43,18 @@ function InitDroppedPickupFor(Inventory Inv)
 		{
 			SecondaryLoadState = Unloaded;
 		}
+	}
+}
+
+function Destroyed()
+{
+	if (Inventory != None)
+	{
+		Super.Destroyed();
+	}
+	else
+	{
+		Super(WeaponPickup).Destroyed();
 	}
 }
 

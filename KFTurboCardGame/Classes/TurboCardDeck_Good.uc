@@ -1,5 +1,5 @@
 //Killing Floor Turbo TurboCardDeck_Good
-//Distributed under the terms of the GPL-2.0 License.
+//Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
 class TurboCardDeck_Good extends TurboCardDeck;
 
@@ -399,7 +399,7 @@ function ActivateBroaderGamble(TurboCardGameplayManager GameplayManager, TurboCa
 
 function ActivateElDiabloSlayer(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
-    Card.UpdateModifier(GameplayManager.PlayerBossDamageModifier, 1.1f, bActivate);
+    Card.UpdateModifier(GameplayManager.PlayerBossDamageModifier, 1.05f, bActivate);
 }
 
 defaultproperties
@@ -754,7 +754,7 @@ defaultproperties
         CardName(1)="El Diablo"
         CardDescriptionList(0)="Increases damage"
         CardDescriptionList(1)="dealt to the"
-        CardDescriptionList(2)="Patriarch by 10%."
+        CardDescriptionList(2)="Patriarch by 5%."
         CardID="GOOD_DIABLOSLAYER"
         OnActivateCard=ActivateElDiabloSlayer
     End Object

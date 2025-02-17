@@ -1,6 +1,6 @@
 //Killing Floor Turbo TurboHUDKillingFloor
 //KFTurbo's HUD. Leverages TurboHUDOverlays for most of the UI elements.
-//Distributed under the terms of the GPL-2.0 License.
+//Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
 class TurboHUDKillingFloor extends SRHUDKillingFloor;
 
@@ -11,6 +11,7 @@ var bool bHasInitializedEndGameHUD;
 var float EndGameHUDAnimationProgress;
 
 var bool bSortedEmoteList;
+var bool bUseBaseGameFontForChat;
 
 var class<TurboHUDOverlay> PlayerInfoHUDClass;
 var TurboHUDOverlay PlayerInfoHUD;
@@ -30,6 +31,8 @@ var TurboHUDOverlay WaveStatsHUD;
 var class<TextReactionSettings> TextReactionSettingsClass;
 var TextReactionSettings TextReactionSettings;
 
+var class<KFTurboFontHelper> FontHelperClass;
+
 //Overlays that are drawn before the player HUD but after victory/game over HUD.
 var array<HudOverlay> PreDrawOverlays;
 
@@ -38,6 +41,7 @@ var localized string MerchantString;
 
 var(Turbo) Plane InvactiveModulate;
 var(Turbo) Plane ActiveModulate;
+
 
 simulated event PostRender(Canvas Canvas)
 {
@@ -183,14 +187,14 @@ simulated function CalculateModulation()
 
 	if (Brightness > 0.5f)
 	{
-		Multiplier *= Lerp((Brightness - 0.5f) * 2.f, 1.f, 0.65f); 
+		Multiplier *= Lerp((Brightness - 0.5f) * 2.f, 1.f, 0.5f); 
 	}
 	
 	Gamma = float(PlayerOwner.ConsoleCommand("get ini:Engine.Engine.ViewportManager Gamma"));
 
 	if (Gamma > 1.f)
 	{
-		Multiplier *= Lerp((Gamma - 1.f), 1.f, 0.65f); 
+		Multiplier *= Lerp((Gamma - 1.f), 1.f, 0.5f); 
 	}
 
 	Multiplier = FMax(Multiplier, 0.6f);
@@ -198,6 +202,13 @@ simulated function CalculateModulation()
 	ActiveModulate.X *= Multiplier;
 	ActiveModulate.Y *= Multiplier;
 	ActiveModulate.Z *= Multiplier;
+}
+
+simulated function ReduceModulation(Canvas C, float Interpolation)
+{
+	C.ColorModulate.X = Lerp(Interpolation, C.ColorModulate.X, 1.f);
+	C.ColorModulate.Y = Lerp(Interpolation, C.ColorModulate.Y, 1.f);
+	C.ColorModulate.Z = Lerp(Interpolation, C.ColorModulate.Z, 1.f);
 }
 
 //Adds overlay that will draw under the player HUD.
@@ -292,6 +303,9 @@ simulated function PostBeginPlay()
 		TextReactionSettings = Spawn(TextReactionSettingsClass, Self);
 		TextReactionSettings.Initialize(Self);
 	}
+
+	bUseBaseGameFontForChat = class'TurboInteraction'.static.ShouldUseBaseGameFontForChat(TurboPlayerController(PlayerOwner));
+	SetFontLocale(class'TurboInteraction'.static.GetFontLocale(TurboPlayerController(PlayerOwner)));
 }
 
 simulated function SetScoreBoardClass(class<Scoreboard> ScoreBoardClass)
@@ -578,10 +592,12 @@ simulated function DrawSpectatingHud(Canvas C)
 		ScoreBoard.DrawScoreboard(C);
 	}
 
+	ReduceModulation(C, 0.5f);
 	if ( bShowPortrait && Portrait != None )
 	{
 		DrawPortraitX(C);
 	}
+	C.ColorModulate = ActiveModulate;
 	
 	if ( bDrawHint )
 	{
@@ -741,10 +757,12 @@ simulated function DrawHudPassC(Canvas C)
 	
 	ResetCanvas(C);
 	
+	ReduceModulation(C, 0.5f);
 	if (bShowPortrait && (Portrait != None))
 	{
 		DrawPortraitX(C);
 	}
+	C.ColorModulate = ActiveModulate;
 	
 	ResetCanvas(C);
 }
@@ -809,6 +827,9 @@ function DisplayMessages(Canvas C)
 {
 	local int i, j, XPos, YPos,MessageCount;
 	local float XL, YL, XXL, YYL;
+	local float InitialClip;
+	InitialClip = C.ClipX;
+	C.ClipX = C.SizeX;
 
 	for( i = 0; i < ConsoleMessageCount; i++ )
 	{
@@ -840,7 +861,14 @@ function DisplayMessages(Canvas C)
 		XPos = (0.005 * HudCanvasScale * C.SizeX) + (((1.0 - HudCanvasScale) / 2.0) * C.SizeX);
 	}
 
-	C.Font = GetConsoleFont(C);
+	if (bUseBaseGameFontForChat)
+	{
+		C.Font = GetDefaultConsoleFont(C);
+	}
+	else
+	{
+		C.Font = GetConsoleFont(C);
+	}
 	C.DrawColor = LevelActionFontColor;
 
 	C.TextSize ("A", XL, YL);
@@ -856,11 +884,11 @@ function DisplayMessages(Canvas C)
 		}
 
 		C.DrawColor = C.MakeColor(0, 0, 0, 120);
-		C.SetPos(XPos + 1.f, YPos + 1.f);
+		C.SetPos(XPos + 2.f, YPos + 2.f);
 		if( TextMessages[i].PRI!=None )
 		{
-			XL = Class'SRScoreBoard'.Static.DrawCountryName(C,TextMessages[i].PRI,XPos + 1.f,YPos + 1.f);
-			C.SetPos( XPos + XL + 1.f, YPos + 1.f );
+			XL = Class'SRScoreBoard'.Static.DrawCountryName(C,TextMessages[i].PRI,XPos + 2.f,YPos + 2.f);
+			C.SetPos( XPos + XL + 2.f, YPos + 2.f );
 		}
 
 		if( SmileyMsgs.Length!=0 )
@@ -876,7 +904,7 @@ function DisplayMessages(Canvas C)
 		YYL = 0;
 		XXL = 0;
 		
-		C.SetPos( XPos, YPos );
+		C.SetPos(XPos, YPos);
 		if( TextMessages[i].PRI!=None )
 		{
 			XL = Class'SRScoreBoard'.Static.DrawCountryName(C,TextMessages[i].PRI,XPos,YPos);
@@ -893,6 +921,8 @@ function DisplayMessages(Canvas C)
 		}
 		YPos += (YL+YYL);
 	}
+	
+	C.ClipX = InitialClip;
 }
 
 simulated function DrawTypingPrompt(Canvas C, String Text, optional int Pos)
@@ -901,9 +931,15 @@ simulated function DrawTypingPrompt(Canvas C, String Text, optional int Pos)
     local float XL, YL;
 	local string PromptText;
 
-    C.Font = GetConsoleFont(C);
+	if (bUseBaseGameFontForChat)
+	{
+		C.Font = GetDefaultConsoleFont(C);
+	}
+	else
+	{
+		C.Font = GetConsoleFont(C);
+	}
     C.Style = ERenderStyle.STY_Alpha;
-    C.SetDrawColor(255, 255, 255, 255);
 
     C.TextSize("A", XL, YL);
 
@@ -912,6 +948,10 @@ simulated function DrawTypingPrompt(Canvas C, String Text, optional int Pos)
 
 	PromptText = "(>"@Left(Text, Pos)$chr(4)$Eval(Pos < Len(Text), Mid(Text, Pos), "_");
 
+    C.SetDrawColor(0, 0, 0, 120);
+    C.SetPos(XPos + 2.f, YPos + 2.f);
+    C.DrawTextClipped(PromptText, true);
+    C.SetDrawColor(255, 255, 255, 255);
     C.SetPos(XPos, YPos);
     C.DrawTextClipped(PromptText, true);
 
@@ -921,23 +961,34 @@ simulated function DrawTypingPrompt(Canvas C, String Text, optional int Pos)
 	}
 }
 
-static final function bool CheckEmotePrompt(string EmoteText, out int LastColon)
+//Returns index where the emote starts in the string. Returns -1 if no emote was present.
+static final function int CheckEmotePrompt(string EmoteText)
 {
 	local int Index, StringSize;
-	local int ColonCount;
-	local int LastSpace;
+	local int ColonCount, LastColonIndex;
 	local string Char;
- 
-	Index = 0;
+	local bool bIsSay;
+	bIsSay = false;
+
+	if (StrCmp(EmoteText, "Say ", 4) == 0)
+	{
+		bIsSay = true;
+		Index = 4;
+	}
+	else if(StrCmp(EmoteText, "TeamSay ", 8) == 0)
+	{
+		bIsSay = true;
+		Index = 8;
+	}
+
+	if (!bIsSay)
+	{
+		return -1;
+	}
+	
 	StringSize = Len(EmoteText);
 	ColonCount = 0;
-	LastColon = -1;
-	LastSpace = -1;
-
-	if (StrCmp(EmoteText, "TeamSay ", Len("TeamSay ")) != 0 && StrCmp(EmoteText, "Say ", Len("Say ")) != 0)
-	{
-		return false;
-	}
+	LastColonIndex = -1;
 
 	while(Index < StringSize)
 	{
@@ -945,31 +996,25 @@ static final function bool CheckEmotePrompt(string EmoteText, out int LastColon)
 		if (Char == ":")
 		{
 			ColonCount++;
-			LastColon = Index;
+			LastColonIndex = Index;
 		}
 		else if (Char == " ")
 		{
 			ColonCount = 0;
-			LastSpace = Index;
 		}
 
 		Index++;
 	}
 
-	if (ColonCount % 2 == 0)
+	if (ColonCount == 0 || (ColonCount & 1) == 0)
 	{
-		return false;
+		return -1;
 	}
 
-	if (LastSpace > LastColon)
-	{
-		return false;
-	}
-
-	return true;
+	return LastColonIndex;
 }
 
-static final function bool GetHintList(string EmoteText, out array<SmileyMessageType> EmoteList, out array<string> HintList)
+static final function bool GetHintList(string EmoteText, array<SmileyMessageType> EmoteList, out array<string> HintList)
 {
 	local int Index, LastAllocatedIndex;
 	local int EmoteTextLength;
@@ -1022,7 +1067,8 @@ simulated function DrawEmoteHintPrompt(Canvas C, String Text, float DrawX, float
 	local float TextSizeX, TextSizeY;
 	local float LargestTextSizeX, TotalTextSizeY;
 
-	if (!CheckEmotePrompt(Text, LastColonIndex))
+	LastColonIndex = CheckEmotePrompt(Text);
+	if (LastColonIndex == -1)
 	{
 		return;
 	}
@@ -1242,16 +1288,95 @@ simulated function UpdateTraderPortrait(bool bReplaceWithMerchant)
 	}
 }
 
+static function font GetConsoleFont(Canvas C)
+{
+	local int FontSize;
+
+	if( default.OverrideConsoleFontName != "" )
+	{
+		if( default.OverrideConsoleFont != None )
+			return default.OverrideConsoleFont;
+		default.OverrideConsoleFont = Font(DynamicLoadObject(default.OverrideConsoleFontName, class'Font'));
+		if( default.OverrideConsoleFont != None )
+			return default.OverrideConsoleFont;
+		Log("Warning: HUD couldn't dynamically load font "$default.OverrideConsoleFontName);
+		default.OverrideConsoleFontName = "";
+	}
+
+	FontSize = Default.ConsoleFontSize;
+	if ( C.ClipX < 640 )
+		FontSize++;
+	if ( C.ClipX < 800 )
+		FontSize++;
+	if ( C.ClipX < 1024 )
+		FontSize++;
+	if ( C.ClipX < 1280 )
+		FontSize++;
+	if ( C.ClipX < 1600 )
+		FontSize++;
+	
+	return TurboHUDKillingFloor(C.Viewport.Actor.myHUD).LoadFont(Min(8,FontSize));
+}
+
+static function font GetDefaultConsoleFont(Canvas C)
+{
+	local int FontSize;
+
+	if( default.OverrideConsoleFontName != "" )
+	{
+		if( default.OverrideConsoleFont != None )
+			return default.OverrideConsoleFont;
+		default.OverrideConsoleFont = Font(DynamicLoadObject(default.OverrideConsoleFontName, class'Font'));
+		if( default.OverrideConsoleFont != None )
+			return default.OverrideConsoleFont;
+		Log("Warning: HUD couldn't dynamically load font "$default.OverrideConsoleFontName);
+		default.OverrideConsoleFontName = "";
+	}
+
+	FontSize = Default.ConsoleFontSize;
+	if ( C.ClipX < 640 )
+		FontSize++;
+	if ( C.ClipX < 800 )
+		FontSize++;
+	if ( C.ClipX < 1024 )
+		FontSize++;
+	if ( C.ClipX < 1280 )
+		FontSize++;
+	if ( C.ClipX < 1600 )
+		FontSize++;
+	return class'SRHUDKillingFloor'.static.LoadFontStatic(Min(8,FontSize));
+}
+
 static function Font LoadFontStatic(int i)
 {
-	return class'KFTurboFontHelper'.static.LoadFontStatic(i);
+	return default.FontHelperClass.static.LoadFontStatic(i);
 }
 
 simulated function Font LoadFont(int i)
 {
-	return class'KFTurboFontHelper'.static.LoadFontStatic(i);
+	return FontHelperClass.static.LoadFontStatic(i);
 }
- 
+
+final simulated function Font LoadLargeNumberFont(int i)
+{
+	return FontHelperClass.static.LoadLargeNumberFont(i);
+}
+
+final simulated function Font LoadBoldFont(int i)
+{
+	return FontHelperClass.static.LoadBoldFontStatic(i);
+}
+
+final simulated function Font LoadBoldItalicFont(int i)
+{
+	return FontHelperClass.static.LoadBoldItalicFontStatic(i);
+}
+
+final simulated function Font LoadItalicFont(int i)
+{
+	return FontHelperClass.static.LoadItalicFontStatic(i);
+}
+
 //Resets all but modulator to expected values.
 static final function ResetCanvas(Canvas Canvas)
 {
@@ -1272,9 +1397,34 @@ static final function ResetCanvas(Canvas Canvas)
 	Canvas.Z           = 1.0;
 }
 
+simulated function SetFontLocale(string LocaleString)
+{
+	if (FontHelperClass != None)
+	{
+		FontHelperClass.static.Cleanup();
+	}
+	
+	switch(LocaleString)
+	{
+		case "ENG":
+			FontHelperClass=class'KFTurboFonts.KFTurboFontHelperEN';
+			break;
+		case "JPN":
+			FontHelperClass=class'KFTurboFontsJP.KFTurboFontHelperJP';
+			break;
+		case "CYR":
+			FontHelperClass=class'KFTurboFontsCY.KFTurboFontHelperCY';
+			break;
+		default:
+			FontHelperClass=class'KFTurboFonts.KFTurboFontHelperEN';
+			break;
+	}
+}
+
 defaultproperties
 {
 	TextReactionSettingsClass=class'TurboTextReactionSettings'
+	FontHelperClass=class'KFTurboFonts.KFTurboFontHelperEN'
 	
 	MerchantPortrait=Texture'KFTurbo.Merchant.Merchant_Portrait'
 	MerchantString="Merchant"

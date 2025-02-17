@@ -1,6 +1,6 @@
 //Killing Floor Turbo TurboHUDWaveStats
 //Handles wave player stats UI.
-//Distributed under the terms of the GPL-2.0 License.
+//Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
 class TurboHUDWaveStats extends TurboHUDOverlay
     hidecategories(Advanced,Collision,Display,Events,Force,Karma,LightColor,Lighting,Movement,Object,Sound);
@@ -77,6 +77,7 @@ var TeamStatBarConfig DamageBar;
 var TeamStatBarConfig ShotsFiredBar;
 var TeamStatBarConfig HealBar;
 var TeamStatBarConfig ReloadsBar;
+var Color TeamBarSeparatorColor;
 
 var Color StatSubtitleTextColor;
 var Color StatSubtitleTextShadowColor;
@@ -336,7 +337,7 @@ simulated function DrawStats(Canvas C)
 	}
 
 	//Calculate box title size.
-	C.Font = class'KFTurboFontHelper'.static.LoadFontStatic(1 + FontSizeOffset);
+	C.Font = TurboHUD.LoadFont(1 + FontSizeOffset);
 	C.FontScaleX = 1.f;
 	C.FontScaleX = 1.f;
 	C.TextSize("000", TextSizeX, TextSizeY);
@@ -365,7 +366,7 @@ simulated function DrawStats(Canvas C)
 	TempY += TextSizeY;
 	SizeYPerEntry = (SizeY - TextSizeY) / 5.5f;
 	
-	C.Font = class'KFTurboFontHelper'.static.LoadFontStatic(1 + FontSizeOffset);
+	C.Font = TurboHUD.LoadFont(1 + FontSizeOffset);
 	C.FontScaleX = 1.f;
 	C.FontScaleX = 1.f;
 	C.TextSize("000", TextSizeX, TextSizeY);
@@ -526,7 +527,7 @@ final function DrawTeamBar(Canvas C, float PositionX, float PositionY, float Siz
 		return;
 	}
 	
-	C.Font = class'KFTurboFontHelper'.static.LoadFontStatic(3 + FontSizeOffset);
+	C.Font = TurboHUD.LoadFont(3 + FontSizeOffset);
 	C.FontScaleX = 1.f;
 	C.FontScaleX = 1.f;
 	C.TextSize("000", TextSizeX, TextSizeY);
@@ -554,6 +555,13 @@ final function DrawTeamBar(Canvas C, float PositionX, float PositionY, float Siz
 		C.DrawColor = TeammateBarColor;
 		C.SetPos(PositionX + ((SizeX * (RemainingPercent - TeammateBarPercent)) - 2.f), PositionY);
 		C.DrawTileStretched(SquareContainer, (SizeX * TeammateBarPercent) + 2.f, SizeY);
+
+		if (Index < TeamAmount.Length - 1)
+		{
+			C.DrawColor = TeamBarSeparatorColor;
+			C.SetPos(PositionX + ((SizeX * (RemainingPercent - TeammateBarPercent)) - 2.f) - 2.f, PositionY);
+			C.DrawTileStretched(SquareContainer, 2.f, SizeY);
+		}
 
 		TeammateString = class'TurboHUDScoreboard'.static.GetCompressedNumber(TeamAmount[Index].Amount) @ TeamAmount[Index].Player.PlayerName;
 		C.DrawColor = StatTextColor;
@@ -609,7 +617,7 @@ final function DrawAccuracyBar(Canvas C, float PositionX, float PositionY, float
 	C.SetPos(PositionX, PositionY);
 	C.DrawTileStretched(SquareContainer, SizeX, SizeY);
 	
-	C.Font = class'KFTurboFontHelper'.static.LoadFontStatic(3 + FontSizeOffset);
+	C.Font = TurboHUD.LoadFont(3 + FontSizeOffset);
 	C.FontScaleX = 1.f;
 	C.FontScaleX = 1.f;
 	C.TextSize("000", TextSizeX, TextSizeY);
@@ -712,6 +720,7 @@ defaultproperties
 	ShotsFiredBar=(FillColor=(R=255,G=215,B=120,A=255),BarColor=(R=255,G=255,B=255,A=255),bDrawFillMarker=true)
 	HealBar=(FillColor=(R=135,G=255,B=120,A=255),BarColor=(R=255,G=255,B=255,A=255),bDrawFillMarker=true)
 	ReloadsBar=(FillColor=(R=255,G=215,B=120,A=255),BarColor=(R=255,G=255,B=255,A=255),bDrawFillMarker=true)
+	TeamBarSeparatorColor=(R=0,G=0,B=0,A=140)
 
 	ShotsFiredColor=(R=255,G=255,B=255,A=255)
 	ShotsHitColor=(R=120,G=145,B=255,A=255)

@@ -1,16 +1,135 @@
 //Killing Floor Turbo TurboGameReplicationInfo
-//KFTurbo's GRI. Hooks up CustomTurboModifier and CustomTurboClientModifier systems.
-//Distributed under the terms of the GPL-2.0 License.
+//KFTurbo's GRI. Hooks up CustomTurboModifier, CustomTurboClientModifier, and voting systems.
+//Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class TurboGameReplicationInfo extends KFGameReplicationInfo;
+class TurboGameReplicationInfo extends KFGameReplicationInfo
+    dependson(TurboGameVoteBase);
+
+var class<TurboServerTimeActor> ServerTimeActorClass;
+var TurboServerTimeActor ServerTimeActor;
 
 var TurboGameModifierReplicationLink CustomTurboModifier;
 var TurboClientModifierReplicationLink CustomTurboClientModifier;
+
+var TurboGameVoteBase VoteInstance; //Current active vote.
+var array< class<TurboGameVoteBase> > VoteClassList; //List of all valid votes a player can initiate.
+delegate OnVoteInstanceStateChanged(TurboGameVoteBase VoteInstance, TurboGameVoteBase.EVotingState NewState);
+delegate OnVoteInstanceTallyChanged(TurboGameVoteBase VoteInstance, int NewYesVoteCount, int NewNoVoteCount);
 
 replication
 {
     reliable if(Role == ROLE_Authority)
         CustomTurboModifier, CustomTurboClientModifier;
+}
+
+simulated function PostBeginPlay()
+{
+    if (Role == ROLE_Authority && ServerTimeActor == None)
+    {
+        if (ServerTimeActorClass == None)
+        {
+            ServerTimeActorClass = class'TurboServerTimeActor';
+        }
+
+        ServerTimeActor = Spawn(ServerTimeActorClass, Self);
+    }
+
+    Super.PostBeginPlay();
+}
+
+function PlayerVote(TurboPlayerReplicationInfo Voter, string VoteString)
+{
+    local int Index;
+    local class<TurboGameVoteBase> VoteClass;
+    local TurboGameVoteBase NewVoteInstance;
+    local string VoteID, VoteValue;
+
+    if (Divide(VoteString, " ", VoteID, VoteValue))
+    {
+        VoteID = Caps(VoteID);
+    }
+    else
+    {
+        VoteID = Caps(VoteString);
+    }
+
+    if (VoteInstance != None)
+    {
+        VoteInstance.PlayerVote(Voter, VoteString);
+        return;
+    }
+
+    if (VoteString == "YES" || VoteString == "NO")
+    {
+        return;
+    }
+
+    for (Index = VoteClassList.Length - 1; Index >= 0; Index--)
+    {
+        if (VoteClassList[Index].static.GetVoteID() != VoteID)
+        {
+            continue;
+        }
+
+        VoteClass = VoteClassList[Index];
+        break;
+    }
+
+    if (VoteClass == None || !VoteClass.static.CanInitiateVote(Self, Voter, VoteString))
+    {
+        return;
+    }
+
+    NewVoteInstance = Spawn(VoteClass, Self);
+
+    if (NewVoteInstance != None)
+    {
+        NewVoteInstance.InitiateVote(Voter, VoteString);
+
+        //Votes can instantly complete in some circumstances.
+        if (NewVoteInstance != None && NewVoteInstance.GetVoteState() < Expired)
+        {
+            RegisterVoteInstance(NewVoteInstance);
+        }
+    }
+}
+
+function PlayerVoteComplete(TurboGameVoteBase CompletedVoteInstance, TurboGameVoteBase.EVotingState VoteState)
+{
+    local TurboPlayerController PlayerController;
+
+    if (VoteState == Failed && CompletedVoteInstance != None && CompletedVoteInstance.GetVoteInitiator() != None)
+    {
+        PlayerController = TurboPlayerController(CompletedVoteInstance.GetVoteInitiator().Owner);
+
+        if (PlayerController != None)
+        {
+            PlayerController.NextStartVoteTime = Level.TimeSeconds + CompletedVoteInstance.GetPlayerStartVoteCooldown(PlayerController);
+        }
+    }
+
+    if (CompletedVoteInstance == VoteInstance)
+    {
+        VoteInstance = None;
+    }
+}
+
+//Passthrough delegates for UI.
+simulated function RegisterVoteInstance(TurboGameVoteBase NewVoteInstance)
+{
+    VoteInstance = NewVoteInstance;
+    VoteInstance.OnVoteStateChanged = OnVoteInstanceStateUpdate;
+    VoteInstance.OnVoteTallyChanged = OnVoteInstanceTallyUpdate;
+}
+
+simulated function OnVoteInstanceStateUpdate(TurboGameVoteBase VoteInstance, TurboGameVoteBase.EVotingState NewState)
+{
+    OnVoteInstanceStateChanged(VoteInstance, NewState);
+}
+
+simulated function OnVoteInstanceTallyUpdate(TurboGameVoteBase VoteInstance, int NewYesVoteCount, int NewNoVoteCount)
+{
+    OnVoteInstanceTallyChanged(VoteInstance, NewYesVoteCount, NewNoVoteCount);
 }
 
 //Reminder that if you override these simulated functions, they must return the same value on the client and server.
@@ -128,4 +247,13 @@ simulated function OnWeaponChange(KFWeapon CurrentWeapon, KFWeapon PendingWeapon
 simulated function ForceNetUpdate()
 {
     NetUpdateTime = Max(Level.TimeSeconds - ((1.f / NetUpdateFrequency) + 1.f), 0.1f);
+}
+
+defaultproperties
+{
+    VoteClassList(0)=class'TurboGameVoteEndTrader'
+    VoteClassList(1)=class'TurboGameVoteSpawnRate'
+    VoteClassList(2)=class'TurboGameVoteMaxMonsters'
+    VoteClassList(3)=class'TurboGameVoteFakedPlayers'
+    VoteClassList(4)=class'TurboGameVotePlayerHealth'
 }

@@ -1,6 +1,6 @@
 //Killing Floor Turbo W_BaseShotgunBullet
 //Base class for shotguns in KFTurbo. Removes usage of redudant headshot multiplier (that barely worked).
-//Distributed under the terms of the GPL-2.0 License.
+//Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
 class W_BaseShotgunBullet extends KFMod.ShotgunBullet;
 

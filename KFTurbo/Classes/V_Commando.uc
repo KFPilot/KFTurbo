@@ -1,6 +1,8 @@
+//Killing Floor Turbo V_Commando
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class V_Commando extends TurboVeterancyTypes
 	abstract;
-
 
 static function AddCustomStats(ClientPerkRepLink Other)
 {
@@ -110,13 +112,16 @@ static function ApplyAdjustedMagCapacityModifier(KFPlayerReplicationInfo KFPRI, 
 			Multiplier *= TurboGameReplicationInfo(KFPRI.Level.GRI).GetCommandoMagazineAmmoMultiplier(KFPRI, Other);
 		}
 
-		if(SCARMK17AssaultRifle(Other) != None)
+		if (IsHighDifficulty(KFPRI))
 		{
-			Multiplier *= 1.2f;
-		}
-		else
-		{
-			Multiplier *= 1.25f;
+			if(SCARMK17AssaultRifle(Other) != None || W_FNFAL_Weap(Other) != None)
+			{
+				Multiplier *= 1.2f;
+			}
+			else
+			{
+				Multiplier *= 1.25f;
+			}
 		}
 	}
 
@@ -127,21 +132,20 @@ static function float GetMagCapacityMod(KFPlayerReplicationInfo KFPRI, KFWeapon 
 {
 	local float Multiplier;
 	Multiplier = 1.f;
-
-	if (Bullpup(Other) != None 
-		|| AK47AssaultRifle(Other) != None 
-		|| ThompsonSMG(Other) != None
-		|| MKb42AssaultRifle(Other) != None)
-	{
-		Multiplier *= LerpStat(KFPRI, 1.f, 1.2f);
-	}
-	else if (ThompsonDrumSMG(Other) != None || SPThompsonSMG(Other) != none)
+	if (ThompsonDrumSMG(Other) != None || SPThompsonSMG(Other) != none)
 	{
 		Multiplier *= LerpStat(KFPRI, 1.f, 1.6f);
 	}
-	else if (SCARMK17AssaultRifle(Other) != None)
+	else if (Bullpup(Other) != None
+		|| AK47AssaultRifle(Other) != None 
+		|| SCARMK17AssaultRifle(Other) != None
+		|| MKb42AssaultRifle(Other) != None)
 	{
 		Multiplier *= LerpStat(KFPRI, 1.f, 1.25f);
+	} 
+	else if (ThompsonSMG(Other) != None)
+	{
+		Multiplier *= LerpStat(KFPRI, 1.f, 1.2f);
 	}
 	else if (M4AssaultRifle(Other) != None)
 	{
@@ -149,7 +153,7 @@ static function float GetMagCapacityMod(KFPlayerReplicationInfo KFPRI, KFWeapon 
 	}
 	else if (W_FNFAL_Weap(Other) != None)
 	{
-		Multiplier *= LerpStat(KFPRI, 1.f, 1.67f);
+		Multiplier *= LerpStat(KFPRI, 1.f, 2.1f);
 	}
 
 	ApplyAdjustedMagCapacityModifier(KFPRI, Other, Multiplier);

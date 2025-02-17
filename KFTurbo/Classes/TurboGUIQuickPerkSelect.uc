@@ -1,3 +1,6 @@
+//Killing Floor Turbo TurboGUIQuickPerkSelect
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class TurboGUIQuickPerkSelect extends ServerPerks.SRKFQuickPerkSelect;
 
 function bool MyOnDraw(Canvas C)

@@ -1,6 +1,6 @@
 //Killing Floor Turbo KFTurboRandomizerMut
 //Randomizer mutator. Handles all logic for the randomizer.
-//Distributed under the terms of the GPL-2.0 License.
+//Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
 class KFTurboRandomizerMut extends Mutator
 		config(KFTurboRandomizer);
@@ -26,6 +26,7 @@ struct PlayerLoadout
 	var KFPlayerController Player;
 	var ELoadoutType LoadoutType;
 	var KFTurboRandomizerLoadout Loadout;
+	var KFTurboRandomizerLoadoutCollection Collection;
 };
 var array<PlayerLoadout> PlayerLoadoutList;
 
@@ -62,6 +63,11 @@ function PostBeginPlay()
 	if (RandomizerSettings == None)
 	{
 		RandomizerSettings = new(Self) RandomizerSettingsClass;
+
+		if (RandomizerSettings != None)
+		{
+			RandomizerSettings.InitializeCollection();
+		}
 	}
 
 	KFGT = KFGameType(Level.Game);
@@ -198,6 +204,7 @@ Begin:
 	}
 
 	Sleep(0.1f);
+	Level.Game.BroadcastLocalizedMessage(class'TurboRandomizerLocalMessage', -1);
 	GotoState('ApplyingLoadouts');
 
 }
@@ -205,12 +212,17 @@ Begin:
 state ApplyingLoadouts
 {
 Begin:
-	while (PlayerLoadoutList.Length > 0)
+	if (PlayerLoadoutList.Length != 0)
 	{
-		ApplyLoadout(PlayerLoadoutList[PlayerLoadoutList.Length - 1]);
-		PlayerLoadoutList.Length = PlayerLoadoutList.Length - 1;
-		
-		Sleep(0.25f);
+		Sleep(0.33f);
+
+		while (PlayerLoadoutList.Length > 0)
+		{
+			ApplyLoadout(PlayerLoadoutList[PlayerLoadoutList.Length - 1]);
+			PlayerLoadoutList.Length = PlayerLoadoutList.Length - 1;
+			
+			Sleep(0.33f);
+		}
 	}
  
 	GotoState('AwaitingWaveCompletion');
@@ -427,27 +439,35 @@ function bool SelectLoadouts()
 		{
 			case LT_FleshpoundLoadout:
 				PlayerLoadoutList[PlayerIndex].Loadout = RandomizerSettings.GetRandomFleshpoundLoadout();
+				PlayerLoadoutList[PlayerIndex].Collection = RandomizerSettings.FleshpoundLoadout;
 				break;
 			case LT_ScrakeLoadout:
 				PlayerLoadoutList[PlayerIndex].Loadout = RandomizerSettings.GetRandomScrakeLoadout();
+				PlayerLoadoutList[PlayerIndex].Collection = RandomizerSettings.ScrakeLoadout;
 				break;
 			case LT_EarlyWave:
 				PlayerLoadoutList[PlayerIndex].Loadout = RandomizerSettings.GetRandomEarlyWaveLoadout();
+				PlayerLoadoutList[PlayerIndex].Collection = RandomizerSettings.EarlyWaveLoadout;
 				break;
 			case LT_MiscLoadout:
 				PlayerLoadoutList[PlayerIndex].Loadout = RandomizerSettings.GetRandomMiscLoadout();
+				PlayerLoadoutList[PlayerIndex].Collection = RandomizerSettings.MiscLoadout;
 				break;
 			case LT_FunnyLoadout:
 				PlayerLoadoutList[PlayerIndex].Loadout = RandomizerSettings.GetRandomFunnyLoadout();
+				PlayerLoadoutList[PlayerIndex].Collection = RandomizerSettings.FunnyLoadout;
 				break;
 			case LT_PatriarchTypeA:
 				PlayerLoadoutList[PlayerIndex].Loadout = RandomizerSettings.GetRandomPatriarchTypeALoadout();
+				PlayerLoadoutList[PlayerIndex].Collection = RandomizerSettings.PatriarchTypeALoadout;
 				break;
 			case LT_PatriarchTypeB:
 				PlayerLoadoutList[PlayerIndex].Loadout = RandomizerSettings.GetRandomPatriarchTypeBLoadout();
+				PlayerLoadoutList[PlayerIndex].Collection = RandomizerSettings.PatriarchTypeBLoadout;
 				break;
 			case LT_PatriarchFunny:
 				PlayerLoadoutList[PlayerIndex].Loadout = RandomizerSettings.GetRandomPatriarchFunnyLoadout();
+				PlayerLoadoutList[PlayerIndex].Collection = RandomizerSettings.PatriarchFunnyLoadout;
 				break;
 		}
 
@@ -544,6 +564,8 @@ function bool ApplyLoadout(out PlayerLoadout Loadout)
 		LoadoutWeaponList[LoadoutWeaponList.Length] = Weapon;
 	}
 
+	Level.Game.BroadcastLocalizedMessage(class'TurboRandomizerLocalMessage', Loadout.Loadout.DefaultIndex, Loadout.Player.PlayerReplicationInfo,, Loadout.Collection.Class);
+
 	FillUpAmmo(HumanPawn);
 
 	for(C = Level.ControllerList; C != None; C = C.NextController)
@@ -551,7 +573,6 @@ function bool ApplyLoadout(out PlayerLoadout Loadout)
 		KFPC = KFPlayerController(C);
 		if(KFPC != None)
 		{
-			KFPC.ClientMessage(LoadoutString);
 
 			for (LoadoutWeaponIndex = 0; LoadoutWeaponIndex < Loadout.Loadout.WeaponList.Length; LoadoutWeaponIndex++)
 			{

@@ -1,7 +1,63 @@
 //Killing Floor Turbo TurboCardDeck_Super
-//Distributed under the terms of the GPL-2.0 License.
+//Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
 class TurboCardDeck_Super extends TurboCardDeck;
+
+var bool bCanUseCleanse, bHasUsedCleanse;
+var TurboCard CleanseCard;
+
+function InitializeDeck()
+{
+    local int Index;
+
+    Super.InitializeDeck();
+
+    Index = DeckCardObjectList.Length;
+
+    InitializeCard(CleanseCard, Index);
+    Index++;
+}
+
+static function TurboCard GetCardFromReference(TurboCardReplicationInfo.CardReference Reference)
+{
+    if (Reference.Deck != default.Class)
+    {
+        return None;
+    }
+
+    if (Reference.CardIndex == default.DeckCardObjectList.Length)
+    {
+        return default.CleanseCard;
+    }
+
+    return Super.GetCardFromReference(Reference);
+}
+
+function TurboCard DrawRandomCard()
+{
+    local int EffectiveDeckSize;
+    EffectiveDeckSize = DeckCardObjectList.Length;
+
+    if (!bCanUseCleanse && bHasUsedCleanse)
+    {
+        EffectiveDeckSize++;
+    }
+
+    if (!bCanUseCleanse && bHasUsedCleanse && FRand() < (1.f / float(EffectiveDeckSize)))
+    {
+        bHasUsedCleanse = true;
+        return CleanseCard;
+    }
+
+    return Super.DrawRandomCard();
+}
+
+function OnDeckDraw(TurboCardReplicationInfo TCRI)
+{
+    local int GoodCardCount, SuperCardCount, ProConCardCount, EvilCardCount;
+    TCRI.GetActiveCardCounts(GoodCardCount, SuperCardCount, ProConCardCount, EvilCardCount);
+    bCanUseCleanse = EvilCardCount >= 2;
+}
 
 function ActivateBerserker(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
@@ -173,14 +229,7 @@ function ActivateBigHeadMode(TurboCardGameplayManager GameplayManager, TurboCard
 
 function ActivateHypersonicAmmo(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
-    if (bActivate)
-    {
-        GameplayManager.PlayerPenetrationModifier.AddModifier(2.f, Card);
-    }
-    else
-    {
-        GameplayManager.PlayerPenetrationModifier.RemoveModifier(Card);
-    }
+    Card.UpdateModifier(GameplayManager.PlayerPenetrationModifier, 3.f, bActivate);
 }
 
 function ActivateStrongArm(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
@@ -341,18 +390,30 @@ function ActivateTooMuchForZBlock(TurboCardGameplayManager GameplayManager, Turb
 
 function ActivateDeEvolution(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
-    if (bActivate)
-    {
-        GameplayManager.WeakMonsterReplacementFlag.SetFlag(Card);
-    }
-    else
-    {
-        GameplayManager.WeakMonsterReplacementFlag.ClearFlag();
-    }
+    Card.UpdateFlag(GameplayManager.WeakMonsterReplacementFlag, bActivate);
+}
+
+function ActivatePestExterminator(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
+{
+    Card.UpdateModifier(GameplayManager.PlayerNonEliteDamageModifier, 1.66f, bActivate);
+}
+
+function ActivateBreakTime(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
+{
+    Card.UpdateModifier(GameplayManager.TraderTimeModifier, 2.f, bActivate);
 }
 
 defaultproperties
 {
+    Begin Object Name=Cleanse Class=TurboCard_Super
+        CardName(0)="Cleanse"
+        CardDescriptionList(0)="Removes a random"
+        CardDescriptionList(1)="Evil card."
+        CardID="SUPER_CLEANSE"
+        OnActivateCard=ActivateCleanse
+    End Object
+    CleanseCard=TurboCard'Cleanse'
+
     Begin Object Name=Berserker Class=TurboCard_Super
         CardName(0)="Fist of the"
         CardName(1)="North London"
@@ -514,7 +575,7 @@ defaultproperties
         CardName(1)="Ammunition"
         CardDescriptionList(0)="All weapon bullet"
         CardDescriptionList(1)="penetration"
-        CardDescriptionList(2)="is doubled."
+        CardDescriptionList(2)="is tripled."
         OnActivateCard=ActivateHypersonicAmmo
         CardID="SUPER_HYPERSONICAMMO"
     End Object
@@ -631,15 +692,6 @@ defaultproperties
     End Object
     DeckCardObjectList(24)=TurboCard'SuppressiveFire'
 
-    Begin Object Name=Cleanse Class=TurboCard_Super
-        CardName(0)="Cleanse"
-        CardDescriptionList(0)="Removes a random"
-        CardDescriptionList(1)="Evil card."
-        CardID="SUPER_CLEANSE"
-        OnActivateCard=ActivateCleanse
-    End Object
-    DeckCardObjectList(25)=TurboCard'Cleanse'
-
     Begin Object Name=LargerBlind Class=TurboCard_Super
         CardName(0)="Larger Blind"
         CardDescriptionList(0)="Increases card"
@@ -647,7 +699,7 @@ defaultproperties
         CardID="SUPER_LARGEBLIND"
         OnActivateCard=ActivateLargerBlind
     End Object
-    DeckCardObjectList(26)=TurboCard'LargerBlind'
+    DeckCardObjectList(25)=TurboCard'LargerBlind'
 
     Begin Object Name=CriticalHit Class=TurboCard_Super
         CardName(0)="Critical Hit"
@@ -657,7 +709,7 @@ defaultproperties
         CardID="SUPER_CRITICAL"
         OnActivateCard=ActivateCriticalHit
     End Object
-    DeckCardObjectList(27)=TurboCard'CriticalHit'
+    DeckCardObjectList(26)=TurboCard'CriticalHit'
 
     Begin Object Name=TooMuchForZBlock Class=TurboCard_Super
         CardName(0)="Too Much"
@@ -668,7 +720,7 @@ defaultproperties
         CardID="SUPER_ZBLOCK"
         OnActivateCard=ActivateTooMuchForZBlock
     End Object
-    DeckCardObjectList(28)=TurboCard'TooMuchForZBlock'
+    DeckCardObjectList(27)=TurboCard'TooMuchForZBlock'
 
     Begin Object Name=DeEvolution Class=TurboCard_Super
         CardName(0)="De-Evolution"
@@ -680,5 +732,24 @@ defaultproperties
         OnActivateCard=ActivateDeEvolution
         CardID="SUPER_DEEVOLUTION"
     End Object
-    DeckCardObjectList(29)=TurboCard'DeEvolution'
+    DeckCardObjectList(28)=TurboCard'DeEvolution'
+
+    Begin Object Name=PestExterminator Class=TurboCard_Super
+        CardName(0)="Pest"
+        CardName(1)="Control"
+        CardDescriptionList(0)="Trash zeds take"
+        CardDescriptionList(1)="66% more damage."
+        OnActivateCard=ActivatePestExterminator
+        CardID="SUPER_EXTERMINATOR"
+    End Object
+    DeckCardObjectList(29)=TurboCard'PestExterminator'
+
+    Begin Object Name=BreakTime Class=TurboCard_Super
+        CardName(0)="Break Time"
+        CardDescriptionList(0)="Increases trader"
+        CardDescriptionList(1)="time by 100%."
+        OnActivateCard=ActivateBreakTime
+        CardID="SUPER_BREAKTIME"
+    End Object
+    DeckCardObjectList(30)=TurboCard'BreakTime'
 }

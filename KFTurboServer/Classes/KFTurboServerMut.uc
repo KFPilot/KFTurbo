@@ -1,6 +1,6 @@
 //Killing Floor Turbo KFTurboServerMut
 //Server-only mutator. Needed for interactions with server-only code in ServerPerksMut.
-//Distributed under the terms of the GPL-2.0 License.
+//Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
 class KFTurboServerMut extends Mutator;
 
@@ -88,6 +88,11 @@ function AddMutator(Mutator M)
 
 function bool CheckReplacement(Actor Other, out byte bSuperRelevant)
 {
+	if (Level.bLevelChange)
+	{
+		return true;
+	}
+
 	if (RepLinkHandler != none && ServerStStats(Other) != None)
 	{
 		RepLinkHandler.OnServerStatsAdded(ServerStStats(Other));

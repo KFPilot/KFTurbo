@@ -20,10 +20,9 @@ KFTurbo has a changelog containing all gameplay changes [here](./changelog.md).
 KFTurbo has the following official servers:
 * New York - `38.180.25.144:7707`
 * Ireland - `38.180.21.26:7707`
-* Poland - `38.180.227.82:7707`
-* Japan - `38.180.202.205:7707`
+* Japan - `45.76.223.226:7707`
 * Austria - `38.180.143.157:7707`
-* Brazil - `38.180.16.109:7707`
+* Brazil - `216.238.114.69:7707`
 
 ## Setup
 For information on how to setup a server with KFTurbo, read the setup instructions [here](./SETUP.md).
@@ -36,3 +35,6 @@ Scary Ghost for [Server Achievements](https://github.com/scaryghost/ServerAchiev
 RuneStorm for grenades assets from [Ballistics Weapons](https://www.runestorm.com/ballistic).
 
 BroodOvermind for the [Classy Gorefast](https://steamcommunity.com/sharedfiles/filedetails/?id=112768245).
+
+## Note
+Killing Floor Turbo will never solicit nor accept donations.

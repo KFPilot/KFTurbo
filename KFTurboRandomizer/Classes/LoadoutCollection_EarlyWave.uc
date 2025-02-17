@@ -1,5 +1,5 @@
 //Killing Floor Turbo LoadoutCollection_EarlyWave
-//Distributed under the terms of the GPL-2.0 License.
+//Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
 class LoadoutCollection_EarlyWave extends KFTurboRandomizerLoadoutCollection;
 
@@ -126,11 +126,11 @@ defaultproperties
     LoadoutList(9)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_EarlyWave.EarlyWaveLoadout10'
     LoadoutList(10)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_EarlyWave.EarlyWaveLoadout11'
     LoadoutList(11)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_EarlyWave.EarlyWaveLoadout12'
-    LoadoutList(13)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_EarlyWave.EarlyWaveLoadout14'
-    LoadoutList(14)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_EarlyWave.EarlyWaveLoadout15'
-    LoadoutList(16)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_EarlyWave.EarlyWaveLoadout17'
-    LoadoutList(17)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_EarlyWave.EarlyWaveLoadout18'
-    LoadoutList(18)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_EarlyWave.EarlyWaveLoadout19'
-    LoadoutList(19)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_EarlyWave.EarlyWaveLoadout20'
+    LoadoutList(12)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_EarlyWave.EarlyWaveLoadout14'
+    LoadoutList(13)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_EarlyWave.EarlyWaveLoadout15'
+    LoadoutList(14)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_EarlyWave.EarlyWaveLoadout17'
+    LoadoutList(15)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_EarlyWave.EarlyWaveLoadout18'
+    LoadoutList(16)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_EarlyWave.EarlyWaveLoadout19'
+    LoadoutList(17)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_EarlyWave.EarlyWaveLoadout20'
 
 }

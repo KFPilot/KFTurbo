@@ -1,6 +1,6 @@
 //Killing Floor Turbo CardGameMutBase
 //Base class for card game mutators. Allows for API to run in KFTurbo without knowing specific implementation.
-//Distributed under the terms of the GPL-2.0 License.
+//Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
 class CardGameMutBase extends Mutator;
 

@@ -3,10 +3,13 @@ class KFTurboTestMut extends Mutator;
 var const byte MAX_HeadHitboxes;
 var const float TIME_ClearDelay;
 
+var array<KFMonster> MonsterList;
 var array<KFTTHeadHitbox> HeadHitboxes;
 var int numPlayers, hitboxCount;
 var float gameSpeed, timeClearedZeds, timeClearedLevel;
 var bool bWaitClearZeds, bWaitClearLevel, bDrawHitboxes;
+
+var bool bInitializedInteraction;
 
 replication {
 	reliable if (Role == ROLE_Authority)
@@ -132,7 +135,8 @@ function bool CheckReplacement(Actor Other, out byte bSuperRelevant) {
 			Zed.screamDamage /= 0.75;
 		}
 		
-		AddHitbox(Zed);
+		//Do not spawn hitboxes for wave simulation monsters.
+		MonsterList[MonsterList.Length] = Zed;
 	}
 	else if (Other.IsA('KFTTPlayerController')) {
 		KFTTPlayerController(Other).Mut = Self;
@@ -182,14 +186,32 @@ function NotifyLogout(Controller Exiting) {
 	Super.NotifyLogout(Exiting);
 }
 
-simulated function Tick(float DeltaTime) {
-	local PlayerController PC;
+simulated function Tick(float DeltaTime)
+{
+	local int Index;
 	
-	PC = Level.GetLocalPlayerController();
-	if (PC != None) {
-		PC.Player.InteractionMaster.AddInteraction("KFTurboTestMut.KFTTInteraction", PC.Player);
-		Disable('Tick');
+	if (Level.NetMode != NM_DedicatedServer && !bInitializedInteraction && Level.GetLocalPlayerController() != None)
+	{
+		Level.GetLocalPlayerController().Player.InteractionMaster.AddInteraction("KFTurboTestMut.KFTTInteraction", Level.GetLocalPlayerController().Player);
+		bInitializedInteraction = true;
+
+		if (Role != ROLE_Authority)
+		{
+			Disable('Tick');
+		}
 	}
+
+	for (Index = MonsterList.Length - 1; Index >= 0; Index--)
+	{
+		if (MonsterList[Index] == None || MonsterList[Index].Tag == 'WaveSimulation')
+		{
+			continue;
+		}
+
+		AddHitbox(MonsterList[Index]);
+	}
+
+	MonsterList.Length = 0;
 }
 
 function Timer() {

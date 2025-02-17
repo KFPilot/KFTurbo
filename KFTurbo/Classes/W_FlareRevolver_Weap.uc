@@ -1,3 +1,6 @@
+//Killing Floor Turbo W_FlareRevolver_Weap
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class W_FlareRevolver_Weap extends FlareRevolver;
 
 function AddReloadedAmmo()
@@ -6,9 +9,19 @@ function AddReloadedAmmo()
 	if (Role == ROLE_Authority) { class'WeaponHelper'.static.OnWeaponReload(Self); }
 }
 
+function bool HandlePickupQuery( pickup Item )
+{
+	if (class'WeaponHelper'.static.SingleWeaponHandlePickupQuery(Self, Item))
+	{
+		return false;
+	}
+
+	return Super.HandlePickupQuery(Item);
+}
+
 simulated function bool PutDown()
 {
-	if ( Instigator.PendingWeapon.class == class'W_DualFlare_Weap' )
+	if (W_DualFlare_Weap(Instigator.PendingWeapon) != None)
 	{
 		bIsReloading = false;
 	}
