@@ -20,4 +20,5 @@ defaultproperties
     Lifetime=10
 
     CheatDeathString="%k%player%d has %kcheated death%d!"
+    bRelevantToInGameChat=true
 }

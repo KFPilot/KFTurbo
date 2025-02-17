@@ -150,6 +150,11 @@ simulated function SetupTurboInteraction()
 	if (TurboInteraction == None)
 	{
 		TurboInteraction = TurboInteraction(Player.InteractionMaster.AddInteraction("KFTurbo.TurboInteraction", Player));
+
+		if (TurboInteraction != None)
+		{
+			TurboInteraction.OnInteractionCreated();
+		}
 	}
 
 	if (TurboChatInteraction == None)
@@ -220,6 +225,14 @@ event ClientOpenMenu(string Menu, optional bool bDisconnect,optional string Msg1
 
 simulated event ReceiveLocalizedMessage(class<LocalMessage> Message, optional int Switch, optional PlayerReplicationInfo RelatedPRI_1, optional PlayerReplicationInfo RelatedPRI_2, optional Object OptionalObject )
 {
+	local class<TurboLocalMessage> TurboLocalMessage;
+	local string LocalMessageString;
+
+	if (Level.NetMode == NM_DedicatedServer || GameReplicationInfo == None)
+	{
+		return;
+	}
+
 	switch(Message)
 	{
 		case class'KFMod.WaitingMessage':
@@ -233,12 +246,31 @@ simulated event ReceiveLocalizedMessage(class<LocalMessage> Message, optional in
 			break;
 	}
 
-	if (class<TurboLocalMessage>(Message) != None && class<TurboLocalMessage>(Message).static.IgnoreLocalMessage(Self, Switch, RelatedPRI_1, RelatedPRI_2, OptionalObject))
+	TurboLocalMessage = class<TurboLocalMessage>(Message);
+
+	if (TurboLocalMessage != None && TurboLocalMessage.static.IgnoreLocalMessage(Self, Switch, RelatedPRI_1, RelatedPRI_2, OptionalObject))
 	{
 		return;
 	}
+
+    Message.Static.ClientReceive( Self, Switch, RelatedPRI_1, RelatedPRI_2, OptionalObject );
 	
-	Super.ReceiveLocalizedMessage(Message, Switch, RelatedPRI_1, RelatedPRI_2, OptionalObject);
+	if (Player == None || Player.Console == None)
+	{
+		return;
+	}
+
+	LocalMessageString = Message.Static.GetString(Switch, RelatedPRI_1, RelatedPRI_2, OptionalObject);
+
+	if (Message.static.IsConsoleMessage(Switch))
+	{
+		Player.Console.Message(LocalMessageString, 0);
+	}
+	
+	if (TurboLocalMessage != None && TurboLocalMessage.static.IsRelevantToInGameChat(Self, Switch, RelatedPRI_1, RelatedPRI_2, OptionalObject) && ExtendedConsole(Player.Console) != None)
+	{
+		ExtendedConsole(Player.Console).OnChat(LocalMessageString, 0);
+	}
 }
 
 function ClientLocationalVoiceMessage(PlayerReplicationInfo Sender, PlayerReplicationInfo Recipient, name MessageType, byte MessageIndex, optional Pawn SoundSender, optional vector SenderLocation)
@@ -314,6 +346,65 @@ function ServerSay(string Msg)
 			Vote("NO");
 			break;
 	}
+}
+
+event TeamMessage(PlayerReplicationInfo PRI, coerce string Message, name Type)
+{
+	local string MessagePrefix;
+	local string RedColorString, WhiteColorString;
+
+	if (Level.NetMode == NM_DedicatedServer || GameReplicationInfo == None)
+	{
+		return;
+	}
+
+	if (AllowTextToSpeech(PRI, Type))
+	{
+		TextToSpeech(Message, TextToSpeechVoiceVolume);
+	}
+
+	if (Type == 'TeamSayQuiet')
+	{
+		Type = 'TeamSay';
+	}
+
+	if (myHUD != None)
+	{
+		myHUD.Message(PRI, MessagePrefix $ Message, Type);
+	}
+
+	if (Player == None || Player.Console == None)
+	{
+		return;
+	}
+
+	RedColorString = chr(27)$chr(200)$chr(1)$chr(1);
+	WhiteColorString = chr(27)$chr(255)$chr(255)$chr(255);
+
+	if (Type != 'TRADER' && PRI != None && PRI.Team != None && GameReplicationInfo.bTeamGame && PRI.Team.TeamIndex == 0)
+	{
+		MessagePrefix = RedColorString;
+	}
+	else
+	{
+		MessagePrefix = WhiteColorString;
+	}
+
+	//Trader should be prefixed with trader, not the client's PlayerName.
+	if (Type == 'TRADER')
+	{
+		MessagePrefix = MessagePrefix $ class'HUDKillingFloor'.default.TraderString $ ": ";
+	}
+	else if (PRI != None)
+	{
+		MessagePrefix = MessagePrefix $ PRI.PlayerName $ ": " ;
+	}
+	else
+	{
+		MessagePrefix = "";
+	}
+
+	Player.Console.Chat(MessagePrefix $ WhiteColorString $ class'GUIComponent'.static.StripColorCodes(Message), 6.0, PRI);
 }
 
 function AttemptMarkActor(vector Start, vector End, Actor TargetActor, class<TurboMarkerType> DataClassOverride, int DataOverride, TurboPlayerMarkReplicationInfo.EMarkColor Color)

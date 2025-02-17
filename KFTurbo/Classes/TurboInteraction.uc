@@ -49,6 +49,15 @@ simulated function bool KeyEvent( out EInputKey Key, out EInputAction Action, FL
 	return false;
 }
 
+simulated function OnInteractionCreated()
+{
+	//Update the ExtendedConsole's In-Game Chat class so it's not competing with us for the chat delegate binding.
+	if (ViewportOwner != None && ExtendedConsole(ViewportOwner.Console) != None)
+	{
+		ExtendedConsole(ViewportOwner.Console).ChatMenuClass = string(class'KFTurbo.TurboInGameChat');
+	}
+}
+
 simulated function InitializeTurboInteraction()
 {
 	if (bHasInitializedInteraction)
@@ -62,6 +71,14 @@ simulated function InitializeTurboInteraction()
 	InitializePipebombUsesSpecialGroup();
 	UpdateUseBaseGameFontForChat();
 	UpdateFontLocale();
+}
+
+simulated function NotifyLevelChange()
+{
+	if (ViewportOwner != None && ExtendedConsole(ViewportOwner.Console) != None)
+	{
+		ExtendedConsole(ViewportOwner.Console).ChatMenuClass = ExtendedConsole(ViewportOwner.Console).default.ChatMenuClass;
+	}
 }
 
 exec simulated function Trade()

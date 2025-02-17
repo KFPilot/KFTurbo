@@ -15,4 +15,6 @@ defaultproperties
 {
     LockedInString="You are %nknot allowed%d to %nkchange perk%d due to the %nkLocked In%d card."
     bUseFullFormatting=true
+    
+    bRelevantToInGameChat=true
 }

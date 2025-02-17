@@ -10,4 +10,6 @@ defaultproperties
     bIsSpecial = false
     bFadeMessage = true
     Lifetime=10
+    
+    bRelevantToInGameChat=true
 }

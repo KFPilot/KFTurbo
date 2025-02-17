@@ -20,4 +20,6 @@ defaultproperties
     Lifetime=10
 
     MarkedForDeathString="%k%player%d has been %kmarked for death%d this wave!"
+    
+    bRelevantToInGameChat=true
 }

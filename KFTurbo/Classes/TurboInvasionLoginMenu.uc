@@ -215,9 +215,14 @@ function Closed(GUIComponent Sender, bool bCancelled)
 
 simulated function bool OpenPlayerChat(GUIComponent Sender)
 {
-	if (Controller == None || Controller.Master == None || Controller.Master.Console == None)
+	if (Controller == None || Controller.Master == None || ExtendedConsole(Controller.Master.Console) == None)
 	{
 		return false;
+	}
+
+	if (ExtendedConsole(Controller.Master.Console) != None)
+	{
+		ExtendedConsole(Controller.Master.Console).ChatMenuClass = string(class'KFTurbo.TurboInGameChat');
 	}
 
 	Controller.CloseMenu();

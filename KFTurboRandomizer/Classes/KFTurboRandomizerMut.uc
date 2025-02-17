@@ -204,6 +204,7 @@ Begin:
 	}
 
 	Sleep(0.1f);
+	Level.Game.BroadcastLocalizedMessage(class'TurboRandomizerLocalMessage', -1);
 	GotoState('ApplyingLoadouts');
 
 }
@@ -213,7 +214,6 @@ state ApplyingLoadouts
 Begin:
 	if (PlayerLoadoutList.Length != 0)
 	{
-		Level.Game.BroadcastLocalizedMessage(class'TurboRandomizerLocalMessage', -1);
 		Sleep(0.33f);
 
 		while (PlayerLoadoutList.Length > 0)

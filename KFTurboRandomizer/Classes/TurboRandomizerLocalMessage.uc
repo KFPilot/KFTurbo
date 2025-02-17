@@ -57,4 +57,6 @@ defaultproperties
     bIsSpecial=false
     bIsConsoleMessage=true
     bUseFullFormatting=true
+    
+    bRelevantToInGameChat=true
 }

@@ -15,6 +15,11 @@ function InitComponent(GUIController MyController, GUIComponent MyOwner)
 	sb_Main.UnmanageComponent(lb_Chat);
 }
 
+function HandleChat(string Msg, int TeamIndex)
+{
+	lb_chat.AddText(Msg);
+}
+
 defaultproperties
 {
 	Begin Object class=AltSectionBackground name=TurboMain
