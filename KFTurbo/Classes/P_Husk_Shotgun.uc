@@ -1,7 +1,7 @@
-//-------------------------------------------------------------------------------
-// Shotgun Husk
-//-------------------------------------------------------------------------------
-
+//Killing Floor Turbo ShotgunHusk
+//Special Husk variant that fires bouncing projectiles in a spread.
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class P_Husk_Shotgun extends P_Husk_SUM;
 
 var int AttackRange; // Minimum distance in units from the target when the husk is allowed to initiate an attack.

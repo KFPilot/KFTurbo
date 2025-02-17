@@ -1,7 +1,7 @@
-//-------------------------------------------------------------------------------
-// Shotgun Husk Projectile
-//-------------------------------------------------------------------------------
-
+//Killing Floor Turbo ShotgunHusk Projectile
+//Emitter class for the Shotgun Husk projectile
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class P_Husk_Shotgun_Proj extends HuskFireProjectile;
 
 var byte Bounces; // Amount of times the projectile can bounce

@@ -1,3 +1,7 @@
+//Killing Floor Turbo ShotgunHusk SteamPuffEmitter
+//Emitter class for the steam puff on Husk_Shotgun
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class P_Husk_Shotgun_SteamPuffEmitter extends Emitter;
 
 defaultproperties
