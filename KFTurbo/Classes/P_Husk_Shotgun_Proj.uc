@@ -141,7 +141,7 @@ simulated singular function Touch(Actor Other) // Overriding Touch here, because
 {
 	local vector HitLocation, HitNormal;
 
-	if (Other == None || KFBulletWhipAttachment(Other) != None)
+	if (Other == None || KFBulletWhipAttachment(Other) != None || ExtendedZCollision(Other) != None)
 	{
 		return;
 	}
@@ -172,7 +172,7 @@ simulated singular function Touch(Actor Other) // Overriding Touch here, because
 
 simulated function ProcessTouch(Actor Other, Vector HitLocation) // HuskFireProjectile calls LAWProj instead of Projectile in ProcessTouch resulting in accessing None
 {
-	if (ExtendedZCollision(Other) != None || KFMonster(Other) != None)
+	if (KFMonster(Other) != None)
 	{
 		return;
 	}
@@ -182,20 +182,26 @@ simulated function ProcessTouch(Actor Other, Vector HitLocation) // HuskFireProj
 
 defaultproperties
 {
-	FlameTrailEmitterClass = Class'KFTurbo.P_Husk_Shotgun_ProjEmitter'
-	TrailEmitterClass = class'P_Husk_Shotgun_ProjTrail'
-	ImpactEmitterClass = Class'KFTurbo.P_Husk_Shotgun_BounceEmitter'
-	ExplosionEmitterClass = Class'KFTurbo.P_Husk_Shotgun_ExplosionEmitter'
-	ExplosionDecal = Class'KFTurbo.P_Husk_Shotgun_ExplosionDecal'
-	StaticMesh = StaticMesh'EffectsSM.Weapons.Ger_Tracer_Ball'
-	BounceSound = Sound'KF_FlamethrowerSnd.FireBase.Fire1Shot1' // Use hard reference for BounceSound
-	Bounces = 5
-	Damage = 7.000000
-	MomentumTransfer = 31250.000000
-	ProjectileLifeSpan = 60.000000
-	LightHue = 255
-	LightSaturation = 64
-	AmbientGlow = 254
-	LightRadius = 5.000000
-	bNetNotify = False // Not needed due to being immune to disintegration
+	FlameTrailEmitterClass=class'KFTurbo.P_Husk_Shotgun_ProjEmitter'
+	TrailEmitterClass=class'P_Husk_Shotgun_ProjTrail'
+	ImpactEmitterClass=class'KFTurbo.P_Husk_Shotgun_BounceEmitter'
+	ExplosionEmitterClass=class'KFTurbo.P_Husk_Shotgun_ExplosionEmitter'
+	ExplosionDecal=class'KFTurbo.P_Husk_Shotgun_ExplosionDecal'
+	StaticMesh=StaticMesh'EffectsSM.Weapons.Ger_Tracer_Ball'
+	BounceSound=Sound'KF_FlamethrowerSnd.FireBase.Fire1Shot1' // Use hard reference for BounceSound
+
+	Bounces=5
+	Damage=6.000000
+	
+	MomentumTransfer=24000.000000
+	ProjectileLifeSpan=60.000000
+	LightHue=255
+	LightSaturation=64
+	LightRadius=5.000000
+	
+	AmbientGlow=254
+
+	SoundVolume=120
+
+	bNetNotify=false // Not needed due to being immune to disintegration
 }

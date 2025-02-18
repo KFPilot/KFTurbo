@@ -39,7 +39,6 @@ simulated function PostBeginPlay()
 		}
 		else
 		{
-			log("Failed to attach emitter to bone.", 'Error');
 			AttachedEmitter.Destroy();
 		}
 	}
@@ -56,7 +55,6 @@ simulated function PostBeginPlay()
 		}
 		else
 		{
-			log("Failed to attach emitter to bone.", 'Error');
 			AttachedEmitter2.Destroy();
 		}
 	}
@@ -147,11 +145,11 @@ function SpawnTwoShots()
 		SavedFireProperties.ProjectileClass = HuskFireProjClass;
 		SavedFireProperties.WarnTargetPct = 1;
 		SavedFireProperties.MaxRange = AttackRange;
-		SavedFireProperties.bTossed = False;
-		SavedFireProperties.bTrySplash = true;
-		SavedFireProperties.bLeadTarget = True;
-		SavedFireProperties.bInstantHit = False;
-		SavedFireProperties.bInitialized = True;
+		SavedFireProperties.bTossed = false;
+		SavedFireProperties.bTrySplash = false;
+		SavedFireProperties.bLeadTarget = false;
+		SavedFireProperties.bInstantHit = false;
+		SavedFireProperties.bInitialized = true;
 	}
 
 	// Turn off extra collision before spawning vomit, otherwise spawn fails
