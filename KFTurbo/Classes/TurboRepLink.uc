@@ -95,9 +95,9 @@ simulated function PostBeginPlay()
 function IncrementFailureCounter()
 {
     FailureCount++;
-    if (FailureCount % 20 == 0)
+    if (FailureCount % 30 == 0)
     {
-        log("WARNING FAILURE LIMIT REACHED " $ FailureCount $ " TIMES ON " $ string(Self) $ "WAITING FOR CPRL.", 'KFTurbo');
+        log("WARNING FAILURE LIMIT AT " $ FailureCount $ " TIMES ON " $ string(Self) $ "WAITING FOR CPRL.", 'KFTurbo');
         if (FailureCount > 60)
         {
             bAwaitingDestroy = true;
@@ -127,6 +127,7 @@ simulated function Tick( float DeltaTime )
 
     if (bAwaitingDestroy)
     {
+        log("WARNING FAILURE LIMIT REACHED " $ FailureCount $ " TIMES ON " $ string(Self) $ "WAITING FOR CPRL. DESTROYING TRL", 'KFTurbo');
         Destroy();
         return;
     }
