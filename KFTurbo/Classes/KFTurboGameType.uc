@@ -432,6 +432,23 @@ function bool AddBoss()
     return false;
 }
 
+function bool AddSquad()
+{
+    local int LastIndex;
+    //Some special game modes (such as Card Game and Holdout) use more than 10 waves. Rather than adding special squads to the game types, we'll just reappend the last entry.
+    if (KFGameLength != GL_Custom && !bUsedSpecialSquad && (MonsterCollection.default.SpecialSquads.Length <= WaveNum || SpecialSquads.Length <= WaveNum))
+    {
+        LastIndex = MonsterCollection.default.SpecialSquads.Length - 1;
+        MonsterCollection.default.SpecialSquads[WaveNum] = MonsterCollection.default.SpecialSquads[LastIndex];
+
+        LastIndex = SpecialSquads.Length - 1;
+        SpecialSquads[WaveNum] = SpecialSquads[LastIndex];
+    }
+
+    Super.AddSquad();
+}
+
+
 function AddSpecialSquad()
 {
 	Super.AddSpecialSquad();
