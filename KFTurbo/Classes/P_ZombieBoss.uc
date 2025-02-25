@@ -121,12 +121,27 @@ function TakeFireDamage(int Damage, pawn DamageInstigator)
 
 function bool MeleeDamageTarget(int HitDamage, vector PushDirection)
 {
+	if (Controller == None)
+	{
+		return;
+	}
+
 	if( Controller.Target!=None && Controller.Target.IsA('NetKActor') )
     {
         PushDirection = Normal(Controller.Target.Location-Location) * 100000.f;
     }
 
     return class'PawnHelper'.static.MeleeDamageTarget(Self, HitDamage, PushDirection, AfflictionData);
+}
+
+function ClawDamageTarget()
+{
+	if (Controller == None)
+	{
+		return;
+	}
+
+	Super.ClawDamageTarget();
 }
 
 simulated function Tick(float DeltaTime)
