@@ -123,7 +123,7 @@ function bool MeleeDamageTarget(int HitDamage, vector PushDirection)
 {
 	if (Controller == None)
 	{
-		return;
+		return false;
 	}
 
 	if( Controller.Target!=None && Controller.Target.IsA('NetKActor') )
