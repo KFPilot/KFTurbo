@@ -1,11 +1,12 @@
 //Killing Floor Turbo TurboCustomZedHandler
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class TurboCustomZedHandler extends Info;
+class TurboCustomZedHandler extends Info
+    dependson(PawnHelper);
 
 struct MonsterReplacement
 {
-    var class<KFMonster> TargetParentClass;
+    var PawnHelper.EMonster TargetType;
     var class<KFMonster> ReplacementClass;
     var float ReplacementRate;
     var float ReplacementProgress;
@@ -22,7 +23,7 @@ function PostBeginPlay()
 {
     Super.PostBeginPlay();
     
-    SetTimer(0.025f, true); //Relatively frequently. We're watching for squad changes via Invasion::NextMonsterTime.
+    SetTimer(0.02f, true); //Relatively frequently. We're watching for squad changes via Invasion::NextMonsterTime.
 
     TurboGT = KFTurboGameType(Level.Game);
     LastCheckedNextMonsterTime = -1.f;
@@ -71,12 +72,14 @@ function bool AttemptReplaceMonster(out class<KFMonster> Monster)
 {
     local int ReplacementIndex;
     local bool bReplacedMonster;
+    local PawnHelper.EMonster MonsterType;
 
     bReplacedMonster = false;
+    MonsterType = class'PawnHelper'.static.GetMonsterType(Monster);
 
     for (ReplacementIndex = 0; ReplacementIndex < ReplacementList.Length; ReplacementIndex++)
     {
-        if (!ClassIsChildOf(Monster, ReplacementList[ReplacementIndex].TargetParentClass))
+        if (ReplacementList[ReplacementIndex].TargetType != MonsterType)
         {
             continue;
         }
@@ -85,7 +88,7 @@ function bool AttemptReplaceMonster(out class<KFMonster> Monster)
 
         if (ReplacementList[ReplacementIndex].ReplacementProgress < 1.f)
         {
-            break;
+            continue;
         }
 
         ReplacementList[ReplacementIndex].ReplacementProgress -= 1.f;
@@ -102,10 +105,10 @@ defaultproperties
 {
     bDebugReplacement = false
 
-    ReplacementList(0)=(TargetParentClass=class'P_Gorefast',ReplacementClass=class'P_Gorefast_Assassin',ReplacementRate=0.075f)
-    ReplacementList(1)=(TargetParentClass=class'P_Crawler',ReplacementClass=class'P_Crawler_Jumper',ReplacementRate=0.1f)
-    ReplacementList(2)=(TargetParentClass=class'P_Bloat',ReplacementClass=class'P_Bloat_Fathead',ReplacementRate=0.05f)
-    ReplacementList(3)=(TargetParentClass=class'P_Siren',ReplacementClass=class'P_Siren_Caroler',ReplacementRate=0.075f)
-    ReplacementList(4)=(TargetParentClass=class'P_Gorefast',ReplacementClass=class'P_Gorefast_Classy',ReplacementRate=0.05f)
-    ReplacementList(5)=(TargetParentClass=class'P_Husk',ReplacementClass=class'P_Husk_Shotgun',ReplacementRate=0.05f)
+    ReplacementList(0)=(TargetType=Gorefast,ReplacementClass=class'P_Gorefast_Assassin',ReplacementRate=0.075f)
+    ReplacementList(1)=(TargetType=Crawler,ReplacementClass=class'P_Crawler_Jumper',ReplacementRate=0.075f)
+    ReplacementList(2)=(TargetType=Bloat,ReplacementClass=class'P_Bloat_Fathead',ReplacementRate=0.05f)
+    ReplacementList(3)=(TargetType=Siren,ReplacementClass=class'P_Siren_Caroler',ReplacementRate=0.075f)
+    ReplacementList(4)=(TargetType=Gorefast,ReplacementClass=class'P_Gorefast_Classy',ReplacementRate=0.05f)
+    ReplacementList(5)=(TargetType=Husk,ReplacementClass=class'P_Husk_Shotgun',ReplacementRate=0.025f)
 }
