@@ -1,3 +1,6 @@
+//Killing Floor Turbo KFTurboLaneZombieVolume
+//Distributed under the terms of the MIT License.
+//For more information see https://github.com/KFPilot/KFTurbo.
 class KFTurboLaneZombieVolume extends ZombieVolume;
 
 //I can't believe how ZombieVolume implements this...
