@@ -60,6 +60,9 @@ function ProcessServerTravel(string URL, bool bItems)
     WaveEventHandlerList.Length = 0;
     WaveSpawnEventHandlerList.Length = 0;
 
+    OnStatsAndAchievementsDisabled = None;
+    LockPerkSelection = None;
+
     Super.ProcessServerTravel(URL, bItems);
 }
 
@@ -439,13 +442,19 @@ function bool AddSquad()
     if (KFGameLength != GL_Custom && !bUsedSpecialSquad && (MonsterCollection.default.SpecialSquads.Length <= WaveNum || SpecialSquads.Length <= WaveNum))
     {
         LastIndex = MonsterCollection.default.SpecialSquads.Length - 1;
-        MonsterCollection.default.SpecialSquads[WaveNum] = MonsterCollection.default.SpecialSquads[LastIndex];
+        if (LastIndex >= 0)
+        {
+            MonsterCollection.default.SpecialSquads[WaveNum] = MonsterCollection.default.SpecialSquads[LastIndex];
+        }
 
         LastIndex = SpecialSquads.Length - 1;
-        SpecialSquads[WaveNum] = SpecialSquads[LastIndex];
+        if (LastIndex >= 0)
+        {
+            SpecialSquads[WaveNum] = SpecialSquads[LastIndex];
+        }
     }
 
-    Super.AddSquad();
+    return Super.AddSquad();
 }
 
 
@@ -641,6 +650,38 @@ function int CalculateTotalMaxMonster()
 function SelectShop() {}
 
 function ClearEndGame(){}
+
+function ShowPathTo(PlayerController P, int TeamNum)
+{
+    local ShopVolume CurrentShop;
+    CurrentShop = KFGameReplicationInfo(GameReplicationInfo).CurrentShop;
+
+    if (CurrentShop == None)
+    {
+        return;
+    }
+
+    //In KF's original code, it was calling InitTeleports for each player controller. 
+    if (!CurrentShop.bTelsInit)
+    {
+        CurrentShop.InitTeleports();
+    }
+
+    if (CurrentShop.TelList.Length == 0)
+    {
+        return;
+    }
+
+    if (CurrentShop.TelList[0] != None && P.FindPathToward(CurrentShop.TelList[0], false) != None)
+    {
+        Spawn(GetTraderPathClass(), P,, P.Pawn.Location);
+    }
+}
+
+function class<Actor> GetTraderPathClass()
+{
+    return class'KFMod.RedWhisp';
+}
 
 state MatchInProgress
 {
