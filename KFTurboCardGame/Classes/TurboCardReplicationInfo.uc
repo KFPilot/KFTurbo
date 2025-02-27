@@ -152,7 +152,6 @@ simulated function SetupTurboCardInteraction()
 
 simulated function Destroyed()
 {
-    //Cleanup overlay.
     if (TurboCardOverlay != None)
     {
         TurboCardOverlay.Destroy();
