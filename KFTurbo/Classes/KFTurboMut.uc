@@ -362,6 +362,10 @@ function OnWaveEnd()
 
 function ServerTraveling(string URL, bool bItems)
 {
+	Super.ServerTraveling(URL, bItems);
+	
+	SetPerkSwitchEnabled = None;
+
 	if (StatsTcpLink == None)
 	{
 		return;
