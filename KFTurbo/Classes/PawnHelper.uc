@@ -554,7 +554,7 @@ static final function bool MeleeDamageTarget(KFMonster Monster, int HitDamage, v
 
 	if(Monster.Role != ROLE_Authority || Monster.Controller == None)
 	{
-		Return false; 
+		return false; 
 	}
 
 	ControllerTarget = Monster.Controller.Target;
@@ -589,13 +589,13 @@ static final function bool MeleeDamageTarget(KFMonster Monster, int HitDamage, v
 	HitActor = Monster.Trace(HitLocation, HitNormal, ControllerTarget.Location , Monster.Location + Monster.EyePosition(), true);
 	Monster.bBlockHitPointTraces = true;
 
-	if( Pawn(HitActor) == none )
+	if (Pawn(HitActor) == None)
 	{
 		Monster.bBlockHitPointTraces = false;
 		HitActor = Monster.Trace(HitLocation, HitNormal, ControllerTarget.Location, Monster.Location, false);
 		Monster.bBlockHitPointTraces = true;
 
-		if ( HitActor != None )
+		if (HitActor != None)
 		{
 			return false;
 		}
@@ -604,7 +604,7 @@ static final function bool MeleeDamageTarget(KFMonster Monster, int HitDamage, v
 	HumanPawn = KFHumanPawn(ControllerTarget);
 	OriginalDamage = HitDamage;
 
-	if ( HumanPawn != none )
+	if (HumanPawn != None)
 	{
 		if (IsPawnBurning(Monster) && AD.Burn != None)
 		{
@@ -632,7 +632,7 @@ static final function bool MeleeDamageTarget(KFMonster Monster, int HitDamage, v
 	}
 	else if (ControllerTarget != None)
 	{
-		if( KFMonster(ControllerTarget) != none )
+		if (KFMonster(ControllerTarget) != None)
 		{
 			HitDamage *= Monster.DamageToMonsterScale;
 		}
