@@ -92,7 +92,7 @@ simulated function SetNextMessageTime(float InNextMessageTime)
 	local int Index;
 	NextMessageTime = InNextMessageTime;
 
-	for (Index = LaneTriggerList.Length; Index >= 0; Index--)
+	for (Index = LaneTriggerList.Length - 1; Index >= 0; Index--)
 	{
 		LaneTriggerList[Index].NextMessageTime = NextMessageTime;
 	}
