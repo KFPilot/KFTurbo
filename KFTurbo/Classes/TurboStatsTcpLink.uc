@@ -40,7 +40,7 @@ static function class<TurboStatsTcpLink> GetStatsTcpLinkClass()
     return TcpLinkClass;
 }
 
-static final function TurboStatsTcpLink FindStats(GameInfo GameInfo)
+static final function TurboStatsTcpLink FindStatsTcpLink(GameInfo GameInfo)
 {
     local KFTurboMut TurboMut;
     TurboMut = class'KFTurboMut'.static.FindMutator(GameInfo);
