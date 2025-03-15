@@ -11,7 +11,7 @@ var TurboCardGameplayManager TurboCardGameplayManagerInfo;
 var TurboCardGameModifierRepLink TurboCardGameModifier;
 var TurboCardClientModifierRepLink TurboCardClientModifier;
 var CardGameRules CardGameRules;
-var TurboCardStatsTcpLink TurboCardStats;
+var TurboCardStatsTcpLink TurboCardStatsTcpLink;
 
 var globalconfig string TurboGoodDeckClassOverrideString;
 var globalconfig string TurboSuperDeckClassOverrideString;
@@ -31,10 +31,10 @@ function PostBeginPlay()
 
 	AttemptModifyGameLength();
 
-	TurboCardStats = SetupStatTcpLink();
+	TurboCardStatsTcpLink = SetupStatTcpLink();
 	
-	class'TurboWaveEventHandler'.static.RegisterWaveHandler(Self, class'CardGameWaveEventHandler');
-	class'TurboWaveSpawnEventHandler'.static.RegisterWaveHandler(Self, class'CardGameWaveSpawnEventHandler');
+	class'CardGameWaveEventHandler'.static.CreateHandler(Self);
+	class'CardGameWaveSpawnEventHandler'.static.CreateHandler(Self);
 }
 
 function Tick(float DeltaTime)

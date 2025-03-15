@@ -156,7 +156,7 @@ simulated function StickToPawn(Pawn HitPawn, Vector HitLocation, Vector HitDirec
 
 		KFM.NumHarpoonsAttached++;
 		
-		class'TurboEventHandler'.static.BroadcastPawnHarpooned(Instigator, KFM, KFM.NumHarpoonsAttached);
+		class'TurboGameplayEventHandler'.static.BroadcastPawnHarpooned(Instigator, KFM, KFM.NumHarpoonsAttached);
 	}
 }
 

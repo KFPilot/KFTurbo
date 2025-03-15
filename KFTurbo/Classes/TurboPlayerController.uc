@@ -20,7 +20,7 @@ var float NextSpectateUseTargetTime, SpectateUseTargetCooldown;
 var bool bInLoginMenu, bHasClosedLoginMenu;
 var float LoginMenuTime;
 
-var array< class<TurboPlayerEventHandler> > TurboPlayerEventHandlerList;
+var array< TurboPlayerEventHandler > PlayerEventHandlerList;
 
 var bool bPipebombUsesSpecialGroup;
 
@@ -62,8 +62,6 @@ simulated function PostBeginPlay()
 
 	if (Role == ROLE_Authority && !Level.bLevelChange)
 	{
-		class'TurboPlayerEventHandler'.static.RegisterPlayerEventHandler(Self, class'TurboPlayerStatsEventHandler');
-		class'TurboHealEventHandler'.static.RegisterHealHandler(Self, class'TurboPlayerStatsHealEventHandler');
 		CreateCommandHandler();
 	}
 }

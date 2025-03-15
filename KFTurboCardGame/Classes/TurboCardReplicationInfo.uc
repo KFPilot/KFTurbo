@@ -372,7 +372,7 @@ function SendVoteResult(TurboCard SelectedCard)
 {
     local TurboCardStatsTcpLink StatsTcpLink;
 
-    StatsTcpLink = class'TurboCardStatsTcpLink'.static.FindStats(Level.Game);
+    StatsTcpLink = class'TurboCardStatsTcpLink'.static.FindCardStatsTcpLink(Level.Game);
 
     if (StatsTcpLink == None)
     {

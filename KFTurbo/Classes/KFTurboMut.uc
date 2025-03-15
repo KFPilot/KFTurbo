@@ -66,8 +66,6 @@ simulated function PostBeginPlay()
 	{
 		Spawn(class'TurboRepLinkTester', Self);
 	}
-	
-	class'TurboHealEventHandler'.static.RegisterHealHandler(Self, class'TurboHealEventHandlerImpl');
 
 	SetupBroadcaster();
 	StatsGameRules = SetupTurboStatsGameRules();
@@ -85,6 +83,8 @@ simulated function PostBeginPlay()
 	{
 		Spawn(class'TurboVersionTcpLink', Self);
 	}
+	
+	class'TurboHealRewardEventHandler'.static.CreateHandler(Self);
 }
 
 function SetupBroadcaster()

@@ -1,46 +1,33 @@
 //Killing Floor Turbo TurboWaveEventHandler
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class TurboWaveEventHandler extends Object;
+class TurboWaveEventHandler extends TurboEventHandler;
 
 //Note that wave 0 is wave 1 for the UI.
 
-static function OnGameStarted(KFTurboGameType GameType, int StartingWave);
+delegate OnGameStarted(KFTurboGameType GameType, int StartingWave);
 
-static function OnGameEnded(KFTurboGameType GameType, int Result);
+delegate OnGameEnded(KFTurboGameType GameType, int Result);
 
-static function OnWaveStarted(KFTurboGameType GameType, int StartedWave);
+delegate OnWaveStarted(KFTurboGameType GameType, int StartedWave);
 //EndedWave is the wave number we just completed (is Invasion::WaveNum - 1 as this is called right after we incremented the wave count and setup the trader wave)
-static function OnWaveEnded(KFTurboGameType GameType, int EndedWave);
+delegate OnWaveEnded(KFTurboGameType GameType, int EndedWave);
 
-
-//Event registration.
-static final function RegisterWaveHandler(Actor Context, class<TurboWaveEventHandler> WaveEventHandlerClass)
+static function TurboEventHandler CreateHandler(Actor Context)
 {
-    local KFTurboGameType KFTurboGameType;
-    local int Index;
+    local TurboEventHandler Handler;
+    local KFTurboGameType GameType;
 
-    if (Context == None || WaveEventHandlerClass == None)
+    Handler = Super.CreateHandler(Context);
+
+    if (Handler == None)
     {
-        return;
+        return None;
     }
 
-    KFTurboGameType = KFTurboGameType(Context.Level.Game);
-
-    if (KFTurboGameType == None)
-    {
-        return;
-    }
-
-    for (Index = 0; Index < KFTurboGameType.WaveEventHandlerList.Length; Index++)
-    {
-        if (KFTurboGameType.WaveEventHandlerList[Index] == WaveEventHandlerClass)
-        {
-            return;
-        }
-    }
-
-    KFTurboGameType.WaveEventHandlerList[KFTurboGameType.WaveEventHandlerList.Length] = WaveEventHandlerClass;
+    GameType = KFTurboGameType(Context.Level.Game);
+    GameType.WaveEventHandlerList[GameType.WaveEventHandlerList.Length] = TurboWaveEventHandler(Handler);
+    return Handler;
 }
 
 //Event broadcasting.
@@ -54,7 +41,7 @@ static final function BroadcastGameStarted(KFTurboGameType GameType, int Started
 
     for (Index = GameType.WaveEventHandlerList.Length - 1; Index >= 0; Index--)
     {
-        GameType.WaveEventHandlerList[Index].static.OnGameStarted(GameType, StartedWave);
+        GameType.WaveEventHandlerList[Index].OnGameStarted(GameType, StartedWave);
     }
 }
 
@@ -68,7 +55,7 @@ static final function BroadcastGameEnded(KFTurboGameType GameType, int Result)
 
     for (Index = GameType.WaveEventHandlerList.Length - 1; Index >= 0; Index--)
     {
-        GameType.WaveEventHandlerList[Index].static.OnGameEnded(GameType, Result);
+        GameType.WaveEventHandlerList[Index].OnGameEnded(GameType, Result);
     }
 }
 
@@ -82,7 +69,7 @@ static final function BroadcastWaveStarted(KFTurboGameType GameType, int Started
 
     for (Index = GameType.WaveEventHandlerList.Length - 1; Index >= 0; Index--)
     {
-        GameType.WaveEventHandlerList[Index].static.OnWaveStarted(GameType, StartedWave);
+        GameType.WaveEventHandlerList[Index].OnWaveStarted(GameType, StartedWave);
     }
 }
 
@@ -97,6 +84,6 @@ static final function BroadcastWaveEnded(KFTurboGameType GameType, int EndedWave
 
     for (Index = GameType.WaveEventHandlerList.Length - 1; Index >= 0; Index--)
     {
-        GameType.WaveEventHandlerList[Index].static.OnWaveEnded(GameType, EndedWave);
+        GameType.WaveEventHandlerList[Index].OnWaveEnded(GameType, EndedWave);
     }
 }

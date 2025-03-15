@@ -3,75 +3,62 @@
 //For more information see https://github.com/KFPilot/KFTurbo.
 class CardGameWaveEventHandler extends KFTurbo.TurboWaveEventHandler;
 
+var KFTurboCardGameMut Mutator;
 var int GameStartWaitTime;
 
-static function OnGameStarted(KFTurboGameType GameType, int StartedWave)
+function PostBeginPlay()
 {
-    GameType.WaveCountDown = Max(default.GameStartWaitTime, GameType.WaveCountDown);
+    Super.PostBeginPlay();
+
+    Mutator = KFTurboCardGameMut(Owner);
+
+    OnGameStarted = GameStarted;
+    OnGameEnded = OnGameEnded;
+    OnWaveStarted = OnWaveStarted;
+    OnWaveEnded = GameStarted;
+}
+
+final function GameStarted(KFTurboGameType GameType, int StartedWave)
+{
+    GameType.WaveCountDown = Max(GameStartWaitTime, GameType.WaveCountDown);
     OnWaveEnded(GameType, StartedWave - 1);
 }
 
-static function OnGameEnded(KFTurboGameType GameType, int Result)
+final function GameEnded(KFTurboGameType GameType, int Result)
 {
-    local KFTurboCardGameMut CardGameMut;
-    local TurboCardStatsTcpLink StatsTcpLink;
-
-    CardGameMut = class'KFTurboCardGameMut'.static.FindMutator(GameType);
-
-    if (CardGameMut == None || CardGameMut.TurboCardReplicationInfo == None)
+    if (Mutator == None || Mutator.TurboCardStatsTcpLink == None)
     {
         return;
     }
 
-    StatsTcpLink = class'TurboCardStatsTcpLink'.static.FindStats(GameType);
-
-    if (StatsTcpLink == None)
-    {
-        return;
-    }
-
-    StatsTcpLink.OnGameEnd(Result, CardGameMut.TurboCardReplicationInfo.GetActiveCardList());
+    Mutator.TurboCardStatsTcpLink.OnGameEnd(Result, Mutator.TurboCardReplicationInfo.GetActiveCardList());
 }
 
-static function OnWaveStarted(KFTurboGameType GameType, int StartedWave)
+final function WaveStarted(KFTurboGameType GameType, int StartedWave)
 {
-    local KFTurboCardGameMut CardGameMut;
-
-    CardGameMut = class'KFTurboCardGameMut'.static.FindMutator(GameType);
-
-    if (CardGameMut == None)
+    if (Mutator == None)
     {
         return;
     }
     
-    CardGameMut.TurboCardReplicationInfo.OnSelectionTimeEnd();
-    CardGameMut.TurboCardGameplayManagerInfo.OnWaveStart(StartedWave);
+    Mutator.TurboCardReplicationInfo.OnSelectionTimeEnd();
+    Mutator.TurboCardGameplayManagerInfo.OnWaveStart(StartedWave);
 }
 
-static function ModifyWaveSize(KFTurboGameType GameType, float Multiplier)
+final function WaveEnded(KFTurboGameType GameType, int EndedWave)
 {
-    GameType.TotalMaxMonsters = Max(float(GameType.TotalMaxMonsters) * Multiplier, 15);
-    KFGameReplicationInfo(GameType.GameReplicationInfo).MaxMonsters = GameType.TotalMaxMonsters;
-}
-
-static function OnWaveEnded(KFTurboGameType GameType, int EndedWave)
-{
-    local KFTurboCardGameMut CardGameMut;
-
     if (GameType.FinalWave <= EndedWave)
     {
         return;
     }
 
-    CardGameMut = class'KFTurboCardGameMut'.static.FindMutator(GameType);
-
-    if (CardGameMut == None)
+    if (Mutator == None)
     {
         return;
     }
 
-    CardGameMut.TurboCardGameplayManagerInfo.OnWaveEnd(EndedWave);
-    CardGameMut.TurboCardReplicationInfo.StartSelection(EndedWave + 1);
+    Mutator.TurboCardGameplayManagerInfo.OnWaveEnd(EndedWave);
+    Mutator.TurboCardReplicationInfo.StartSelection(EndedWave + 1);
 }
 
 defaultproperties

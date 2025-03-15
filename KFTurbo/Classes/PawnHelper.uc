@@ -375,7 +375,7 @@ static final simulated function PostTakeDamage(KFMonster Monster, int Damage, Pa
 
 			if (Monster.bBurnified && AD.Burn.BurnRatio <= 0.f)
 			{
-				class'TurboEventHandler'.static.BroadcastPawnIgnited(AD.LastBurnDamageInstigator, Monster, class<KFWeaponDamageType>(AD.Burn.LastBurnDamageType), Monster.LastBurnDamage);
+				class'TurboGameplayEventHandler'.static.BroadcastPawnIgnited(AD.LastBurnDamageInstigator, Monster, class<KFWeaponDamageType>(AD.Burn.LastBurnDamageType), Monster.LastBurnDamage);
 			}
 		}
 	}
@@ -609,7 +609,7 @@ static final function bool MeleeDamageTarget(KFMonster Monster, int HitDamage, v
 		if (IsPawnBurning(Monster) && AD.Burn != None)
 		{
 			HitDamage = float(OriginalDamage) * AD.Burn.BurnMonsterDamageModifier;
-			class'TurboEventHandler'.static.BroadcastBurnMitigatedDamage(AD.LastBurnDamageInstigator, HumanPawn, HitDamage, OriginalDamage - HitDamage);
+			class'TurboGameplayEventHandler'.static.BroadcastBurnMitigatedDamage(AD.LastBurnDamageInstigator, HumanPawn, HitDamage, OriginalDamage - HitDamage);
 		}
 
 		HumanPawn.TakeDamage(HitDamage, Monster, HitLocation, PushDirection, Monster.CurrentDamType);

@@ -19,11 +19,23 @@ var int ControllerListIndex;
 var KFTurboGameType TurboGameType;
 var TurboGameReplicationInfo TurboGRI;
 var KFTurboMut Mutator;
+var TurboPlayerEventHandler PlayerStatsHandler;
+var TurboHealEventHandler HealStatsHandler;
 
 //Turns on collector/replicator system.
 var globalconfig bool bEnableStatCollector;
 var globalconfig string WaveStatCollectorClassOverride;
 var class<TurboWavePlayerStatCollector> WaveStatCollectorClass;
+
+static final function TurboWavePlayerStatCollector GetPlayerWaveStats(TurboPlayerController Player)
+{
+    if (Player == None)
+    {
+        return None;
+    }
+
+    return TurboWavePlayerStatCollector(class'TurboWavePlayerStatCollector'.static.FindStats(TurboPlayerReplicationInfo(Player.PlayerReplicationInfo)));
+}
 
 function PostBeginPlay()
 {
@@ -32,6 +44,21 @@ function PostBeginPlay()
     TurboGameType = KFTurboGameType(Level.Game);
     TurboGRI = TurboGameReplicationInfo(Level.GRI);
     Mutator = KFTurboMut(Owner);
+    
+    PlayerStatsHandler = TurboPlayerEventHandler(class'TurboPlayerEventHandler'.static.CreateHandler(Self));
+    PlayerStatsHandler.OnPlayerFire = OnPlayerFire;
+    PlayerStatsHandler.OnPlayerMeleeFire = OnPlayerMeleeFire;
+    PlayerStatsHandler.OnPlayerFireHit = OnPlayerFireHit;
+    PlayerStatsHandler.OnPlayerReload = OnPlayerReload;
+    PlayerStatsHandler.OnPlayerDamagedMonster = OnPlayerDamagedMonster;
+    PlayerStatsHandler.OnPlayerReceivedDamage = OnPlayerReceivedDamage;
+    PlayerStatsHandler.OnPlayerKilledMonster = OnPlayerKilledMonster;
+    PlayerStatsHandler.OnPlayerDied = OnPlayerDied;
+    
+    HealStatsHandler = TurboHealEventHandler(class'TurboHealEventHandler'.static.CreateHandler(Self));
+    HealStatsHandler.OnPawnDartHealed = OnPawnDartHealed;
+    HealStatsHandler.OnPawnSyringeHealed = IncrementHealStats;
+    HealStatsHandler.OnPawnGrenadeHealed = IncrementHealStats;
 
     if (WaveStatCollectorClassOverride != "")
     {
@@ -74,6 +101,133 @@ function Killed(Controller Killer, Controller Killed, Pawn KilledPawn, class<Dam
     {
         class'TurboPlayerEventHandler'.static.BroadcastPlayerDied(TurboPlayerController(Killed), Killer, DamageType);
     }
+}
+
+final function OnPlayerFire(TurboPlayerController Player, WeaponFire FireMode)
+{
+    local TurboWavePlayerStatCollector WavePlayerStatCollector;
+    WavePlayerStatCollector = GetPlayerWaveStats(Player);
+
+    if (WavePlayerStatCollector == None)
+    {
+        return;
+    }
+
+    WavePlayerStatCollector.IncrementShotsFired();
+}
+
+final function OnPlayerFireHit(TurboPlayerController Player, WeaponFire FireMode, KFMonster HitMonster, class<KFMonster> MonsterClass, bool bHeadshot, int Damage)
+{
+    local TurboWavePlayerStatCollector WavePlayerStatCollector;
+    WavePlayerStatCollector = GetPlayerWaveStats(Player);
+
+    if (WavePlayerStatCollector == None)
+    {
+        return;
+    }
+
+    WavePlayerStatCollector.IncrementShotsHit(bHeadShot);
+}
+
+final function OnPlayerMeleeFire(TurboPlayerController Player, KFMeleeFire FireMode)
+{
+    local TurboWavePlayerStatCollector WavePlayerStatCollector;
+    WavePlayerStatCollector = GetPlayerWaveStats(Player);
+
+    if (WavePlayerStatCollector == None)
+    {
+        return;
+    }
+
+    WavePlayerStatCollector.IncrementMeleeSwings();
+}
+
+final function OnPlayerReload(TurboPlayerController Player, KFWeapon Weapon)
+{
+    local TurboWavePlayerStatCollector WavePlayerStatCollector;
+    WavePlayerStatCollector = GetPlayerWaveStats(Player);
+    
+    if (WavePlayerStatCollector == None)
+    {
+        return;
+    }
+
+    WavePlayerStatCollector.IncrementReloads();
+}
+
+final function OnPlayerDamagedMonster(TurboPlayerController Player, KFMonster Target, int Damage)
+{
+    local TurboWavePlayerStatCollector WavePlayerStatCollector;
+    WavePlayerStatCollector = GetPlayerWaveStats(Player);
+
+    if (WavePlayerStatCollector == None)
+    {
+        return;
+    }
+
+    WavePlayerStatCollector.IncrementDamageDone(Damage, Target.Class);
+}
+
+final function OnPlayerKilledMonster(TurboPlayerController Player, KFMonster Target, class<DamageType> DamageType)
+{
+    local TurboWavePlayerStatCollector WavePlayerStatCollector;
+    WavePlayerStatCollector = GetPlayerWaveStats(Player);
+
+    if (WavePlayerStatCollector == None)
+    {
+        return;
+    }
+
+    WavePlayerStatCollector.IncrementKills(Target.Class);
+}
+
+final function OnPlayerReceivedDamage(TurboPlayerController Player, KFMonster Instigator, int Damage)
+{
+    local TurboWavePlayerStatCollector WavePlayerStatCollector;
+    WavePlayerStatCollector = GetPlayerWaveStats(Player);
+
+    if (WavePlayerStatCollector == None)
+    {
+        return;
+    }
+
+    WavePlayerStatCollector.IncrementDamageTaken(Damage);
+}
+
+final function OnPlayerDied(TurboPlayerController Player, Controller Killer, class<DamageType> DamageType)
+{
+    local TurboWavePlayerStatCollector WavePlayerStatCollector;
+    WavePlayerStatCollector = GetPlayerWaveStats(Player);
+
+    if (WavePlayerStatCollector == None)
+    {
+        return;
+    }
+
+    WavePlayerStatCollector.OnDied(Killer, DamageType);
+}
+
+final function OnPawnDartHealed(Pawn Instigator, Pawn Target, int HealingAmount, HealingProjectile HealDart)
+{
+    IncrementHealStats(Instigator, Target, HealingAmount);
+}
+
+final function IncrementHealStats(Pawn Instigator, Pawn Target, int HealingAmount)
+{
+    local TurboWavePlayerStatCollector StatCollector;
+    if (Instigator == None || Instigator == Target)
+    {
+        return;
+    }
+
+    StatCollector = GetPlayerWaveStats(TurboPlayerController(Instigator.Controller));
+
+    if (StatCollector == None)
+    {
+        return;
+    }
+
+    StatCollector.IncrementHealthHealed(HealingAmount);
 }
 
 //Does initial kick-off.

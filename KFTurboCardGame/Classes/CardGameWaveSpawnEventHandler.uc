@@ -3,35 +3,34 @@
 //For more information see https://github.com/KFPilot/KFTurbo.
 class CardGameWaveSpawnEventHandler extends KFTurbo.TurboWaveSpawnEventHandler;
 
-static function OnNextSpawnSquadGenerated(KFTurboGameType GameType, out array < class<KFMonster> > NextSpawnSquad)
+var KFTurboCardGameMut Mutator;
+
+function PostBeginPlay()
 {
-    local KFTurboCardGameMut CardGameMut;
+    Super.PostBeginPlay();
 
-    CardGameMut = class'KFTurboCardGameMut'.static.FindMutator(GameType);
+    Mutator = KFTurboCardGameMut(Owner);
 
-    if (CardGameMut == None)
-    {
-        return;
-    }
-
-    CardGameMut.TurboCardGameplayManagerInfo.OnNextSpawnSquadGenerated(NextSpawnSquad);
+    OnNextSpawnSquadGenerated = NextSpawnSquadGenerated;
+    OnBossSpawned = BossSpawned;
 }
 
-static function OnBossSpawned(KFTurboGameType GameType)
+final function NextSpawnSquadGenerated(KFTurboGameType GameType, out array < class<KFMonster> > NextSpawnSquad)
 {
-    local KFTurboCardGameMut CardGameMutator;
-    
-    if (GameType == None)
+    if (Mutator == None)
     {
         return;
     }
 
-    CardGameMutator = class'KFTurboCardGameMut'.static.FindMutator(GameType);
+    Mutator.TurboCardGameplayManagerInfo.OnNextSpawnSquadGenerated(NextSpawnSquad);
+}
 
-    if (CardGameMutator == None)
+final function BossSpawned(KFTurboGameType GameType)
+{
+    if (Mutator == None)
     {
         return;
     }
 
-    CardGameMutator.TurboCardGameplayManagerInfo.OnBossSpawned();
+    Mutator.TurboCardGameplayManagerInfo.OnBossSpawned();
 }

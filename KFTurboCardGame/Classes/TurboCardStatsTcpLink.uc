@@ -11,7 +11,7 @@ var TurboStatsTcpLink StatsTcpLink;
 var array<TurboCard> ShownCardList;
 
 //static final function KFTurboCardGameMut FindMutator(GameInfo GameInfo)
-static final function TurboCardStatsTcpLink FindStats(GameInfo GameInfo)
+static final function TurboCardStatsTcpLink FindCardStatsTcpLink(GameInfo GameInfo)
 {
     local KFTurboCardGameMut CardGameMut;
     CardGameMut = class'KFTurboCardGameMut'.static.FindMutator(GameInfo);
@@ -21,7 +21,7 @@ static final function TurboCardStatsTcpLink FindStats(GameInfo GameInfo)
         return None;
     }
 
-    return CardGameMut.TurboCardStats;
+    return CardGameMut.TurboCardStatsTcpLink;
 }
 
 final function TurboStatsTcpLink GetStatsTcpLink()

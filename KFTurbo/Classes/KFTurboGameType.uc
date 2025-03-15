@@ -27,11 +27,13 @@ var float GameTraderTimeModifier;
 var bool bHasSpawnedBoss;
 
 //Event handler stored here so we have an easy way to find it.
-//TODO: Slowly split these up into relevant categories so that a listener doesn't bloat the list of active handlers just to get one event it wants.
-var array< class<TurboEventHandler> > EventHandlerList;
-var array< class<TurboHealEventHandler> > HealEventHandlerList;
-var array< class<TurboWaveEventHandler> > WaveEventHandlerList;
-var array< class<TurboWaveSpawnEventHandler> > WaveSpawnEventHandlerList;
+var array< TurboEventHandler > EventHandlerList; //List of all event handlers.
+
+var array< TurboPlayerEventHandler > GlobalPlayerEventHandlerList; //Event Handlers added to this will receive events for all players. To refine events to a specific player, use TurboPlayerController::PlayerEventHandlerList
+var array< TurboGameplayEventHandler > GameplayEventHandlerList;
+var array< TurboHealEventHandler > HealEventHandlerList;
+var array< TurboWaveEventHandler > WaveEventHandlerList;
+var array< TurboWaveSpawnEventHandler > WaveSpawnEventHandlerList;
 
 var MapConfigurationObject MapConfigurationObject; //MapConfigurationObject associated with the current map.
 
@@ -54,11 +56,14 @@ event InitGame(string Options, out string Error)
 
 function ProcessServerTravel(string URL, bool bItems)
 {
-    MapConfigurationObject = None;
     EventHandlerList.Length = 0;
+    GlobalPlayerEventHandlerList.Length = 0;
+    GameplayEventHandlerList.Length = 0;
     HealEventHandlerList.Length = 0;
     WaveEventHandlerList.Length = 0;
     WaveSpawnEventHandlerList.Length = 0;
+    
+    MapConfigurationObject = None;
 
     OnStatsAndAchievementsDisabled = None;
     LockPerkSelection = None;
