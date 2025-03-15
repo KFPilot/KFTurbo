@@ -13,8 +13,8 @@ function PostBeginPlay()
     Mutator = KFTurboCardGameMut(Owner);
 
     OnGameStarted = GameStarted;
-    OnGameEnded = OnGameEnded;
-    OnWaveStarted = OnWaveStarted;
+    OnGameEnded = GameEnded;
+    OnWaveStarted = WaveStarted;
     OnWaveEnded = GameStarted;
 }
 
