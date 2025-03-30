@@ -27,6 +27,7 @@ var protected string GameStartTime;
 var protected string GameType;
 
 var globalconfig bool bRequireAdminForDifficultyCommands;
+var globalconfig bool bAutoRestartEmptyIdleServer; //Server will restart after 1 hour of being empty and idle.
 
 var bool bSkipInitialMonsterWander;
 
@@ -65,6 +66,11 @@ simulated function PostBeginPlay()
 	if (bDebugClientPerkRepLink)
 	{
 		Spawn(class'TurboRepLinkTester', Self);
+	}
+
+	if (bAutoRestartEmptyIdleServer && Level.NetMode == NM_DedicatedServer)
+	{
+		Spawn(class'TurboIdleServerHandler',  Self);
 	}
 
 	SetupBroadcaster();
@@ -399,4 +405,6 @@ defaultproperties
 	GameType="turbo"
 
 	bSkipInitialMonsterWander=false
+
+	bAutoRestartEmptyIdleServer=false
 }
