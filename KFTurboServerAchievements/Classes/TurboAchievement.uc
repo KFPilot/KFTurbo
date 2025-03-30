@@ -9,6 +9,7 @@ var localized string Title;
 var localized string Description;
 var Texture Icon;
 
+var protected bool bHasInitialized; //Must be set to true once initialized.
 var protected bool bHasUpdate;
 var protected bool bComplete;
 
@@ -17,11 +18,13 @@ var protected bool bRepeatable;
 var protected int CompletionCount;
 
 var bool bPendingChange;
-var int NotificationIntervalCount;
 
-final function Name GetID()
+var protected int NotificationIntervalCount; //How many intervals to notify the player of progress updates (1 would be once at 50%, 2 would be twice at 33% and 66%, etc...).
+var protected int LastNotificationInterval; //Last interval we notified at.
+
+final function string GetID()
 {
-    return Name;
+    return Caps(string(Name));
 }
 
 final function string GetTitle()
@@ -41,7 +44,7 @@ final function Texture GetIcon()
 
 final function bool CanBeUpdated()
 {
-    return !IsRepeatable() && IsComplete();
+    return IsReady() && (!IsComplete() || IsRepeatable());
 }
 
 final function bool HasUpdate()
@@ -59,6 +62,11 @@ final function ConsumeUpdate()
     bHasUpdate = false;
 }
 
+final function bool IsReady()
+{
+    return bHasInitialized;
+}
+
 final function bool IsComplete()
 {
     return bComplete;
@@ -71,38 +79,59 @@ final function bool IsRepeatable()
 
 final function bool IsSerializable()
 {
-    return GetID() != '';
+    return GetID() != "";
+}
+
+simulated final function int GetNewValueNotificationInterval(float NewProgress)
+{
+    local float NotificationInterval;
+    
+    if (NotificationIntervalCount <= 0 || NewProgress <= 0.f || NewProgress >= 1.f)
+    {
+        return 0;
+    }
+
+    NotificationInterval = 1.f / float(NotificationIntervalCount + 1);
+    return NewProgress / NotificationInterval;
 }
 
 final function string Serialize()
 {
-    return Repl("{%qID%q:%q"$GetID()$"%q,%qC%q:%q"$string(CompletionCount)$"%q,%qV%q:"$ValueToJSON()$"}", "%q", Chr(34));
+    return Repl("{%qI%q:%q"$GetID()$"%q,%qC%q:%q"$string(CompletionCount)$"%q,%qV%q:"$ValueToJSON()$"}", "%q", Chr(34));
+}
+
+//Called when an achievement is initialized without data. Can be overriden by a child type if needed.
+function InitializeDefault()
+{
+    bHasInitialized = true;
 }
 
 //These need to be implemented per achievement type:
 
-function Initialize()
-{
-    log("ERROR: TurboAchievement::Initialize was not implemented for the achievement "$Self, 'TurboAchievement');
-}
-
-//Override to provide JSON version of value. Values must either be JSON objects or appropriately wrapped with ".
-//Can use %q to represent ". The caller of this function TurboAchievement::Serialize does a Repl pass on strings to replace %q with ".
+//Override to provide JSON version of value. Values must be appropriately wrapped with the " character.
+//DO NOT NEST A JSON OBJECT OR USE THE CHARACTERS [ OR ]. The parser is bespoke and is expecting those character to demarkate array bounds.
+//Can use %q to represent the " character. The caller of this function TurboAchievement::Serialize does a Repl pass on strings to replace %q.]
 function string ValueToJSON()
 {
-    log("ERROR: TurboAchievement::ValueToJSON was not implemented for the achievement "$Self, 'TurboAchievement');
+    log("ERROR: TurboAchievement::ValueToJSON was not implemented for the achievement "$Self, 'KFTurboServerAchievements');
     return "false";
 }
 
-function PopulateFromJSON(string JSON)
+function Deserialize(string Data)
 {
-    log("ERROR: TurboAchievement::PopulateFromJSON was not implemented for the achievement "$Self, 'TurboAchievement');
+    log("ERROR: TurboAchievement::Deserialize was not implemented for the achievement "$Self, 'KFTurboServerAchievements');
 }
 
 function float GetProgress()
 {
-    log("ERROR: TurboAchievement::GetProgress was not implemented for the achievement "$Self, 'TurboAchievement');
+    log("ERROR: TurboAchievement::GetProgress was not implemented for the achievement "$Self, 'KFTurboServerAchievements');
     return 0.f;
+}
+
+function string GetProgressText()
+{
+    log("ERROR: TurboAchievement::GetProgressText was not implemented for the achievement "$Self, 'KFTurboServerAchievements');
+    return "";
 }
 
 defaultproperties
@@ -115,5 +144,4 @@ defaultproperties
     CompletionCount=0
 
     bPendingChange=false
-    NotificationIntervalCount=0
 }

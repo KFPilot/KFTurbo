@@ -4,6 +4,9 @@
 class TurboAchievementFlag extends TurboAchievement
     instanced;
 
+var localized string ProgressCompleteString;
+var localized string ProgressIncompleteString;
+
 function SetFlag()
 {
     if (!CanBeUpdated())
@@ -20,10 +23,26 @@ function SetFlag()
     MarkUpdate();
 }
 
-function Initialize()
+simulated final function InitializeData(int NewCompletionCount)
 {
+    if (bHasInitialized)
+    {
+        return;
+    }
+
+    bHasInitialized = true;
+
+    CompletionCount = NewCompletionCount;
     bComplete = CompletionCount > 0;
 }
+
+simulated final function UpdateData(int NewCompletionCount)
+{
+    CompletionCount = NewCompletionCount;
+    bComplete = CompletionCount > 0;
+}
+
+function Initialize() {}
 
 function string ValueToJSON()
 {
@@ -48,6 +67,11 @@ function float GetProgress()
     {
         return 0.f;
     }
+}
+
+function string GetProgressText()
+{
+    return Eval(IsComplete(), ProgressCompleteString, ProgressIncompleteString);
 }
 
 defaultproperties

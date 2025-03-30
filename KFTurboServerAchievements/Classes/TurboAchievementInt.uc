@@ -43,6 +43,43 @@ function int AddValue(int Delta)
     MarkUpdate();
 }
 
+simulated final function InitializeData(int NewValue, int NewCompletionCount)
+{
+    if (bHasInitialized)
+    {
+        return;
+    }
+
+    bHasInitialized = true;
+
+    Value = NewValue;
+    CompletionCount = NewCompletionCount;
+    bComplete = CompletionCount > 0;
+}
+
+//Returns true if we should notify the player of the progress update. Never call this to set the authoritative value.
+simulated final function bool UpdateData(int NewValue, int NewCompletionCount)
+{
+    local bool bValueUpdate, bCompletionCountUpdate, bShouldNotifyPlayer;
+    local int NewNotificationInterval;
+    bValueUpdate = NewValue > 0 && NewValue != Value;
+    bCompletionCountUpdate = NewCompletionCount != CompletionCount;
+
+    NewNotificationInterval = GetNewValueNotificationInterval(float(NewValue) / float(MaxValue));
+
+    //Only notify the player of an achievement value changing if the value changed, this didn't cause an achievement completion, this achievement has notification intervals, and we're at a new notification interval.
+    bShouldNotifyPlayer = bHasInitialized && bValueUpdate && !bCompletionCountUpdate && NotificationIntervalCount != 0 && LastNotificationInterval != NewNotificationInterval && NewNotificationInterval != 0;
+
+    bHasInitialized = true;
+
+    Value = NewValue;
+    CompletionCount = NewCompletionCount;
+    bComplete = CompletionCount > 0;
+    LastNotificationInterval = NewNotificationInterval;
+
+    return bShouldNotifyPlayer;
+}
+
 function Initialize() {}
 
 function string ValueToJSON()
@@ -58,6 +95,11 @@ function PopulateFromJSON(string JSON)
     Value = int(LeftPart);
 }
 
+function Deserialize(string Data)
+{
+    log("ERROR: TurboAchievement::Deserialize was not implemented for the achievement "$Self, 'KFTurboServerAchievements');
+}
+
 function float GetProgress()
 {
     local float Progress;
@@ -65,8 +107,14 @@ function float GetProgress()
     return FClamp(Progress - float(int(Progress)), 0.f, 1.f);
 }
 
+function string GetProgressText()
+{
+    return Value@"/"@MaxValue;
+}
+
 defaultproperties
 {
     Value=0
     MaxValue=10
+    NotificationIntervalCount=0
 }

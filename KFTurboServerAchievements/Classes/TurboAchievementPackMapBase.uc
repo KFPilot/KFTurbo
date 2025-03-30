@@ -1,4 +1,5 @@
 //Killing Floor Turbo TurboAchievementPackMapBase
+//Base class for map achievement packs.
 //Works very similarly to etsai (Scary Ghost)'s MapAchievementsBase,
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
