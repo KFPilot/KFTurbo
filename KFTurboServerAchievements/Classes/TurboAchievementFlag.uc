@@ -7,11 +7,11 @@ class TurboAchievementFlag extends TurboAchievement
 var localized string ProgressCompleteString;
 var localized string ProgressIncompleteString;
 
-function SetFlag()
+function bool SetFlag()
 {
     if (!CanBeUpdated())
     {
-        return;
+        return false;
     }
 
     if (!bComplete)
@@ -21,6 +21,7 @@ function SetFlag()
 
     CompletionCount++;
     MarkUpdate();
+    return true;
 }
 
 simulated final function InitializeData(int NewCompletionCount)
@@ -71,10 +72,19 @@ function float GetProgress()
 
 function string GetProgressText()
 {
-    return Eval(IsComplete(), ProgressCompleteString, ProgressIncompleteString);
+    if (IsComplete())
+    {
+        return ProgressCompleteString;
+    }
+    else
+    {
+        return ProgressIncompleteString;
+    }
 }
 
 defaultproperties
 {
     bComplete=false
+    ProgressCompleteString=""
+    ProgressIncompleteString=""
 }

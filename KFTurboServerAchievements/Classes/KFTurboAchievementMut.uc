@@ -41,6 +41,38 @@ function PostBeginPlay()
     Super.PostBeginPlay();
 }
 
+function bool CheckReplacement(Actor Other, out byte bSuperRelevant)
+{
+    if (PlayerReplicationInfo(Other) != None)
+    {
+        CreateLinkReplicationInfo(PlayerReplicationInfo(Other));
+    }
+
+	return true;
+}
+
+function CreateLinkReplicationInfo(PlayerReplicationInfo PRI)
+{
+	local TurboAchievementLRI AchievementPRI;
+    local LinkedReplicationInfo LastLRI;
+	AchievementPRI = Spawn(class'TurboAchievementLRI', PRI.Owner);
+
+    LastLRI = PRI.CustomReplicationInfo;
+
+    if (LastLRI == None)
+    {
+        PRI.CustomReplicationInfo = AchievementPRI;
+        return;
+    }
+
+    while (LastLRI.NextReplicationInfo != None)
+    {
+        LastLRI = LastLRI.NextReplicationInfo;
+    }
+
+    LastLRI.NextReplicationInfo = AchievementPRI;
+}
+
 defaultproperties
 {
     GroupName="KFServerAchievements"

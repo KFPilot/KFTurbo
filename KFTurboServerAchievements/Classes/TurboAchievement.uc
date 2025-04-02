@@ -5,6 +5,8 @@ class TurboAchievement extends Object
     instanced
     abstract;
 
+var protected int AchievementIndex; //Set during TurboAchievementPack::PreBeginPlay().
+
 var localized string Title;
 var localized string Description;
 var Texture Icon;
@@ -21,6 +23,25 @@ var bool bPendingChange;
 
 var protected int NotificationIntervalCount; //How many intervals to notify the player of progress updates (1 would be once at 50%, 2 would be twice at 33% and 66%, etc...).
 var protected int LastNotificationInterval; //Last interval we notified at.
+
+delegate OnAchievementComplete(TurboAchievementPack AchievementPack, TurboAchievement Achievement);
+
+
+final function SetIndex(int NewIndex)
+{
+    if (AchievementIndex != -1)
+    {
+        log("ERROR - SetIndex was called on "$GetID()$" after already setting the achievement's index!");
+        return;
+    }
+
+    AchievementIndex = NewIndex;
+}
+
+final function int GetIndex()
+{
+    return AchievementIndex;
+}
 
 final function string GetID()
 {
@@ -136,6 +157,8 @@ function string GetProgressText()
 
 defaultproperties
 {
+    AchievementIndex=-1
+
     bSaveProgress=true
     bHasUpdate=false
     bComplete=false

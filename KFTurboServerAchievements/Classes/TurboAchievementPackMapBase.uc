@@ -7,6 +7,43 @@ class TurboAchievementPackMapBase extends TurboAchievementPack;
 
 #exec OBJ LOAD FILE=KillingFloor2HUD.utx
 
+enum EBaseGameMap
+{
+    WestLondon, //0
+    Manor,
+    Farm,
+    Offices,
+    BioticsLab,
+    Foundry,    //5
+    Bedlam,
+    Wyre,
+    Biohazard,
+    Crash,
+    Departed,   //10
+    FilthsCross,
+    HospitalHorrors,
+    Icebreaker,
+    MountainPass,
+    Suburbia,   //15
+    Waterworks,
+    EvilSantasLair,
+    Aperture,
+    AbusementPark,
+    IceCave,    //20
+    Hellride,
+    HillbillyHorror,
+    Moonbase,
+    Steamland,
+    FrightYard, //25
+    Hell,
+    Forgotton,
+    SirensBelch,
+    Stronghold,
+    Transit,    //30
+    Clandestine,
+    ThrillsChills
+};
+
 struct MapIndex
 {
     var string Map;

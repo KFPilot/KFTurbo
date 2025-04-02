@@ -6,41 +6,68 @@ class TurboAchievementInt extends TurboAchievement
 
 var protected int Value, MaxValue;
 
-function int SetValue(int NewValue)
+function bool SetValue(int NewValue)
 {
     if (!CanBeUpdated())
     {
-        return Value;
+        return false;
     }
 
     if (Value == NewValue)
     {
-        return Value;
+        return false;
     }
 
     Value = NewValue;
     MarkUpdate();
-    return Value;
+
+    return CheckCompletion();
 }
 
-function int AddValue(int Delta)
+function bool AddValue(int Delta)
 {
     local int NewValue;
 
     if (!CanBeUpdated())
     {
-        return Value;
+        return false;
     }
 
     NewValue = Max(0, Value + Delta);
 
     if (Value == NewValue)
     {
-        return Value;
+        return false;
     }
 
     Value = NewValue;
     MarkUpdate();
+
+    return CheckCompletion();
+}
+
+function bool CheckCompletion()
+{
+    if (Value < MaxValue)
+    {
+        return false;
+    }
+
+    if (bRepeatable)
+    {
+        while (Value > MaxValue)
+        {
+            Value -= MaxValue;
+            CompletionCount++;
+        }
+    }
+    else
+    {
+        Value = 0;
+        CompletionCount = 1;
+    }
+
+    return true;
 }
 
 simulated final function InitializeData(int NewValue, int NewCompletionCount)

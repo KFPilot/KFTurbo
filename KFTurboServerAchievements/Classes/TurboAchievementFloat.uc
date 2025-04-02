@@ -6,42 +6,66 @@ class TurboAchievementFloat extends TurboAchievement
 
 var protected float Value, MaxValue;
 
-function float SetValue(float NewValue)
+function bool SetValue(float NewValue)
 {
     if (!CanBeUpdated())
     {
-        return Value;
+        return false;
     }
 
     if (Value == NewValue)
     {
-        return Value;
+        return false;
     }
 
     Value = NewValue;
     MarkUpdate();
-    return Value;
+    return CheckCompletion();
 }
 
-function float AddValue(float Delta)
+function bool AddValue(float Delta)
 {
     local float NewValue;
     
     if (!CanBeUpdated())
     {
-        return Value;
+        return false;
     }
 
     NewValue = FMax(0, Value + Delta);
 
     if (Value == NewValue)
     {
-        return Value;
+        return false;
     }
 
     Value = NewValue;
     MarkUpdate();
-    return Value;
+    return CheckCompletion();
+}
+
+function bool CheckCompletion()
+{
+    if (Value < MaxValue)
+    {
+        return false;
+    }
+
+    if (bRepeatable)
+    {
+        while (Value > MaxValue)
+        {
+            Value -= MaxValue;
+            CompletionCount++;
+        }
+    }
+    else
+    {
+        Value = 0;
+        CompletionCount = 1;
+    }
+
+    return true;
 }
 
 simulated final function InitializeData(float NewValue, int NewCompletionCount)

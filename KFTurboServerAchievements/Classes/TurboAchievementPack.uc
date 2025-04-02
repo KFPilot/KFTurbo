@@ -25,10 +25,21 @@ replication
         SendIntStatus, SendFloatStatus, SendFlagStatus;
 }
 
-function PreBeginPlay()
+simulated function PreBeginPlay()
 {
+    local int Index;
+
     Super.PreBeginPlay();
-    AchievementLRI = TurboAchievementLRI(Owner);
+
+    if (AchievementLRI == None && TurboAchievementLRI(Owner) != None)
+    {
+        AchievementLRI = TurboAchievementLRI(Owner);
+    }
+    
+    for (Index = 0; Index < AchievementList.Length; Index++)
+    {
+        AchievementList[Index].SetIndex(Index);
+    }
 }
 
 function PostBeginPlay()
@@ -194,6 +205,49 @@ final function InitializeAllDefault()
     }
 }
 
+final function AddProgressInt(TurboAchievementInt Achievement, int Delta)
+{
+    if (Delta == 0)
+    {
+        return;
+    }
+
+    if (!Achievement.AddValue(Delta))
+    {
+        return;
+    }
+
+    OnAchievementComplete(Self, Achievement);
+    SendAchievementCompleted(Achievement.GetIndex());
+}
+
+final function AddProgressFloat(TurboAchievementFloat Achievement, float Delta)
+{
+    if (Delta == 0)
+    {
+        return;
+    }
+
+    if (!Achievement.AddValue(Delta))
+    {
+        return;
+    }
+
+    OnAchievementComplete(Self, Achievement);
+    SendAchievementCompleted(Achievement.GetIndex());
+}
+
+final function SetFlag(TurboAchievementFlag Achievement)
+{
+    if (!Achievement.SetFlag())
+    {
+        return;
+    }
+
+    OnAchievementComplete(Self, Achievement);
+    SendAchievementCompleted(Achievement.GetIndex());
+}
+
 simulated function Tick(float DeltaTime)
 {
     if (AchievementLRI == None)
@@ -207,6 +261,11 @@ simulated function Tick(float DeltaTime)
 
 simulated function SendAchievementCompleted(int Index)
 {
+    if (Role == ROLE_Authority)
+    {
+        return;
+    }
+    
     OnAchievementComplete(Self, AchievementList[Index]);
 }
 
