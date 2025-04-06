@@ -15,13 +15,13 @@ function PostBeginPlay()
     OnGameStarted = GameStarted;
     OnGameEnded = GameEnded;
     OnWaveStarted = WaveStarted;
-    OnWaveEnded = GameStarted;
+    OnWaveEnded = WaveEnded;
 }
 
 final function GameStarted(KFTurboGameType GameType, int StartedWave)
 {
     GameType.WaveCountDown = Max(GameStartWaitTime, GameType.WaveCountDown);
-    OnWaveEnded(GameType, StartedWave - 1);
+    Mutator.TurboCardReplicationInfo.StartSelection(StartedWave);
 }
 
 final function GameEnded(KFTurboGameType GameType, int Result)
