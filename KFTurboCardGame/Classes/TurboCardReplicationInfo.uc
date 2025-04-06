@@ -454,9 +454,10 @@ function StartSelection(int WaveNumber)
     ClearSelection();
 
     Deck = None;
+    WaveNumber++;
 
     log ("Selecting for wave number:"@WaveNumber);
-    switch(WaveNumber + 1)
+    switch(WaveNumber)
     {
         case 0:
         case 1:
