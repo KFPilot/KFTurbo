@@ -31,7 +31,7 @@ static function TurboEventHandler CreateHandler(Actor Context)
         return None;
     }
 
-    Handler = Context.Spawn(default.Class, GameType);
+    Handler = Context.Spawn(default.Class, Context);
     GameType.EventHandlerList[GameType.EventHandlerList.Length] = Handler;
     return Handler;
 }
