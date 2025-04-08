@@ -110,6 +110,8 @@ struct MassDetonationEntry
 };
 var array<MassDetonationEntry> MassDetonationList;
 
+var bool bKillsGiveShield;
+
 static final function bool IsBerserker(Pawn Pawn)
 {
     if (Pawn == None || KFPlayerReplicationInfo(Pawn.PlayerReplicationInfo) == None)
@@ -634,6 +636,11 @@ function Killed(Controller Killer, Controller Killed, Pawn KilledPawn, class<Dam
             AddMassDetonationEntry(KFMonster(KilledPawn), PlayerController(Killer));
         }
     }
+
+    if (bKillsGiveShield && KFMonster(KilledPawn) != None && PlayerController(Killer) != None)
+    {
+        GrantShieldOnKill(KFMonster(KilledPawn), PlayerController(Killer));
+    }
     
     Super.Killed(Killer, Killed, KilledPawn, DamageType);
 }
@@ -787,6 +794,39 @@ final function PerformMassDetonation(MassDetonationEntry Detonation)
         
 		HitPawn.TakeDamage(DamageScale * float(Detonation.MaxHealth) * 0.25f, Detonation.Controller.Pawn, Detonation.Location, HitMomentum, class'MassDetonation_DT');
     }
+}
+
+function GrantShieldOnKill(KFMonster KilledMonster, PlayerController Killer)
+{
+    local PawnHelper.EMonsterTier Tier;
+    local float ShieldAmount;
+
+    if (Killer.Pawn == None)
+    {
+        return;
+    }
+
+    Tier = class'PawnHelper'.static.GetMonsterTier(KilledMonster.Class);
+    switch (Tier)
+    {
+        case Trash:
+            ShieldAmount = 0.25f;
+            break;
+        case Special:
+            ShieldAmount = 1.f;
+            break;
+        case Elite:
+            ShieldAmount = 2.f;
+            break;
+    }
+
+    ShieldAmount = FMin(Killer.Pawn.ShieldStrength + ShieldAmount, 100.f);
+    if (ShieldAmount <= Killer.Pawn.ShieldStrength)
+    {
+        return;
+    }
+
+    Killer.Pawn.ShieldStrength = ShieldAmount;
 }
 
 function float GetAdjustedScoreValue(float Score)
@@ -1089,5 +1129,4 @@ defaultproperties
     MonsterRangedDamageMultiplier=1.f
     MonsterMeleeDamageMomentumMultiplier=1.f
     MonsterStalkerDamageMultiplier=1.f
-
 }

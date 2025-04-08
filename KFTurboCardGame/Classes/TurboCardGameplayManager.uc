@@ -41,6 +41,7 @@ var CardDeltaStack GoodCardSelectionCountDelta;
 var CardDeltaStack ProConCardSelectionCountDelta;
 var CardFlag CurseOfRaFlag;
 var CurseOfRaManager CurseOfRaManager;
+var CardFlag BlackoutFlag;
 
 //FRIENDLY FIRE
 var CardModifierStack FriendlyFireModifier;
@@ -70,6 +71,7 @@ var CardFlag OversizedPipebombFlag;
 var CardModifierStack PlayerMaxHealthModifier;
 var CardDeltaStack PlayerHealthRegenDelta;
 var PlayerRegenActor PlayerRegenActor;
+var CardFlag PlayerKillsGrantArmorFlag;
 
 //CARRY CAPACITY
 var CardDeltaStack PlayerCarryCapacityDelta;
@@ -521,6 +523,12 @@ function CurseOfRaFlagChanged(CardFlag Flag, bool bIsEnabled)
     }
 }
 
+function BlackoutFlagChanged(CardFlag Flag, bool bIsEnabled)
+{
+    CardClientModifier.bBlackout = bIsEnabled;
+    CardClientModifier.UpdateBlackout();
+}
+
 //FRIENDLY FIRE
 function FriendlyFireModifierChanged(CardModifierStack ModifiedStack, float Modifier)
 {
@@ -670,6 +678,11 @@ function PlayerHealthRegenDeltaChanged(CardDeltaStack ChangedDelta, int Delta)
             PlayerRegenActor.Destroy();
         }
     }
+}
+
+function PlayerKillsGrantArmorFlagChanged(CardFlag Flag, bool bIsEnabled)
+{
+    CardGameRules.bKillsGiveShield = bIsEnabled;
 }
 
 //CARRY CAPACITY
@@ -1292,6 +1305,12 @@ defaultproperties
     End Object
     CurseOfRaFlag=CardFlag'CurseOfRaCardFlag'
 
+    Begin Object Name=BlackoutCardFlag Class=CardFlag
+        FlagID="Blackout"
+        OnFlagSetChanged=BlackoutFlagChanged
+    End Object
+    BlackoutFlag=CardFlag'BlackoutCardFlag'
+
 //FRIENDLY FIRE
     Begin Object Name=FriendlyFireModifierStack Class=CardModifierStack
         ModifierStackID="FriendlyFire"
@@ -1377,6 +1396,12 @@ defaultproperties
         OnDeltaChanged=PlayerHealthRegenDeltaChanged
     End Object
     PlayerHealthRegenDelta=CardDeltaStack'PlayerHealthRegenDeltaStack'
+
+    Begin Object Name=PlayerKillsGrantArmorCardFlag Class=CardFlag
+        FlagID="PlayerKillsGrantArmor"
+        OnFlagSetChanged=PlayerKillsGrantArmorFlagChanged
+    End Object
+    PlayerKillsGrantArmorFlag=CardFlag'PlayerKillsGrantArmorCardFlag'
 
 //CARRY CAPACITY
     Begin Object Name=PlayerCarryCapacityDeltaStack Class=CardDeltaStack

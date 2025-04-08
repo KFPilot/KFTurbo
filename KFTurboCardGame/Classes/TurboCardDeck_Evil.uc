@@ -430,6 +430,11 @@ function ActivateBadBlood(TurboCardGameplayManager GameplayManager, TurboCard Ca
     Card.UpdateModifier(GameplayManager.PlayerMaxHealthModifier, 0.8f, bActivate);
 }
 
+function ActivateBlackout(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
+{
+    Card.UpdateFlag(GameplayManager.BlackoutFlag, bActivate);
+}
+
 defaultproperties
 {
     Begin Object Name=Hyperbloats Class=TurboCard_Evil
@@ -833,4 +838,14 @@ defaultproperties
         OnActivateCard=ActivateBadBlood
     End Object
     DeckCardObjectList(36)=TurboCard'BadBlood'
+    
+    Begin Object Name=Blackout Class=TurboCard_Evil
+        CardName(0)="Blackout"
+        CardDescriptionList(0)="Darkens the world"
+        CardDescriptionList(1)="for the rest"
+        CardDescriptionList(2)="of the game."
+        CardID="EVIL_BLACKOUT"
+        OnActivateCard=ActivateBlackout
+    End Object
+    DeckCardObjectList(37)=TurboCard'Blackout'
 }

@@ -403,6 +403,11 @@ function ActivateBreakTime(TurboCardGameplayManager GameplayManager, TurboCard C
     Card.UpdateModifier(GameplayManager.TraderTimeModifier, 2.f, bActivate);
 }
 
+function ActivateVampiricKevlar(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
+{
+    Card.UpdateFlag(GameplayManager.PlayerKillsGrantArmorFlag, bActivate);
+}
+
 defaultproperties
 {
     Begin Object Name=Cleanse Class=TurboCard_Super
@@ -752,4 +757,14 @@ defaultproperties
         CardID="SUPER_BREAKTIME"
     End Object
     DeckCardObjectList(30)=TurboCard'BreakTime'
+
+    Begin Object Name=VampiricKevlar Class=TurboCard_Super
+        CardName(0)="Vampiric Kevlar"
+        CardDescriptionList(0)="Kills grant armor"
+        CardDescriptionList(1)="amount based on"
+        CardDescriptionList(2)="the monster killed."
+        OnActivateCard=ActivateVampiricKevlar
+        CardID="SUPER_VAMPKEV"
+    End Object
+    DeckCardObjectList(31)=TurboCard'VampiricKevlar'
 }
