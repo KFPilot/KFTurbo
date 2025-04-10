@@ -133,6 +133,7 @@ function AttemptModifyGameLength()
 		return;
 	}
 
+    KFTurboGameType(Level.Game).KFGameLength = 2; //Ensure the game length is correct!
 	KFTurboGameType(Level.Game).SetFinalWaveOverride(14);
 }
 

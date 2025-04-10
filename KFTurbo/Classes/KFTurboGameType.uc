@@ -403,6 +403,8 @@ simulated function bool SetFinalWaveOverride(int NewOverride)
     }
 
     FinalWaveOverride = NewOverride;
+    MonsterCollection.default.SpecialSquads.Length = 0;
+    PrepareSpecialSquads();
     return true;
 }
 
@@ -443,8 +445,9 @@ function bool AddBoss()
 function bool AddSquad()
 {
     local int LastIndex;
+
     //Some special game modes (such as Card Game and Holdout) use more than 10 waves. Rather than adding special squads to the game types, we'll just reappend the last entry.
-    if (KFGameLength != GL_Custom && !bUsedSpecialSquad && (MonsterCollection.default.SpecialSquads.Length <= WaveNum || SpecialSquads.Length <= WaveNum))
+    if (KFGameLength != GL_Custom && !bUsedSpecialSquad && MonsterCollection.default.SpecialSquads.Length <= WaveNum)
     {
         LastIndex = MonsterCollection.default.SpecialSquads.Length - 1;
         if (LastIndex >= 0)
