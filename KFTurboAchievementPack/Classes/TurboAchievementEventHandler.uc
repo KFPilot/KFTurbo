@@ -1,7 +1,18 @@
 //Killing Floor Turbo TurboAchievementEventHandler
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class TurboAchievementEventHandler extends KFTurbo.TurboEventHandler;
+class TurboAchievementEventHandler extends KFTurbo.TurboGameplayEventHandler;
+
+function PostBeginPlay()
+{
+    Super.PostBeginPlay();
+
+    OnPawnIgnited = PawnIgnited;
+    OnPawnZapped = PawnZapped;
+    OnPawnHarpooned = PawnHarpooned;
+    OnBurnMitigatedDamage = BurnMitigatedDamage;
+    OnPawnPushedWithMCZThrower = PawnPushedWithMCZThrower;
+}
 
 static function SAReplicationInfo ResolveSARI(Pawn Instigator)
 {
@@ -13,7 +24,7 @@ static function SAReplicationInfo ResolveSARI(Pawn Instigator)
     return class'SAReplicationInfo'.static.findSAri(Instigator.PlayerReplicationInfo);
 }
 
-static function OnPawnIgnited(Pawn Instigator, Pawn Target, class<KFWeaponDamageType> DamageType, int BurnDamage)
+function PawnIgnited(Pawn Instigator, Pawn Target, class<KFWeaponDamageType> DamageType, int BurnDamage)
 {
     local SAReplicationInfo SARI;
     local TurboAchievementPackImpl AchievementPack;
@@ -36,7 +47,7 @@ static function OnPawnIgnited(Pawn Instigator, Pawn Target, class<KFWeaponDamage
     }
 }
 
-static function OnPawnZapped(Pawn Instigator, Pawn Target, float ZapAmount, bool bCausedZapped)
+function PawnZapped(Pawn Instigator, Pawn Target, float ZapAmount, bool bCausedZapped)
 {
     local SAReplicationInfo SARI;
     local TurboAchievementPackImpl AchievementPack;
@@ -59,7 +70,7 @@ static function OnPawnZapped(Pawn Instigator, Pawn Target, float ZapAmount, bool
     }
 }
 
-static function OnPawnHarpooned(Pawn Instigator, Pawn Target, int CurrentHarpoonCount)
+function PawnHarpooned(Pawn Instigator, Pawn Target, int CurrentHarpoonCount)
 {
     local SAReplicationInfo SARI;
     local TurboAchievementPackImpl AchievementPack;
@@ -82,7 +93,7 @@ static function OnPawnHarpooned(Pawn Instigator, Pawn Target, int CurrentHarpoon
     }
 }
 
-static function OnBurnMitigatedDamage(Pawn Instigator, Pawn Target, int Damage, int MitigatedDamage)
+function BurnMitigatedDamage(Pawn Instigator, Pawn Target, int Damage, int MitigatedDamage)
 {
     local SAReplicationInfo SARI;
     local TurboAchievementPackImpl AchievementPack;
@@ -105,7 +116,7 @@ static function OnBurnMitigatedDamage(Pawn Instigator, Pawn Target, int Damage, 
     }
 }
 
-static function OnPawnPushedWithMCZThrower(Pawn Instigator, Pawn Target, Vector VelocityAdded)
+function PawnPushedWithMCZThrower(Pawn Instigator, Pawn Target, Vector VelocityAdded)
 {
     local SAReplicationInfo SARI;
     local TurboAchievementPackImpl AchievementPack;

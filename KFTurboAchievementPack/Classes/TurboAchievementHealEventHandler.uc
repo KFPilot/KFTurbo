@@ -3,6 +3,15 @@
 //For more information see https://github.com/KFPilot/KFTurbo.
 class TurboAchievementHealEventHandler extends KFTurbo.TurboHealEventHandler;
 
+function PostBeginPlay()
+{
+    Super.PostBeginPlay();
+
+    OnPawnDartHealed = PawnDartHealed;
+    OnPawnSyringeHealed = PawnSyringeHealed;
+    OnPawnGrenadeHealed = PawnGrenadeHealed;
+}
+
 static function SAReplicationInfo ResolveSARI(Pawn Instigator)
 {
     if (Instigator == None || Instigator.PlayerReplicationInfo == None)
@@ -13,7 +22,7 @@ static function SAReplicationInfo ResolveSARI(Pawn Instigator)
     return class'SAReplicationInfo'.static.findSAri(Instigator.PlayerReplicationInfo);
 }
 
-static function OnPawnDartHealed(Pawn Instigator, Pawn Target, int HealingAmount, HealingProjectile HealDart)
+function PawnDartHealed(Pawn Instigator, Pawn Target, int HealingAmount, HealingProjectile HealDart)
 {
     local SAReplicationInfo SARI;
     local TurboAchievementPackImpl AchievementPack;
@@ -37,7 +46,7 @@ static function OnPawnDartHealed(Pawn Instigator, Pawn Target, int HealingAmount
     }
 }
 
-static function OnPawnSyringeHealed(Pawn Instigator, Pawn Target, int HealingAmount)
+function PawnSyringeHealed(Pawn Instigator, Pawn Target, int HealingAmount)
 {
     local SAReplicationInfo SARI;
     local TurboAchievementPackImpl AchievementPack;
@@ -61,7 +70,7 @@ static function OnPawnSyringeHealed(Pawn Instigator, Pawn Target, int HealingAmo
     }
 }
 
-static function OnPawnGrenadeHealed(Pawn Instigator, Pawn Target, int HealingAmount)
+function PawnGrenadeHealed(Pawn Instigator, Pawn Target, int HealingAmount)
 {
     local SAReplicationInfo SARI;
     local TurboAchievementPackImpl AchievementPack;
