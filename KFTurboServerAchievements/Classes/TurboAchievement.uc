@@ -31,7 +31,7 @@ final function SetIndex(int NewIndex)
 {
     if (AchievementIndex != -1)
     {
-        log("ERROR - SetIndex was called on "$GetID()$" after already setting the achievement's index!");
+        log("ERROR - SetIndex was called on "$GetID()$" after already setting the achievement's index!", 'KFTurboServerAchievements');
         return;
     }
 
@@ -138,7 +138,7 @@ function string ValueToJSON()
     return "false";
 }
 
-function Deserialize(string Data)
+function Deserialize(string Data, int CompletionCount)
 {
     log("ERROR: TurboAchievement::Deserialize was not implemented for the achievement "$Self, 'KFTurboServerAchievements');
 }
@@ -153,6 +153,19 @@ function string GetProgressText()
 {
     log("ERROR: TurboAchievement::GetProgressText was not implemented for the achievement "$Self, 'KFTurboServerAchievements');
     return "";
+}
+
+static final function bool IsNumeric(string String)
+{
+    local int p;
+
+	p = 0;
+	while (Mid(String, p, 1) >= "0" && Mid(String, p, 1) <= "9") p++;
+
+	if (Mid(String, p) != "")
+		return false;
+
+	return true;
 }
 
 defaultproperties

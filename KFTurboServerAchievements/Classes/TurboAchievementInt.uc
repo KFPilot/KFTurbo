@@ -114,17 +114,9 @@ function string ValueToJSON()
     return "%q"$string(Value)$"%q";
 }
 
-function PopulateFromJSON(string JSON)
+function Deserialize(string Data, int CompletionCount)
 {
-    local string LeftPart, RightPart;
-    Divide(JSON, "V", LeftPart, RightPart);
-    LeftPart = Mid(RightPart, 1, Len(RightPart) - 2);
-    Value = int(LeftPart);
-}
-
-function Deserialize(string Data)
-{
-    log("ERROR: TurboAchievement::Deserialize was not implemented for the achievement "$Self, 'KFTurboServerAchievements');
+    
 }
 
 function float GetProgress()

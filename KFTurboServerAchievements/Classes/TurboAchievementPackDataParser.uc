@@ -70,11 +70,13 @@ final function EDeserializationResult ResolvePlayerID(string InJSONData)
 
     if (!Divide(InJSONData, "\"PlayerID\":", LeftSide, RightSide))
     {
+        log("ERROR - TurboAchievementPackDataParser::ResolvePlayerID failed to find PlayerID key in JSON data.", 'KFTurboServerAchievements');
         return Failure;
     }
 
     if (!Divide(RightSide, ",", LeftSide, RightSide))
     {
+        log("ERROR - TurboAchievementPackDataParser::ResolvePlayerID failed to find delimiting comma in JSON data.", 'KFTurboServerAchievements');
         return Failure;
     }
 
@@ -96,11 +98,13 @@ final function EDeserializationResult ResolvePackID(string InJSONData)
 
     if (!Divide(InJSONData, "\"PackID\":", LeftSide, RightSide))
     {
+        log("ERROR - TurboAchievementPackDataParser::ResolvePackID failed to find PackID key in JSON data.", 'KFTurboServerAchievements');
         return Failure;
     }
 
     if (!Divide(RightSide, ",", LeftSide, RightSide))
     {
+        log("ERROR - TurboAchievementPackDataParser::ResolvePackID failed to find delimiting comma in JSON data.", 'KFTurboServerAchievements');
         return Failure;
     }
 
@@ -127,11 +131,13 @@ final function EDeserializationResult ConvertAchievementData(string InJSONData)
 
     if (!Divide(JSONData, "[", LeftSide, RightSide))
     {
+        log("ERROR - TurboAchievementPackDataParser::ConvertAchievementData failed to find array start character [ in JSON data.", 'KFTurboServerAchievements');
         return Failure;
     }
     
     if (!Divide(RightSide, "]", AchievementDataString, LeftSide))
     {
+        log("ERROR - TurboAchievementPackDataParser::ConvertAchievementData failed to find array end character ] in JSON data.", 'KFTurboServerAchievements');
         return Failure;
     }
 
@@ -165,11 +171,13 @@ final function EDeserializationResult ProcessAchievementEntry(string Achievement
 
     if (!Divide(AchievementEntryString, "\"I\":", LeftSide, RightSide))
     {
+        log("ERROR - TurboAchievementPackDataParser::ProcessAchievementEntry failed to find ID key in JSON data.", 'KFTurboServerAchievements');
         return Failure;
     }
 
     if (!Divide(RightSide, ",", LeftSide, RightSide))
     {
+        log("ERROR - TurboAchievementPackDataParser::ProcessAchievementEntry failed to find ID key delimiting comma in JSON data.", 'KFTurboServerAchievements');
         return Failure;
     }
 
@@ -179,11 +187,13 @@ final function EDeserializationResult ProcessAchievementEntry(string Achievement
 
     if (!Divide(AchievementEntryString, "\"C\":", LeftSide, RightSide))
     {
+        log("ERROR - TurboAchievementPackDataParser::ProcessAchievementEntry failed to find CompletionCount key in JSON data.", 'KFTurboServerAchievements');
         return Failure;
     }
 
     if (!Divide(RightSide, ",", LeftSide, RightSide))
     {
+        log("ERROR - TurboAchievementPackDataParser::ProcessAchievementEntry failed to find CompletionCount key delimiting comma in JSON data.", 'KFTurboServerAchievements');
         return Failure;
     }
 
@@ -193,11 +203,13 @@ final function EDeserializationResult ProcessAchievementEntry(string Achievement
 
     if (!Divide(AchievementEntryString, "\"V\":", LeftSide, RightSide))
     {
+        log("ERROR - TurboAchievementPackDataParser::ProcessAchievementEntry failed to find Value key in JSON data.", 'KFTurboServerAchievements');
         return Failure;
     }
 
     if (!Divide(RightSide, ",", LeftSide, RightSide))
     {
+        log("ERROR - TurboAchievementPackDataParser::ProcessAchievementEntry failed to find Value key delimiting comma in JSON data.", 'KFTurboServerAchievements');
         return Failure;
     }
 

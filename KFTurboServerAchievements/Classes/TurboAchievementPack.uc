@@ -180,9 +180,8 @@ final function Deserialize(TurboAchievementPackDataParser Parser)
         {
             continue;
         }
-
         
-        AchievementList[Index].Deserialize(Parser.AchievementDataList[DataIndex].Value);
+        AchievementList[Index].Deserialize(Parser.AchievementDataList[DataIndex].Value, Parser.AchievementDataList[DataIndex].CompletionCount);
 
         DataIndex++;
     }
@@ -265,7 +264,7 @@ simulated function SendAchievementCompleted(int Index)
     {
         return;
     }
-    
+
     OnAchievementComplete(Self, AchievementList[Index]);
 }
 
