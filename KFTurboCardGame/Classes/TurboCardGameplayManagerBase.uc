@@ -6,7 +6,8 @@
 //For more information see https://github.com/KFPilot/KFTurbo.
 class TurboCardGameplayManagerBase extends Engine.Info;
 
-var KFTurboCardGameMut CardGaneMutator;
+var KFTurboCardGameMut CardGameMutator;
+var KFTurboMut TurboMutator;
 var KFTurboGameType TurboGameType;
 var TurboCardReplicationInfo CardReplicationInfo;
 var TurboCardGameModifierRepLink CardGameModifier;
@@ -42,17 +43,17 @@ function PostBeginPlay()
     Super.PostBeginPlay();
 
     TurboGameType = KFTurboGameType(Level.Game);
-    CardGaneMutator = KFTurboCardGameMut(Owner);
+    CardGameMutator = KFTurboCardGameMut(Owner);
 
-    if (CardGaneMutator == None)
+    if (CardGameMutator == None)
     {
         return;
     }
 
-    CardReplicationInfo = CardGaneMutator.TurboCardReplicationInfo;
-    CardGameModifier = CardGaneMutator.TurboCardGameModifier;
-    CardClientModifier = CardGaneMutator.TurboCardClientModifier;
-    CardGameRules = CardGaneMutator.CardGameRules;
+    CardReplicationInfo = CardGameMutator.TurboCardReplicationInfo;
+    CardGameModifier = CardGameMutator.TurboCardGameModifier;
+    CardClientModifier = CardGameMutator.TurboCardClientModifier;
+    CardGameRules = CardGameMutator.CardGameRules;
 
     log("Collecting all modifiers, deltas and flags...", 'KFTurboCardGame');
     StopWatch(false);
@@ -100,6 +101,12 @@ function PostBeginPlay()
     CardFlagList.Length = Count;
     StopWatch(true);
     log("... collection of"@CardModifierList.Length@"modifiers,"@CardDeltaList.Length@"deltas and"@CardFlagList.Length@"flags complete!", 'KFTurboCardGame');
+}
+
+function Tick(float DeltaTime)
+{
+    TurboMutator = class'KFTurboMut'.static.FindMutator(Level.Game);
+    Disable('Tick');
 }
 
 function ModifyPlayer(Pawn Pawn)

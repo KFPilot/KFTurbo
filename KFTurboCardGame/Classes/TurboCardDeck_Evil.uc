@@ -435,6 +435,11 @@ function ActivateBlackout(TurboCardGameplayManager GameplayManager, TurboCard Ca
     Card.UpdateFlag(GameplayManager.BlackoutFlag, bActivate);
 }
 
+function ActivateUnusualMutation(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
+{
+    Card.UpdateModifier(GameplayManager.SpecialVariantSpawnModifier, 5.f, bActivate);
+}
+
 defaultproperties
 {
     Begin Object Name=Hyperbloats Class=TurboCard_Evil
@@ -848,4 +853,16 @@ defaultproperties
         OnActivateCard=ActivateBlackout
     End Object
     DeckCardObjectList(37)=TurboCard'Blackout'
+    
+    Begin Object Name=UnusualMutation Class=TurboCard_Evil
+        CardName(0)="Unusual"
+        CardName(1)="Mutation"
+        CardDescriptionList(0)="Increases chance"
+        CardDescriptionList(1)="for zeds to be"
+        CardDescriptionList(2)="replaced with"
+        CardDescriptionList(3)="a variant by 400%."
+        CardID="EVIL_UNUSUALMUT"
+        OnActivateCard=ActivateUnusualMutation
+    End Object
+    DeckCardObjectList(38)=TurboCard'UnusualMutation'
 }

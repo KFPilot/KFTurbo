@@ -12,6 +12,7 @@ var CardModifierStack WaveSpeedModifier;
 
 var CardModifierStack MaxMonstersModifier;
 var CardModifierStack TotalMonstersModifier;
+var CardModifierStack SpecialVariantSpawnModifier;
 
 var CardModifierStack TraderTimeModifier;
 var CardFlag ShortTermRewardFlag;
@@ -339,6 +340,11 @@ function TotalMonstersModifierChanged(CardModifierStack ModifiedStack, float Mod
     }
     
     TurboGameType.TotalMaxMonsters = float(TurboGameType.TotalMaxMonsters) * (TurboGameType.GameTotalMonstersModifier / OriginalModifier);
+}
+
+function SpecialVariantSpawnModifierChanged(CardModifierStack ModifiedStack, float Modifier)
+{
+    TurboMutator.CustomZedHandler.ReplacementRateMultiplier = Modifier;
 }
 
 function ShortTermRewardCardFlagChanged(CardFlag Flag, bool bIsEnabled) {}
@@ -1207,6 +1213,12 @@ defaultproperties
         OnModifierChanged=TotalMonstersModifierChanged
     End Object
     TotalMonstersModifier=CardModifierStack'TotalMonstersModifierStack'
+
+    Begin Object Name=SpecialVariantSpawnModifierStack Class=CardModifierStack
+        ModifierStackID="SpecialVariantSpawn"
+        OnModifierChanged=SpecialVariantSpawnModifierChanged
+    End Object
+    SpecialVariantSpawnModifier=CardModifierStack'SpecialVariantSpawnModifierStack'
 
     Begin Object Name=ShortTermRewardCardFlag Class=CardFlag
         FlagID="ShortTermReward"

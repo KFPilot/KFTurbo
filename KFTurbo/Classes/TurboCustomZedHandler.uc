@@ -6,12 +6,12 @@ class TurboCustomZedHandler extends Info
 
 enum EReplacementIndex
 {
-    Assassin,
+    Assassin, //0
     Jumper,
     Fathead,
     Caroler,
     Classy,
-    Shotgun
+    Shotgun //5
 };
 
 struct MonsterReplacement
@@ -146,10 +146,10 @@ defaultproperties
 
     ReplacementList(0)=(TargetType=Gorefast,ReplacementClass=class'P_Gorefast_Assassin',ReplacementRate=0.075f)
     ReplacementList(1)=(TargetType=Crawler,ReplacementClass=class'P_Crawler_Jumper',ReplacementRate=0.075f)
-    ReplacementList(2)=(TargetType=Bloat,ReplacementClass=class'P_Bloat_Fathead',ReplacementRate=0.05f)
+    ReplacementList(2)=(TargetType=Bloat,ReplacementClass=class'P_Bloat_Fathead',ReplacementRate=0.075f)
     ReplacementList(3)=(TargetType=Siren,ReplacementClass=class'P_Siren_Caroler',ReplacementRate=0.075f)
     ReplacementList(4)=(TargetType=Gorefast,ReplacementClass=class'P_Gorefast_Classy',ReplacementRate=0.025f)
-    ReplacementList(5)=(TargetType=Husk,ReplacementClass=class'P_Husk_Shotgun',ReplacementRate=0.05f)
+    ReplacementList(5)=(TargetType=Husk,ReplacementClass=class'P_Husk_Shotgun',ReplacementRate=0.075f)
 
     bRandomizeProgressAtWaveStart=true
     ReplacementRateMultiplier=1.f
