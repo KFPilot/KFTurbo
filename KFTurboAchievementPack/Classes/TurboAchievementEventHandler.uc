@@ -14,7 +14,7 @@ function PostBeginPlay()
     OnPawnPushedWithMCZThrower = PawnPushedWithMCZThrower;
 }
 
-static function SAReplicationInfo ResolveSARI(Pawn Instigator)
+static final function SAReplicationInfo ResolveSARI(Pawn Instigator)
 {
     if (Instigator == None || Instigator.PlayerReplicationInfo == None)
     {

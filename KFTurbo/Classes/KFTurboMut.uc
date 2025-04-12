@@ -16,6 +16,12 @@ var TurboStatsTcpLink StatsTcpLink;
 var TurboCustomZedHandler CustomZedHandler;
 var TurboDoorManager DoorManager;
 
+//TODO: Remove this once KFTurboServerAchievements is done.
+//This is really hacky. We have a better implementation coming in via KFTurboServerAchievements that will handle this properly
+//For now we need somewhere to store these and this is probably the best place to do so.
+var TurboHealEventHandler AchievementHealEventHandler;
+var TurboGameplayEventHandler AchievementGameplayEventHandler;
+
 var globalconfig bool bDebugClientPerkRepLink;
 
 var globalconfig bool bCheckLatestTurboVersion;

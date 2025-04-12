@@ -12,7 +12,7 @@ function PostBeginPlay()
     OnPawnGrenadeHealed = PawnGrenadeHealed;
 }
 
-static function SAReplicationInfo ResolveSARI(Pawn Instigator)
+static final function SAReplicationInfo ResolveSARI(Pawn Instigator)
 {
     if (Instigator == None || Instigator.PlayerReplicationInfo == None)
     {
