@@ -308,6 +308,8 @@ function AddCardGamePlayerReplicationInfo(KFPlayerReplicationInfo PlayerReplicat
 	}
 
 	CardGamePRI.ForceNetUpdate();
+
+	Spawn(class'TurboPlayerCardCustomInfo', PlayerReplicationInfo); //Non-replicating per-player data.
 }
 
 function ModifyPlayer(Pawn Other)

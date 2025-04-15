@@ -6,6 +6,7 @@ class TurboCardGameModifierRepLink extends TurboGameModifierReplicationLink
 
 //Higher means faster.
 var(Turbo) float FireRateMultiplier;
+var(Turbo) float MeleeFireRateMultiplier;
 var(Turbo) float ZedTimeDualPistolFireRateMultiplier;
 var(Turbo) float BerserkerFireRateMultiplier;
 var(Turbo) float FirebugFireRateMultiplier;
@@ -61,7 +62,7 @@ var(Turbo) bool bOversizedPipebombs;
 replication
 {
     reliable if(bNetDirty && Role == ROLE_Authority)
-        FireRateMultiplier, ZedTimeDualPistolFireRateMultiplier, BerserkerFireRateMultiplier, FirebugFireRateMultiplier,
+        FireRateMultiplier, MeleeFireRateMultiplier, ZedTimeDualPistolFireRateMultiplier, BerserkerFireRateMultiplier, FirebugFireRateMultiplier,
         ReloadRateMultiplier, ZedTimeDualWeaponReloadRateMultiplier, CommandoReloadRateMultiplier,
         MagazineAmmoMultiplier, CommandoMagazineAmmoMultiplier, MedicMagazineAmmoMultiplier,
         MaxAmmoMultiplier, CommandoMaxAmmoMultiplier, MedicMaxAmmoMultiplier, GrenadeMaxAmmoMultiplier,
@@ -80,7 +81,11 @@ simulated function float GetFireRateMultiplier(KFPlayerReplicationInfo KFPRI, We
     Multiplier = Super.GetFireRateMultiplier(KFPRI, Other);
     Multiplier *= FireRateMultiplier;   
 
-    if (Level.TimeDilation < 0.75f && IsDualWeapon(KFWeapon(Other)))
+    if (KFMeleeGun(Other) != None)
+    {
+        Multiplier *= MeleeFireRateMultiplier;
+    }
+    else if (Level.TimeDilation < 0.75f && IsDualWeapon(KFWeapon(Other)))
     {
         Multiplier *= ZedTimeDualPistolFireRateMultiplier;
     }
@@ -292,6 +297,7 @@ function OnShotgunFire(KFShotgunFire ShotgunFire)
 defaultproperties
 {
     FireRateMultiplier=1.f
+    MeleeFireRateMultiplier=1.f
     ZedTimeDualPistolFireRateMultiplier=1.f
     BerserkerFireRateMultiplier=1.f
     FirebugFireRateMultiplier=1.f

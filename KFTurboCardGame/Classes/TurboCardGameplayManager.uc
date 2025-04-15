@@ -45,7 +45,7 @@ var CurseOfRaManager CurseOfRaManager;
 var CardFlag BlackoutFlag;
 
 //FRIENDLY FIRE
-var CardModifierStack FriendlyFireModifier;
+var CardModifierAdditiveStack FriendlyFireModifier;
 
 //DAMAGE
 var CardFlag BleedDamageFlag;
@@ -110,7 +110,9 @@ var CardFlag PlayerMassDetonationFlag;
 
 var CardModifierStack WeldStrengthModifier;
 
+var CardModifierAdditiveStack CriticalHitChanceModifier;
 var CardFlag CriticalShotFlag;
+var CardFlag CriticalHitsGrantCriticalHitChanceFlag;
 
 //DAMAGE RECEIVED
 var CardModifierStack PlayerArmorStrengthModifier;
@@ -122,6 +124,7 @@ var CardFlag PlayerDamageSubstituteFlag;
 
 //FIRE RATE
 var CardModifierStack PlayerFireRateModifier;
+var CardModifierStack PlayerMeleeFireRateModifier;
 var CardModifierStack PlayerBerserkerFireRateModifier;
 var CardModifierStack PlayerFirebugFireRateModifier;
 var CardModifierStack PlayerZedTimeDualWeaponFireRateModifier;
@@ -247,6 +250,8 @@ function OnWaveStart(int StartedWave)
     {
         ExplodeDoorsActor.ExplodeDoors();
     }
+
+    PlayerJumpModifier.AddModifier(0.5f, None);
 }
 
 function OnWaveEnd(int EndedWave)
@@ -538,13 +543,13 @@ function BlackoutFlagChanged(CardFlag Flag, bool bIsEnabled)
 //FRIENDLY FIRE
 function FriendlyFireModifierChanged(CardModifierStack ModifiedStack, float Modifier)
 {
-    if (Modifier <= 1.f)
+    if (Modifier <= 0.f)
     {
         TeamGame(Level.Game).FriendlyFireScale = 0.0001f;
         return;
     }
 
-    TeamGame(Level.Game).FriendlyFireScale = (Modifier - 1.f);
+    TeamGame(Level.Game).FriendlyFireScale = Modifier;
 }
 
 //DAMAGE
@@ -591,11 +596,26 @@ function SuddenDeathFlagChanged(CardFlag Flag, bool bIsEnabled)
 
 function CheatDeathFlagChanged(CardFlag Flag, bool bIsEnabled)
 {
+    local int Index;
+    local TurboPlayerCardCustomInfo PlayerCardInfo;
+
     CardGameRules.bCheatDeathEnabled = bIsEnabled;
 
-    if (!bIsEnabled)
+    //Reset player data for cheating death (in case the card was enabled, effect triggered, disabled, and then enabled again).
+    if (bIsEnabled)
     {
-        CardGameRules.CheatedDeathPlayerList.Length = 0;
+        for (Index = Level.GRI.PRIArray.Length - 1; Index >= 0; Index--)
+        {
+            PlayerCardInfo = TurboPlayerCardCustomInfo(class'TurboPlayerCardCustomInfo'.static.FindCustomInfo(TurboPlayerReplicationInfo(Level.GRI.PRIArray[Index])));
+
+            if (PlayerCardInfo == None)
+            {
+                continue;
+            }
+
+            PlayerCardInfo.bHasCheatedDeath = false;
+            PlayerCardInfo.CheatDeathTime = -1.f;
+        }
     }
 }
 
@@ -817,9 +837,20 @@ function WeldStrengthModifierChanged(CardModifierStack ModifiedStack, float Modi
     CardGameModifier.WeldStrengthMultiplier = Modifier;
 }
 
+function CriticalHitChanceChanged(CardModifierStack ModifiedStack, float Modifier)
+{
+    Modifier = FMax(Modifier, 0.f);
+    CardGameRules.CriticalHitChance = Modifier;
+}
+
 function CriticalShotCardFlagChanged(CardFlag Flag, bool bIsEnabled)
 {
-    CardGameRules.bCriticalHitEnabled = bIsEnabled;
+    CardGameRules.bCriticalHitEveryTenShots = bIsEnabled;
+}
+
+function CriticalHitsGrantCriticalHitChanceCardFlagChanged(CardFlag Flag, bool bIsEnabled)
+{
+    CardGameRules.bBonusCriticalHitChanceAfterCriticalHit = bIsEnabled;
 }
 
 //DAMAGE RECEIVED
@@ -846,13 +877,11 @@ function PlayerFallDamageModifierChanged(CardModifierStack ModifiedStack, float 
 
 function PlayerDamageSubstituteCardFlagChanged(CardFlag Flag, bool bIsEnabled)
 {
+    CardGameRules.bNegateFirstPlayerDamage = bIsEnabled;
+
     if (bIsEnabled)
     {
         CardGameRules.ResetNegateDamageList();
-    }
-    else
-    {
-        CardGameRules.ClearNegateDamageList();
     }
 }
 
@@ -860,6 +889,12 @@ function PlayerDamageSubstituteCardFlagChanged(CardFlag Flag, bool bIsEnabled)
 function PlayerFireRateModifierChanged(CardModifierStack ModifiedStack, float Modifier)
 {
     CardGameModifier.FireRateMultiplier = Modifier;
+    CardGameModifier.ForceNetUpdate();
+}
+
+function PlayerMeleeFireRateModifierChanged(CardModifierStack ModifiedStack, float Modifier)
+{
+    CardGameModifier.MeleeFireRateMultiplier = Modifier;
     CardGameModifier.ForceNetUpdate();
 }
 
@@ -1324,11 +1359,11 @@ defaultproperties
     BlackoutFlag=CardFlag'BlackoutCardFlag'
 
 //FRIENDLY FIRE
-    Begin Object Name=FriendlyFireModifierStack Class=CardModifierStack
+    Begin Object Name=FriendlyFireModifierStack Class=CardModifierAdditiveStack
         ModifierStackID="FriendlyFire"
         OnModifierChanged=FriendlyFireModifierChanged
     End Object
-    FriendlyFireModifier=CardModifierStack'FriendlyFireModifierStack'
+    FriendlyFireModifier=CardModifierAdditiveStack'FriendlyFireModifierStack'
     
 //DAMAGE
     Begin Object Name=BleedDamageCardFlag Class=CardFlag
@@ -1562,11 +1597,23 @@ defaultproperties
     End Object
     WeldStrengthModifier=CardModifierStack'WeldStrengthModifierStack'
 
+    Begin Object Name=CriticalHitChanceModifierStack Class=CardModifierAdditiveStack
+        ModifierStackID="CriticalHitChanceModifier"
+        OnModifierChanged=CriticalHitChanceChanged
+    End Object
+    CriticalHitChanceModifier=CardModifierAdditiveStack'CriticalHitChanceModifierStack'
+
     Begin Object Name=CriticalShotCardFlag Class=CardFlag
         FlagID="CriticalShot"
         OnFlagSetChanged=CriticalShotCardFlagChanged
     End Object
     CriticalShotFlag=CardFlag'CriticalShotCardFlag'
+
+    Begin Object Name=CriticalHitsGrantCriticalHitChanceCardFlag Class=CardFlag
+        FlagID="CriticalHitsGrantCriticalHitChance"
+        OnFlagSetChanged=CriticalHitsGrantCriticalHitChanceCardFlagChanged
+    End Object
+    CriticalHitsGrantCriticalHitChanceFlag=CardFlag'CriticalHitsGrantCriticalHitChanceCardFlag'
 
 //DAMAGE RECEIVED
     Begin Object Name=PlayerArmorStrengthModifierStack Class=CardModifierStack
@@ -1605,6 +1652,12 @@ defaultproperties
         OnModifierChanged=PlayerFireRateModifierChanged
     End Object
     PlayerFireRateModifier=CardModifierStack'PlayerFireRateModifierStack'
+
+    Begin Object Name=PlayerMeleeFireRateModifierStack Class=CardModifierStack
+        ModifierStackID="PlayerMeleeFireRate"
+        OnModifierChanged=PlayerMeleeFireRateModifierChanged
+    End Object
+    PlayerMeleeFireRateModifier=CardModifierStack'PlayerMeleeFireRateModifierStack'
 
     Begin Object Name=PlayerBerserkerFireRateModifierStack Class=CardModifierStack
         ModifierStackID="PlayerBerserkerFireRate"

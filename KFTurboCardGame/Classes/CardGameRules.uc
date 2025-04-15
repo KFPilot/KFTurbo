@@ -43,27 +43,25 @@ var(Turbo) float NonHeadshotDamageMultiplier;
 
 var(Turbo) float LowHealthDamageMultiplier;
 
-var (Turbo) bool bCriticalHitEnabled;
+var(Turbo) float CriticalHitDamageMultiplier;
+var(Turbo) float BaseCriticalHitChance;
+var(Turbo) float CriticalHitChance;
+var(Turbo) bool bCriticalHitEveryTenShots;
+var(Turbo) bool bBonusCriticalHitChanceAfterCriticalHit;
 var bool bHasPerformedCriticalHitEffect;
 
-var (Turbo) bool bCheatDeathEnabled;
-struct CheatDeathEntry
-{
-    var PlayerController Player;
-    var float DeathTime;
-};
-var (Turbo) array<CheatDeathEntry> CheatedDeathPlayerList;
+var(Turbo) bool bCheatDeathEnabled;
 
-var (Turbo) bool bRussianRouletteEnabled;
-var (Turbo) Sound RussianRoulettePlayerKilledSound, RussianRouletteMonsterKilledSound;
+var(Turbo) bool bRussianRouletteEnabled;
+var(Turbo) Sound RussianRoulettePlayerKilledSound, RussianRouletteMonsterKilledSound;
 
-var (Turbo) bool bDisableSyringe;
-var (Turbo) bool bNoDropOrSellItems;
-var (Turbo) float PlayerJumpZMultiplier;
-var (Turbo) float PlayerAirControlMultiplier;
+var(Turbo) bool bDisableSyringe;
+var(Turbo) bool bNoDropOrSellItems;
+var(Turbo) float PlayerJumpZMultiplier;
+var(Turbo) float PlayerAirControlMultiplier;
 
-var (Turbo) bool bSuperGrenades;
-var (Turbo) bool bOversizedPipebombs;
+var(Turbo) bool bSuperGrenades;
+var(Turbo) bool bOversizedPipebombs;
 
 //Monster
 var array<KFMonster> MonsterPawnList;
@@ -92,13 +90,7 @@ var(Turbo) float MonsterStalkerDamageMultiplier;
 
 var Pawn MarkedForDeathPawn;
 
-struct NegateDamageEntry
-{
-    var TurboHumanPawn HumanPawn;
-    var int NegateCount;
-};
-var array<NegateDamageEntry> NegateDamageList;
-
+var(Turbo) bool bNegateFirstPlayerDamage;
 
 var bool bMassDetonationEnabled;
 struct MassDetonationEntry
@@ -125,6 +117,11 @@ static final function bool IsBerserker(Pawn Pawn)
     }
 
     return false;
+}
+
+static final function TurboPlayerCardCustomInfo FindCustomInfo(TurboPlayerReplicationInfo TPRI)
+{
+    return TurboPlayerCardCustomInfo(class'TurboPlayerCardCustomInfo'.static.FindCustomInfo(TPRI));
 }
 
 function Tick(float DeltaTime)
@@ -250,7 +247,7 @@ function bool PreventDeath(Pawn Killed, Controller Killer, class<DamageType> Dam
 
 final function bool AttemptCheatDeath(PlayerController Killed, Pawn KilledPawn, class<DamageType> DamageType)
 {
-    local int Index;
+    local TurboPlayerCardCustomInfo PlayerCardInfo;
 
     //Do not block suicides or kills caused by the world (unless it's normal fall damage).
     if (class<Suicided>(DamageType) != None || (DamageType.default.bCausedByWorld && class<TurboHumanFall_DT>(DamageType) == None))
@@ -258,18 +255,21 @@ final function bool AttemptCheatDeath(PlayerController Killed, Pawn KilledPawn, 
         return false;
     }
 
-    for(Index = CheatedDeathPlayerList.Length - 1; Index > -1; Index--)
+    if (Killed == None || Killed.PlayerReplicationInfo == None)
     {
-        if (CheatedDeathPlayerList[Index].Player == Killed)
-        {
-            return false;
-        }
+        return false;
     }
 
-    CheatedDeathPlayerList.Length = CheatedDeathPlayerList.Length + 1;
-    CheatedDeathPlayerList[CheatedDeathPlayerList.Length - 1].Player = Killed;
-    CheatedDeathPlayerList[CheatedDeathPlayerList.Length - 1].DeathTime = Level.TimeSeconds;
-    KilledPawn.Health = Max(KilledPawn.HealthMax * 0.5f, Max(KilledPawn.Health, 1));
+    PlayerCardInfo = FindCustomInfo(TurboPlayerReplicationInfo(Killed.PlayerReplicationInfo));
+
+    if (PlayerCardInfo == None || PlayerCardInfo.bHasCheatedDeath)
+    {
+        return false;
+    }
+
+    PlayerCardInfo.bHasCheatedDeath = false;
+
+    KilledPawn.Health = Max(KilledPawn.HealthMax, Max(KilledPawn.Health, 1));
 
     Level.BroadcastLocalizedMessage(class'CheatDeathLocalMessage', 0, Killed.PlayerReplicationInfo);
     
@@ -278,29 +278,21 @@ final function bool AttemptCheatDeath(PlayerController Killed, Pawn KilledPawn, 
 
 final function bool IsInCheatDeathGracePeriod(PlayerController Injured)
 {
-    local int Index;
+    local TurboPlayerCardCustomInfo PlayerCardInfo;
 
-    if (Injured == None)
+    if (Injured == None || Injured.PlayerReplicationInfo == None)
     {
         return false;
     }
 
-    for (Index = CheatedDeathPlayerList.Length - 1; Index >= 0; Index--)
-    {
-        //Cheated Death list is in time order.
-        //If any entry we iterate to is expired, we can assume all the rest are as well.
-        if (CheatedDeathPlayerList[Index].DeathTime + 2.f < Level.TimeSeconds)
-        {
-            return false;
-        }
+    PlayerCardInfo = FindCustomInfo(TurboPlayerReplicationInfo(Injured.PlayerReplicationInfo));
 
-        if (CheatedDeathPlayerList[Index].Player == Injured)
-        {
-            return true;
-        }
+    if (PlayerCardInfo == None)
+    {
+        return false;
     }
 
-    return false;
+    return PlayerCardInfo.bHasCheatedDeath && PlayerCardInfo.CheatDeathTime > 0.f && Level.TimeSeconds < PlayerCardInfo.CheatDeathTime;
 }
 
 function int NetDamage(int OriginalDamage, int Damage, Pawn Injured, Pawn InstigatedBy, Vector HitLocation, out Vector Momentum, class<DamageType> DamageType )
@@ -324,7 +316,7 @@ function int NetDamage(int OriginalDamage, int Damage, Pawn Injured, Pawn Instig
             return 0;
         }
 
-        if (NegateDamageList.Length > 0 && AttemptNegateDamage(KFHumanPawn(Injured)))
+        if (bNegateFirstPlayerDamage && AttemptNegateDamage(KFHumanPawn(Injured)))
         {
             return 0;
         }
@@ -393,10 +385,7 @@ function int NetDamage(int OriginalDamage, int Damage, Pawn Injured, Pawn Instig
                 MonsterNetDamage(DamageMultiplier, KFMonster(Injured), InstigatedBy, HitLocation, Momentum, WeaponDamageType);
             }
 
-            if (bCriticalHitEnabled)
-            {
-                DamageMultiplier *= GetCriticalHitMultiplier(InstigatedBy, HitLocation);
-            }
+            DamageMultiplier *= GetCriticalHitMultiplier(InstigatedBy, HitLocation);
         }
 
         if (KFHumanPawn(Injured) != None && WeaponDamageType.default.bIsExplosive)
@@ -552,30 +541,65 @@ function MonsterNetDamage(out float DamageMultiplier, KFMonster Injured, Pawn In
 function float GetCriticalHitMultiplier(Pawn InstigatedBy, vector HitLocation)
 {
     local TurboWavePlayerStatCollector Collector;
-    if (InstigatedBy == None || InstigatedBy.Controller == None || !InstigatedBy.Controller.bIsPlayer)
+    local TurboPlayerCardCustomInfo PlayerCardInfo;
+    local float CurrentCriticalHitChance;
+    local int NumCriticalHits;
+
+    local bool bAttemptPerpetualCriticalHitGrant;
+    
+    if (InstigatedBy == None || InstigatedBy.Controller == None || InstigatedBy.Controller.PlayerReplicationInfo == None || !InstigatedBy.Controller.bIsPlayer)
     {
         return 1.f;
     }
 
-    Collector = TurboWavePlayerStatCollector(class'TurboWavePlayerStatCollector'.static.FindStats(TurboPlayerReplicationInfo(InstigatedBy.PlayerReplicationInfo)));
+    NumCriticalHits = 0;
+    CurrentCriticalHitChance = CriticalHitChance + BaseCriticalHitChance;
 
-    if (Collector == None)
+    bAttemptPerpetualCriticalHitGrant = !bHasPerformedCriticalHitEffect && bBonusCriticalHitChanceAfterCriticalHit;
+
+    if (bAttemptPerpetualCriticalHitGrant)
     {
-        return 1.f;
+        PlayerCardInfo = FindCustomInfo(TurboPlayerReplicationInfo(InstigatedBy.Controller.PlayerReplicationInfo));
     }
 
-    if (Collector.ShotsFired % 10 != 0)
+    if (bCriticalHitEveryTenShots)
     {
-        return 1.f;
+        Collector = TurboWavePlayerStatCollector(class'TurboWavePlayerStatCollector'.static.FindStats(TurboPlayerReplicationInfo(InstigatedBy.PlayerReplicationInfo)));
+
+        if (Collector != None && Collector.ShotsFired % 10 == 0)
+        {
+            CurrentCriticalHitChance += 1.f;
+        }
     }
 
-    if (!bHasPerformedCriticalHitEffect)
+    if (bAttemptPerpetualCriticalHitGrant && PlayerCardInfo != None && PlayerCardInfo.IsInPerpetualCriticalHitTime())
     {
-        bHasPerformedCriticalHitEffect = true;
-        Spawn(class'CriticalHitEffect', InstigatedBy.Controller,, HitLocation);
+        CurrentCriticalHitChance += 0.5f;
     }
     
-    return 2.5f;
+    while (CurrentCriticalHitChance >= 1.f)
+    {
+        NumCriticalHits++;
+        CriticalHitChance -= 1.f;
+    }
+
+    if (CurrentCriticalHitChance > 0.f && FRand() < CurrentCriticalHitChance)
+    {
+        NumCriticalHits++;
+    }
+
+    if (NumCriticalHits > 0 && !bHasPerformedCriticalHitEffect)
+    {
+        if (bAttemptPerpetualCriticalHitGrant && PlayerCardInfo != None)
+        {
+            PlayerCardInfo.AttemptGrantPerpetualCriticalHit();
+        }
+
+        bHasPerformedCriticalHitEffect = true;
+        class'CardGamePlayerReplicationInfo'.static.GetCardGameLRI(InstigatedBy.Controller.PlayerReplicationInfo).OnCriticalHit(HitLocation, NumCriticalHits);
+    }
+    
+    return CriticalHitDamageMultiplier * float(NumCriticalHits);
 }
 
 function ApplyThornsDamage(int DamageTaken, KFHumanPawn Injured, KFMonster InstigatedBy)
@@ -998,7 +1022,6 @@ function UpdateCanThrowWeapons()
     local int Index;
 
     PawnList = class'TurboGameplayHelper'.static.GetPlayerPawnList(Level);
-    NegateDamageList.Length = PawnList.Length;
 
     for (Index = 0; Index < PawnList.Length; Index++)
     {
@@ -1028,46 +1051,40 @@ function UpdateCanThrowWeapons()
 
 final function ResetNegateDamageList()
 {
-    local array<TurboHumanPawn> PawnList;
     local int Index;
+    local TurboPlayerCardCustomInfo PlayerCardInfo;
 
-    PawnList = class'TurboGameplayHelper'.static.GetPlayerPawnList(Level);
-    NegateDamageList.Length = PawnList.Length;
-
-    for (Index = 0; Index < PawnList.Length; Index++)
+    for (Index = Level.GRI.PRIArray.Length - 1; Index >= 0; Index--)
     {
-        NegateDamageList[Index].HumanPawn = PawnList[Index];
-        NegateDamageList[Index].NegateCount = 10;
-    }
-}
+        PlayerCardInfo = FindCustomInfo(TurboPlayerReplicationInfo(Level.GRI.PRIArray[Index]));
 
-final function ClearNegateDamageList()
-{
-    NegateDamageList.Length = 0;
-}
-
-final function bool AttemptNegateDamage(KFHumanPawn Injured)
-{
-    local int Index;
-
-    for (Index = NegateDamageList.Length - 1; Index >= 0; Index--)
-    {
-        if (NegateDamageList[Index].HumanPawn != Injured)
+        if (PlayerCardInfo == None)
         {
             continue;
         }
 
-        NegateDamageList[Index].NegateCount--;
+        PlayerCardInfo.NegateDamageCount = 10;
+    }
+}
 
-        if (NegateDamageList[Index].NegateCount <= 0)
-        {
-            NegateDamageList.Remove(Index, 1);
-        }
+final function bool AttemptNegateDamage(KFHumanPawn Injured)
+{
+    local TurboPlayerCardCustomInfo PlayerCardInfo;
 
-        return true;
+    if (Injured == None || Injured.PlayerReplicationInfo == None)
+    {
+        return false;
     }
 
-    return false;
+    PlayerCardInfo = FindCustomInfo(TurboPlayerReplicationInfo(Injured.PlayerReplicationInfo));
+
+    if (PlayerCardInfo == None || PlayerCardInfo.NegateDamageCount <= 0)
+    {
+        return false;
+    }
+
+    PlayerCardInfo.NegateDamageCount--;
+    return true;
 }
 
 defaultproperties
@@ -1108,6 +1125,11 @@ defaultproperties
     NonHeadshotDamageMultiplier=1.f
 
     LowHealthDamageMultiplier=1.f
+
+    CriticalHitDamageMultiplier=1.5f
+    BaseCriticalHitChance=0.02f
+    CriticalHitChance=0.f
+    bCriticalHitEveryTenShots=false
 
     PlayerJumpZMultiplier=1.f
     PlayerAirControlMultiplier=1.f  

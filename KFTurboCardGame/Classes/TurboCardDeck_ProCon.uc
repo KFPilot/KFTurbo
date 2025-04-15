@@ -111,7 +111,7 @@ function ActivateFasterReloadSmallerMag(TurboCardGameplayManager GameplayManager
     if (bActivate)
     {
         GameplayManager.PlayerReloadRateModifier.AddModifier(1.15f, Card);
-        GameplayManager.PlayerMagazineAmmoModifier.AddModifier(0.8f, Card);
+        GameplayManager.PlayerMagazineAmmoModifier.AddModifier(0.9f, Card);
     }
     else
     {
@@ -237,7 +237,7 @@ function ActivateDoubleEdgeSword(TurboCardGameplayManager GameplayManager, Turbo
     if (bActivate)
     {
         GameplayManager.PlayerDamageModifier.AddModifier(1.05f, Card);
-        GameplayManager.FriendlyFireModifier.AddModifier(1.05f, Card);
+        GameplayManager.FriendlyFireModifier.AddModifier(0.05f, Card);
     }
     else
     {
@@ -478,7 +478,7 @@ function ActivateCollateralDamage(TurboCardGameplayManager GameplayManager, Turb
     if (bActivate)
     {
         GameplayManager.PlayerExplosiveDamageModifier.AddModifier(1.1f, Card);
-        GameplayManager.FriendlyFireModifier.AddModifier(1.05f, Card);
+        GameplayManager.FriendlyFireModifier.AddModifier(0.05f, Card);
     }
     else
     {
@@ -493,7 +493,7 @@ function ActivateHealingAndHurting(TurboCardGameplayManager GameplayManager, Tur
     {
         GameplayManager.PlayerNonMedicHealPotencyModifier.AddModifier(1.2f, Card);
         GameplayManager.PlayerMedicHealPotencyModifier.AddModifier(1.2f, Card);
-        GameplayManager.FriendlyFireModifier.AddModifier(1.05f, Card);
+        GameplayManager.FriendlyFireModifier.AddModifier(0.05f, Card);
     }
     else
     {
@@ -527,7 +527,7 @@ function ActivateOversizedPipebombs(TurboCardGameplayManager GameplayManager, Tu
 function ActivateShortHop(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
     Card.UpdateModifier(GameplayManager.PlayerMovementSpeedModifier, 1.1f, bActivate);
-    Card.UpdateModifier(GameplayManager.PlayerJumpModifier, 0.5f, bActivate);
+    Card.UpdateModifier(GameplayManager.PlayerJumpModifier, 0.75f, bActivate);
 }
 
 function ActivateChargeExchange(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
@@ -553,6 +553,30 @@ function ActivateDilutedHeal(TurboCardGameplayManager GameplayManager, TurboCard
     Card.UpdateModifier(GameplayManager.PlayerNonMedicHealPotencyModifier, 0.85f, bActivate);
     Card.UpdateModifier(GameplayManager.PlayerMedicHealPotencyModifier, 0.85f, bActivate);
     Card.UpdateModifier(GameplayManager.PlayerHealRechargeModifier, 1.15f, bActivate);
+}
+
+function ActivateVolatileDamage(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
+{
+    Card.UpdateModifier(GameplayManager.CriticalHitChanceModifier, 1.15f, bActivate);
+    Card.UpdateModifier(GameplayManager.PlayerDamageModifier, 0.9f, bActivate);
+}
+
+function ActivateCriticalAmmo(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
+{
+    Card.UpdateModifier(GameplayManager.CriticalHitChanceModifier, 1.15f, bActivate);
+    Card.UpdateModifier(GameplayManager.PlayerMaxAmmoModifier, 0.9f, bActivate);
+}
+
+function ActivateCriticalCaution(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
+{
+    Card.UpdateModifier(GameplayManager.CriticalHitChanceModifier, 1.25f, bActivate);
+    Card.UpdateModifier(GameplayManager.FriendlyFireModifier, 0.05f, bActivate);
+}
+
+function ActivateHeavyWeapons(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
+{
+    Card.UpdateModifier(GameplayManager.PlayerDamageModifier, 1.05f, bActivate);
+    Card.UpdateModifier(GameplayManager.PlayerEquipRateModifier, 0.9f, bActivate);
 }
 
 defaultproperties
@@ -600,7 +624,7 @@ defaultproperties
         CardDescriptionList(1)="speed of all"
         CardDescriptionList(2)="weapons by 15% and"
         CardDescriptionList(3)="reduces magazine"
-        CardDescriptionList(4)="size by 20%."
+        CardDescriptionList(4)="size by 10%."
         OnActivateCard=ActivateFasterReloadSmallerMag
         CardID="PROCON_SAWEDOFFMAG"
     End Object
@@ -977,7 +1001,7 @@ defaultproperties
         CardDescriptionList(0)="Increases player"
         CardDescriptionList(1)="speed by 10% but"
         CardDescriptionList(2)="reduces jump"
-        CardDescriptionList(3)="height by 75%."
+        CardDescriptionList(3)="height by 50%."
         OnActivateCard=ActivateShortHop
         CardID="PROCON_OVERSIZEPIPE"
     End Object
@@ -1019,4 +1043,51 @@ defaultproperties
         CardID="PROCON_DILUTEDHEALING"
     End Object
     DeckCardObjectList(35)=TurboCard'DilutedHeal'
+
+    Begin Object Name=VolatileDamage Class=TurboCard_ProCon
+        CardName(0)="Volatile Damage"
+        CardDescriptionList(0)="Increases critical"
+        CardDescriptionList(1)="hit chance by 15%"
+        CardDescriptionList(2)="but decreases weapon"
+        CardDescriptionList(3)="damage by 10%."
+        CardID="PROCON_VOLDAMAGE"
+        OnActivateCard=ActivateVolatileDamage
+    End Object
+    DeckCardObjectList(36)=TurboCard'VolatileDamage'
+
+    Begin Object Name=CriticalAmmo Class=TurboCard_ProCon
+        CardName(0)="Critically"
+        CardName(1)="Packed Ammo"
+        CardDescriptionList(0)="Increases critical"
+        CardDescriptionList(1)="hit chance by 15%"
+        CardDescriptionList(2)="but decreases weapon"
+        CardDescriptionList(3)="magazine size by 10%."
+        CardID="PROCON_CRITICALAMMO"
+        OnActivateCard=ActivateCriticalAmmo
+    End Object
+    DeckCardObjectList(37)=TurboCard'CriticalAmmo'
+
+    Begin Object Name=CriticalCaution Class=TurboCard_ProCon
+        CardName(0)="Critical"
+        CardName(1)="Caution"
+        CardDescriptionList(0)="Increases critical"
+        CardDescriptionList(1)="hit chance by 15%"
+        CardDescriptionList(2)="but increases"
+        CardDescriptionList(3)="friendly fire by 5%."
+        CardID="PROCON_CRITICALCAUTION"
+        OnActivateCard=ActivateCriticalCaution
+    End Object
+    DeckCardObjectList(38)=TurboCard'CriticalCaution'
+
+    Begin Object Name=HeavyWeapons Class=TurboCard_ProCon
+        CardName(0)="Heavy Weapons"
+        CardDescriptionList(0)="Increases weapon"
+        CardDescriptionList(1)="damage by 5% but"
+        CardDescriptionList(2)="but decreases"
+        CardDescriptionList(3)="weapon swap"
+        CardDescriptionList(4)="speed by 10%."
+        CardID="PROCON_HEAVYWEAP"
+        OnActivateCard=ActivateHeavyWeapons
+    End Object
+    DeckCardObjectList(39)=TurboCard'HeavyWeapons'
 }

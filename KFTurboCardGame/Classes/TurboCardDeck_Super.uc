@@ -357,11 +357,14 @@ function ActivateSuppressiveFire(TurboCardGameplayManager GameplayManager, Turbo
 {
     if (bActivate)
     {
-        GameplayManager.PlayerFireRateModifier.AddModifier(1.66f, Card);
+        GameplayManager.PlayerFireRateModifier.AddModifier(1.5f, Card);
+        //PlayerFireRateModifier applies to melee weapons so we use this to reduce the effective melee firerate bonus to 25%.
+        GameplayManager.PlayerMeleeFireRateModifier.AddModifier(0.8333f, Card);
     }
     else
     {
         GameplayManager.PlayerFireRateModifier.RemoveModifier(Card);
+        GameplayManager.PlayerMeleeFireRateModifier.RemoveModifier(Card);
     }
 }
 
@@ -406,6 +409,16 @@ function ActivateBreakTime(TurboCardGameplayManager GameplayManager, TurboCard C
 function ActivateVampiricKevlar(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
     Card.UpdateFlag(GameplayManager.PlayerKillsGrantArmorFlag, bActivate);
+}
+
+function ActivateCriticalEye(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
+{
+    Card.UpdateModifier(GameplayManager.CriticalHitChanceModifier, 0.3f, bActivate);
+}
+
+function ActivatePerpetuallyCritical(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
+{
+    Card.UpdateFlag(GameplayManager.CriticalHitsGrantCriticalHitChanceFlag, bActivate);
 }
 
 defaultproperties
@@ -691,7 +704,9 @@ defaultproperties
         CardName(1)="Fire"
         CardDescriptionList(0)="Increases"
         CardDescriptionList(1)="firerate of all"
-        CardDescriptionList(2)="weapons by 66%."
+        CardDescriptionList(2)="ranged weapons by"
+        CardDescriptionList(3)="by 50% and melee"
+        CardDescriptionList(4)="weapons by 25%."
         OnActivateCard=ActivateSuppressiveFire
         CardID="SUPER_SUPPRESSFIRE"
     End Object
@@ -708,9 +723,10 @@ defaultproperties
 
     Begin Object Name=CriticalHit Class=TurboCard_Super
         CardName(0)="Critical Hit"
-        CardDescriptionList(0)="Players' 10th shots"
-        CardDescriptionList(1)="and swings deal"
-        CardDescriptionList(2)="150% more damage."
+        CardDescriptionList(0)="Every 5th shot or"
+        CardDescriptionList(1)="swing receive 100%"
+        CardDescriptionList(2)="extra critical"
+        CardDescriptionList(3)="hit chance."
         CardID="SUPER_CRITICAL"
         OnActivateCard=ActivateCriticalHit
     End Object
@@ -767,4 +783,26 @@ defaultproperties
         CardID="SUPER_VAMPKEV"
     End Object
     DeckCardObjectList(31)=TurboCard'VampiricKevlar'
+
+    Begin Object Name=CriticalEye Class=TurboCard_Super
+        CardName(0)="Critical Eye"
+        CardDescriptionList(0)="Increases critical"
+        CardDescriptionList(1)="hit chance by 30%."
+        OnActivateCard=ActivateCriticalEye
+        CardID="SUPER_CRITEYE"
+    End Object
+    DeckCardObjectList(32)=TurboCard'CriticalEye'
+
+    Begin Object Name=PerpetuallyCritical Class=TurboCard_Super
+        CardName(0)="Perpetually Critical"
+        CardDescriptionList(0)="Critical hits"
+        CardDescriptionList(1)="increase critical"
+        CardDescriptionList(2)="hit chance by 75%"
+        CardDescriptionList(3)="for 5 seconds."
+        CardDescriptionList(4)="Has a 20 second"
+        CardDescriptionList(5)="cooldown."
+        OnActivateCard=ActivatePerpetuallyCritical
+        CardID="SUPER_PERPCRITICAL"
+    End Object
+    DeckCardObjectList(33)=TurboCard'PerpetuallyCritical'
 }

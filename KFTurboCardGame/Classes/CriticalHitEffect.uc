@@ -20,9 +20,9 @@ defaultproperties
     Begin Object Class=SpriteEmitter Name=CriticalHitSpriteEmitter
         UseDirectionAs=PTDU_Scale
         UseColorScale=True
-        RespawnDeadParticles=False
+        RespawnDeadParticles=false
         ZTest=False
-        UseRegularSizeScale=False
+        UseRegularSizeScale=false
         Acceleration=(Z=5.000000)
         MaxCollisions=(Min=3.000000,Max=6.000000)
         ColorScale(0)=(Color=(B=255,G=255,R=255))
@@ -41,7 +41,7 @@ defaultproperties
         FadeOutFactor=(W=6.000000)
         FadeInFactor=(W=5.000000)
         MaxParticles=1
-        AutomaticInitialSpawning=False
+        AutomaticInitialSpawning=false
         InitialParticlesPerSecond=5000
         EffectAxis=PTEA_PositiveZ
         UseRotationFrom=PTRS_Offset
@@ -56,8 +56,7 @@ defaultproperties
     Emitters(0)=SpriteEmitter'CriticalHitSpriteEmitter'
 
     AutoDestroy=true
-    bNoDelete=False
-    RemoteRole=ROLE_SimulatedProxy
-    bOnlyRelevantToOwner=true
-    bNotOnDedServer=False
+    bNoDelete=false
+    RemoteRole=ROLE_None
+    bNotOnDedServer=true
 }

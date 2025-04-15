@@ -402,6 +402,31 @@ function ActivateElDiabloSlayer(TurboCardGameplayManager GameplayManager, TurboC
     Card.UpdateModifier(GameplayManager.PlayerBossDamageModifier, 1.05f, bActivate);
 }
 
+function ActivateCriticalBoost(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
+{
+    Card.UpdateModifier(GameplayManager.CriticalHitChanceModifier, 1.1f, bActivate);
+}
+
+function ActivateQuickerSwitch(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
+{
+    Card.UpdateModifier(GameplayManager.PlayerEquipRateModifier, 1.15f, bActivate);
+}
+
+function ActivateDenseShot(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
+{
+    Card.UpdateModifier(GameplayManager.PlayerPenetrationModifier, 1.5f, bActivate);
+}
+
+function ActivateExtraPocket(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
+{
+    Card.UpdateDelta(GameplayManager.PlayerCarryCapacityDelta, 1, bActivate);
+}
+
+function ActivateLongerBreather(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
+{
+    Card.UpdateModifier(GameplayManager.TraderTimeModifier, 1.25f, bActivate);
+}
+
 defaultproperties
 {
     Begin Object Name=BonusCashKill Class=TurboCard_Good
@@ -759,4 +784,50 @@ defaultproperties
         OnActivateCard=ActivateElDiabloSlayer
     End Object
     DeckCardObjectList(34)=TurboCard'ElDiabloSlayer'
+
+    Begin Object Name=CriticalBoost Class=TurboCard_Good
+        CardName(0)="Critical Boost"
+        CardDescriptionList(0)="Increases critical"
+        CardDescriptionList(1)="hit chance by 10%."
+        CardID="GOOD_CRITBOOST"
+        OnActivateCard=ActivateCriticalBoost
+    End Object
+    DeckCardObjectList(35)=TurboCard'CriticalBoost'
+
+    Begin Object Name=QuickerSwitch Class=TurboCard_Good
+        CardName(0)="QuickerSwitch"
+        CardDescriptionList(0)="Increases weapon"
+        CardDescriptionList(1)="swap speed by 15%."
+        CardID="GOOD_QUICKSWITCH"
+        OnActivateCard=ActivateQuickerSwitch
+    End Object
+    DeckCardObjectList(36)=TurboCard'QuickerSwitch'
+
+    Begin Object Name=DenseShot Class=TurboCard_Good
+        CardName(0)="Denser Bullets"
+        CardDescriptionList(0)="All weapon bullet"
+        CardDescriptionList(1)="penetration is"
+        CardDescriptionList(2)="increased by 50%."
+        CardID="GOOD_QUICKSWITCH"
+        OnActivateCard=ActivateDenseShot
+    End Object
+    DeckCardObjectList(37)=TurboCard'DenseShot'
+
+    Begin Object Name=ExtraPocket Class=TurboCard_Good
+        CardName(0)="Extra Pocket"
+        CardDescriptionList(0)="Increases max carry"
+        CardDescriptionList(1)="capacity by 1."
+        CardID="GOOD_EXTRAPOCKET"
+        OnActivateCard=ActivateExtraPocket
+    End Object
+    DeckCardObjectList(38)=TurboCard'ExtraPocket'
+
+    Begin Object Name=LongerBreather Class=TurboCard_Good
+        CardName(0)="Longer Breather"
+        CardDescriptionList(0)="Increases trader"
+        CardDescriptionList(1)="time by 25%."
+        CardID="GOOD_EXTRAPOCKET"
+        OnActivateCard=ActivateLongerBreather
+    End Object
+    DeckCardObjectList(39)=TurboCard'LongerBreather'
 }

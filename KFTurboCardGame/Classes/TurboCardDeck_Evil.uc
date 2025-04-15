@@ -69,7 +69,7 @@ function ActivateFriendlyFire(TurboCardGameplayManager GameplayManager, TurboCar
 {
     if (bActivate)
     {
-        GameplayManager.FriendlyFireModifier.AddModifier(1.1f, Card);
+        GameplayManager.FriendlyFireModifier.AddModifier(0.1f, Card);
     }
     else
     {

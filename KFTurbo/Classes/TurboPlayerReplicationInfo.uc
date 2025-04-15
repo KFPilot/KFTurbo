@@ -12,11 +12,16 @@ var bool bVotedForTraderEnd;
 var array<TurboPlayerStatCollectorBase> StatCollectorList;
 var array<TurboPlayerStatCollectorBase> StatReplicatorList;
 
+var array<TurboPlayerCustomInfo> PlayerCustomInfoList;
+
+//Doesn't seem to be an API for checking a delegate is bound so we'll just do the bookkeeping.
 var bool bHasRegisteredOnReceiveStatCollector;
 var bool bHasRegisteredOnReceiveStatReplicator;
+var bool bHasRegisteredOnReceiveCustomInfo;
+
 delegate OnReceiveStatCollector(TurboPlayerReplicationInfo PlayerReplicationInfo, TurboPlayerStatCollectorBase Collector);
 delegate OnReceiveStatReplicator(TurboPlayerReplicationInfo PlayerReplicationInfo, TurboPlayerStatCollectorBase Replicator);
-
+delegate OnReceiveCustomInfo(TurboPlayerReplicationInfo PlayerReplicationInfo, TurboPlayerCustomInfo Collector);
 
 replication
 {
@@ -103,6 +108,25 @@ simulated function UnregisterStatReplicator(TurboPlayerStatCollectorBase Replica
         if (StatReplicatorList[Index] == Replicator || StatReplicatorList[Index] == None)
         {
             StatReplicatorList.Remove(Index, 1);
+        }
+    }
+}
+
+simulated function RegisterCustomInfo(TurboPlayerCustomInfo CustomInfo)
+{
+    PlayerCustomInfoList.Length = PlayerCustomInfoList.Length + 1;
+    PlayerCustomInfoList[PlayerCustomInfoList.Length - 1] = CustomInfo;
+    OnReceiveCustomInfo(Self, CustomInfo);
+}
+
+simulated function UnregisterCustomInfo(TurboPlayerCustomInfo CustomInfo)
+{
+    local int Index;
+    for (Index = PlayerCustomInfoList.Length - 1; Index >= 0; Index--)
+    {
+        if (PlayerCustomInfoList[Index] == CustomInfo || PlayerCustomInfoList[Index] == None)
+        {
+            PlayerCustomInfoList.Remove(Index, 1);
         }
     }
 }

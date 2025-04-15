@@ -87,7 +87,7 @@ final function ClearModifiers()
     UpdateModifier();
 }
 
-final function UpdateModifier()
+function UpdateModifier()
 {
     local int Index;
     CachedModifier = default.CachedModifier;
