@@ -923,6 +923,7 @@ exec function TossCash( int Amount )
 function bool DoJump( bool bUpdating )
 {
     local float JumpModifier;
+	local bool bResult, bOriginalIsWalking;
 
 	if (Role == Role_Authority)
 	{
@@ -931,7 +932,12 @@ function bool DoJump( bool bUpdating )
 		JumpZ = default.JumpZ * JumpModifier;
 	}
     
-	return Super(KFPawn).DoJump(bUpdating);
+	bOriginalIsWalking = bIsWalking;
+	bIsWalking = false;
+	bResult = Super(KFPawn).DoJump(bUpdating);
+	bIsWalking = bOriginalIsWalking;
+
+	return bResult;
 }
 
 simulated function float GetJumpZModifier()
