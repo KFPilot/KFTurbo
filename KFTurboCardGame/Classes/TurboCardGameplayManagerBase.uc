@@ -243,7 +243,7 @@ final function PotentiallyDoubleHuskSpawn(out array < class<KFMonster> > NextSpa
     {
         HuskCount--;
 
-        if (FRand() < 0.5f)
+        if (FRand() < 0.75f)
         {
             NextSpawnSquad.Length = NextSpawnSquad.Length + 1;
             NextSpawnSquad[NextSpawnSquad.Length - 1] = class'P_Husk_STA';
