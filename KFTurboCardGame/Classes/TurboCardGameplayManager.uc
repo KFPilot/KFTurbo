@@ -250,8 +250,6 @@ function OnWaveStart(int StartedWave)
     {
         ExplodeDoorsActor.ExplodeDoors();
     }
-
-    PlayerJumpModifier.AddModifier(0.5f, None);
 }
 
 function OnWaveEnd(int EndedWave)
