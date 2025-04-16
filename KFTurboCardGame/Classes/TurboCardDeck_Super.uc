@@ -508,7 +508,8 @@ defaultproperties
     DeckCardObjectList(5)=TurboCard'ScrakeDamage'
     
     Begin Object Name=SuperGrenades Class=TurboCard_Super
-        CardName(0)="Super Grenades"
+        CardName(0)="Super"
+        CardName(1)="Grenades"
         CardDescriptionList(0)="Increases grenade"
         CardDescriptionList(1)="carry capacity by"
         CardDescriptionList(2)="100% and increases"
