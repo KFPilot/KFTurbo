@@ -580,7 +580,7 @@ function float GetCriticalHitMultiplier(Pawn InstigatedBy, vector HitLocation)
     while (CurrentCriticalHitChance >= 1.f)
     {
         NumCriticalHits++;
-        CriticalHitChance -= 1.f;
+        CurrentCriticalHitChance -= 1.f;
     }
 
     if (CurrentCriticalHitChance > 0.f && FRand() < CurrentCriticalHitChance)
@@ -588,7 +588,12 @@ function float GetCriticalHitMultiplier(Pawn InstigatedBy, vector HitLocation)
         NumCriticalHits++;
     }
 
-    if (NumCriticalHits > 0 && !bHasPerformedCriticalHitEffect)
+    if (NumCriticalHits <= 0)
+    {
+        return 1.f;
+    }
+
+    if (!bHasPerformedCriticalHitEffect)
     {
         if (bAttemptPerpetualCriticalHitGrant && PlayerCardInfo != None)
         {
@@ -1130,6 +1135,7 @@ defaultproperties
     BaseCriticalHitChance=0.02f
     CriticalHitChance=0.f
     bCriticalHitEveryTenShots=false
+    bBonusCriticalHitChanceAfterCriticalHit=false
 
     PlayerJumpZMultiplier=1.f
     PlayerAirControlMultiplier=1.f  

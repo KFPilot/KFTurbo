@@ -404,7 +404,7 @@ function ActivateElDiabloSlayer(TurboCardGameplayManager GameplayManager, TurboC
 
 function ActivateCriticalBoost(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
-    Card.UpdateModifier(GameplayManager.CriticalHitChanceModifier, 1.1f, bActivate);
+    Card.UpdateModifier(GameplayManager.CriticalHitChanceModifier, 0.1f, bActivate);
 }
 
 function ActivateQuickerSwitch(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
