@@ -18,21 +18,29 @@ simulated function PostBeginPlay()
 {
     Super.PostBeginPlay();
 
-    if (Role == ROLE_Authority)
-    {
-        ServerTimeActor = TurboGameReplicationInfo(Level.GRI).ServerTimeActor;
-    }
+    ServerTimeActor = TurboGameReplicationInfo(Level.GRI).ServerTimeActor;
 
     if (Level.NetMode == NM_DedicatedServer)
     {
         return;
     }
-
+    
     SetTimer(0.1f, false);
 }
 
 simulated function Timer()
 {
+    if (ServerTimeActor == None)
+    {
+        ServerTimeActor = TurboGameReplicationInfo(Level.GRI).ServerTimeActor;
+
+        if (ServerTimeActor == None)
+        {
+            SetTimer(0.1f, false);
+            return;
+        }
+    }
+
     if (Level.GetLocalPlayerController() != None && RegisterToOverlay(Level.GetLocalPlayerController()))
     {
         return;
@@ -70,6 +78,7 @@ function StartBorrowedTime()
 {
     BorrowedTimeStart = Level.TimeSeconds;
     BorrowedTimeEnd = BorrowedTimeStart + GetWaveBorrowedTime();
+    ForceNetUpdate();
 }
 
 function int GetWaveBorrowedTime()
@@ -90,6 +99,12 @@ function StopBorrowedTime()
 {
     BorrowedTimeStart = -1;
     BorrowedTimeEnd = -1;
+    ForceNetUpdate();
+}
+
+final function ForceNetUpdate()
+{
+    NetUpdateTime = Level.TimeSeconds - ((1.f / NetUpdateFrequency) * 2.f);
 }
 
 function Tick(float DeltaTime)
