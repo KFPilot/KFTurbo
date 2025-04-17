@@ -409,7 +409,7 @@ function ActivateCriticalBoost(TurboCardGameplayManager GameplayManager, TurboCa
 
 function ActivateQuickerSwitch(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
-    Card.UpdateModifier(GameplayManager.PlayerEquipRateModifier, 1.15f, bActivate);
+    Card.UpdateModifier(GameplayManager.PlayerEquipRateModifier, 0.85f, bActivate);
 }
 
 function ActivateDenseShot(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
