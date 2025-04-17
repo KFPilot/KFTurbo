@@ -540,7 +540,6 @@ function MonsterNetDamage(out float DamageMultiplier, KFMonster Injured, Pawn In
 
 function float GetCriticalHitMultiplier(Pawn InstigatedBy, vector HitLocation)
 {
-    local TurboWavePlayerStatCollector Collector;
     local TurboPlayerCardCustomInfo PlayerCardInfo;
     local float CurrentCriticalHitChance;
     local int NumCriticalHits;
@@ -1127,7 +1126,7 @@ defaultproperties
     CriticalHitDamageMultiplier=1.5f
     BaseCriticalHitChance=0.02f
     CriticalHitChance=0.f
-    bCriticalHitEveryTenShots=false
+    bCriticalHitChanceForEachNonCriticalHit=false
     bBonusCriticalHitChanceAfterCriticalHit=false
 
     PlayerJumpZMultiplier=1.f
