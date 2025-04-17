@@ -1047,21 +1047,21 @@ simulated final function DrawAlternativeAmmo(Canvas C, Vector2D RightAnchor)
 		//Draw "ALT" header text.
 		C.FontScaleX = 1.f;
 		C.FontScaleY = 1.f;
-		C.Font = TurboHUD.LoadLargeNumberFont(BaseFontSize + 3);
+		C.Font = TurboHUD.LoadFont(BaseFontSize + 1);
 		C.TextSize(GetStringOfZeroes(3), TextSizeX, TextSizeY);
-		C.FontScaleX = BackplateTextSizeX / TextSizeX;
+		C.FontScaleX = (BackplateTextSizeX / TextSizeX);
 		C.FontScaleY = C.FontScaleX;
 		C.TextSize(GetStringOfZeroes(3), TextSizeX, TextSizeY);
 
-		C.SetPos(TempX - (TextSizeX * 0.5f), TempY - (TextSizeY * 0.5f));
+		C.SetPos(TempX - (TextSizeX * 0.465f), TempY - (TextSizeY * 0.5f));
 
 		if (!bIsMedicGun)
 		{
-			DrawTextMeticulous(C, Eval(SecondaryAmmoHeader != "", SecondaryAmmoHeader, "ALT"), TextSizeX);
+			DrawTextMeticulous(C, SecondaryAmmoHeader, TextSizeX);
 		}
 		else
 		{
-			DrawTextMeticulous(C, Eval(SecondaryMedicGunAmmoHeader != "", SecondaryMedicGunAmmoHeader, "MED"), TextSizeX);
+			DrawTextMeticulous(C, SecondaryMedicGunAmmoHeader, TextSizeX);
 		}
 
 		//Draw Secondary Ammo amount.
