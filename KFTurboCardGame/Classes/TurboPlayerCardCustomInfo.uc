@@ -12,6 +12,8 @@ var float PerpetualCriticalHitStartTime;
 var float PerpetualCriticalHitTime;
 var float PerpetualCriticalHitCooldown;
 
+var int NonCriticalHitCount;
+
 final function bool IsInPerpetualCriticalHitTime()
 {
 	if (PerpetualCriticalHitStartTime <= 0.f)
@@ -42,4 +44,6 @@ defaultproperties
 	PerpetualCriticalHitStartTime=-1.f
 	PerpetualCriticalHitTime=5.f
 	PerpetualCriticalHitCooldown=20.f
+
+	NonCriticalHitCount=0
 }

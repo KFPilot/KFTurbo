@@ -724,10 +724,12 @@ defaultproperties
 
     Begin Object Name=CriticalHit Class=TurboCard_Super
         CardName(0)="Critical Hit"
-        CardDescriptionList(0)="Every 5th shot or"
-        CardDescriptionList(1)="swing receive 100%"
-        CardDescriptionList(2)="extra critical"
-        CardDescriptionList(3)="hit chance."
+        CardDescriptionList(0)="Each time a player"
+        CardDescriptionList(1)="does not crit they"
+        CardDescriptionList(2)="receive 2% extra"
+        CardDescriptionList(3)="critical hit"
+        CardDescriptionList(4)="chance. Resets on"
+        CardDescriptionList(5)="critical hit."
         CardID="SUPER_CRITICAL"
         OnActivateCard=ActivateCriticalHit
     End Object
@@ -776,7 +778,8 @@ defaultproperties
     DeckCardObjectList(30)=TurboCard'BreakTime'
 
     Begin Object Name=VampiricKevlar Class=TurboCard_Super
-        CardName(0)="Vampiric Kevlar"
+        CardName(0)="Vampiric"
+        CardName(1)="Kevlar"
         CardDescriptionList(0)="Kills grant armor"
         CardDescriptionList(1)="amount based on"
         CardDescriptionList(2)="the monster killed."

@@ -843,7 +843,7 @@ function CriticalHitChanceChanged(CardModifierStack ModifiedStack, float Modifie
 
 function CriticalShotCardFlagChanged(CardFlag Flag, bool bIsEnabled)
 {
-    CardGameRules.bCriticalHitEveryTenShots = bIsEnabled;
+    CardGameRules.bCriticalHitChanceForEachNonCriticalHit = bIsEnabled;
 }
 
 function CriticalHitsGrantCriticalHitChanceCardFlagChanged(CardFlag Flag, bool bIsEnabled)

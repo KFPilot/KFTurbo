@@ -46,7 +46,7 @@ var(Turbo) float LowHealthDamageMultiplier;
 var(Turbo) float CriticalHitDamageMultiplier;
 var(Turbo) float BaseCriticalHitChance;
 var(Turbo) float CriticalHitChance;
-var(Turbo) bool bCriticalHitEveryTenShots;
+var(Turbo) bool bCriticalHitChanceForEachNonCriticalHit;
 var(Turbo) bool bBonusCriticalHitChanceAfterCriticalHit;
 var bool bHasPerformedCriticalHitEffect;
 
@@ -544,37 +544,25 @@ function float GetCriticalHitMultiplier(Pawn InstigatedBy, vector HitLocation)
     local TurboPlayerCardCustomInfo PlayerCardInfo;
     local float CurrentCriticalHitChance;
     local int NumCriticalHits;
-
-    local bool bAttemptPerpetualCriticalHitGrant;
     
     if (InstigatedBy == None || InstigatedBy.Controller == None || InstigatedBy.Controller.PlayerReplicationInfo == None || !InstigatedBy.Controller.bIsPlayer)
     {
         return 1.f;
     }
 
+    PlayerCardInfo = FindCustomInfo(TurboPlayerReplicationInfo(InstigatedBy.Controller.PlayerReplicationInfo));
+
     NumCriticalHits = 0;
     CurrentCriticalHitChance = CriticalHitChance + BaseCriticalHitChance;
 
-    bAttemptPerpetualCriticalHitGrant = !bHasPerformedCriticalHitEffect && bBonusCriticalHitChanceAfterCriticalHit;
-
-    if (bAttemptPerpetualCriticalHitGrant)
-    {
-        PlayerCardInfo = FindCustomInfo(TurboPlayerReplicationInfo(InstigatedBy.Controller.PlayerReplicationInfo));
-    }
-
-    if (bCriticalHitEveryTenShots)
-    {
-        Collector = TurboWavePlayerStatCollector(class'TurboWavePlayerStatCollector'.static.FindStats(TurboPlayerReplicationInfo(InstigatedBy.PlayerReplicationInfo)));
-
-        if (Collector != None && Collector.ShotsFired % 10 == 0)
-        {
-            CurrentCriticalHitChance += 1.f;
-        }
-    }
-
-    if (bAttemptPerpetualCriticalHitGrant && PlayerCardInfo != None && PlayerCardInfo.IsInPerpetualCriticalHitTime())
+    if (bBonusCriticalHitChanceAfterCriticalHit && PlayerCardInfo != None && PlayerCardInfo.IsInPerpetualCriticalHitTime())
     {
         CurrentCriticalHitChance += 0.5f;
+    }
+
+    if (bCriticalHitChanceForEachNonCriticalHit && PlayerCardInfo != None && PlayerCardInfo.NonCriticalHitCount > 0)
+    {
+        CurrentCriticalHitChance += float(PlayerCardInfo.NonCriticalHitCount) * 0.02f;
     }
     
     while (CurrentCriticalHitChance >= 1.f)
@@ -590,16 +578,21 @@ function float GetCriticalHitMultiplier(Pawn InstigatedBy, vector HitLocation)
 
     if (NumCriticalHits <= 0)
     {
+        if (bCriticalHitChanceForEachNonCriticalHit && PlayerCardInfo != None)
+        {
+            PlayerCardInfo.NonCriticalHitCount++;
+        }
+            
         return 1.f;
+    }
+    
+    if (bBonusCriticalHitChanceAfterCriticalHit && PlayerCardInfo != None)
+    {
+        PlayerCardInfo.AttemptGrantPerpetualCriticalHit();
     }
 
     if (!bHasPerformedCriticalHitEffect)
     {
-        if (bAttemptPerpetualCriticalHitGrant && PlayerCardInfo != None)
-        {
-            PlayerCardInfo.AttemptGrantPerpetualCriticalHit();
-        }
-
         bHasPerformedCriticalHitEffect = true;
         class'CardGamePlayerReplicationInfo'.static.GetCardGameLRI(InstigatedBy.Controller.PlayerReplicationInfo).OnCriticalHit(HitLocation, NumCriticalHits);
     }
