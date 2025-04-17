@@ -799,7 +799,7 @@ defaultproperties
 
     Begin Object Name=PerpetuallyCritical Class=TurboCard_Super
         CardName(0)="Perpetually"
-        CardName(0)="Critical"
+        CardName(1)="Critical"
         CardDescriptionList(0)="Critical hits"
         CardDescriptionList(1)="increase critical"
         CardDescriptionList(2)="hit chance by 75%"
