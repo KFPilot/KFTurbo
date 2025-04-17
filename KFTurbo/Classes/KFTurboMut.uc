@@ -403,7 +403,7 @@ defaultproperties
 	bDebugClientPerkRepLink=false
 
 	bCheckLatestTurboVersion=true
-	TurboVersion="6.3.1"
+	TurboVersion="6.3.2"
 	bHasVersionUpdate=false
 
 	bRequireAdminForDifficultyCommands=true
