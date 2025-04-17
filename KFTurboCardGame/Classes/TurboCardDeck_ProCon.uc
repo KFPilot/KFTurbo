@@ -557,8 +557,8 @@ function ActivateDilutedHeal(TurboCardGameplayManager GameplayManager, TurboCard
 
 function ActivateVolatileDamage(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
-    Card.UpdateModifier(GameplayManager.CriticalHitChanceModifier, 0.15f, bActivate);
-    Card.UpdateModifier(GameplayManager.PlayerDamageModifier, 0.9f, bActivate);
+    Card.UpdateModifier(GameplayManager.CriticalHitChanceModifier, 0.1f, bActivate);
+    Card.UpdateModifier(GameplayManager.PlayerDamageModifier, 0.95f, bActivate);
 }
 
 function ActivateCriticalAmmo(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
@@ -1059,10 +1059,10 @@ defaultproperties
         CardName(0)="Critically"
         CardName(1)="Packed Ammo"
         CardDescriptionList(0)="Increases critical"
-        CardDescriptionList(1)="hit chance by 15%"
+        CardDescriptionList(1)="hit chance by 10%"
         CardDescriptionList(2)="but decreases"
         CardDescriptionList(3)="weapon magazine"
-        CardDescriptionList(4)="size by 10%."
+        CardDescriptionList(4)="size by 5%."
         CardID="PROCON_CRITICALAMMO"
         OnActivateCard=ActivateCriticalAmmo
     End Object
