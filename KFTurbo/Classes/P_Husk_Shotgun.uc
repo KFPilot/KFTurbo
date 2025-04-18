@@ -19,14 +19,15 @@ simulated function PostBeginPlay()
 
 	super.PostBeginPlay();
 
-	// Check if not running on a dedicated server
 	if (Level.NetMode == NM_DedicatedServer)
 	{
 		return;
 	}
+	
+	SetBoneScale(20, 1.25f, 'CHR_RArmForeArm');
 
-	BoneLocation = GetBoneCoords('CHR_Ribcage').Origin;
 	// Attach steam stream emitter
+	BoneLocation = GetBoneCoords('CHR_Ribcage').Origin;
 	AttachOffset = vect(13, -1, 9); // X = height, Z = distance
 
 	if (SteamEmitterClass != None)
@@ -42,6 +43,7 @@ simulated function PostBeginPlay()
 			AttachedEmitter.Destroy();
 		}
 	}
+
 	// Attach steam puff emitter
 	AttachOffset = vect(18.5, -1, 19); // X = height, Z = distance
 
