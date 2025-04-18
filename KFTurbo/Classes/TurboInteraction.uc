@@ -339,7 +339,7 @@ simulated function UpdateMerchant()
 		{
 			MerchantAnim = MeshAnimation(DynamicLoadObject(MerchantAnimRef, class'MeshAnimation'));
 		}
-		
+
 		if (MerchantMaterial == None)
 		{
 			MerchantMaterial = Material(DynamicLoadObject(MerchantMaterialRef, class'Material'));
@@ -353,6 +353,7 @@ simulated function UpdateMerchant()
 				{
 					Trader.LinkMesh(MerchantMesh, false);
 					Trader.LinkSkelAnim(MerchantAnim);
+					Trader.LoopAnim('Idle');
 					Trader.Skins.Length = 1;
 					Trader.Skins[0] = MerchantMaterial;
 				}
