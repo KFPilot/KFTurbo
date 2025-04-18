@@ -24,7 +24,7 @@ simulated function PostBeginPlay()
 		return;
 	}
 	
-	SetBoneScale(20, 1.25f, 'CHR_RArmForeArm');
+	SetBoneScale(20, 1.15f, 'CHR_RArmForeArm');
 
 	// Attach steam stream emitter
 	BoneLocation = GetBoneCoords('CHR_Ribcage').Origin;
