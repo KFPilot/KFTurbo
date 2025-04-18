@@ -271,11 +271,11 @@ simulated function Tick(float DeltaTime)
             ZoneInfoList[Index].Zone.bClearToFogColor = true;
             if (ZoneInfoList[Index].bIsSkyZone)
             {
-                bUpdated = FadeZone(ZoneInfoList[Index], DeltaTime * 10.f, -128.f, 32.f) || bUpdated;
+                bUpdated = FadeZone(ZoneInfoList[Index], DeltaTime * 10.f, -128.f, 4.f) || bUpdated;
             }
             else
             {
-                bUpdated = FadeZone(ZoneInfoList[Index], DeltaTime, -128.f, 512.f) || bUpdated;
+                bUpdated = FadeZone(ZoneInfoList[Index], DeltaTime, -128.f, 800.f) || bUpdated;
             }
         }
     }
