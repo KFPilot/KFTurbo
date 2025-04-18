@@ -2,9 +2,16 @@
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
 class TurboHUDPlayer extends TurboHUDOverlay
-    hidecategories(Advanced,Collision,Display,Events,Force,Karma,LightColor,Lighting,Movement,Object,Sound);
+    hidecategories(Advanced,Collision,Display,Events,Force,Karma,LightColor,Lighting,Movement,Object,Sound)
+	config(KFTurbo);
 
 var int BaseFontSize;
+
+var config bool bEnableHitchDetection;
+var float FrameTimeList[100];
+var int FrameTimeIndex;
+var float LastHitchTime;
+var float HitchFrameTime;
 
 //These sizes are based on % of monitor Y size.
 var(Layout) Vector2D HealthBackplateSize;
@@ -138,10 +145,49 @@ simulated final function Pawn FindRelevantPawn()
 	return TurboHUD.PawnOwner;
 }
 
+simulated function AddTickEntry(float DeltaTime)
+{
+	local int Index;
+	local float FrameTime;
+	local float FrameTimeAverage;
+
+	FrameTime = (DeltaTime / Level.TimeDilation);
+	FrameTimeList[FrameTimeIndex] = FrameTime;
+	FrameTimeIndex = (FrameTimeIndex + 1) % 100;
+
+	for (Index = 0; Index < ArrayCount(FrameTimeList); Index++)
+	{
+		if (FrameTimeList[Index] <= 0.f)
+		{
+			break;
+		}
+
+		FrameTimeAverage += FrameTimeList[Index];
+	}
+
+	FrameTimeAverage = FrameTimeAverage / float(Index);
+
+	if (FrameTimeAverage * 2.f < FrameTime)
+	{
+		if (HitchFrameTime > FrameTime && LastHitchTime > Level.TimeSeconds + 5.f)
+		{
+			return;
+		}
+
+		HitchFrameTime = FrameTime;
+		LastHitchTime = Level.TimeSeconds;
+	}
+}
+
 simulated function Tick(float DeltaTime)
 {
 	local Pawn CurrentPawn;
 	CurrentPawn = FindRelevantPawn();
+
+	if (bEnableHitchDetection && DeltaTime > 0.f)
+	{
+		AddTickEntry(DeltaTime);
+	}
 
 	if (CurrentPawn == None)
 	{
@@ -253,6 +299,8 @@ simulated function Tick(float DeltaTime)
 
 simulated function OnScreenSizeChange(Canvas C, Vector2D CurrentClipSize, Vector2D PreviousClipSize)
 {
+	local int Index;
+
 	if (C.ClipY > 1600)
 	{
 		BaseFontSize = 0;
@@ -268,6 +316,11 @@ simulated function OnScreenSizeChange(Canvas C, Vector2D CurrentClipSize, Vector
 	else
 	{
 		BaseFontSize = 3;
+	}
+
+	for (Index = ArrayCount(FrameTimeList) - 1; Index >= 0; Index--)
+	{
+		FrameTimeList[Index] = -1.f;
 	}
 }
 
@@ -1127,6 +1180,14 @@ simulated final function DrawWeight(Canvas C, Vector2D LeftAnchor)
 
 	C.SetPos(BackplateCenterX + (BackplateTextSizeX * 0.5f) - (WeightTextSpaceX), BackplateCenterY - (TextSizeY * 0.5f));
 	DrawTextMeticulous(C, WeightString, TextSizeX);
+
+	if (bEnableHitchDetection && LastHitchTime + 5.f > Level.TimeSeconds)
+	{
+		C.DrawColor = C.MakeColor(255, 0, 0, 255);
+		C.SetPos(BackplateCenterX - BackplateSizeX, (BackplateCenterY - (BackplateSizeY * 0.5f)) - TextSizeY);
+		C.Font = TurboHUD.LoadFont(BaseFontSize + 3);
+		C.DrawText("HITCH FRAME TIME:"@(HitchFrameTime * 1000.f)$"ms");
+	}
 }
 
 simulated final function DrawCash(Canvas C)
@@ -1313,4 +1374,6 @@ defaultproperties
 	GrenadeIcon=Texture'KFTurbo.Ammo.NadeIcon_D'
 	FlashlightIcon=Texture'KFTurbo.Ammo.BulbIcon_D'
 	WeightIcon=Texture'KFTurbo.Ammo.WeightIcon_D'
+
+	FrameTimeIndex=0
 }
