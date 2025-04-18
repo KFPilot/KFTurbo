@@ -536,6 +536,7 @@ function BlackoutFlagChanged(CardFlag Flag, bool bIsEnabled)
 {
     CardClientModifier.bBlackout = bIsEnabled;
     CardClientModifier.UpdateBlackout();
+    CardClientModifier.ForceNetUpdate();
 }
 
 //FRIENDLY FIRE
