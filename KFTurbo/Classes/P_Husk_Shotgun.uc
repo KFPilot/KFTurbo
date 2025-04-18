@@ -173,6 +173,12 @@ function SpawnTwoShots()
 	ToggleAuxCollision(true);
 }
 
+
+static simulated function PreCacheMaterials(LevelInfo myLevel)
+{
+	myLevel.AddPrecacheMaterial(Shader'KFTurbo.Shotgun.HuskBot_SHDR');
+}
+
 defaultproperties
 {
 	AttackRange=2100
@@ -189,4 +195,5 @@ defaultproperties
 	HealthMax=800.000000
 	Health=800
 	MenuName="Scorcher"
+	Skins(0)=Shader'KFTurbo.Shotgun.HuskBot_SHDR'
 }
