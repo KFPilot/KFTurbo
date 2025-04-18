@@ -847,8 +847,9 @@ defaultproperties
     Begin Object Name=Blackout Class=TurboCard_Evil
         CardName(0)="Blackout"
         CardDescriptionList(0)="Darkens the world"
-        CardDescriptionList(1)="for the rest"
-        CardDescriptionList(2)="of the game."
+        CardDescriptionList(1)="and reduces view"
+        CardDescriptionList(2)="distance for the"
+        CardDescriptionList(3)="rest of the game."
         CardID="EVIL_BLACKOUT"
         OnActivateCard=ActivateBlackout
     End Object
