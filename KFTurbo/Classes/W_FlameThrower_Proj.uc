@@ -218,7 +218,7 @@ defaultproperties
 	MyDamageType=Class'W_FlameThrower_DT'
 	ExplosionDecal=Class'W_FlameThrower_BurnMark'
 	BaseTime=2
-	Damage=10.000000
+	Damage=11.000000
 	DamageRadius=100
 	MaxPenetrations=10
 }
