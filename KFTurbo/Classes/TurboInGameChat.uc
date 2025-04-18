@@ -7,7 +7,6 @@ function InitComponent(GUIController MyController, GUIComponent MyOwner)
 {
 	//This character does not like being copied so we're just gonna pull it from the UT2K4InGameChat widget.
 	lb_Chat.Separator = class'UT2K4InGameChat'.default.lb_Chat.Separator;
-	lb_Chat.MyScrollText.Separator = lb_Chat.Separator;
 
 	Super.InitComponent(MyController, MyOwner);
 
