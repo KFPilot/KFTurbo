@@ -7,6 +7,8 @@ function InitComponent(GUIController MyController, GUIComponent MyOwner)
 {
 	//This character does not like being copied so we're just gonna pull it from the UT2K4InGameChat widget.
 	lb_Chat.Separator = class'UT2K4InGameChat'.default.lb_Chat.Separator;
+	eb_Send.Caption = class'UT2K4InGameChat'.default.eb_Send.Caption;
+	eb_Send.Hint = class'UT2K4InGameChat'.default.eb_Send.Hint;
 
 	Super.InitComponent(MyController, MyOwner);
 
@@ -62,8 +64,8 @@ defaultproperties
 		WinTop=0.95
 		bScaleToParent=True
 		bBoundToParent=True
-		Caption="Say: "
-		Hint="Prefix a message with a dot (.) to send a team message or a slash (/) to send a command."
+		Caption=""
+		Hint=""
 		ComponentWidth=-1
 		CaptionWidth=0.1
 		bAutoSizeCaption=True
@@ -88,5 +90,4 @@ defaultproperties
 	bResizeHeightAllowed=False
 	bMoveAllowed=False
 	bPersistent=True
- 	WindowName="In-Game Chat"
 }
