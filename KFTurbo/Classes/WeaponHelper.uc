@@ -871,7 +871,7 @@ static final function M79GrenadeTakeDamage(M79GrenadeProjectile Projectile, int 
         {
             Projectile.Disintegrate(HitLocation, vect(0,0,1));
         }
-        else
+        else if (!Projectile.bDud)
         {
             Projectile.Explode(HitLocation, vect(0,0,1));
         }
@@ -882,7 +882,7 @@ static final function LawProjTakeDamage(LawProj Projectile, int Damage, Pawn Ins
 {
 	if (Monster(InstigatedBy) != none || InstigatedBy == Projectile.Instigator)
 	{
-        if(class<SirenScreamDamage>(DamageType) == None)
+        if(class<SirenScreamDamage>(DamageType) == None && !Projectile.bDud)
         {
             Projectile.Explode(HitLocation, vect(0,0,1));
         }
