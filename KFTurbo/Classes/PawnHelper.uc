@@ -807,52 +807,52 @@ static final function EMonster GetMonsterType(class<Monster> MonsterClass)
 	}
 
 	//Slow fallback.
-	if (ClassIsChildOf(MonsterClass, class'P_Clot'))
+	if (ClassIsChildOf(MonsterClass, class'ZombieClotBase'))
 	{
 		return Clot;
 	}
 
-	if (ClassIsChildOf(MonsterClass, class'P_Crawler'))
+	if (ClassIsChildOf(MonsterClass, class'ZombieCrawlerBase'))
 	{
 		return Crawler;
 	}
 
-	if (ClassIsChildOf(MonsterClass, class'P_Stalker'))
+	if (ClassIsChildOf(MonsterClass, class'ZombieStalkerBase'))
 	{
 		return Stalker;
 	}
 
-	if (ClassIsChildOf(MonsterClass, class'P_Gorefast'))
+	if (ClassIsChildOf(MonsterClass, class'ZombieGorefastBase'))
 	{
 		return Gorefast;
 	}
 
-	if (ClassIsChildOf(MonsterClass, class'P_Bloat'))
+	if (ClassIsChildOf(MonsterClass, class'ZombieBloatBase'))
 	{
 		return Bloat;
 	}
 
-	if (ClassIsChildOf(MonsterClass, class'P_Husk'))
+	if (ClassIsChildOf(MonsterClass, class'ZombieHuskBase'))
 	{
 		return Husk;
 	}
 
-	if (ClassIsChildOf(MonsterClass, class'P_Siren'))
+	if (ClassIsChildOf(MonsterClass, class'ZombieSirenBase'))
 	{
 		return Siren;
 	}
 
-	if (ClassIsChildOf(MonsterClass, class'P_Scrake'))
+	if (ClassIsChildOf(MonsterClass, class'ZombieScrakeBase'))
 	{
 		return Scrake;
 	}
 
-	if (ClassIsChildOf(MonsterClass, class'P_Fleshpound'))
+	if (ClassIsChildOf(MonsterClass, class'ZombieFleshpoundBase'))
 	{
 		return Fleshpound;
 	}
 
-	if (ClassIsChildOf(MonsterClass, class'P_ZombieBoss'))
+	if (ClassIsChildOf(MonsterClass, class'ZombieBossBase'))
 	{
 		return Boss;
 	}

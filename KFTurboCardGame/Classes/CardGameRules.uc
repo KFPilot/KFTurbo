@@ -827,7 +827,6 @@ final function PerformMassDetonation(MassDetonationEntry Detonation)
 
 function GrantShieldOnKill(KFMonster KilledMonster, PlayerController Killer)
 {
-    local PawnHelper.EMonsterTier Tier;
     local float ShieldAmount;
 
     if (Killer.Pawn == None)
@@ -835,8 +834,9 @@ function GrantShieldOnKill(KFMonster KilledMonster, PlayerController Killer)
         return;
     }
 
-    Tier = class'PawnHelper'.static.GetMonsterTier(KilledMonster.Class);
-    switch (Tier)
+    ShieldAmount = 0.5f;
+
+    switch (class'PawnHelper'.static.GetMonsterTier(KilledMonster.Class))
     {
         case Trash:
             ShieldAmount = 0.25f;
@@ -845,11 +845,34 @@ function GrantShieldOnKill(KFMonster KilledMonster, PlayerController Killer)
             ShieldAmount = 1.f;
             break;
         case Elite:
-            ShieldAmount = 2.f;
+            ShieldAmount = 5.f;
+            break;
+        case Boss:
+            ShieldAmount = 50.f;
             break;
     }
 
-    ShieldAmount = FMin(Killer.Pawn.ShieldStrength + ShieldAmount, 100.f);
+    switch (class'PawnHelper'.static.GetMonsterType(KilledMonster.Class))
+    {
+        //Trash
+        case Clot:
+            ShieldAmount *= 2.f;
+            break;
+        case Gorefast:
+            ShieldAmount *= 3.f;
+            break;
+        //Special
+        case Siren:
+        case Husk:
+            ShieldAmount *= 1.5f;
+            break;
+        //Elite
+        case Fleshpound:
+            ShieldAmount *= 1.5f;
+            break;
+    }
+
+    ShieldAmount = FMin(Killer.Pawn.ShieldStrength + ShieldAmount, FMax(Killer.Pawn.ShieldStrength, 100.f));
     if (ShieldAmount <= Killer.Pawn.ShieldStrength)
     {
         return;
