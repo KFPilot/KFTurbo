@@ -16,6 +16,20 @@ function DoFireEffect()
 	Super.DoFireEffect();
 }
 
+function class<Projectile> GetDesiredProjectileClass()
+{
+    local class<Projectile> ProjectileClass;
+    ProjectileClass = Super.GetDesiredProjectileClass();
+
+    //Ensure it never uses the original grenade.
+    if (ProjectileClass == class'KFMod.Nade')
+    {
+        ProjectileClass = class'KFTurbo.W_Frag_Proj';
+    }
+
+	return ProjectileClass;
+}
+
 function projectile SpawnProjectile(Vector Start, Rotator Dir)
 {
     return Super.SpawnProjectile(Start, Dir);
