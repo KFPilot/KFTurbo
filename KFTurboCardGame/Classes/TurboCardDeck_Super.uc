@@ -423,7 +423,7 @@ function ActivatePerpetuallyCritical(TurboCardGameplayManager GameplayManager, T
 
 function ActivateStunningHit(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
-    Card.UpdateModifier(GameplayManager.MonsterDamageStunChance, 0.01f, bActivate);
+    Card.UpdateModifier(GameplayManager.MonsterDamageStunChance, 0.005f, bActivate);
 }
 
 defaultproperties
@@ -819,7 +819,7 @@ defaultproperties
     Begin Object Name=StunningHit Class=TurboCard_Super
         CardName(0)="Stunning Hit"
         CardDescriptionList(0)="Player damage has"
-        CardDescriptionList(1)="a 1% chance to"
+        CardDescriptionList(1)="a 0.5% chance to"
         CardDescriptionList(2)="stun non-boss zeds."
         OnActivateCard=ActivateStunningHit
         CardID="SUPER_STUNNING"
