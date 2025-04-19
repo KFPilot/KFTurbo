@@ -260,6 +260,16 @@ simulated function UnSetZappedBehavior()
     class'PawnHelper'.static.UnSetZappedBehavior(self, AfflictionData);
 }
 
+function StartCharging()
+{
+    if (AnimAction == 'KnockDown')
+    {
+        return;
+    }
+
+    Super.StartCharging();
+}
+
 state RageCharging
 {
 Ignores StartCharging;

@@ -88,6 +88,9 @@ var(Turbo) float MonsterRangedDamageMultiplier;
 var(Turbo) float MonsterMeleeDamageMomentumMultiplier;
 var(Turbo) float MonsterStalkerDamageMultiplier;
 
+//Chance damage to monster can stun them.
+var(Turbo) float MonsterStunChance;
+
 var Pawn MarkedForDeathPawn;
 
 var(Turbo) bool bNegateFirstPlayerDamage;
@@ -535,6 +538,11 @@ function MonsterNetDamage(out float DamageMultiplier, KFMonster Injured, Pawn In
         {
             DamageMultiplier *= NonHeadshotDamageMultiplier;
         }
+    }
+
+    if (MonsterStunChance > 0.f && FRand() < MonsterStunChance)
+    {
+        ForceFlipOver(Injured);
     }
 }
 
@@ -1084,6 +1092,58 @@ final function bool AttemptNegateDamage(KFHumanPawn Injured)
     return true;
 }
 
+final function ForceFlipOver(KFMonster Monster)
+{
+    if (class'PawnHelper'.static.GetMonsterTier(Monster.Class) == Boss)
+    {
+        return;
+    }
+
+    if (KFMonsterController(Monster.Controller) == None)
+    {
+        return;
+    }
+
+	if (Physics == PHYS_Falling)
+	{
+		Monster.SetPhysics(PHYS_Walking);
+	}
+    
+    if (Monster.IsInState('BeginRaging'))
+    {
+        if (ZombieFleshPound(Monster) != None)
+        {
+            UnrageFleshpound(ZombieFleshPound(Monster));
+        }
+
+        Monster.GotoState('');
+    }
+
+    Monster.LastPainAnim = Level.TimeSeconds + FMax(Monster.GetAnimDuration('KnockDown'), 2.f);
+
+    Monster.StopAnimating(true);
+	Monster.bShotAnim = true;
+	Monster.SetAnimAction('KnockDown');
+	Monster.Acceleration = vect(0, 0, 0);
+	Monster.Velocity.X = 0;
+	Monster.Velocity.Y = 0;
+	Monster.Controller.GoToState('WaitForAnim');
+	KFMonsterController(Monster.Controller).bUseFreezeHack = true;
+}
+
+final function UnrageFleshpound(ZombieFleshPound Fleshpound)
+{
+    Fleshpound.TwoSecondDamageTotal = 0;
+    Fleshpound.bFrustrated = false;
+    Fleshpound.bChargingPlayer = false;
+    Fleshpound.ClientChargingAnims();
+
+    if (FleshpoundZombieController(Fleshpound.Controller) != None)
+    {
+        FleshpoundZombieController(Fleshpound.Controller).SetPoundRageTimout(0);
+    }
+}
+
 defaultproperties
 {
     BonusCashMultiplier=1.f
@@ -1149,4 +1209,5 @@ defaultproperties
     MonsterRangedDamageMultiplier=1.f
     MonsterMeleeDamageMomentumMultiplier=1.f
     MonsterStalkerDamageMultiplier=1.f
+    MonsterStunChance=0.f
 }

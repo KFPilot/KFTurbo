@@ -200,6 +200,7 @@ var CardModifierStack MonsterRangedDamageModifier;
 var CardModifierStack MonsterStalkerMeleeDamageModifier;
 var CardModifierStack MonsterSirenScreamDamageModifier;
 var CardModifierStack MonsterSirenScreamRangeModifier;
+var CardModifierStack MonsterDamageStunChance;
 
 //SCALING
 var CardModifierStack MonsterHeadSizeModifier;
@@ -1187,6 +1188,11 @@ function MonsterSirenScreamRangeModifierChanged(CardModifierStack ModifiedStack,
     CardGameRules.SirenScreamRangeModifier = Modifier;
 }
 
+function MonsterDamageStunChanceChanged(CardModifierStack ModifiedStack, float Modifier)
+{
+    CardGameRules.MonsterStunChance = Modifier;
+}
+
 //SCALING
 function MonsterHeadSizeModifierChanged(CardModifierStack ModifiedStack, float Modifier)
 {
@@ -1950,6 +1956,12 @@ defaultproperties
         OnModifierChanged=MonsterSirenScreamRangeModifierChanged
     End Object
     MonsterSirenScreamRangeModifier=CardModifierStack'MonsterSirenScreamRangeModifierStack'
+
+    Begin Object Name=MonsterDamageStunChanceStack Class=CardModifierAdditiveStack
+        ModifierStackID="MonsterDamageStunChance"
+        OnModifierChanged=MonsterDamageStunChanceChanged
+    End Object
+    MonsterDamageStunChance=CardModifierAdditiveStack'MonsterDamageStunChanceStack'
 
 //SCALING
     Begin Object Name=MonsterHeadSizeModifierStack Class=CardModifierStack
