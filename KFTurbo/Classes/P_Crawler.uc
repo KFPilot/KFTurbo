@@ -44,7 +44,7 @@ function bool MeleeDamageTarget(int HitDamage, vector PushDirection)
     {
         if (MidAirAttackCounter <= 0)
         {
-            return;
+            return false;
         }
 
         MidAirAttackCounter--;
