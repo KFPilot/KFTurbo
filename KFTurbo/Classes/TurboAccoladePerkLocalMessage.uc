@@ -30,6 +30,7 @@ static function string GetString(optional int Switch, optional PlayerReplication
 defaultproperties
 {
     bDisplayForAccoladeEarner=false
+    bIsConsoleMessage=true
 
     OtherPlayerEarnedPerkLevelString="%player has earned level %level %perk!"
     
