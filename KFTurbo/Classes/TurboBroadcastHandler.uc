@@ -3,8 +3,14 @@
 //For more information see https://github.com/KFPilot/KFTurbo.
 class TurboBroadcastHandler extends Engine.BroadcastHandler;
 
-event AllowBroadcastLocalized( Actor Sender, class<LocalMessage> Message, optional int Switch, optional PlayerReplicationInfo RelatedPRI_1, optional PlayerReplicationInfo RelatedPRI_2, optional Object OptionalObject )
+function AllowBroadcastLocalized( Actor Sender, class<LocalMessage> Message, optional int Switch, optional PlayerReplicationInfo RelatedPRI_1, optional PlayerReplicationInfo RelatedPRI_2, optional Object OptionalObject )
 {
+	//Ignore broken no late joiner message.
+	if (Message == Level.Game.GameMessageClass && Switch == 16)
+	{
+		return;
+	}
+
 	switch(Message)
 	{
 		case class'KFMod.WaitingMessage':
