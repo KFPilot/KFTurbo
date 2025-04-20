@@ -277,7 +277,7 @@ function OnNextSpawnSquadGenerated(out array < class<KFMonster> > NextSpawnSquad
 {
     local int SquadIndex;
 
-    if (!WeakMonsterReplacementFlag.IsFlagSet() && !ScrakeMonsterReplacementFlag.IsFlagSet() && !MonsterUpgradeFlag.IsFlagSet())
+    if (!HuskAmountBoostFlag.IsFlagSet() && !WeakMonsterReplacementFlag.IsFlagSet() && !ScrakeMonsterReplacementFlag.IsFlagSet() && !MonsterUpgradeFlag.IsFlagSet())
     {
         return;
     }
@@ -292,7 +292,7 @@ function OnNextSpawnSquadGenerated(out array < class<KFMonster> > NextSpawnSquad
         {
             AttemptReplaceWeakMonster(NextSpawnSquad[SquadIndex]);
         }
-        else if (ScrakeMonsterReplacementFlag.IsFlagSet() && FRand() < 0.05f)
+        else if (ScrakeMonsterReplacementFlag.IsFlagSet() && FRand() < 0.08f)
         {
             NextSpawnSquad[SquadIndex] = class'P_Scrake_STA';
         }

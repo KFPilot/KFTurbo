@@ -746,7 +746,7 @@ defaultproperties
         CardName(0)="Oops!"
         CardName(1)="All Scrakes!"
         CardDescriptionList(0)="All zeds have a"
-        CardDescriptionList(1)="5% chance to be"
+        CardDescriptionList(1)="8% chance to be"
         CardDescriptionList(2)="replaced with"
         CardDescriptionList(3)="a Scrake instead."
         CardID="EVIL_OOPSALLSC"
