@@ -270,7 +270,7 @@ final function bool AttemptCheatDeath(PlayerController Killed, Pawn KilledPawn, 
         return false;
     }
 
-    PlayerCardInfo.bHasCheatedDeath = false;
+    PlayerCardInfo.bHasCheatedDeath = true;
 
     KilledPawn.Health = Max(KilledPawn.HealthMax, Max(KilledPawn.Health, 1));
 
