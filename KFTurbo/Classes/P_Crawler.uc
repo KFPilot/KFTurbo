@@ -8,6 +8,8 @@ var PawnHelper.AfflictionData AfflictionData;
 var bool bUnstunTimeReady;
 var float UnstunTime;
 
+var int MidAirAttackCounter;
+
 simulated function PostBeginPlay()
 {
     Super.PostBeginPlay();
@@ -37,7 +39,25 @@ function TakeFireDamage(int Damage, pawn DamageInstigator)
 
 function bool MeleeDamageTarget(int HitDamage, vector PushDirection)
 {
+    //Prevent too many hits in a row mid-air.
+    if (Physics == PHYS_Falling)
+    {
+        if (MidAirAttackCounter <= 0)
+        {
+            return;
+        }
+
+        MidAirAttackCounter--;
+    }
+
     return class'PawnHelper'.static.MeleeDamageTarget(Self, HitDamage, PushDirection, AfflictionData);
+}
+
+event Landed(vector HitNormal)
+{
+    MidAirAttackCounter = default.MidAirAttackCounter;
+
+    Super.Landed(HitNormal);
 }
 
 simulated function Tick(float DeltaTime)
@@ -155,6 +175,8 @@ defaultproperties
     DodgeAnims(1)="ZombieSpring"
     DodgeAnims(2)="ZombieSpring"
     DodgeAnims(3)="ZombieSpring"
+
+    MidAirAttackCounter=2
 
     Begin Object Class=AfflictionBurn Name=BurnAffliction
         BurnDurationModifier=1.f
