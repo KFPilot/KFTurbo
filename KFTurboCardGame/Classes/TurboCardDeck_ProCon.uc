@@ -576,7 +576,7 @@ function ActivateCriticalCaution(TurboCardGameplayManager GameplayManager, Turbo
 function ActivateHeavyWeapons(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
     Card.UpdateModifier(GameplayManager.PlayerDamageModifier, 1.05f, bActivate);
-    Card.UpdateModifier(GameplayManager.PlayerEquipRateModifier, 0.9f, bActivate);
+    Card.UpdateModifier(GameplayManager.PlayerEquipRateModifier, 1.1f, bActivate);
 }
 
 defaultproperties
