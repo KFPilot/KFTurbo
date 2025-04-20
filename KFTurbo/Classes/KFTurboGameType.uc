@@ -730,7 +730,7 @@ state MatchInProgress
 
     function OpenShops()
     {
-        if (WaveCountDown == 59 && WaveNum % 3 == 0)
+        if (WaveCountDown == 31 && WaveNum % 4 == 0)
         {
             BroadcastLocalizedMessage(class'TurboEndTraderVoteMessage', 0);
         }
