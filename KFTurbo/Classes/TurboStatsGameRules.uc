@@ -23,7 +23,6 @@ var TurboPlayerEventHandler PlayerStatsHandler;
 var TurboHealEventHandler HealStatsHandler;
 
 //Turns on collector/replicator system.
-var globalconfig bool bEnableStatCollector;
 var globalconfig string WaveStatCollectorClassOverride;
 var class<TurboWavePlayerStatCollector> WaveStatCollectorClass;
 
@@ -74,6 +73,11 @@ function PostBeginPlay()
 function int NetDamage(int OriginalDamage, int Damage, Pawn Injured, Pawn InstigatedBy, vector HitLocation, out vector Momentum, class<DamageType> DamageType)
 {
     Damage = Super.NetDamage(OriginalDamage, Damage, Injured, InstigatedBy, HitLocation, Momentum, DamageType);
+
+    if (Damage == 0)
+    {
+        return 0;
+    }
 
     if (InstigatedBy != None && KFMonster(Injured) != None)
     {
@@ -233,7 +237,7 @@ final function IncrementHealStats(Pawn Instigator, Pawn Target, int HealingAmoun
 //Does initial kick-off.
 function Tick(float DeltaTime)
 {
-    if (!bEnableStatCollector || class'KFTurboGameType'.static.StaticIsTestGameType(Self))
+    if (class'KFTurboGameType'.static.StaticIsTestGameType(Self))
     {
         Disable('Tick');
         return;
@@ -396,5 +400,5 @@ function SendEndGameStats()
 
 defaultproperties
 {
-    bEnableStatCollector=true
+    
 }
