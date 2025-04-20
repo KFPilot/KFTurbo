@@ -390,7 +390,7 @@ function ActivateUnlicensedPractitioner(TurboCardGameplayManager GameplayManager
     if (bActivate)
     {
         GameplayManager.PlayerMedicHealPotencyModifier.AddModifier(1.1f, Card);
-        GameplayManager.PlayerNonMedicHealPotencyModifier.AddModifier(0.75f, Card);
+        GameplayManager.PlayerNonMedicHealPotencyModifier.AddModifier(0.8f, Card);
     }
     else
     {
@@ -862,13 +862,11 @@ defaultproperties
     Begin Object Name=UnlicensedPractitioner Class=TurboCard_ProCon
         CardName(0)="Unlicensed"
         CardName(1)="Practitioner"
-        CardDescriptionList(0)="Increases heal"
-        CardDescriptionList(1)="potency for"
-        CardDescriptionList(2)="Field Medics by"
-        CardDescriptionList(3)="10% but reduces"
-        CardDescriptionList(4)="heal potency"
-        CardDescriptionList(5)="for non Field"
-        CardDescriptionList(6)="Medics by 25%."
+        CardDescriptionList(0)="Increases on-perk"
+        CardDescriptionList(1)="heal potency for"
+        CardDescriptionList(2)="by 10% but reduces"
+        CardDescriptionList(3)="off-perk heal"
+        CardDescriptionList(4)="potency by 20%."
         OnActivateCard=ActivateUnlicensedPractitioner
         CardID="PROCON_UNLICPRACTITIONER"
     End Object
