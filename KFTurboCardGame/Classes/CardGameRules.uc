@@ -1176,7 +1176,7 @@ defaultproperties
     bSuddenDeathEnabled=false
     bPerformingSuddenDeath=false
     bMassDetonationEnabled=false
-    bCheatDeathEnabled=true
+    bCheatDeathEnabled=false
     PlayerThornsDamageMultiplier=1.f
 
     FleshpoundDamageMultiplier=1.f
