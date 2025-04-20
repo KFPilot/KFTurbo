@@ -409,7 +409,7 @@ function ActivateCriticalBoost(TurboCardGameplayManager GameplayManager, TurboCa
 
 function ActivateQuickerSwitch(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
-    Card.UpdateModifier(GameplayManager.PlayerEquipRateModifier, 0.85f, bActivate);
+    Card.UpdateModifier(GameplayManager.PlayerEquipRateModifier, 0.9f, bActivate);
 }
 
 function ActivateDenseShot(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
@@ -797,7 +797,7 @@ defaultproperties
     Begin Object Name=QuickerSwitch Class=TurboCard_Good
         CardName(0)="QuickerSwitch"
         CardDescriptionList(0)="Increases weapon"
-        CardDescriptionList(1)="swap speed by 15%."
+        CardDescriptionList(1)="swap speed by 10%."
         CardID="GOOD_QUICKSWITCH"
         OnActivateCard=ActivateQuickerSwitch
     End Object
