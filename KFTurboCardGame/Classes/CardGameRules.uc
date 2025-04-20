@@ -66,6 +66,9 @@ var(Turbo) bool bOversizedPipebombs;
 //Monster
 var array<KFMonster> MonsterPawnList;
 
+var(Turbo) float ClotMovementSpeedModifier;
+var array<P_Clot> ClotPawnList;
+
 var(Turbo) float BloatMovementSpeedModifier;
 var array<P_Bloat> BloatPawnList;
 
@@ -146,6 +149,16 @@ function Tick(float DeltaTime)
 	}
 
     MonsterPawnList.Length = 0;
+
+	for(Index = ClotPawnList.Length - 1; Index > -1; Index--)
+	{
+		if(ClotPawnList[Index] == None)
+		{
+			continue;
+		}
+
+		ClotPawnList[Index].OriginalGroundSpeed *= ClotMovementSpeedModifier;
+	}
 
 	for(Index = BloatPawnList.Length - 1; Index > -1; Index--)
 	{
@@ -938,6 +951,9 @@ function ModifyActor(Actor Other)
             MonsterPawnList[MonsterPawnList.Length] = KFMonster(Other);
             switch (class'PawnHelper'.static.GetMonsterType(MonsterPawnList[MonsterPawnList.Length - 1].Class))
             {
+                case Clot:
+                    ClotPawnList[ClotPawnList.Length] = P_Clot(Other);
+                    return;
                 case Bloat:
                     BloatPawnList[BloatPawnList.Length] = P_Bloat(Other);
                     return;
@@ -1218,6 +1234,8 @@ defaultproperties
     PlayerAirControlMultiplier=1.f  
 
     SirenScreamDamageMultiplier=1.f
+
+    ClotMovementSpeedModifier=1.f
 
     BloatMovementSpeedModifier=1.f
 
