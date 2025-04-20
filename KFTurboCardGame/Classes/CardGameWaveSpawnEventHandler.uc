@@ -1,4 +1,4 @@
-//Killing Floor Turbo OopsAllScrakesWaveEventHandler
+//Killing Floor Turbo CardGameWaveSpawnEventHandler
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
 class CardGameWaveSpawnEventHandler extends KFTurbo.TurboWaveSpawnEventHandler;
