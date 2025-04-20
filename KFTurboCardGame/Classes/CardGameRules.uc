@@ -271,10 +271,11 @@ final function bool AttemptCheatDeath(PlayerController Killed, Pawn KilledPawn, 
     }
 
     PlayerCardInfo.bHasCheatedDeath = true;
+    PlayerCardInfo.CheatDeathTime = Level.TimeSeconds + 2.f;
 
     KilledPawn.Health = Max(KilledPawn.HealthMax, Max(KilledPawn.Health, 1));
-
-    Level.BroadcastLocalizedMessage(class'CheatDeathLocalMessage', 0, Killed.PlayerReplicationInfo);
+    Level.BroadcastLocalizedMessage(class'CheatDeathLocalMessage', 0, Killed.PlayerReplicationInfo);    
+    Spawn(class'CheatDeathEffect', KilledPawn,, KilledPawn.Location + (vect(0, 0, 0.8f) * KilledPawn.CollisionHeight));
     
     return true;
 }
@@ -1175,6 +1176,7 @@ defaultproperties
     bSuddenDeathEnabled=false
     bPerformingSuddenDeath=false
     bMassDetonationEnabled=false
+    bCheatDeathEnabled=true
     PlayerThornsDamageMultiplier=1.f
 
     FleshpoundDamageMultiplier=1.f
