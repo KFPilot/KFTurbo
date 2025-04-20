@@ -12,7 +12,7 @@ var TurboGameModifierReplicationLink CustomTurboModifier;
 var TurboClientModifierReplicationLink CustomTurboClientModifier;
 
 var TurboGameVoteBase VoteInstance; //Current active vote.
-var array< class<TurboGameVoteBase> > VoteClassList; //List of all valid votes a player can initiate.
+var array< class<TurboGameVoteBase> > VoteClassList; //List of all valid votes a player can initiate. Does not replicate.
 delegate OnVoteInstanceStateChanged(TurboGameVoteBase VoteInstance, TurboGameVoteBase.EVotingState NewState);
 delegate OnVoteInstanceTallyChanged(TurboGameVoteBase VoteInstance, int NewYesVoteCount, int NewNoVoteCount);
 
@@ -256,4 +256,5 @@ defaultproperties
     VoteClassList(2)=class'TurboGameVoteMaxMonsters'
     VoteClassList(3)=class'TurboGameVoteFakedPlayers'
     VoteClassList(4)=class'TurboGameVotePlayerHealth'
+    VoteClassList(5)=class'TurboGameVoteMonsterSkipWander'
 }

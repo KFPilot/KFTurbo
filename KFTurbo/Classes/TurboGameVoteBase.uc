@@ -292,7 +292,12 @@ function int GetBroadcastDataForState(EVotingState State)
 //Returns true if the provided player can initiate this vote.
 static function bool CanInitiateVote(TurboGameReplicationInfo TGRI, TurboPlayerReplicationInfo Initiator, string VoteString)
 {
-    if (TGRI == None || Initiator.bOnlySpectator && !default.bCanSpectatorsVote)
+    if (TGRI == None || (Initiator.bOnlySpectator && !default.bCanSpectatorsVote))
+    {
+        return false;
+    }
+
+    if (!TGRI.bMatchHasBegun)
     {
         return false;
     }

@@ -838,6 +838,14 @@ exec function AdminSetMaxMonsters(float MaxMonstersModifier)
 	}
 }
 
+exec function AdminSetMonsterWanderEnabled(bool bEnabled)
+{
+	if (TurboCommandHandler != None)
+	{
+		TurboCommandHandler.SetMonsterWanderEnabled(Self, bEnabled);
+	}
+}
+
 exec function AdminShowSettings()
 {
 	if (TurboCommandHandler != None)

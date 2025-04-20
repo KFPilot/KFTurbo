@@ -18,11 +18,13 @@ enum EAdminCommand
     AC_SetPlayerHealthCount,
     AC_SetSpawnRateModifier,
     AC_SetMaxMonstersModifier,
+    AC_SetMonsterWanderEnabled, //10
 
-    AC_GetFakedPlayerCount, //10
+    AC_GetFakedPlayerCount,
     AC_GetPlayerHealthCount,
     AC_GetSpawnRateModifier,
-    AC_GetMaxMonstersModifier //13
+    AC_GetMaxMonstersModifier,
+    AC_GetMonsterWanderEnabled //15
 };
 
 //Debug commands.
@@ -39,11 +41,13 @@ var localized string SetFakedPlayerCountString;
 var localized string SetPlayerHealthCountString;
 var localized string SetSpawnRateModifierString;
 var localized string SetMaxMonstersModifierString;
+var localized string SetMonsterWanderEnabledString;
 
 var localized string GetFakedPlayerCountString;
 var localized string GetPlayerHealthCountString;
 var localized string GetSpawnRateModifierString;
 var localized string GetMaxMonstersModifierString;
+var localized string GetMonsterWanderEnabledString;
 
 static function string GetString(optional int Switch, optional PlayerReplicationInfo RelatedPRI_1, optional PlayerReplicationInfo RelatedPRI_2, optional Object OptionalObject)
 {
@@ -74,6 +78,8 @@ static function string GetString(optional int Switch, optional PlayerReplication
             return Repl(FormatAdminString(default.SetSpawnRateModifierString, RelatedPRI_1), "%f", DecodeFloat(Switch >> 8));
         case AC_SetMaxMonstersModifier:
             return Repl(FormatAdminString(default.SetMaxMonstersModifierString, RelatedPRI_1), "%f", DecodeFloat(Switch >> 8));
+        case AC_SetMonsterWanderEnabled:
+            return Repl(FormatAdminString(default.SetMonsterWanderEnabledString, RelatedPRI_1), "%b", DecodeBool(Switch >> 8));
 
         case AC_GetFakedPlayerCount:
             return Repl(FormatAdminString(default.GetFakedPlayerCountString, RelatedPRI_1), "%i", Switch >> 8);
@@ -83,6 +89,8 @@ static function string GetString(optional int Switch, optional PlayerReplication
             return Repl(FormatAdminString(default.GetSpawnRateModifierString, RelatedPRI_1), "%f", DecodeFloat(Switch >> 8));
         case AC_GetMaxMonstersModifier:
             return Repl(FormatAdminString(default.GetMaxMonstersModifierString, RelatedPRI_1), "%f", DecodeFloat(Switch >> 8));
+        case AC_GetMonsterWanderEnabled:
+            return Repl(FormatAdminString(default.GetMonsterWanderEnabledString, RelatedPRI_1), "%b", DecodeBool(Switch >> 8));
     }
 
     return "";
@@ -106,6 +114,21 @@ static final function float DecodeFloat(int Data)
     return float(Data) / 1000.f;
 }
 
+static final function int EncodeBool(bool bValue)
+{
+    if (bValue)
+    {
+        return 1;
+    }
+    
+    return 0;
+}
+
+static final function bool DecodeBool(int Data)
+{
+    return Data == 1;
+}
+
 defaultproperties
 {
     SkippedWaveString="%dThe %kcurrent wave%d has been %kskipped%d by %k%p%d."
@@ -120,11 +143,13 @@ defaultproperties
     SetPlayerHealthCountString="%kMonster player health%d count has been %kset%d to %k%i%d by %k%p%d."
     SetSpawnRateModifierString="%kSpawn rate%d modifier has been %kset%d to %k%fx%d by %k%p%d."
     SetMaxMonstersModifierString="%kMax monster%d modifier has been %kset%d to %k%fx%d by %k%p%d."
+    SetMonsterWanderEnabledString="%kZed wandering enabled%d has been %kset%d to %k%b%d by %k%p%d."
     
     GetFakedPlayerCountString="%kFaked player%d count is set to %k%i%d."
     GetPlayerHealthCountString="%kMonster player health%d count is set to %k%i%d."
     GetSpawnRateModifierString="%kSpawn rate%d modifier is set to %k%fx%d."
     GetMaxMonstersModifierString="%kMax monster%d modifier is set to %k%fx%d."
+    GetMonsterWanderEnabledString="%kZed wandering enabled%d is set to %k%b%d."
 
     Lifetime=15
     bIsSpecial=false

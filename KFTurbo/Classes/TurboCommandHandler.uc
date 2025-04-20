@@ -283,9 +283,29 @@ function SetMaxMonsters(TurboPlayerController Instigator, float MaxMonstersModif
 	Instigator.Level.Game.BroadcastLocalized(Instigator.Level.GRI, class'TurboAdminLocalMessage', (9 | ((class'TurboAdminLocalMessage'.static.EncodeFloat(MaxMonstersModifier)) << 8)), Instigator.PlayerReplicationInfo); //EAdminCommand.AC_SetMaxMonstersModifier
 }
 
+function SetMonsterWanderEnabled(TurboPlayerController Instigator, bool bEnabled)
+{
+    local KFTurboMut KFTurboMut;
+
+	if (Instigator.Role != ROLE_Authority)
+	{
+		return;
+	}
+
+	if (!Instigator.HasPermissionForCommand(true))
+	{
+		return;
+	}
+
+    KFTurboMut = class'KFTurboMut'.static.FindMutator(Level.Game);
+	KFTurboMut.bSkipInitialMonsterWander = !bEnabled;
+	Instigator.Level.Game.BroadcastLocalized(Instigator.Level.GRI, class'TurboAdminLocalMessage', (10 | ((class'TurboAdminLocalMessage'.static.EncodeBool(!bEnabled)) << 8)), Instigator.PlayerReplicationInfo); //EAdminCommand.AC_SetMonsterWanderEnabled
+}
+
 function ShowSettings(TurboPlayerController Instigator)
 {
 	local KFTurboGameType TurboGameType;
+    local KFTurboMut KFTurboMut;
 
 	if (Instigator.Role != ROLE_Authority)
 	{
@@ -298,8 +318,10 @@ function ShowSettings(TurboPlayerController Instigator)
 	}
 	
 	TurboGameType = KFTurboGameType(Instigator.Level.Game);
-	Instigator.Level.Game.BroadcastLocalized(Instigator.Level.GRI, class'TurboAdminLocalMessage', (10 | (TurboGameType.GetFakedPlayerCount() << 8)), Instigator.PlayerReplicationInfo); 			//EAdminCommand.AC_GetFakedPlayerCount
-	Instigator.Level.Game.BroadcastLocalized(Instigator.Level.GRI, class'TurboAdminLocalMessage', (11 | (TurboGameType.GetForcedPlayerHealthCount() << 8)), Instigator.PlayerReplicationInfo);	//EAdminCommand.AC_GetPlayerHealthCount
-	Instigator.Level.Game.BroadcastLocalized(Instigator.Level.GRI, class'TurboAdminLocalMessage', (12 | (class'TurboAdminLocalMessage'.static.EncodeFloat(TurboGameType.AdminSpawnRateModifier) << 8)), Instigator.PlayerReplicationInfo);	//EAdminCommand.AC_GetSpawnRateModifier
-	Instigator.Level.Game.BroadcastLocalized(Instigator.Level.GRI, class'TurboAdminLocalMessage', (13 | (class'TurboAdminLocalMessage'.static.EncodeFloat(TurboGameType.AdminMaxMonstersModifier) << 8)), Instigator.PlayerReplicationInfo);	//EAdminCommand.AC_GetMaxMonstersModifier
+    KFTurboMut = class'KFTurboMut'.static.FindMutator(TurboGameType);
+	Instigator.Level.Game.BroadcastLocalized(Instigator.Level.GRI, class'TurboAdminLocalMessage', (11 | (TurboGameType.GetFakedPlayerCount() << 8)), Instigator.PlayerReplicationInfo);															//EAdminCommand.AC_GetFakedPlayerCount
+	Instigator.Level.Game.BroadcastLocalized(Instigator.Level.GRI, class'TurboAdminLocalMessage', (12 | (TurboGameType.GetForcedPlayerHealthCount() << 8)), Instigator.PlayerReplicationInfo);													//EAdminCommand.AC_GetPlayerHealthCount
+	Instigator.Level.Game.BroadcastLocalized(Instigator.Level.GRI, class'TurboAdminLocalMessage', (13 | (class'TurboAdminLocalMessage'.static.EncodeFloat(TurboGameType.AdminSpawnRateModifier) << 8)), Instigator.PlayerReplicationInfo);		//EAdminCommand.AC_GetSpawnRateModifier
+	Instigator.Level.Game.BroadcastLocalized(Instigator.Level.GRI, class'TurboAdminLocalMessage', (14 | (class'TurboAdminLocalMessage'.static.EncodeFloat(TurboGameType.AdminMaxMonstersModifier) << 8)), Instigator.PlayerReplicationInfo);	//EAdminCommand.AC_GetMaxMonstersModifier
+	Instigator.Level.Game.BroadcastLocalized(Instigator.Level.GRI, class'TurboAdminLocalMessage', (15 | ((class'TurboAdminLocalMessage'.static.EncodeBool(!KFTurboMut.bSkipInitialMonsterWander)) << 8)), Instigator.PlayerReplicationInfo); 	//EAdminCommand.AC_GetMonsterWanderEnabled
 }
