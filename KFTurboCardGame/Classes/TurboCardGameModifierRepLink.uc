@@ -73,7 +73,12 @@ replication
         PlayerMaxHealthMultiplier,
         HealRechargeMultiplier,
         bOversizedPipebombs;
-} 
+}
+
+static simulated final function TurboPlayerCardCustomInfo GetPlayerCustomInfo(KFPlayerReplicationInfo KFPRI)
+{
+    return TurboPlayerCardCustomInfo(class'TurboPlayerCardCustomInfo'.static.FindCustomInfo(TurboPlayerReplicationInfo(KFPRI)));
+}
 
 simulated function float GetFireRateMultiplier(KFPlayerReplicationInfo KFPRI, Weapon Other)
 {
