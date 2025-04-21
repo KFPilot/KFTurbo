@@ -606,6 +606,13 @@ function float GetCriticalHitMultiplier(Pawn InstigatedBy, vector HitLocation)
             
         return 1.f;
     }
+    else
+    {
+        if (bCriticalHitChanceForEachNonCriticalHit && PlayerCardInfo != None)
+        {
+            PlayerCardInfo.NonCriticalHitCount = 0;
+        }
+    }
     
     if (bBonusCriticalHitChanceAfterCriticalHit && PlayerCardInfo != None)
     {
