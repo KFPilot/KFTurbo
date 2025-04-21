@@ -60,6 +60,8 @@ static function RenderComplexMessage(
 		Canvas.DrawTile( M1, IconSize, IconSize, 0, 0, M1.MaterialUSize(), M1.MaterialVSize() );
 		Canvas.Style = A;
 	}
+	
+	class'TurboHUDKillingFloor'.static.ResetCanvas(Canvas);
 }
 
 
