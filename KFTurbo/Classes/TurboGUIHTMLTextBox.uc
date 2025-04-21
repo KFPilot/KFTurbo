@@ -186,6 +186,8 @@ function bool RenderHTMLText( canvas C )
 	local int i,YOffset,MX,MY;
 	local bool bMouseOnClient;
 
+	class'TurboHUDKillingFloor'.static.ResetCanvas(C);
+
 	CX = C.ClipX;
 	CY = C.ClipY;
 	C.OrgX = ActualLeft(WinLeft);
