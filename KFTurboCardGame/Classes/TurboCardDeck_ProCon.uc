@@ -125,7 +125,7 @@ function ActivateHandSizeWaveSize(TurboCardGameplayManager GameplayManager, Turb
     if (bActivate)
     {
         GameplayManager.CardSelectionCountDelta.AddDelta(1, Card);
-        GameplayManager.TotalMonstersModifier.AddModifier(1.25f, Card);
+        GameplayManager.TotalMonstersModifier.AddModifier(1.15f, Card);
     }
     else
     {
@@ -461,9 +461,9 @@ function ActivateMoreToPlay(TurboCardGameplayManager GameplayManager, TurboCard 
 {
     if (bActivate)
     {
-        GameplayManager.PlayerMaxAmmoModifier.AddModifier(1.15f, Card);
+        GameplayManager.PlayerMaxAmmoModifier.AddModifier(1.05f, Card);
         GameplayManager.PlayerDamageModifier.AddModifier(1.05f, Card);
-        GameplayManager.TotalMonstersModifier.AddModifier(1.2f, Card);
+        GameplayManager.TotalMonstersModifier.AddModifier(1.1f, Card);
     }
     else
     {
@@ -636,7 +636,7 @@ defaultproperties
         CardDescriptionList(0)="Increases card"
         CardDescriptionList(1)="selection by 1"
         CardDescriptionList(2)="but increases wave"
-        CardDescriptionList(3)="size by 25%."
+        CardDescriptionList(3)="size by 15%."
         OnActivateCard=ActivateHandSizeWaveSize
         CardID="PROCON_MOCARDSMOPROB"
     End Object
@@ -928,9 +928,9 @@ defaultproperties
         CardName(1)="To Play"
         CardDescriptionList(0)="Increases max"
         CardDescriptionList(1)="weapon ammo by"
-        CardDescriptionList(2)="15% and damage by"
-        CardDescriptionList(3)="5% but wave size is"
-        CardDescriptionList(4)="increased by 20%."
+        CardDescriptionList(2)="and damage by"
+        CardDescriptionList(3)="5% but wave size"
+        CardDescriptionList(4)="is increased by 10%."
         OnActivateCard=ActivateMoreToPlay
         CardID="PROCON_MOREGAMETOPLAY"
     End Object

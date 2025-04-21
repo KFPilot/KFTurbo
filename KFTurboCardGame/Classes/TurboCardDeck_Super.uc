@@ -309,7 +309,7 @@ function ActivateDeepestAmmoPockets(TurboCardGameplayManager GameplayManager, Tu
 {
     if (bActivate)
     {
-        GameplayManager.PlayerMaxAmmoModifier.AddModifier(1.35f, Card);
+        GameplayManager.PlayerMaxAmmoModifier.AddModifier(1.3f, Card);
     }
     else
     {
@@ -664,7 +664,7 @@ defaultproperties
         CardName(0)="The Deepest of"
         CardName(1)="Ammo Pockets"
         CardDescriptionList(0)="Increases max"
-        CardDescriptionList(1)="ammo by 35%."
+        CardDescriptionList(1)="ammo by 30%."
         OnActivateCard=ActivateDeepestAmmoPockets
         CardID="SUPER_DEEPESTAMMOPOCKET"
     End Object
