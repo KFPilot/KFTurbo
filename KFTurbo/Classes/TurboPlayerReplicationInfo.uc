@@ -71,6 +71,14 @@ simulated function Destroyed()
         }
     }
 
+    for (Index = PlayerCustomInfoList.Length - 1; Index >= 0; Index--)
+    {
+        if (PlayerCustomInfoList[Index] != None)
+        {
+            PlayerCustomInfoList[Index].Destroy();
+        }
+    }
+
     Super.Destroyed();
 }
 

@@ -795,7 +795,7 @@ defaultproperties
     DeckCardObjectList(35)=TurboCard'CriticalBoost'
 
     Begin Object Name=QuickerSwitch Class=TurboCard_Good
-        CardName(0)="QuickerSwitch"
+        CardName(0)="Quicker Switch"
         CardDescriptionList(0)="Increases weapon"
         CardDescriptionList(1)="swap speed by 10%."
         CardID="GOOD_QUICKSWITCH"

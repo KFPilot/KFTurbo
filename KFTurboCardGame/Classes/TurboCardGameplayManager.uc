@@ -183,6 +183,10 @@ var CardFlag PlayerLowHealthSlowsFlag;
 //THORNS
 var CardModifierStack PlayerThornsModifier;
 
+//SPECIAL
+var CardFlag PlayerGrenadeThrowBuff;
+var CardFlag PlayerHealBoostBuff;
+
 ////////////////////
 //MONSTER MODIFIERS
 
@@ -1143,6 +1147,16 @@ function PlayerThornsModifierChanged(CardModifierStack ModifiedStack, float Modi
     CardGameRules.PlayerThornsDamageMultiplier = Modifier;
 }
 
+function PlayerGrenadeThrowBuffFlagChanged(Cardflag Flag, bool bIsEnabled)
+{
+    PlayerCardEventHandler.bTossGrenadeBuff = bIsEnabled;
+}
+
+function PlayerHealBoostBuffFlagChanged(CardFlag Flag, bool bIsEnabled)
+{
+    HealCardEventHandler.bHealingBoost = bIsEnabled;
+}
+
 ////////////////////
 //MONSTER MODIFIERS
 
@@ -1884,6 +1898,20 @@ defaultproperties
         OnModifierChanged=PlayerThornsModifierChanged
     End Object
     PlayerThornsModifier=CardModifierStack'PlayerThornsModifierStack'
+
+//SPECIAL
+    Begin Object Name=PlayerGrenadeThrowBuffCardFlag Class=CardFlag
+        FlagID="PlayerGrenadeThrowBuff"
+        OnFlagSetChanged=PlayerGrenadeThrowBuffFlagChanged
+    End Object
+    PlayerGrenadeThrowBuff=CardFlag'PlayerGrenadeThrowBuffCardFlag'
+
+    Begin Object Name=PlayerHealBoostBuffCardFlag Class=CardFlag
+        FlagID="PlayerHealBoostBuff"
+        OnFlagSetChanged=PlayerHealBoostBuffFlagChanged
+    End Object
+    PlayerHealBoostBuff=CardFlag'PlayerHealBoostBuffCardFlag'
+
 
 ////////////////////
 //MONSTER MODIFIERS

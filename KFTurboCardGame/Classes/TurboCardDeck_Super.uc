@@ -426,6 +426,16 @@ function ActivateStunningHit(TurboCardGameplayManager GameplayManager, TurboCard
     Card.UpdateModifier(GameplayManager.MonsterDamageStunChance, 0.01f, bActivate);
 }
 
+function ActivateFragOut(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
+{
+    Card.UpdateFlag(GameplayManager.PlayerGrenadeThrowBuff, bActivate);
+}
+
+function ActivateEpinephrine(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
+{
+    Card.UpdateFlag(GameplayManager.PlayerHealBoostBuff, bActivate);
+}
+
 defaultproperties
 {
     Begin Object Name=Cleanse Class=TurboCard_Super
@@ -825,4 +835,31 @@ defaultproperties
         CardID="SUPER_STUNNING"
     End Object
     DeckCardObjectList(34)=TurboCard'StunningHit'
+
+    Begin Object Name=FragOut Class=TurboCard_Super
+        CardName(0)="Frag Out"
+        CardDescriptionList(0)="Throwing a grenade"
+        CardDescriptionList(1)="increases weapon"
+        CardDescriptionList(2)="firerate and reload"
+        CardDescriptionList(3)="speed by 100% for"
+        CardDescriptionList(4)="5 seconds."
+        OnActivateCard=ActivateFragOut
+        CardID="SUPER_FRAGOUT"
+    End Object
+    DeckCardObjectList(35)=TurboCard'FragOut'
+
+    Begin Object Name=Epinephrine Class=TurboCard_Super
+        CardName(0)="Epinephrine"
+        CardDescriptionList(0)="Increases player"
+        CardDescriptionList(1)="movement speed by"
+        CardDescriptionList(2)="50% and reduces"
+        CardDescriptionList(3)="damage taken by 50%"
+        CardDescriptionList(4)="for 10 seconds when"
+        CardDescriptionList(5)="healed by another"
+        CardDescriptionList(6)="player. Has a 45"
+        CardDescriptionList(7)="second cooldown."
+        OnActivateCard=ActivateEpinephrine
+        CardID="SUPER_EPINE"
+    End Object
+    DeckCardObjectList(36)=TurboCard'Epinephrine'
 }

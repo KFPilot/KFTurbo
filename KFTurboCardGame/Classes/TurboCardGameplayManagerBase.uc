@@ -12,6 +12,8 @@ var KFTurboGameType TurboGameType;
 var TurboCardReplicationInfo CardReplicationInfo;
 var TurboCardGameModifierRepLink CardGameModifier;
 var TurboCardClientModifierRepLink CardClientModifier;
+var TurboPlayerCardEventHandler PlayerCardEventHandler;
+var TurboHealCardEventHandler HealCardEventHandler;
 var CardGameRules CardGameRules;
 
 var array<CardModifierStack> CardModifierList;
@@ -53,6 +55,8 @@ function PostBeginPlay()
     CardReplicationInfo = CardGameMutator.TurboCardReplicationInfo;
     CardGameModifier = CardGameMutator.TurboCardGameModifier;
     CardClientModifier = CardGameMutator.TurboCardClientModifier;
+    PlayerCardEventHandler = CardGameMutator.PlayerCardEventHandler;
+    HealCardEventHandler = CardGameMutator.HealCardEventHandler;
     CardGameRules = CardGameMutator.CardGameRules;
 
     log("Collecting all modifiers, deltas and flags...", 'KFTurboCardGame');

@@ -1,9 +1,10 @@
 //Killing Floor Turbo TurboPlayerCustomInfo
 //Actor that can contain custom info per-player. May replicate. Registration should be automatically handled via Tick.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class TurboPlayerCustomInfo extends Info;
+class TurboPlayerCustomInfo extends ReplicationInfo;
 
 var TurboPlayerReplicationInfo PlayerTPRI;
+var float ResolveTimeout;
 
 replication
 {
@@ -37,10 +38,15 @@ static final function TurboPlayerCustomInfo FindCustomInfo(TurboPlayerReplicatio
 	return None;
 }
 
-function PreBeginPlay()
+simulated function PostBeginPlay()
 {
-	PlayerTPRI = TurboPlayerReplicationInfo(Owner);
-	Super.PreBeginPlay();
+	if (Role == ROLE_Authority)
+	{
+		PlayerTPRI = TurboPlayerReplicationInfo(Controller(Owner).PlayerReplicationInfo);
+		ResolveTimeout = Level.TimeSeconds + 5.f;
+	}
+	
+	Super.PostBeginPlay();
 }
 
 simulated function Destroyed()
@@ -59,6 +65,11 @@ simulated function Tick(float DeltaTime)
 
 	if (PlayerTPRI == None)
 	{
+		if (Role == ROLE_Authority && ResolveTimeout < Level.TimeSeconds)
+		{
+			Destroy();
+		}
+
 		return;
 	}
 
@@ -96,4 +107,10 @@ defaultproperties
 {
 	RemoteRole=ROLE_None
     NetUpdateFrequency=0.100000
+    bAlwaysRelevant=false
+    bOnlyRelevantToOwner=false
+
+	//Default property replication for these.
+    bOnlyDirtyReplication=true
+    bSkipActorPropertyReplication=true
 }

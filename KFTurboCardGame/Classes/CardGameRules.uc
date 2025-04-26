@@ -293,28 +293,16 @@ final function bool AttemptCheatDeath(PlayerController Killed, Pawn KilledPawn, 
     return true;
 }
 
-final function bool IsInCheatDeathGracePeriod(PlayerController Injured)
+final function bool IsInCheatDeathGracePeriod(TurboPlayerCardCustomInfo PlayerCardInfo)
 {
-    local TurboPlayerCardCustomInfo PlayerCardInfo;
-
-    if (Injured == None || Injured.PlayerReplicationInfo == None)
-    {
-        return false;
-    }
-
-    PlayerCardInfo = FindCustomInfo(TurboPlayerReplicationInfo(Injured.PlayerReplicationInfo));
-
-    if (PlayerCardInfo == None)
-    {
-        return false;
-    }
-
-    return PlayerCardInfo.bHasCheatedDeath && PlayerCardInfo.CheatDeathTime > 0.f && Level.TimeSeconds < PlayerCardInfo.CheatDeathTime;
+    return PlayerCardInfo != None && PlayerCardInfo.IsInCheatDeathGracePeriod();
 }
 
 function int NetDamage(int OriginalDamage, int Damage, Pawn Injured, Pawn InstigatedBy, Vector HitLocation, out Vector Momentum, class<DamageType> DamageType )
 {
     local class<KFWeaponDamageType> WeaponDamageType;
+    local TurboPlayerCardCustomInfo InjuredCardInfo;
+    local TurboPlayerCardCustomInfo InstigatorCardInfo;
     local float DamageMultiplier;
     Damage = Super.NetDamage(OriginalDamage, Damage, Injured, InstigatedBy, HitLocation, Momentum, DamageType);
 
@@ -328,14 +316,20 @@ function int NetDamage(int OriginalDamage, int Damage, Pawn Injured, Pawn Instig
     //Check for outright damage blocking effects first.
     if (KFHumanPawn(Injured) != None)
     {
-        if (bCheatDeathEnabled && IsInCheatDeathGracePeriod(PlayerController(Injured.Controller)))
+        InjuredCardInfo = FindCustomInfo(TurboPlayerReplicationInfo(Injured.PlayerReplicationInfo));
+        if (bCheatDeathEnabled && IsInCheatDeathGracePeriod(InjuredCardInfo))
         {
             return 0;
         }
 
-        if (bNegateFirstPlayerDamage && AttemptNegateDamage(KFHumanPawn(Injured)))
+        if (bNegateFirstPlayerDamage && AttemptNegateDamage(InjuredCardInfo))
         {
             return 0;
+        }
+
+        if (MutatorOwner.HealCardEventHandler.bHealingBoost && IsInHealingBoostTime(InjuredCardInfo))
+        {
+            DamageMultiplier *= 0.5f;
         }
         
         DamageMultiplier *= DamageTakenMultiplier;
@@ -488,6 +482,11 @@ function int NetDamage(int OriginalDamage, int Damage, Pawn Injured, Pawn Instig
     }
 
 	return Damage;
+}
+
+final function bool IsInHealingBoostTime(TurboPlayerCardCustomInfo PlayerCardInfo)
+{
+    return PlayerCardInfo != None && PlayerCardInfo.IsInHealBoostTime();
 }
 
 function ApplyPerkDamageModifiers(out float DamageMultiplier, KFHumanPawn InstigatedBy, KFPlayerReplicationInfo InstigatedByPRI, class<KFWeaponDamageType> WeaponDamageType)
@@ -1119,17 +1118,8 @@ final function ResetNegateDamageList()
     }
 }
 
-final function bool AttemptNegateDamage(KFHumanPawn Injured)
+final function bool AttemptNegateDamage(TurboPlayerCardCustomInfo PlayerCardInfo)
 {
-    local TurboPlayerCardCustomInfo PlayerCardInfo;
-
-    if (Injured == None || Injured.PlayerReplicationInfo == None)
-    {
-        return false;
-    }
-
-    PlayerCardInfo = FindCustomInfo(TurboPlayerReplicationInfo(Injured.PlayerReplicationInfo));
-
     if (PlayerCardInfo == None || PlayerCardInfo.NegateDamageCount <= 0)
     {
         return false;

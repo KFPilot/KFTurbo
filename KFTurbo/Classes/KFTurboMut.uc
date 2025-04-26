@@ -176,7 +176,7 @@ function bool CheckReplacement(Actor Other, out byte bSuperRelevant)
 		ReplaceWith(Other, string(class'KFTurbo.TurboRandomItemSpawn'));
 		return false;
 	}
-	else if (Controller(Other) != None)
+	else if (Controller(Other) != None && MessagingSpectator(Other) == None)
 	{
 		if (Controller(Other).PlayerReplicationInfoClass != None && class<TurboPlayerReplicationInfo>(Controller(Other).PlayerReplicationInfoClass) == None)
 		{
@@ -199,6 +199,12 @@ function bool CheckReplacement(Actor Other, out byte bSuperRelevant)
 function AddTurboPlayerMarkReplicationInfo(KFPlayerReplicationInfo PlayerReplicationInfo)
 {
 	local TurboPlayerMarkReplicationInfo TurboPRI;
+
+	if (MessagingSpectator(PlayerReplicationInfo.Owner) != None)
+	{
+		return;
+	}
+
 	TurboPRI = Spawn(class'TurboPlayerMarkReplicationInfo', PlayerReplicationInfo.Owner);
 	TurboPRI.NextReplicationInfo = PlayerReplicationInfo.CustomReplicationInfo;
 	TurboPRI.OwningReplicationInfo = PlayerReplicationInfo;
@@ -403,7 +409,7 @@ defaultproperties
 	bDebugClientPerkRepLink=false
 
 	bCheckLatestTurboVersion=true
-	TurboVersion="6.5.1"
+	TurboVersion="6.5.2"
 	bHasVersionUpdate=false
 
 	bRequireAdminForDifficultyCommands=true

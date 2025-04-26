@@ -10,8 +10,12 @@ var TurboCardReplicationInfo TurboCardReplicationInfo;
 var TurboCardGameplayManager TurboCardGameplayManagerInfo;
 var TurboCardGameModifierRepLink TurboCardGameModifier;
 var TurboCardClientModifierRepLink TurboCardClientModifier;
+var TurboPlayerCardEventHandler PlayerCardEventHandler;
+var TurboHealCardEventHandler HealCardEventHandler;
 var CardGameRules CardGameRules;
 var TurboCardStatsTcpLink TurboCardStatsTcpLink;
+
+var array<TurboPlayerReplicationInfo> PendingPlayerReplicationInfoList;
 
 var globalconfig string TurboGoodDeckClassOverrideString;
 var globalconfig string TurboSuperDeckClassOverrideString;
@@ -35,6 +39,8 @@ function PostBeginPlay()
 	
 	class'CardGameWaveEventHandler'.static.CreateHandler(Self);
 	class'CardGameWaveSpawnEventHandler'.static.CreateHandler(Self);
+	PlayerCardEventHandler = TurboPlayerCardEventHandler(class'TurboPlayerCardEventHandler'.static.CreateHandler(Self));
+	HealCardEventHandler = TurboHealCardEventHandler(class'TurboHealCardEventHandler'.static.CreateHandler(Self));
 }
 
 function Tick(float DeltaTime)
@@ -265,14 +271,17 @@ function TurboCardGameplayManager CreateCardGameplayManager()
 
 function bool CheckReplacement(Actor Other, out byte bSuperRelevant)
 {
-	if (KFPlayerReplicationInfo(Other) != None)
+	if (TurboPlayerReplicationInfo(Other) != None)
 	{
-		AddCardGamePlayerReplicationInfo(KFPlayerReplicationInfo(Other));
+		PendingPlayerReplicationInfoList[PendingPlayerReplicationInfoList.Length] = TurboPlayerReplicationInfo(Other);
+		SetTimer(0.01f, false);
+		return true;
 	}
 
 	if (TurboGameReplicationInfo(Other) != None)
 	{
 		AddTurboCardGameModifier(TurboGameReplicationInfo(Other));
+		return true;
 	}
 	
 	if (CardGameRules != None)
@@ -283,10 +292,26 @@ function bool CheckReplacement(Actor Other, out byte bSuperRelevant)
 	return true;
 }
 
+function Timer()
+{
+	local int Index;
+	for (Index = PendingPlayerReplicationInfoList.Length - 1; Index >= 0; Index--)
+	{
+		AddCardGamePlayerReplicationInfo(PendingPlayerReplicationInfoList[Index]);
+	}
+
+	PendingPlayerReplicationInfoList.Length = 0;
+}
+
 function AddCardGamePlayerReplicationInfo(KFPlayerReplicationInfo PlayerReplicationInfo)
 {
 	local CardGamePlayerReplicationInfo CardGamePRI;
 	local LinkedReplicationInfo LastLRI;
+
+	if (MessagingSpectator(PlayerReplicationInfo.Owner) != None)
+	{
+		return;
+	}
 
 	LastLRI = PlayerReplicationInfo.CustomReplicationInfo;
 	while (LastLRI != None && LastLRI.NextReplicationInfo != None)
@@ -309,7 +334,7 @@ function AddCardGamePlayerReplicationInfo(KFPlayerReplicationInfo PlayerReplicat
 
 	CardGamePRI.ForceNetUpdate();
 
-	Spawn(class'TurboPlayerCardCustomInfo', PlayerReplicationInfo); //Non-replicating per-player data.
+	Spawn(class'TurboPlayerCardCustomInfo', PlayerReplicationInfo.Owner);
 }
 
 function ModifyPlayer(Pawn Other)

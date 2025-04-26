@@ -117,6 +117,11 @@ final function OnPlayerFire(TurboPlayerController Player, WeaponFire FireMode)
         return;
     }
 
+    if (W_Frag_Fire(FireMode) != None)
+    {
+        return;
+    }
+
     WavePlayerStatCollector.IncrementShotsFired();
 }
 

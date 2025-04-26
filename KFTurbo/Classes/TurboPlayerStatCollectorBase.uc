@@ -6,6 +6,7 @@ class TurboPlayerStatCollectorBase extends Info;
 var TurboPlayerReplicationInfo PlayerTPRI;
 var protected bool bIsCollector;
 var class<TurboPlayerStatCollectorBase> PlayerStatReplicatorClass;
+var float ResolveTimeout;
 
 replication
 {
@@ -61,6 +62,7 @@ static final function TurboPlayerStatCollectorBase FindStats(TurboPlayerReplicat
 function PreBeginPlay()
 {
 	PlayerTPRI = TurboPlayerReplicationInfo(Owner);
+	ResolveTimeout = Level.TimeSeconds + 5.f;
 	Super.PreBeginPlay();
 }
 
@@ -106,6 +108,10 @@ simulated function Tick(float DeltaTime)
 
 	if (PlayerTPRI == None)
 	{
+		if (Role == ROLE_Authority && ResolveTimeout < Level.TimeSeconds)
+		{
+			Destroy();
+		}
 		return;
 	}
 

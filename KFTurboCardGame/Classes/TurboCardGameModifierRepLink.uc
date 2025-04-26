@@ -95,7 +95,22 @@ simulated function float GetFireRateMultiplier(KFPlayerReplicationInfo KFPRI, We
         Multiplier *= ZedTimeDualPistolFireRateMultiplier;
     }
 
-    return Multiplier;
+    return Multiplier * GetCardCustomInfoFireRateMultiplier(GetPlayerCustomInfo(KFPRI));
+}
+
+final simulated function float GetCardCustomInfoFireRateMultiplier(TurboPlayerCardCustomInfo CardCustomInfo)
+{
+    if (CardCustomInfo == None)
+    {
+        return 1.f;
+    }
+
+    if (CardCustomInfo.IsInGrenadeBuffTime())
+    {
+        return 2.f;
+    }
+
+    return 1.f;
 }
 
 simulated function float GetBerserkerFireRateMultiplier(KFPlayerReplicationInfo KFPRI, Weapon Other) { return Super.GetBerserkerFireRateMultiplier(KFPRI, Other) * BerserkerFireRateMultiplier; }
@@ -111,7 +126,22 @@ simulated function float GetReloadRateMultiplier(KFPlayerReplicationInfo KFPRI, 
         Multiplier *= ZedTimeDualWeaponReloadRateMultiplier;
     }
     
-    return Multiplier;
+    return Multiplier * GetCardCustomInfoReloadRateMultiplier(GetPlayerCustomInfo(KFPRI));
+}
+
+final simulated function float GetCardCustomInfoReloadRateMultiplier(TurboPlayerCardCustomInfo CardCustomInfo)
+{
+    if (CardCustomInfo == None)
+    {
+        return 1.f;
+    }
+    
+    if (CardCustomInfo.IsInGrenadeBuffTime())
+    {
+        return 2.f;
+    }
+
+    return 1.f;
 }
 
 simulated function float GetCommandoReloadRateMultiplier(KFPlayerReplicationInfo KFPRI, Weapon Other) { return Super.GetCommandoReloadRateMultiplier(KFPRI, Other) * CommandoReloadRateMultiplier; }
@@ -180,6 +210,7 @@ simulated function float GetTraderGrenadeCostMultiplier(KFPlayerReplicationInfo 
 simulated function float GetPlayerMovementSpeedMultiplier(KFPlayerReplicationInfo KFPRI, KFGameReplicationInfo KFGRI) 
 {
     local float Multiplier;
+
     if (bFreezePlayersDuringWave && KFGRI != None && KFGRI.bWaveInProgress)
     {
         if (KFMeleeGun(Controller(KFPRI.Owner).Pawn.Weapon) == None)
@@ -200,7 +231,22 @@ simulated function float GetPlayerMovementSpeedMultiplier(KFPlayerReplicationInf
         Multiplier *= 0.75f;
     }
     
-    return Super.GetPlayerMovementSpeedMultiplier(KFPRI, KFGRI) * Multiplier;
+    return Super.GetPlayerMovementSpeedMultiplier(KFPRI, KFGRI) * Multiplier * GetCardCustomInfoSpeedMultiplier(GetPlayerCustomInfo(KFPRI));
+}
+
+final simulated function float GetCardCustomInfoSpeedMultiplier(TurboPlayerCardCustomInfo CardCustomInfo)
+{
+    if (CardCustomInfo == None)
+    {
+        return 1.f;
+    }
+
+    if (CardCustomInfo.IsInHealBoostTime())
+    {
+        return 2.f;
+    }
+
+    return 1.f;
 }
 
 simulated function float GetPlayerMovementAccelMultiplier(KFPlayerReplicationInfo KFPRI, KFGameReplicationInfo KFGRI)
