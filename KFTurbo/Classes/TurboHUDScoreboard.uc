@@ -199,7 +199,7 @@ static final function string GetCompressedNumber(int Number)
 	{
 		Number = Number / 100000;
 		Result = string(Number);
-		Result = Left(Result, Len(Result) - 1)$default.SeparatorCharacter$Right(Result, 1)$default.ThousandSuffix;
+		Result = Left(Result, Len(Result) - 1)$default.SeparatorCharacter$Right(Result, 1)$default.MillionSuffix;
 		return Result;
 	}
 }
@@ -381,7 +381,7 @@ simulated final function DrawPlayerEntry(Canvas Canvas, TurboPlayerReplicationIn
 		Canvas.DrawColor = Canvas.MakeColor(255, 0, 0, 255);
 		Canvas.FontScaleX = 1.f;
 		Canvas.FontScaleY = 1.f;
-		Canvas.Font = TurboHUD.LoadFont(6);
+		Canvas.Font = TurboHUD.LoadFont(4);
 		Canvas.TextSize(DrawText, TextSizeX, TextSizeY);
 		Canvas.FontScaleX = (SizeY * 0.5f) / TextSizeY;
 		Canvas.FontScaleY = Canvas.FontScaleX;
