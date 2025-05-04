@@ -245,14 +245,17 @@ function InitializeMonster(KFMonster Monster)
 
 function bool PreventDeath(Pawn Killed, Controller Killer, class<DamageType> DamageType, vector HitLocation)
 {
+    local TurboPlayerCardCustomInfo PlayerCardInfo;
+
 	if (Super.PreventDeath(Killed, Killer, DamageType, HitLocation))
     {
         return true;
     }
 
-    if (bCheatDeathEnabled && Killed != None && PlayerController(Killed.Controller) != None)
+    if (bCheatDeathEnabled && Killed != None && Killed.PlayerReplicationInfo != None && PlayerController(Killed.Controller) != None)
     {
-        if (IsInCheatDeathGracePeriod(PlayerController(Killed.Controller)) || AttemptCheatDeath(PlayerController(Killed.Controller), Killed, DamageType))
+        PlayerCardInfo = FindCustomInfo(TurboPlayerReplicationInfo(Killed.PlayerReplicationInfo));
+        if (PlayerCardInfo != None && IsInCheatDeathGracePeriod(PlayerCardInfo) || AttemptCheatDeath(PlayerCardInfo, Killed, DamageType))
         {
             return true;
         }
@@ -261,22 +264,13 @@ function bool PreventDeath(Pawn Killed, Controller Killer, class<DamageType> Dam
 	return false;
 }
 
-final function bool AttemptCheatDeath(PlayerController Killed, Pawn KilledPawn, class<DamageType> DamageType)
+final function bool AttemptCheatDeath(TurboPlayerCardCustomInfo PlayerCardInfo, Pawn KilledPawn, class<DamageType> DamageType)
 {
-    local TurboPlayerCardCustomInfo PlayerCardInfo;
-
     //Do not block suicides or kills caused by the world (unless it's normal fall damage).
     if (class<Suicided>(DamageType) != None || (DamageType.default.bCausedByWorld && class<TurboHumanFall_DT>(DamageType) == None))
     {
         return false;
     }
-
-    if (Killed == None || Killed.PlayerReplicationInfo == None)
-    {
-        return false;
-    }
-
-    PlayerCardInfo = FindCustomInfo(TurboPlayerReplicationInfo(Killed.PlayerReplicationInfo));
 
     if (PlayerCardInfo == None || PlayerCardInfo.bHasCheatedDeath)
     {
@@ -287,7 +281,7 @@ final function bool AttemptCheatDeath(PlayerController Killed, Pawn KilledPawn, 
     PlayerCardInfo.CheatDeathTime = Level.TimeSeconds + 2.f;
 
     KilledPawn.Health = Max(KilledPawn.HealthMax, Max(KilledPawn.Health, 1));
-    Level.BroadcastLocalizedMessage(class'CheatDeathLocalMessage', 0, Killed.PlayerReplicationInfo);    
+    Level.BroadcastLocalizedMessage(class'CheatDeathLocalMessage', 0, PlayerCardInfo.PlayerTPRI);
     Spawn(class'CheatDeathEffect', KilledPawn,, KilledPawn.Location + (vect(0, 0, 0.8f) * KilledPawn.CollisionHeight));
     
     return true;
@@ -302,7 +296,6 @@ function int NetDamage(int OriginalDamage, int Damage, Pawn Injured, Pawn Instig
 {
     local class<KFWeaponDamageType> WeaponDamageType;
     local TurboPlayerCardCustomInfo InjuredCardInfo;
-    local TurboPlayerCardCustomInfo InstigatorCardInfo;
     local float DamageMultiplier;
     Damage = Super.NetDamage(OriginalDamage, Damage, Injured, InstigatedBy, HitLocation, Momentum, DamageType);
 
@@ -724,6 +717,7 @@ function PerformSuddenDeath()
 {
     local Controller C;
     local PlayerController PC;
+    local TurboPlayerCardCustomInfo PlayerCardInfo;
 
     if (bPerformingSuddenDeath)
     {
@@ -736,11 +730,12 @@ function PerformSuddenDeath()
     {
         PC = PlayerController(C);
 
-        if (PC != None && PC.Pawn != None && !PC.Pawn.bDeleteMe && PC.Pawn.Health > 0)
+        if (PC != None && PC.Pawn != None && PC.PlayerReplicationInfo != None && !PC.Pawn.bDeleteMe && PC.Pawn.Health > 0)
         {
             if (bCheatDeathEnabled)
             {
-                if (IsInCheatDeathGracePeriod(PC) || AttemptCheatDeath(PC, PC.Pawn, class'SuddenDeath_DT'))
+                PlayerCardInfo = FindCustomInfo(TurboPlayerReplicationInfo(PC.PlayerReplicationInfo));
+                if (IsInCheatDeathGracePeriod(PlayerCardInfo) || AttemptCheatDeath(PlayerCardInfo, PC.Pawn, class'SuddenDeath_DT'))
                 {
                     continue;
                 }
