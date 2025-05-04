@@ -16,6 +16,7 @@ struct PlayerInfoData
 	var TurboPlayerReplicationInfo TPRI;
 	var TurboHumanPawn HumanPawn;
 	var float DistanceSquared;
+	var TurboPlayerReplicationInfo.EConnectionState ConnectionState;
 	
 	var float CurrentHealth;
 	var float LastCheckedHealth;
@@ -55,6 +56,8 @@ var Texture PerkBackplate;
 
 var Texture ChatIcon;
 var Texture ShoppingIcon;
+var Texture PoorSignalIcon;
+var Texture NoSignalIcon;
 
 var Texture MedicBackplate;
 var Texture MedicCap;
@@ -74,7 +77,7 @@ simulated function Initialize(TurboHUDKillingFloor OwnerHUD)
 	MedicRequestScaleCurve.Points = MedicRequestScalePointList;
 }
 
-static final simulated function float GetHealthMax(out PlayerInfoData PlayerInfo)
+static final simulated function float GetHealthMax(PlayerInfoData PlayerInfo)
 {
 	if (PlayerInfo.HumanPawn != None)
 	{
@@ -89,7 +92,7 @@ static final simulated function float GetHealthMax(out PlayerInfoData PlayerInfo
 	return 100.f;
 }
 
-static final simulated function float GetHealth(out PlayerInfoData PlayerInfo)
+static final simulated function float GetHealth(PlayerInfoData PlayerInfo)
 {
 	if (PlayerInfo.HumanPawn != None)
 	{
@@ -109,7 +112,7 @@ static final simulated function float GetHealth(out PlayerInfoData PlayerInfo)
 	return 0.f;
 }
 
-static final simulated function float GetHealthHealingTo(out PlayerInfoData PlayerInfo)
+static final simulated function float GetHealthHealingTo(PlayerInfoData PlayerInfo)
 {
 	if (PlayerInfo.HumanPawn != None)
 	{
@@ -124,7 +127,7 @@ static final simulated function float GetHealthHealingTo(out PlayerInfoData Play
 	return 0.f;
 }
 
-static final simulated function float GetShield(out PlayerInfoData PlayerInfo)
+static final simulated function float GetShield(PlayerInfoData PlayerInfo)
 {
 	if (PlayerInfo.HumanPawn != None)
 	{
@@ -309,6 +312,7 @@ simulated function Tick(float DeltaTime)
 			PlayerInfoDataList[PlayerInfoIndex].TPRI = TurboPlayerReplicationInfo(PRI);
 			PlayerInfoDataList[PlayerInfoIndex].HumanPawn = HumanPawn;
 			PlayerInfoDataList[PlayerInfoIndex].DistanceSquared = VSizeSquared(TurboHUD.PlayerOwner.CalcViewLocation - HumanPawn.Location);
+			PlayerInfoDataList[PlayerInfoIndex].ConnectionState = PlayerInfoDataList[PlayerInfoIndex].TPRI.GetConnectionState();
 			PlayerInfoDataList[PlayerInfoIndex].bInitialized = false;
 		}
 	}
@@ -325,6 +329,7 @@ simulated function Tick(float DeltaTime)
 			}
 
 			PlayerInfoDataList[PlayerInfoIndex].DistanceSquared = VSizeSquared(TurboHUD.PlayerOwner.CalcViewLocation - HumanPawn.Location);
+			PlayerInfoDataList[PlayerInfoIndex].ConnectionState = PlayerInfoDataList[PlayerInfoIndex].TPRI.GetConnectionState();
 		}
 	}
 
@@ -458,7 +463,7 @@ simulated function Render(Canvas C)
 	class'TurboHUDKillingFloor'.static.ResetCanvas(C);
 }
 
-simulated final function DrawPlayerInfo(Canvas C, out PlayerInfoData PlayerInfo, float ScreenLocX, float ScreenLocY)
+simulated final function DrawPlayerInfo(Canvas C, PlayerInfoData PlayerInfo, float ScreenLocX, float ScreenLocY)
 {
 	local float XL, YL, TempX, TempY, TempSize, TempStartSize;
 	local float Dist, OffsetX;
@@ -476,7 +481,7 @@ simulated final function DrawPlayerInfo(Canvas C, out PlayerInfoData PlayerInfo,
 		return;
 	}
 
-	Dist = vsize(PlayerInfo.HumanPawn.Location - TurboHUD.PlayerOwner.CalcViewLocation);
+	Dist = VSize(PlayerInfo.HumanPawn.Location - TurboHUD.PlayerOwner.CalcViewLocation);
 	Dist -= TurboHUD.HealthBarFullVisDist;
 	Dist = FClamp(Dist, 0, TurboHUD.HealthBarCutoffDist - TurboHUD.HealthBarFullVisDist);
 	Dist = Dist / (TurboHUD.HealthBarCutoffDist - TurboHUD.HealthBarFullVisDist);
@@ -574,6 +579,22 @@ simulated final function DrawPlayerInfo(Canvas C, out PlayerInfoData PlayerInfo,
 		C.DrawRect(ShoppingIcon, TurboHUD.BarHeight * 5.f, TurboHUD.BarHeight * 5.f);
 	}
 
+	if (PlayerInfo.ConnectionState != Normal)
+	{
+		TempY -= (TurboHUD.BarHeight * 2.5f);
+		C.SetPos(TempX + TurboHUD.BarHeight * 1.25f, TempY);
+
+		switch (PlayerInfo.ConnectionState)
+		{
+			case PoorConnection:
+				C.DrawRect(PoorSignalIcon, TurboHUD.BarHeight * 2.5f, TurboHUD.BarHeight * 2.5f);
+				break;
+			case NoConnection:
+				C.DrawRect(NoSignalIcon, TurboHUD.BarHeight * 2.5f, TurboHUD.BarHeight * 2.5f);
+				break;
+		}
+	}
+
 	// Health
 	bDrawLostHealth = PlayerInfo.PreviousHealth > PlayerInfo.CurrentHealth;
 	DrawBackplate(C, ScreenLocX, ScreenLocY, BeaconAlpha, 1.f);
@@ -590,7 +611,7 @@ simulated final function DrawPlayerInfo(Canvas C, out PlayerInfoData PlayerInfo,
 		DrawBar(C, ScreenLocX + FMax((TurboHUD.BarLength * (PlayerInfo.CurrentHealth - 0.01f)), 0.f), ScreenLocY, FClamp((PlayerInfo.PreviousHealth - PlayerInfo.CurrentHealth) + 0.01f, 0, 1), HealthLossBarColor, 1.f);
 	}
 
-	if ( PlayerInfo.CurrentHealth > 0.f )
+	if (PlayerInfo.CurrentHealth > 0.f )
 	{
 		HealthBarColor.A = byte(float(default.HealthBarColor.A) * (float(BeaconAlpha) / 255.f));
 		DrawBar(C, ScreenLocX, ScreenLocY, FClamp(PlayerInfo.CurrentHealth, 0, 1), HealthBarColor, 1.f);
@@ -788,6 +809,8 @@ defaultproperties
 
 	ChatIcon=Texture'KFTurbo.HUD.ChatIcon_a00'
 	ShoppingIcon=Texture'KFTurbo.HUD.ShopIcon_a01'
+	PoorSignalIcon=Texture'KFTurbo.HUD.LowSignal_a01'
+	NoSignalIcon=Texture'KFTurbo.HUD.NoSignal_a01'
 
 	MedicBackplate=Texture'KFTurbo.HUD.EdgeBackplate_D'
 	MedicCap=Texture'KFTurbo.HUD.ContainerRoundedCap_D'

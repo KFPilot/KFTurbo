@@ -57,6 +57,9 @@ var(Layout) float PingTextSizeY;
 var(Color) Color PingIconColor;
 var Texture PingIcon;
 
+var Texture PoorSignalIcon;
+var Texture NoSignalIcon;
+
 var localized string ThousandSuffix;
 var localized string MillionSuffix;
 var localized string SeparatorCharacter;
@@ -389,6 +392,22 @@ simulated final function DrawPlayerEntry(Canvas Canvas, TurboPlayerReplicationIn
 		Canvas.SetPos(TempX - (TextSizeX * 0.5f), PositionY - (TextSizeY * 0.5f));
 		Canvas.DrawText(DrawText);
 	}
+
+	if (TurboPRI.GetConnectionState() != Normal)
+	{
+		TempX = (CenterX + (SizeX * 0.5f));
+		TempY = CenterY - (SizeY * 0.4f);
+		Canvas.SetPos(TempX + (SizeY * 0.1f), TempY);
+		switch (TurboPRI.GetConnectionState())
+		{
+			case PoorConnection:
+				Canvas.DrawRect(PoorSignalIcon, (SizeY * 0.8f), (SizeY * 0.8f));
+				break;
+			case NoConnection:
+				Canvas.DrawRect(NoSignalIcon, (SizeY * 0.8f), (SizeY * 0.8f));
+				break;
+		}
+	}
 }
 
 defaultproperties
@@ -434,6 +453,8 @@ defaultproperties
 	PingIconColor=(R=40,G=40,B=40,A=230)
 	PingIcon=Texture'KFTurbo.Scoreboard.ScoreboardPing_D'
 
+	PoorSignalIcon=Texture'KFTurbo.HUD.LowSignal_a01'
+	NoSignalIcon=Texture'KFTurbo.HUD.NoSignal_a01'
 	
 	ThousandSuffix="K"
 	MillionSuffix="M"

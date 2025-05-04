@@ -3,6 +3,15 @@
 //For more information see https://github.com/KFPilot/KFTurbo.
 class TurboPlayerReplicationInfo extends KFPlayerReplicationInfo;
 
+enum EConnectionState
+{
+    Normal,
+    PoorConnection,
+    NoConnection
+};
+var float LastPoorConnectionTime;
+var float LastNoConnectionTime;
+
 var int ShieldStrength;
 
 var int HealthMax;
@@ -137,6 +146,29 @@ simulated function UnregisterCustomInfo(TurboPlayerCustomInfo CustomInfo)
             PlayerCustomInfoList.Remove(Index, 1);
         }
     }
+}
+
+simulated final function EConnectionState GetConnectionState()
+{
+    if (PacketLoss >= 50)
+    {
+        LastNoConnectionTime = Level.TimeSeconds + 10.f;
+    }
+    else if (PacketLoss >= 5)
+    {
+        LastPoorConnectionTime = Level.TimeSeconds + 10.f;
+    }
+
+    if (LastNoConnectionTime > 0.f && Level.TimeSeconds < LastNoConnectionTime)
+    {
+        return NoConnection;
+    }
+    else if (LastPoorConnectionTime > 0.f && Level.TimeSeconds < LastPoorConnectionTime)
+    {
+        return PoorConnection;
+    }
+
+    return Normal;
 }
 
 defaultproperties
