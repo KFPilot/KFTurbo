@@ -579,6 +579,11 @@ function ActivateHeavyWeapons(TurboCardGameplayManager GameplayManager, TurboCar
     Card.UpdateModifier(GameplayManager.PlayerEquipRateModifier, 1.1f, bActivate);
 }
 
+function ActivateNothing(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
+{
+
+}
+
 defaultproperties
 {
     Begin Object Name=TradeIn Class=TurboCard_ProConStrange
@@ -1089,4 +1094,12 @@ defaultproperties
         OnActivateCard=ActivateHeavyWeapons
     End Object
     DeckCardObjectList(39)=TurboCard'HeavyWeapons'
+
+    Begin Object Name=Nothing Class=TurboCard_ProCon
+        CardName(0)="Nothing"
+        CardDescriptionList(0)=""
+        CardID="PROCON_NOTHING"
+        OnActivateCard=ActivateNothing
+    End Object
+    DeckCardObjectList(40)=TurboCard'Nothing'
 }
