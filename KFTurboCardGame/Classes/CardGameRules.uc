@@ -30,6 +30,7 @@ var(Turbo) float TrashHeadshotDamageMultiplier;
 var(Turbo) float TrashDamageMultiplier;
 var(Turbo) float BossDamageMultiplier;
 var(Turbo) float MonsterFullHealthDamageMultiplier;
+var(Turbo) bool bPlayerHeadshotsIncreaseHeadshotDamage;
 
 var(Turbo) float DamageTakenMultiplier;
 var(Turbo) float ExplosiveDamageTakenMultiplier;
@@ -295,7 +296,7 @@ final function bool IsInCheatDeathGracePeriod(TurboPlayerCardCustomInfo PlayerCa
 function int NetDamage(int OriginalDamage, int Damage, Pawn Injured, Pawn InstigatedBy, Vector HitLocation, out Vector Momentum, class<DamageType> DamageType )
 {
     local class<KFWeaponDamageType> WeaponDamageType;
-    local TurboPlayerCardCustomInfo InjuredCardInfo;
+    local TurboPlayerCardCustomInfo InjuredCardInfo, InstigatorCardInfo;
     local float DamageMultiplier;
     Damage = Super.NetDamage(OriginalDamage, Damage, Injured, InstigatedBy, HitLocation, Momentum, DamageType);
 
@@ -342,7 +343,12 @@ function int NetDamage(int OriginalDamage, int Damage, Pawn Injured, Pawn Instig
     if (WeaponDamageType != None)
     {
         if (KFHumanPawn(InstigatedBy) != None)
-        {
+        {            
+            if (InstigatedBy.Controller == None || InstigatedBy.Controller.PlayerReplicationInfo == None || !InstigatedBy.Controller.bIsPlayer)
+            {
+                InstigatorCardInfo = FindCustomInfo(TurboPlayerReplicationInfo(InstigatedBy.PlayerReplicationInfo));
+            }
+
             if (LowHealthDamageMultiplier != 1.f && ((float(InstigatedBy.Health) / InstigatedBy.HealthMax) < 0.75f))
             {
                 DamageMultiplier *= LowHealthDamageMultiplier;
@@ -386,10 +392,10 @@ function int NetDamage(int OriginalDamage, int Damage, Pawn Injured, Pawn Instig
 
             if (KFMonster(Injured) != None)
             {
-                MonsterNetDamage(DamageMultiplier, KFMonster(Injured), InstigatedBy, HitLocation, Momentum, WeaponDamageType);
+                MonsterNetDamage(DamageMultiplier, KFMonster(Injured), InstigatedBy, InstigatorCardInfo, HitLocation, Momentum, WeaponDamageType);
             }
 
-            DamageMultiplier *= GetCriticalHitMultiplier(InstigatedBy, HitLocation);
+            DamageMultiplier *= GetCriticalHitMultiplier(InstigatedBy, InstigatorCardInfo, HitLocation);
         }
 
         if (KFHumanPawn(Injured) != None && WeaponDamageType.default.bIsExplosive)
@@ -499,7 +505,7 @@ function ApplyPerkDamageModifiers(out float DamageMultiplier, KFHumanPawn Instig
     }
 }
 
-function MonsterNetDamage(out float DamageMultiplier, KFMonster Injured, Pawn InstigatedBy, Vector HitLocation, out Vector Momentum, class<KFWeaponDamageType> WeaponDamageType)
+function MonsterNetDamage(out float DamageMultiplier, KFMonster Injured, Pawn InstigatedBy, TurboPlayerCardCustomInfo InsitgatorCardInfo, Vector HitLocation, out Vector Momentum, class<KFWeaponDamageType> WeaponDamageType)
 {
     local bool bWasHeadshot;
     local PawnHelper.EMonsterTier MonsterTier;
@@ -539,6 +545,11 @@ function MonsterNetDamage(out float DamageMultiplier, KFMonster Injured, Pawn In
             }
 
             DamageMultiplier *= HeadshotDamageMultiplier;
+
+            if (bPlayerHeadshotsIncreaseHeadshotDamage && InsitgatorCardInfo != None)
+            {
+                DamageMultiplier *= InsitgatorCardInfo.GetPlayerHeadshotBonus();
+            }
         }
         else
         {
@@ -552,18 +563,10 @@ function MonsterNetDamage(out float DamageMultiplier, KFMonster Injured, Pawn In
     }
 }
 
-function float GetCriticalHitMultiplier(Pawn InstigatedBy, vector HitLocation)
+function float GetCriticalHitMultiplier(Pawn InstigatedBy, TurboPlayerCardCustomInfo PlayerCardInfo, vector HitLocation)
 {
-    local TurboPlayerCardCustomInfo PlayerCardInfo;
     local float CurrentCriticalHitChance;
     local int NumCriticalHits;
-    
-    if (InstigatedBy == None || InstigatedBy.Controller == None || InstigatedBy.Controller.PlayerReplicationInfo == None || !InstigatedBy.Controller.bIsPlayer)
-    {
-        return 1.f;
-    }
-
-    PlayerCardInfo = FindCustomInfo(TurboPlayerReplicationInfo(InstigatedBy.Controller.PlayerReplicationInfo));
 
     NumCriticalHits = 0;
     CurrentCriticalHitChance = CriticalHitChance + BaseCriticalHitChance;

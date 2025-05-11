@@ -436,6 +436,11 @@ function ActivateEpinephrine(TurboCardGameplayManager GameplayManager, TurboCard
     Card.UpdateFlag(GameplayManager.PlayerHealBoostBuff, bActivate);
 }
 
+function ActivateRackEmUp(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
+{
+    Card.UpdateFlag(GameplayManager.PlayerHeadshotsIncreaseHeadshotDamage, bActivate);
+}
+
 defaultproperties
 {
     Begin Object Name=Cleanse Class=TurboCard_Super
@@ -862,4 +867,18 @@ defaultproperties
         CardID="SUPER_EPINE"
     End Object
     DeckCardObjectList(36)=TurboCard'Epinephrine'
+
+    Begin Object Name=RackEmUp Class=TurboCard_Super
+        CardName(0)="Rack'em'Up"
+        CardDescriptionList(0)="Headshots increase"
+        CardDescriptionList(1)="headshot damage by"
+        CardDescriptionList(2)="2.5% per headshot to"
+        CardDescriptionList(3)="a maximum of 30%."
+        CardDescriptionList(4)="Resets after 3"
+        CardDescriptionList(5)="seconds of not"
+        CardDescriptionList(6)="scoring a headshot."
+        OnActivateCard=ActivateRackEmUp
+        CardID="SUPER_MOMENTUM"
+    End Object
+    DeckCardObjectList(37)=TurboCard'RackEmUp'
 }

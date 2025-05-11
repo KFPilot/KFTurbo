@@ -23,10 +23,13 @@ var float LastHealBoostTime;
 var float HealBoostBoostTime;
 var float HealBoostBoostCooldown;
 
+var int HeadshotCount;
+var float HeadshotStackExpireTime;
+
 replication
 {
     reliable if (Role == ROLE_Authority)
-        LastGrenadeThrowTime, LastHealBoostTime;
+        LastGrenadeThrowTime, LastHealBoostTime, HeadshotCount, HeadshotStackExpireTime;
 }
 
 simulated function PostBeginPlay()
@@ -34,6 +37,7 @@ simulated function PostBeginPlay()
 	Super.PostBeginPlay();
 
 	SetTimer(0.1f, false);
+	Disable('Tick');
 }
 
 simulated function Timer()
@@ -46,6 +50,30 @@ simulated function Timer()
 	}
 
 	SetTimer(0.1f, false);
+}
+
+function Tick(float DeltaTime)
+{
+	local bool bNeedsTick;
+	bNeedsTick = false;
+	
+	if (HeadshotCount != 0)
+	{
+		if (HeadshotStackExpireTime > Level.TimeSeconds)
+		{
+			bNeedsTick = true;
+		}
+		else
+		{
+			ResetPlayerHeadshot();
+		}
+	}
+
+
+	if (!bNeedsTick)
+	{
+		Disable('Tick');
+	}
 }
 
 //Doesn't use ServerTimeActor because this is only used on server.
@@ -99,6 +127,25 @@ final simulated function PlayerHealed()
 final simulated function bool IsInHealBoostTime()
 {
 	return LastHealBoostTime > 0.f && (LastHealBoostTime + HealBoostBoostTime > ServerTimeActor.GetServerTimeSeconds());
+}
+
+final simulated function PlayerScoredHeadshot()
+{
+	HeadshotCount++;
+	HeadshotStackExpireTime = Level.TimeSeconds + 3.f;
+	Enable('Tick');
+	ForceNetUpdate();
+}
+
+final simulated function float GetPlayerHeadshotBonus()
+{
+	return 1.f + (float(Min(HeadshotCount, 12)) * 0.025f);
+}
+
+final simulated function ResetPlayerHeadshot()
+{
+	HeadshotCount = 0;
+	ForceNetUpdate();
 }
 
 defaultproperties

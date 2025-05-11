@@ -186,6 +186,7 @@ var CardModifierStack PlayerThornsModifier;
 //SPECIAL
 var CardFlag PlayerGrenadeThrowBuff;
 var CardFlag PlayerHealBoostBuff;
+var CardFlag PlayerHeadshotsIncreaseHeadshotDamage;
 
 ////////////////////
 //MONSTER MODIFIERS
@@ -1157,6 +1158,12 @@ function PlayerHealBoostBuffFlagChanged(CardFlag Flag, bool bIsEnabled)
     HealCardEventHandler.bHealingBoost = bIsEnabled;
 }
 
+function PlayerHeadshotsIncreaseHeadshotDamageFlagChanged(CardFlag Flag, bool bIsEnabled)
+{
+    CardGameRules.bPlayerHeadshotsIncreaseHeadshotDamage = bIsEnabled;
+    PlayerCardEventHandler.bPlayerHeadshotsIncreaseHeadshotDamage = bIsEnabled;
+}
+
 ////////////////////
 //MONSTER MODIFIERS
 
@@ -1912,6 +1919,11 @@ defaultproperties
     End Object
     PlayerHealBoostBuff=CardFlag'PlayerHealBoostBuffCardFlag'
 
+    Begin Object Name=PlayerHeadshotsIncreaseHeadshotDamageFlag Class=CardFlag
+        FlagID="PlayerHeadshotsIncreaseHeadshotDamage"
+        OnFlagSetChanged=PlayerHeadshotsIncreaseHeadshotDamageFlagChanged
+    End Object
+    PlayerHeadshotsIncreaseHeadshotDamage=CardFlag'PlayerHeadshotsIncreaseHeadshotDamageFlag'
 
 ////////////////////
 //MONSTER MODIFIERS

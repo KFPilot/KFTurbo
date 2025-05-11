@@ -4,6 +4,7 @@
 class TurboPlayerCardEventHandler extends TurboPlayerEventHandler;
 
 var bool bTossGrenadeBuff;
+var bool bPlayerHeadshotsIncreaseHeadshotDamage;
 
 static function TurboPlayerCardCustomInfo FindCardCustomInfo(TurboPlayerController Player)
 {
@@ -20,6 +21,7 @@ function PostBeginPlay()
     Super.PostBeginPlay();
 
     OnPlayerFire = PlayerFire;
+    OnPlayerFireHit = PlayerFireHit;
 }
 
 final function PlayerFire(TurboPlayerController Player, WeaponFire FireMode)
@@ -30,7 +32,16 @@ final function PlayerFire(TurboPlayerController Player, WeaponFire FireMode)
     }
 }
 
+final function PlayerFireHit(TurboPlayerController Player, WeaponFire FireMode, KFMonster HitMonster, class<KFMonster> MonsterClass, bool bHeadshot, int Damage)
+{
+    if (bPlayerHeadshotsIncreaseHeadshotDamage)
+    {
+        FindCardCustomInfo(Player).PlayerScoredHeadshot(); 
+    }
+}
+
 defaultproperties
 {
     bTossGrenadeBuff=false
+    bPlayerHeadshotsIncreaseHeadshotDamage=false
 }
