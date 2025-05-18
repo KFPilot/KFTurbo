@@ -59,6 +59,8 @@ var(Turbo) float WeldStrengthMultiplier;
 
 var(Turbo) bool bOversizedPipebombs;
 
+var(Turbo) bool bBurnSpeedsUpPlayers;
+
 replication
 {
     reliable if(bNetDirty && Role == ROLE_Authority)
@@ -72,7 +74,8 @@ replication
         PlayerMovementSpeedMultiplier, PlayerMovementAccelMultiplier, bFreezePlayersDuringWave, bMoneySlowsPlayers, bMissingHealthStronglySlows,
         PlayerMaxHealthMultiplier,
         HealRechargeMultiplier,
-        bOversizedPipebombs;
+        bOversizedPipebombs,
+        bBurnSpeedsUpPlayers;
 }
 
 static simulated final function TurboPlayerCardCustomInfo GetPlayerCustomInfo(KFPlayerReplicationInfo KFPRI)
@@ -210,10 +213,13 @@ simulated function float GetTraderGrenadeCostMultiplier(KFPlayerReplicationInfo 
 simulated function float GetPlayerMovementSpeedMultiplier(KFPlayerReplicationInfo KFPRI, KFGameReplicationInfo KFGRI) 
 {
     local float Multiplier;
+    local KFPawn Pawn;
+
+    Pawn = KFPawn(Controller(KFPRI.Owner).Pawn);
 
     if (bFreezePlayersDuringWave && KFGRI != None && KFGRI.bWaveInProgress)
     {
-        if (KFMeleeGun(Controller(KFPRI.Owner).Pawn.Weapon) == None)
+        if (KFMeleeGun(Pawn.Weapon) == None)
         {
             return 0.0001f;
         }
@@ -226,9 +232,14 @@ simulated function float GetPlayerMovementSpeedMultiplier(KFPlayerReplicationInf
         Multiplier *= FClamp(Lerp((KFPRI.Score - 800.f) / 5200.f, 1.f, 0.01f), 0.01f, 1.f);
     }
 
-    if (bMissingHealthStronglySlows && Controller(KFPRI.Owner) != None && (float(Controller(KFPRI.Owner).Pawn.Health) / Controller(KFPRI.Owner).Pawn.HealthMax) < 0.75f)
+    if (bMissingHealthStronglySlows && Pawn != None && (float(Pawn.Health) / Pawn.HealthMax) < 0.75f)
     {
         Multiplier *= 0.75f;
+    }
+
+    if (bBurnSpeedsUpPlayers && Pawn != None && Pawn.bBurnified)
+    {
+        Multiplier *= 1.15f;
     }
     
     return Super.GetPlayerMovementSpeedMultiplier(KFPRI, KFGRI) * Multiplier * GetCardCustomInfoSpeedMultiplier(GetPlayerCustomInfo(KFPRI));

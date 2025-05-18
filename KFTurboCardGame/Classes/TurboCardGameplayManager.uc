@@ -119,6 +119,7 @@ var CardModifierStack PlayerArmorStrengthModifier;
 var CardModifierStack PlayerDamageTakenModifier;
 var CardModifierStack PlayerExplosiveDamageTakenModifier;
 var CardModifierStack PlayerFallDamageModifier;
+var CardModifierStack PlayerBurnDamageModifier;
 
 var CardFlag PlayerDamageSubstituteFlag;
 
@@ -187,6 +188,7 @@ var CardModifierStack PlayerThornsModifier;
 var CardFlag PlayerGrenadeThrowBuff;
 var CardFlag PlayerHealBoostBuff;
 var CardFlag PlayerHeadshotsIncreaseHeadshotDamage;
+var CardFlag PlayerBurnGivesMovementSpeed;
 
 ////////////////////
 //MONSTER MODIFIERS
@@ -880,6 +882,11 @@ function PlayerFallDamageModifierChanged(CardModifierStack ModifiedStack, float 
     CardGameRules.FallDamageTakenMultiplier = Modifier;
 }
 
+function PlayerBurnDamageModifierChanged(CardModifierStack ModifiedStack, float Modifier)
+{
+    CardGameRules.PlayerBurnDamageModifier = Modifier;
+}
+
 function PlayerDamageSubstituteCardFlagChanged(CardFlag Flag, bool bIsEnabled)
 {
     CardGameRules.bNegateFirstPlayerDamage = bIsEnabled;
@@ -1162,6 +1169,12 @@ function PlayerHeadshotsIncreaseHeadshotDamageFlagChanged(CardFlag Flag, bool bI
 {
     CardGameRules.bPlayerHeadshotsIncreaseHeadshotDamage = bIsEnabled;
     PlayerCardEventHandler.bPlayerHeadshotsIncreaseHeadshotDamage = bIsEnabled;
+}
+
+function PlayerBurnGivesMovementSpeedFlagChanged(CardFlag Flag, bool bIsEnabled)
+{
+    CardGameModifier.bBurnSpeedsUpPlayers = bIsEnabled;
+    CardGameModifier.ForceNetUpdate();
 }
 
 ////////////////////
@@ -1666,6 +1679,12 @@ defaultproperties
     End Object
     PlayerFallDamageModifier=CardModifierStack'PlayerFallDamageModifierStack'
 
+    Begin Object Name=PlayerBurnDamageModifierStack Class=CardModifierStack
+        ModifierStackID="PlayerBurnDamageModifier"
+        OnModifierChanged=PlayerBurnDamageModifierChanged
+    End Object
+    PlayerBurnDamageModifier=CardModifierStack'PlayerBurnDamageModifierStack'
+
     Begin Object Name=PlayerDamageSubstituteCardFlag Class=CardFlag
         FlagID="PlayerDamageSubstitute"
         OnFlagSetChanged=PlayerDamageSubstituteCardFlagChanged
@@ -1924,6 +1943,12 @@ defaultproperties
         OnFlagSetChanged=PlayerHeadshotsIncreaseHeadshotDamageFlagChanged
     End Object
     PlayerHeadshotsIncreaseHeadshotDamage=CardFlag'PlayerHeadshotsIncreaseHeadshotDamageFlag'
+
+    Begin Object Name=PlayerBurnGivesMovementSpeedFlag Class=CardFlag
+        FlagID="PlayerBurnGivesMovementSpeed"
+        OnFlagSetChanged=PlayerBurnGivesMovementSpeedFlagChanged
+    End Object
+    PlayerBurnGivesMovementSpeed=CardFlag'PlayerBurnGivesMovementSpeedFlag'
 
 ////////////////////
 //MONSTER MODIFIERS

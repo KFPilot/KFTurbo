@@ -35,6 +35,7 @@ var(Turbo) bool bPlayerHeadshotsIncreaseHeadshotDamage;
 var(Turbo) float DamageTakenMultiplier;
 var(Turbo) float ExplosiveDamageTakenMultiplier;
 var(Turbo) float FallDamageTakenMultiplier;
+var(Turbo) float PlayerBurnDamageModifier;
 
 var(Turbo) float OnPerkDamageMultiplier;
 var(Turbo) float OffPerkDamageMultiplier;
@@ -444,7 +445,11 @@ function int NetDamage(int OriginalDamage, int Damage, Pawn Injured, Pawn Instig
 
     if (KFHumanPawn(Injured) != None)
     {
-        if (FallDamageTakenMultiplier != 1.f && class<TurboHumanFall_DT>(DamageType) != None)
+        if (PlayerBurnDamageModifier != 1.f && class<TurboHumanBurned_DT>(DamageType) != None)
+        {
+            DamageMultiplier *= PlayerBurnDamageModifier;
+        }
+        else if (FallDamageTakenMultiplier != 1.f && class<TurboHumanFall_DT>(DamageType) != None)
         {
             DamageMultiplier *= FallDamageTakenMultiplier;
         }
@@ -1210,6 +1215,7 @@ defaultproperties
     DamageTakenMultiplier=1.f
     ExplosiveDamageTakenMultiplier=1.f
     FallDamageTakenMultiplier=1.f
+    PlayerBurnDamageModifier=1.f
 
     OnPerkDamageMultiplier=1.f
     OffPerkDamageMultiplier=1.f

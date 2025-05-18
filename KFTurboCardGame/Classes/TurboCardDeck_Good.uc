@@ -427,6 +427,12 @@ function ActivateLongerBreather(TurboCardGameplayManager GameplayManager, TurboC
     Card.UpdateModifier(GameplayManager.TraderTimeModifier, 1.25f, bActivate);
 }
 
+function ActivateGooseCooked(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
+{
+    Card.UpdateModifier(GameplayManager.PlayerBurnDamageModifier, 0.5f, bActivate);
+    Card.UpdateFlag(GameplayManager.PlayerBurnGivesMovementSpeed, bActivate);
+}
+
 defaultproperties
 {
     Begin Object Name=BonusCashKill Class=TurboCard_Good
@@ -830,4 +836,17 @@ defaultproperties
         OnActivateCard=ActivateLongerBreather
     End Object
     DeckCardObjectList(39)=TurboCard'LongerBreather'
+
+    Begin Object Name=GooseCooked Class=TurboCard_Good
+        CardName(0)="My Goose Is"
+        CardName(1)="Getting Cooked"
+        CardDescriptionList(0)="Increases player"
+        CardDescriptionList(1)="movement speed by"
+        CardDescriptionList(2)="15% when on fire"
+        CardDescriptionList(3)="and reduces burn"
+        CardDescriptionList(4)="damage by 50%."
+        CardID="GOOD_GOOSECOOKED"
+        OnActivateCard=ActivateGooseCooked
+    End Object
+    DeckCardObjectList(40)=TurboCard'GooseCooked'
 }

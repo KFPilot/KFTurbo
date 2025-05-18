@@ -26,6 +26,7 @@ const LoginMenuFlag = 2;
 var byte PlayerFlags;
 
 var float JumpZMultiplier;
+var float BurnDamageMultiplier;
 
 replication
 {
@@ -160,11 +161,11 @@ function VeterancyChanged()
 }
 
 //Changed out damage type to ignore (and more importantly not damage) armor.
-function TakeFireDamage(int Damage, pawn BInstigator)
+function TakeFireDamage(int Damage, pawn BurnInstigator)
 {
     if( Damage > 0 )
     {
-        TakeDamage(float(Damage) * Lerp(ShieldStrength / 100.f, 1.f, 0.25f, true), BInstigator, Location, vect(0,0,0), class'TurboHumanBurned_DT');
+        TakeDamage(float(Damage) * Lerp(ShieldStrength / 100.f, 1.f, 0.25f, true) * BurnDamageMultiplier, BurnInstigator, Location, vect(0,0,0), class'TurboHumanBurned_DT');
 
         if (BurnDown > 0)
         {
@@ -950,6 +951,7 @@ defaultproperties
 	bDebugServerBuyWeapon=false
 	HealthHealingTo=0
 	JumpZMultiplier=1.f
+	BurnDamageMultiplier=1.f
 
 	RequiredEquipment(0)="KFTurbo.W_Knife_Weap"
 	RequiredEquipment(1)="KFTurbo.W_9MM_Weap"
