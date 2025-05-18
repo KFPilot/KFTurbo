@@ -1184,7 +1184,7 @@ simulated final function DrawWeight(Canvas C, Vector2D LeftAnchor)
 	if (bEnableHitchDetection && LastHitchTime + 5.f > Level.TimeSeconds)
 	{
 		C.DrawColor = C.MakeColor(255, 0, 0, 255);
-		C.SetPos(BackplateCenterX - BackplateSizeX, (BackplateCenterY - (BackplateSizeY * 0.5f)) - TextSizeY);
+		C.SetPos(BackplateCenterX - BackplateSizeX, (BackplateCenterY - (BackplateSizeY * 1.5f)) - TextSizeY);
 		C.Font = TurboHUD.LoadFont(BaseFontSize + 3);
 		C.DrawText("HITCH FRAME TIME:"@(HitchFrameTime * 1000.f)$"ms");
 	}
