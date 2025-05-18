@@ -23,13 +23,13 @@ var float LastHealBoostTime;
 var float HealBoostBoostTime;
 var float HealBoostBoostCooldown;
 
-var int HeadshotCount;
-var float HeadshotStackExpireTime;
+var int RackEmUpHeadshotCount;
+var float RackEmUpHeadshotStackExpireTime;
 
 replication
 {
     reliable if (Role == ROLE_Authority)
-        LastGrenadeThrowTime, LastHealBoostTime, HeadshotCount, HeadshotStackExpireTime;
+        LastGrenadeThrowTime, LastHealBoostTime, RackEmUpHeadshotCount, RackEmUpHeadshotStackExpireTime;
 }
 
 simulated function PostBeginPlay()
@@ -37,13 +37,15 @@ simulated function PostBeginPlay()
 	Super.PostBeginPlay();
 
 	SetTimer(0.1f, false);
-	Disable('Tick');
 }
 
 simulated function Timer()
 {
-	ServerTimeActor = TurboGameReplicationInfo(Level.GRI).ServerTimeActor;
-
+	if (TurboGameReplicationInfo(Level.GRI) != None)
+	{
+		ServerTimeActor = TurboGameReplicationInfo(Level.GRI).ServerTimeActor;
+	}
+	
 	if (ServerTimeActor != None)
 	{
 		return;
@@ -52,14 +54,21 @@ simulated function Timer()
 	SetTimer(0.1f, false);
 }
 
-function Tick(float DeltaTime)
+simulated function Tick(float DeltaTime)
 {
 	local bool bNeedsTick;
 	bNeedsTick = false;
 	
-	if (HeadshotCount != 0)
+	Super.Tick(DeltaTime);
+
+	if (!bRegistered)
 	{
-		if (HeadshotStackExpireTime > Level.TimeSeconds)
+		return;
+	}
+
+	if (RackEmUpHeadshotCount != 0)
+	{
+		if (RackEmUpHeadshotStackExpireTime > Level.TimeSeconds)
 		{
 			bNeedsTick = true;
 		}
@@ -69,10 +78,13 @@ function Tick(float DeltaTime)
 		}
 	}
 
-
 	if (!bNeedsTick)
 	{
 		Disable('Tick');
+	}
+	else
+	{
+		Enable('Tick');
 	}
 }
 
@@ -131,20 +143,20 @@ final simulated function bool IsInHealBoostTime()
 
 final simulated function PlayerScoredHeadshot()
 {
-	HeadshotCount++;
-	HeadshotStackExpireTime = Level.TimeSeconds + 3.f;
+	RackEmUpHeadshotCount++;
+	RackEmUpHeadshotStackExpireTime = Level.TimeSeconds + 3.f;
 	Enable('Tick');
 	ForceNetUpdate();
 }
 
 final simulated function float GetPlayerHeadshotBonus()
 {
-	return 1.f + (float(Min(HeadshotCount, 12)) * 0.025f);
+	return 1.f + (float(Min(RackEmUpHeadshotCount, 12)) * 0.025f);
 }
 
 final simulated function ResetPlayerHeadshot()
 {
-	HeadshotCount = 0;
+	RackEmUpHeadshotCount = 0;
 	ForceNetUpdate();
 }
 

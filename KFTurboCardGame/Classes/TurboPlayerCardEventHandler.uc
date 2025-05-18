@@ -34,7 +34,7 @@ final function PlayerFire(TurboPlayerController Player, WeaponFire FireMode)
 
 final function PlayerFireHit(TurboPlayerController Player, WeaponFire FireMode, KFMonster HitMonster, class<KFMonster> MonsterClass, bool bHeadshot, int Damage)
 {
-    if (bPlayerHeadshotsIncreaseHeadshotDamage)
+    if (bHeadshot && bPlayerHeadshotsIncreaseHeadshotDamage)
     {
         FindCardCustomInfo(Player).PlayerScoredHeadshot(); 
     }

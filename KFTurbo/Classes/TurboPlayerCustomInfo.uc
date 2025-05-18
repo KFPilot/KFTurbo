@@ -4,6 +4,7 @@
 class TurboPlayerCustomInfo extends ReplicationInfo;
 
 var TurboPlayerReplicationInfo PlayerTPRI;
+var bool bRegistered;
 var float ResolveTimeout;
 
 replication
@@ -42,11 +43,24 @@ simulated function PostBeginPlay()
 {
 	if (Role == ROLE_Authority)
 	{
-		PlayerTPRI = TurboPlayerReplicationInfo(Controller(Owner).PlayerReplicationInfo);
+		if (Controller(Owner) != None)
+		{
+			PlayerTPRI = TurboPlayerReplicationInfo(Controller(Owner).PlayerReplicationInfo);
+		}
+
 		ResolveTimeout = Level.TimeSeconds + 5.f;
 	}
-	
+	else if (PlayerTPRI == None)
+	{
+		if (Controller(Owner) != None)
+		{
+			PlayerTPRI = TurboPlayerReplicationInfo(Controller(Owner).PlayerReplicationInfo);
+		}
+	}
+
 	Super.PostBeginPlay();
+	
+	Enable('Tick');
 }
 
 simulated function Destroyed()
@@ -63,18 +77,31 @@ simulated function Tick(float DeltaTime)
 {
 	Super.Tick(DeltaTime);
 
-	if (PlayerTPRI == None)
+	if (bRegistered)
 	{
-		if (Role == ROLE_Authority && ResolveTimeout < Level.TimeSeconds)
-		{
-			Destroy();
-		}
-
 		return;
 	}
 
-	Register();
+	if (PlayerTPRI == None)
+	{
+		if (Controller(Owner) != None)
+		{
+			PlayerTPRI = TurboPlayerReplicationInfo(Controller(Owner).PlayerReplicationInfo);
+		}
 
+		if (PlayerTPRI == None)
+		{
+			if (Role == ROLE_Authority && ResolveTimeout < Level.TimeSeconds)
+			{
+				Destroy();
+			}
+
+			return;
+		}
+	}
+
+	bRegistered = true;
+	Register();
 	Disable('Tick');
 }
 
@@ -105,8 +132,10 @@ simulated function Unregister()
 
 defaultproperties
 {
+	bRegistered=false
+
 	RemoteRole=ROLE_None
-    NetUpdateFrequency=0.100000
+    NetUpdateFrequency=1.0
     bAlwaysRelevant=false
     bOnlyRelevantToOwner=false
 

@@ -333,7 +333,7 @@ function AddCardGamePlayerReplicationInfo(KFPlayerReplicationInfo PlayerReplicat
 	}
 
 	CardGamePRI.ForceNetUpdate();
-
+	
 	Spawn(class'TurboPlayerCardCustomInfo', PlayerReplicationInfo.Owner);
 }
 

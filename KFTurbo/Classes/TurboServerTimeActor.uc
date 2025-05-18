@@ -14,6 +14,16 @@ replication
 		ServerTimeSeconds;
 }
 
+static final function TurboServerTimeActor FindTurboServerTimeActor(Actor Context)
+{
+    if (Context == None || TurboGameReplicationInfo(Context.Level.GRI) == None)
+    {
+        return None;
+    }
+
+    return TurboGameReplicationInfo(Context.Level.GRI).ServerTimeActor;
+}
+
 simulated final function float GetServerTimeSeconds()
 {
     return ClientServerTimeSeconds;

@@ -4,6 +4,8 @@
 class TurboCardOverlay extends TurboHUDOverlay;
 
 var TurboCardReplicationInfo TCRI;
+var TurboPlayerCardCustomInfo PlayerCardCustomInfo;
+var TurboServerTimeActor ServerTimeActor;
 struct SelectableCardEntry
 {
 	var TurboCardActor CardActor;
@@ -49,6 +51,15 @@ var float FadeInAndUpRate;
 var float FanOutRatio;
 var float FanOutRate;
 
+var float RackEmUpRatio; 
+var float RackEmUpFadeInRate;
+var float RackEmUpFadeOutRate;
+var int RackEmUpLastKnownHeadshot;
+var float RackEmUpPulseRatio;
+var float RackEmUpPulseFadeRate;
+var float RackEmUpTimeStart;
+var float RackEmUpTimeEnd;
+
 enum EBorrowedTimeWarnLevel
 {
 	NoWarning,
@@ -91,6 +102,8 @@ simulated function InitializeCardGameHUD(TurboCardReplicationInfo CGRI)
 	OnActiveCardsUpdated(CGRI);
 
 	bReduceCardVisibility = class'TurboCardInteraction'.static.ShouldReduceCardVisibility(TurboPlayerController(TurboHUD.PlayerOwner));
+
+	Timer();
 }
 
 simulated function bool CanUseLargeCards()
@@ -167,6 +180,24 @@ simulated function int GetVoteIndex()
 	return CGPRI.VoteIndex - 1;
 }
 
+simulated function Timer()
+{
+	if (ServerTimeActor == None)
+	{
+		ServerTimeActor = class'TurboServerTimeActor'.static.FindTurboServerTimeActor(Self);
+	}
+
+	if (PlayerCardCustomInfo == None)
+	{
+		PlayerCardCustomInfo = TurboPlayerCardCustomInfo(class'TurboPlayerCardCustomInfo'.static.FindCustomInfo(TurboPlayerReplicationInfo(GetController().PlayerReplicationInfo)));
+	}
+
+	if (ServerTimeActor == None || PlayerCardCustomInfo == None)
+	{
+		SetTimer(0.1f, false);
+	}
+}
+
 simulated function Tick(float DeltaTime)
 {
 	local int Index;
@@ -213,6 +244,11 @@ simulated function Tick(float DeltaTime)
 		}
 
 		ActiveCardRenderActorList[Index].Ratio = FMax(Lerp(DeltaTime * 8.f, ActiveCardRenderActorList[Index].Ratio, 0.f), 0.f);
+	}
+
+	if (PlayerCardCustomInfo != None && (RackEmUpRatio > 0.f || PlayerCardCustomInfo.RackEmUpHeadshotCount != 0))
+	{
+		TickRackEmUp(DeltaTime);
 	}
 }
 
@@ -349,8 +385,6 @@ simulated function OnSelectableCardsUpdated(TurboCardReplicationInfo CGRI)
 
 	FadeInAndUpRatio = 0.f;
 	FanOutRatio = 0.f;
-
-    log ("OnSelectableCardsUpdated - CurrentCardCount:"@CurrentCardCount);
 }
 
 simulated function Render(Canvas C)
@@ -374,6 +408,11 @@ simulated function Render(Canvas C)
 	if (BorrowedTimeActor != None)
 	{
 		DrawBorrowedTime(C);
+	}
+
+	if (PlayerCardCustomInfo != None && (RackEmUpRatio > 0.f || PlayerCardCustomInfo.RackEmUpHeadshotCount != 0))
+	{
+		DrawRackEmUp(C);
 	}
 
 	class'TurboHUDKillingFloor'.static.ResetCanvas(C);
@@ -918,6 +957,107 @@ simulated function CheckSoundWarning(int TimeRemaining)
 	}
 }
 
+simulated function TickRackEmUp(float DeltaTime)
+{
+	if (PlayerCardCustomInfo.RackEmUpHeadshotCount == 0)
+	{
+		if (RackEmUpRatio > 0.f)
+		{
+			RackEmUpRatio = FMax(0.f, RackEmUpRatio - (DeltaTime * RackEmUpFadeOutRate));
+		}
+		else
+		{
+			RackEmUpLastKnownHeadshot = 0;
+		}
+		return;
+	}
+
+	if (RackEmUpRatio < 1.f)
+	{
+		RackEmUpRatio = Lerp(DeltaTime * RackEmUpFadeInRate, RackEmUpRatio, 1.f);
+		if (Abs(1.f - RackEmUpRatio) < 0.001f)
+		{
+			RackEmUpRatio = 1.f;
+		}
+	}
+
+	if (RackEmUpLastKnownHeadshot != PlayerCardCustomInfo.RackEmUpHeadshotCount)
+	{
+		if (RackEmUpLastKnownHeadshot < PlayerCardCustomInfo.RackEmUpHeadshotCount)
+		{
+			RackEmUpPulseRatio = Lerp(0.5f, RackEmUpPulseRatio, 1.f);
+		}
+
+		RackEmUpLastKnownHeadshot = PlayerCardCustomInfo.RackEmUpHeadshotCount;
+	}
+	else
+	{
+		RackEmUpPulseRatio = Lerp(DeltaTime * RackEmUpPulseFadeRate, RackEmUpPulseRatio, 0.f);
+	}
+
+	if (PlayerCardCustomInfo.RackEmUpHeadshotStackExpireTime != RackEmUpTimeEnd)
+	{
+		RackEmUpTimeEnd = PlayerCardCustomInfo.RackEmUpHeadshotStackExpireTime;
+		RackEmUpTimeStart = ServerTimeActor.GetServerTimeSeconds();
+	}
+}
+
+simulated function DrawRackEmUp(Canvas C)
+{
+	local float SizeX, SizeY;
+	local float TempX, TempY;
+	local float BarSizeX, BarSizeY;
+	local float TextSizeX, TextSizeY, TextScale;
+
+	if (RackEmUpRatio <= 0.f)
+	{
+		return;
+	}
+
+	class'TurboHUDKillingFloor'.static.ResetCanvas(C);
+
+	SizeX = C.SizeX;
+	SizeY = C.SizeY;
+	BarSizeX = SizeY * class'TurboHUDPlayer'.default.WeightBackplateSize.X * 0.333f;
+	BarSizeY = SizeY * class'TurboHUDPlayer'.default.WeightBackplateSize.Y;
+
+	TempX = (SizeX * 0.5f) - (SizeY * (class'TurboHUDPlayer'.default.HealthBackplateSize.X + (class'TurboHUDPlayer'.default.BackplateSpacing.X * 1.5f)));
+	TempX -= BarSizeX;
+
+	TempY = SizeY - (BarSizeY + (SizeY * (class'TurboHUDPlayer'.default.BackplateSpacing.Y * 2.f)));
+
+	C.Font = TurboHUD.LoadBoldItalicFont(BaseFontSize - 2);
+	C.TextSize("00", TextSizeX, TextSizeY);
+	TextScale = (BarSizeY / TextSizeY) * 1.f;
+
+	BarSizeY = SizeY * class'TurboHUDPlayer'.default.WeightBackplateSize.Y * 0.25f;
+
+	if (RackEmUpTimeStart <= 0.f || RackEmUpTimeEnd <= 0.f || RackEmUpTimeStart == RackEmUpTimeEnd || RackEmUpTimeEnd < ServerTimeActor.GetServerTimeSeconds())
+	{
+		C.SetPos(TempX, TempY - BarSizeY);
+		C.DrawColor = MakeColor(0, 0, 0, 120.f * RackEmUpRatio);
+		C.DrawTileStretched(TurboHUD.WhiteMaterial, BarSizeX, BarSizeY);
+	}
+	else
+	{
+		C.SetPos(TempX, TempY - BarSizeY);
+		C.DrawColor = MakeColor(0, 0, 0, 120 * RackEmUpRatio);
+		C.DrawTileStretched(TurboHUD.WhiteMaterial, BarSizeX, BarSizeY);
+		C.DrawColor = MakeColor(255, 0, 0, 180 * RackEmUpRatio);
+		C.DrawTileStretched(TurboHUD.WhiteMaterial, BarSizeX * FClamp((ServerTimeActor.GetServerTimeSecondsUntil(RackEmUpTimeEnd)) / (RackEmUpTimeEnd - RackEmUpTimeStart), 0.f , 1.f), BarSizeY);
+	}
+
+	C.FontScaleX = TextScale * (1.f + RackEmUpPulseRatio);
+	C.FontScaleY = C.FontScaleX;
+
+	C.TextSize(RackEmUpLastKnownHeadshot$"x", TextSizeX, TextSizeY);
+	C.DrawColor = MakeColor(0.f, 0.f, 0.f, 128.f * RackEmUpRatio);
+	C.SetPos(TempX + ((BarSizeX * 0.5f) - (TextSizeX * 0.5f)) + (TextSizeY * 0.1f), TempY - (TextSizeY * 0.6f));
+	C.DrawColor = MakeColor(255, 255, 255, 255.f * RackEmUpRatio);
+	C.SetPos(TempX + (BarSizeX * 0.5f) - (TextSizeX * 0.5f), TempY - (TextSizeY * 0.5f));
+	C.DrawText(RackEmUpLastKnownHeadshot$"x");
+}
+
 defaultproperties
 {
 	VotedCardIndex=-1
@@ -943,4 +1083,14 @@ defaultproperties
 	ThirtySecondsWarningSound=Sound'KF_FoundrySnd.Alarm_SirenLoop01'
 	TenSecondWarningSound=Sound'KF_FoundrySnd.1Shot.Alarm_AlertWarning01'
 	LastWarnTime=-1
+
+	RackEmUpRatio=0.f
+	RackEmUpFadeInRate=4.f
+	RackEmUpFadeOutRate=2.f
+
+	RackEmUpLastKnownHeadshot=0
+	RackEmUpPulseRatio=0.f
+	RackEmUpPulseFadeRate=6.f
+	RackEmUpTimeStart=-1.f
+	RackEmUpTimeEnd=-1.f
 }
