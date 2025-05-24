@@ -159,7 +159,7 @@ function ActivateMovementSpeed(TurboCardGameplayManager GameplayManager, TurboCa
 {
     if (bActivate)
     {
-        GameplayManager.PlayerMovementSpeedModifier.AddModifier(1.3f, Card);
+        GameplayManager.PlayerMovementSpeedModifier.AddModifier(1.25f, Card);
     }
     else
     {
@@ -171,7 +171,7 @@ function ActivateReloadSpeed(TurboCardGameplayManager GameplayManager, TurboCard
 {
     if (bActivate)
     {
-        GameplayManager.PlayerReloadRateModifier.AddModifier(1.5f, Card);
+        GameplayManager.PlayerReloadRateModifier.AddModifier(1.3f, Card);
     }
     else
     {
@@ -236,7 +236,7 @@ function ActivateStrongArm(TurboCardGameplayManager GameplayManager, TurboCard C
 {
     if (bActivate)
     {
-        GameplayManager.PlayerCarryCapacityDelta.AddDelta(3, Card);
+        GameplayManager.PlayerCarryCapacityDelta.AddDelta(4, Card);
     }
     else
     {
@@ -357,9 +357,9 @@ function ActivateSuppressiveFire(TurboCardGameplayManager GameplayManager, Turbo
 {
     if (bActivate)
     {
-        GameplayManager.PlayerFireRateModifier.AddModifier(1.5f, Card);
-        //PlayerFireRateModifier applies to melee weapons so we use this to reduce the effective melee firerate bonus to 25%.
-        GameplayManager.PlayerMeleeFireRateModifier.AddModifier(0.8333f, Card);
+        GameplayManager.PlayerFireRateModifier.AddModifier(1.4f, Card);
+        //PlayerFireRateModifier applies to melee weapons so we use this to reduce the effective melee firerate bonus to 20%.
+        GameplayManager.PlayerMeleeFireRateModifier.AddModifier(0.857142f, Card);
     }
     else
     {
@@ -554,7 +554,7 @@ defaultproperties
         CardName(0)="Adrenaline"
         CardDescriptionList(0)="Increases player"
         CardDescriptionList(1)="movement speed for"
-        CardDescriptionList(2)="all players by 30%."
+        CardDescriptionList(2)="all players by 25%."
         OnActivateCard=ActivateMovementSpeed
         CardID="SUPER_ADRENALINE"
     End Object
@@ -565,7 +565,7 @@ defaultproperties
         CardName(1)="Reload"
         CardDescriptionList(0)="Increases all"
         CardDescriptionList(1)="weapon reload"
-        CardDescriptionList(2)="speed by 50%."
+        CardDescriptionList(2)="speed by 30%."
         OnActivateCard=ActivateReloadSpeed
         CardID="SUPER_STRATRELOAD"
     End Object
@@ -624,7 +624,7 @@ defaultproperties
         CardName(0)="Strong Arm"
         CardDescriptionList(0)="Increases max"
         CardDescriptionList(1)="carry weight"
-        CardDescriptionList(2)="by 3 for all."
+        CardDescriptionList(2)="by 4 for all."
         CardDescriptionList(3)="players."
         OnActivateCard=ActivateStrongArm
         CardID="SUPER_STRONGARM"
@@ -726,8 +726,8 @@ defaultproperties
         CardDescriptionList(0)="Increases"
         CardDescriptionList(1)="firerate of all"
         CardDescriptionList(2)="ranged weapons by"
-        CardDescriptionList(3)="by 50% and melee"
-        CardDescriptionList(4)="weapons by 25%."
+        CardDescriptionList(3)="by 40% and melee"
+        CardDescriptionList(4)="weapons by 20%."
         OnActivateCard=ActivateSuppressiveFire
         CardID="SUPER_SUPPRESSFIRE"
     End Object
@@ -822,9 +822,9 @@ defaultproperties
         CardName(1)="Critical"
         CardDescriptionList(0)="Critical hits"
         CardDescriptionList(1)="increase critical"
-        CardDescriptionList(2)="hit chance by 75%"
+        CardDescriptionList(2)="hit chance by 50%"
         CardDescriptionList(3)="for 5 seconds."
-        CardDescriptionList(4)="Has a 20 second"
+        CardDescriptionList(4)="Has a 10 second"
         CardDescriptionList(5)="cooldown."
         OnActivateCard=ActivatePerpetuallyCritical
         CardID="SUPER_PERPCRITICAL"
@@ -859,9 +859,9 @@ defaultproperties
         CardDescriptionList(1)="movement speed by"
         CardDescriptionList(2)="50% and reduces"
         CardDescriptionList(3)="damage taken by 50%"
-        CardDescriptionList(4)="for 10 seconds when"
+        CardDescriptionList(4)="for 5 seconds when"
         CardDescriptionList(5)="healed by another"
-        CardDescriptionList(6)="player. Has a 45"
+        CardDescriptionList(6)="player. Has a 10"
         CardDescriptionList(7)="second cooldown."
         OnActivateCard=ActivateEpinephrine
         CardID="SUPER_EPINE"
@@ -872,13 +872,13 @@ defaultproperties
         CardName(0)="Rack'em'Up"
         CardDescriptionList(0)="Headshots increase"
         CardDescriptionList(1)="headshot damage by"
-        CardDescriptionList(2)="2.5% per headshot to"
+        CardDescriptionList(2)="2% per headshot to"
         CardDescriptionList(3)="a maximum of 30%."
-        CardDescriptionList(4)="Resets after 3"
+        CardDescriptionList(4)="Resets after 5"
         CardDescriptionList(5)="seconds of not"
         CardDescriptionList(6)="scoring a headshot."
         OnActivateCard=ActivateRackEmUp
-        CardID="SUPER_MOMENTUM"
+        CardID="SUPER_RACKEMUP"
     End Object
     DeckCardObjectList(37)=TurboCard'RackEmUp'
 }

@@ -224,6 +224,12 @@ final function OnPawnDartHealed(Pawn Instigator, Pawn Target, int HealingAmount,
 final function IncrementHealStats(Pawn Instigator, Pawn Target, int HealingAmount)
 {
     local TurboWavePlayerStatCollector StatCollector;
+    
+    if (HealingAmount <= 0)
+    {
+        return;
+    }
+
     if (Instigator == None || Instigator == Target)
     {
         return;

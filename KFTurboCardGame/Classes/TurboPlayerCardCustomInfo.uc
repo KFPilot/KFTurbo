@@ -144,14 +144,14 @@ final simulated function bool IsInHealBoostTime()
 final simulated function PlayerScoredHeadshot()
 {
 	RackEmUpHeadshotCount++;
-	RackEmUpHeadshotStackExpireTime = Level.TimeSeconds + 3.f;
+	RackEmUpHeadshotStackExpireTime = Level.TimeSeconds + 5.f;
 	Enable('Tick');
 	ForceNetUpdate();
 }
 
 final simulated function float GetPlayerHeadshotBonus()
 {
-	return 1.f + (float(Min(RackEmUpHeadshotCount, 12)) * 0.025f);
+	return 1.f + (float(Min(RackEmUpHeadshotCount, 15)) * 0.02f);
 }
 
 final simulated function ResetPlayerHeadshot()
@@ -169,7 +169,7 @@ defaultproperties
 
 	PerpetualCriticalHitStartTime=-1.f
 	PerpetualCriticalHitTime=5.f
-	PerpetualCriticalHitCooldown=20.f
+	PerpetualCriticalHitCooldown=10.f
 
 	NonCriticalHitCount=0
 
@@ -177,8 +177,8 @@ defaultproperties
 	GrenadeBoostTime=5.f
 
 	LastHealBoostTime=0.f
-	HealBoostBoostTime=10.f
-	HealBoostBoostCooldown=45.f
+	HealBoostBoostTime=5.f
+	HealBoostBoostCooldown=10.f
 
 	//Replicates now that the client has to be aware of certain properties on here.
     RemoteRole=ROLE_SimulatedProxy

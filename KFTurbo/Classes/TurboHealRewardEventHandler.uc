@@ -19,6 +19,11 @@ final function PawnDartHealed(Pawn Instigator, Pawn Target, int HealingAmount, H
 
 final function RewardHealedHealth(Pawn Instigator, Pawn Target, int HealingAmount)
 {
+    if (HealingAmount <= 0)
+    {
+        return;
+    }
+    
     if (Instigator == None || Instigator == Target || TurboPlayerReplicationInfo(Instigator.PlayerReplicationInfo) == None)
     {
         return;

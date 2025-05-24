@@ -27,6 +27,12 @@ function PawnDartHealed(Pawn Instigator, Pawn Target, int HealingAmount, Healing
     local SAReplicationInfo SARI;
     local TurboAchievementPackImpl AchievementPack;
     local int Index;
+    
+    if (HealingAmount <= 0)
+    {
+        return;
+    }
+
     SARI = ResolveSARI(Instigator);
 
     if (SARI == None)

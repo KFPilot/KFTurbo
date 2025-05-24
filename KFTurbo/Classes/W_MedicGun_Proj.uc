@@ -151,17 +151,17 @@ simulated function ProcessTouch(Actor Other, Vector HitLocation)
      }
 
      HitHumanPawn = Healed;
-     AddDamagedHealStats( MedicReward );
+     AddDamagedHealStats(MedicReward);
 
      MedicReward = int((MedicReward / Healed.HealthMax) * 60);
 
-     PRI.ReceiveRewardForHealing( MedicReward, Healed );
+     PRI.ReceiveRewardForHealing(MedicReward, Healed);
 
      Explode(HitLocation, -vector(Rotation));
 }
 
 
-function AddDamagedHealStats( int MedicReward )
+function AddDamagedHealStats(int MedicReward)
 {
     local KFSteamStatsAndAchievements KFSteamStats;
 
@@ -172,7 +172,7 @@ function AddDamagedHealStats( int MedicReward )
 
 	KFSteamStats = KFSteamStatsAndAchievements( Instigator.PlayerReplicationInfo.SteamStatsAndAchievements );
 
-	if ( KFSteamStats != none )
+	if (MedicReward > 0 && KFSteamStats != None)
 	{
 	 	KFSteamStats.AddDamageHealed(MedicReward, bIsMP7Projectile, bIsMP5Projectile);
 	}

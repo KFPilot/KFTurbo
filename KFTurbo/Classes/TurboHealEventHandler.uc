@@ -43,6 +43,8 @@ static final function BroadcastPawnDartHealed(Pawn Instigator, Pawn Target, int 
         return;
     }
 
+    HealingAmount = Max(HealingAmount, 0);
+
     for (Index = KFTurboGameType.HealEventHandlerList.Length - 1; Index >= 0; Index--)
     {
         KFTurboGameType.HealEventHandlerList[Index].OnPawnDartHealed(Instigator, Target, HealingAmount, HealDart);
@@ -66,6 +68,8 @@ static final function BroadcastPawnSyringeHealed(Pawn Instigator, Pawn Target, i
         return;
     }
 
+    HealingAmount = Max(HealingAmount, 0);
+
     for (Index = KFTurboGameType.HealEventHandlerList.Length - 1; Index >= 0; Index--)
     {
         KFTurboGameType.HealEventHandlerList[Index].OnPawnSyringeHealed(Instigator, Target, HealingAmount);
@@ -88,6 +92,8 @@ static final function BroadcastPawnGrenadeHealed(Pawn Instigator, Pawn Target, i
     {
         return;
     }
+    
+    HealingAmount = Max(HealingAmount, 0);
 
     for (Index = KFTurboGameType.HealEventHandlerList.Length - 1; Index >= 0; Index--)
     {

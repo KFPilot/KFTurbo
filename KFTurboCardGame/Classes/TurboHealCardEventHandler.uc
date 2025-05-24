@@ -28,6 +28,12 @@ final function RewardHealedHealth(Pawn Instigator, Pawn Target, int HealingAmoun
 {
     local TurboPlayerCardCustomInfo CardCustomInfo;
 
+    //Healing amounts equal to 0 is fine, it should still attempt to trigger on player healed effects.
+    if (HealingAmount < 0)
+    {
+        return;
+    }
+
     if (!bHealingBoost)
     {
         return;
