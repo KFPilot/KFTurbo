@@ -393,10 +393,10 @@ function int NetDamage(int OriginalDamage, int Damage, Pawn Injured, Pawn Instig
 
             if (KFMonster(Injured) != None)
             {
+                DamageMultiplier *= GetCriticalHitMultiplier(InstigatedBy, InstigatorCardInfo, HitLocation);
+
                 MonsterNetDamage(DamageMultiplier, KFMonster(Injured), InstigatedBy, InstigatorCardInfo, HitLocation, Momentum, WeaponDamageType);
             }
-
-            DamageMultiplier *= GetCriticalHitMultiplier(InstigatedBy, InstigatorCardInfo, HitLocation);
         }
 
         if (KFHumanPawn(Injured) != None && WeaponDamageType.default.bIsExplosive)
