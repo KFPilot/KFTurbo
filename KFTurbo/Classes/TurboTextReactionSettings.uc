@@ -85,4 +85,5 @@ defaultproperties
     TextSoundList(5)=(Text=":abouttime:",SoundRef="KFTurbo.UI.abouttime")
     TextSoundList(6)=(Text=":thatsterror:",SoundRef="KFTurbo.UI.ThatsTerror",bFullCooldown=true)
     TextSoundList(7)=(Text=":metalpipe:",SoundRef="KFTurbo.UI.MetalPipe")
+    TextSoundList(8)=(Text=":mcdonal:",SoundRef="KFTurbo.UI.Mcdonal",bFullCooldown=true)
 }
