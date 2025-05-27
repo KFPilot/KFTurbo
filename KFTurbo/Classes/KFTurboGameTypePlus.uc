@@ -271,6 +271,8 @@ function int CalculateTotalMaxMonster()
     return float(TurboMonsterCollection.GetWaveTotalMonsters(WaveNum, GameDifficulty, GetMaxMonsterPlayerCount())) * GameTotalMonstersModifier;
 }
 
+function PrepareSpecialSquads() {}
+
 function AddSpecialSquad()
 {
     BuildNextSquad();
