@@ -309,7 +309,7 @@ function ActivateDeepestAmmoPockets(TurboCardGameplayManager GameplayManager, Tu
 {
     if (bActivate)
     {
-        GameplayManager.PlayerMaxAmmoModifier.AddModifier(1.3f, Card);
+        GameplayManager.PlayerMaxAmmoModifier.AddModifier(1.25f, Card);
     }
     else
     {
@@ -423,7 +423,7 @@ function ActivatePerpetuallyCritical(TurboCardGameplayManager GameplayManager, T
 
 function ActivateStunningHit(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
-    Card.UpdateModifier(GameplayManager.MonsterDamageStunChance, 0.01f, bActivate);
+    Card.UpdateModifier(GameplayManager.MonsterDamageStunChance, 0.02f, bActivate);
 }
 
 function ActivateFragOut(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
@@ -679,7 +679,7 @@ defaultproperties
         CardName(0)="The Deepest of"
         CardName(1)="Ammo Pockets"
         CardDescriptionList(0)="Increases max"
-        CardDescriptionList(1)="ammo by 30%."
+        CardDescriptionList(1)="ammo by 25%."
         OnActivateCard=ActivateDeepestAmmoPockets
         CardID="SUPER_DEEPESTAMMOPOCKET"
     End Object
@@ -834,7 +834,7 @@ defaultproperties
     Begin Object Name=StunningHit Class=TurboCard_Super
         CardName(0)="Stunning Hit"
         CardDescriptionList(0)="Player damage has"
-        CardDescriptionList(1)="a 1% chance to"
+        CardDescriptionList(1)="a 2% chance to"
         CardDescriptionList(2)="stun non-boss zeds."
         OnActivateCard=ActivateStunningHit
         CardID="SUPER_STUNNING"
