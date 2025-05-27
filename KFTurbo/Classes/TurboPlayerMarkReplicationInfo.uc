@@ -92,17 +92,25 @@ static function Color GetMarkerColor(EMarkColor Color)
 
 simulated function final vector GetMarkLocation()
 {
+    local class<TurboMarkerType> MarkerDataClass;
+    MarkerDataClass = class<TurboMarkerType>(DataClass);
+    
     if (MarkedActor != None && CanMarkReceiveLocationUpdate())
     {
-        if (class<TurboMarkerType>(DataClass) != None)
+        if (MarkerDataClass != None)
         {
-            return MarkedActor.Location + class<TurboMarkerType>(DataClass).static.GetMarkerOffset(MarkedActor, MarkActorClass, DataObject, DataClass, MarkerData);
+            return MarkedActor.Location +MarkerDataClass.static.GetMarkerOffset(MarkedActor, MarkActorClass, DataObject, DataClass, MarkerData);
         }
 
         return MarkedActor.Location;
     }
 
-    return MarkLocation + class<TurboMarkerType>(DataClass).static.GetMarkerOffset(MarkedActor, MarkActorClass, DataObject, DataClass, MarkerData);
+    if (MarkerDataClass != None)
+    {
+        return MarkLocation + MarkerDataClass.static.GetMarkerOffset(MarkedActor, MarkActorClass, DataObject, DataClass, MarkerData);
+    }
+
+    return MarkLocation;
 }
 
 function MarkActor(Actor Target, class<TurboMarkerType> DataClassOverride, int DataOverride)
