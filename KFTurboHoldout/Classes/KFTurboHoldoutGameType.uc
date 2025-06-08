@@ -245,8 +245,6 @@ function SetupWave()
     ScoreMultiplier = TurboMonsterCollectionHoldoutImpl(TurboMonsterCollection).GetScoreMultiplier();
 }
 
-function PrepareSpecialSquads() {}
-
 final function float GetScoreMultiplier()
 {
     local float Multiplier;

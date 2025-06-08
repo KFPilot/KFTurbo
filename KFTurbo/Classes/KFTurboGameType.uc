@@ -395,10 +395,11 @@ final function bool HasAnyTraders()
 	return bHasAnyTraders;
 }
 
-simulated function bool SetFinalWaveOverride(int NewOverride)
+function bool SetFinalWaveOverride(int NewOverride)
 {
     if (bHasAttemptedToApplyFinalWaveOverride)
     {
+        log("Error!!! Attempted to set final wave override but wave setup was already performed.", 'KFTurbo');
         return false;
     }
 
@@ -408,7 +409,7 @@ simulated function bool SetFinalWaveOverride(int NewOverride)
     return true;
 }
 
-simulated function PrepareSpecialSquads()
+function PrepareSpecialSquads()
 {
     Super.PrepareSpecialSquads();
 

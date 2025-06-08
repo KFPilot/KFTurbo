@@ -271,7 +271,15 @@ function int CalculateTotalMaxMonster()
     return float(TurboMonsterCollection.GetWaveTotalMonsters(WaveNum, GameDifficulty, GetMaxMonsterPlayerCount())) * GameTotalMonstersModifier;
 }
 
-function PrepareSpecialSquads() {}
+function PrepareSpecialSquads()
+{
+    if (FinalWaveOverride != -1)
+    {
+        FinalWave = FinalWaveOverride;
+    }
+
+    bHasAttemptedToApplyFinalWaveOverride = true;
+}
 
 function AddSpecialSquad()
 {
