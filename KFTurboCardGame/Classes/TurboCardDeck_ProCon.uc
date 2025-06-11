@@ -10,6 +10,8 @@ var TurboCard TradeInCard;
 var bool bCanUseSoulForASoul, bHasUsedSoulForASoul;
 var TurboCard SoulForASoulCard;
 
+var array<TurboCard> SomethingCardList;
+
 function InitializeDeck()
 {
     local int Index;
@@ -581,7 +583,44 @@ function ActivateHeavyWeapons(TurboCardGameplayManager GameplayManager, TurboCar
 
 function ActivateNothing(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
+    log("- (The Nothing card does nothing.)", 'KFTurboCardGame');
+}
 
+function ActivateSomething(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
+{
+    local TurboCard RandomCard;
+
+    if (bActivate)
+    {
+        RandomCard = OriginalDeckCardObjectList[Rand(OriginalDeckCardObjectList.Length)];
+
+        if (RandomCard == None || RandomCard.CardID == "PROCON_SOMETHING")
+        {
+            log("- Rolled the same card, we're going to do nothing.", 'KFTurboCardGame');
+            return;
+        }
+
+        log("- Card with ID"@RandomCard.CardID@"was selected. Activating card now.", 'KFTurboCardGame');
+        SomethingCardList[SomethingCardList.Length] = OriginalDeckCardObjectList[Rand(OriginalDeckCardObjectList.Length)];
+        RandomCard.OnActivateCard(GameplayManager, RandomCard, true);
+    }
+    else
+    {
+        while (SomethingCardList.Length > 0 && SomethingCardList[SomethingCardList.Length - 1] == None)
+        {
+            SomethingCardList.Length = SomethingCardList.Length - 1;
+        }
+
+        if (SomethingCardList.Length == 0)
+        {
+            return;
+        }
+
+        log("- Removing activated card"@RandomCard.CardID@"was selected. Activating card now.", 'KFTurboCardGame');
+        RandomCard = SomethingCardList[SomethingCardList.Length - 1];
+        SomethingCardList.Length = SomethingCardList.Length - 1;
+        RandomCard.OnActivateCard(GameplayManager, RandomCard, false);
+    }
 }
 
 defaultproperties
@@ -1095,11 +1134,19 @@ defaultproperties
     End Object
     DeckCardObjectList(39)=TurboCard'HeavyWeapons'
 
-    Begin Object Name=Nothing Class=TurboCard_ProCon
+    Begin Object Name=Nothing Class=TurboCard_ProConStrange
         CardName(0)="Nothing"
         CardDescriptionList(0)=""
         CardID="PROCON_NOTHING"
         OnActivateCard=ActivateNothing
     End Object
     DeckCardObjectList(40)=TurboCard'Nothing'
+
+    Begin Object Name=Something Class=TurboCard_ProConStrange_Something
+        CardName(0)=""
+        CardDescriptionList(0)=""
+        CardID="PROCON_SOMETHING"
+        OnActivateCard=ActivateSomething
+    End Object
+    DeckCardObjectList(41)=TurboCard'Something'
 }
