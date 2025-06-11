@@ -4,6 +4,7 @@
 class TurboCardDeck extends Info;
 
 var array< TurboCard > DeckCardObjectList;
+var array< TurboCard > OriginalDeckCardObjectList;
 
 function InitializeDeck()
 {
@@ -13,6 +14,8 @@ function InitializeDeck()
     {
         InitializeCard(DeckCardObjectList[Index], Index);
     }
+
+    OriginalDeckCardObjectList = DeckCardObjectList;
 }
 
 final function InitializeCard(TurboCard Card, int Index)
