@@ -39,21 +39,6 @@ final function AddModifier(float Modifier, TurboCard Card)
     }
 
     log(ModifierStackID$": Applying modifier"@Modifier@"from"@Eval(ID != "", ID, "(NO ID)")@".", 'KFTurboCardGame');
-
-    if (ID != "")
-    {
-        for (Index = ModifierList.Length - 1; Index >= 0; Index--)
-        {
-            if (ModifierList[Index].ID == ID)
-            {
-                log("-"$ModifierStackID$": Found existing entry with matching ID. Replacing value.", 'KFTurboCardGame');
-                ModifierList[Index].Modifier = Modifier;
-                UpdateModifier();
-                return;
-            }
-        }
-    }
-
     ModifierList.Length = ModifierList.Length + 1;
     ModifierList[ModifierList.Length - 1].ID = ID;
     ModifierList[ModifierList.Length - 1].Modifier = Modifier;
@@ -79,6 +64,8 @@ final function RemoveModifier(TurboCard Card)
             return;
         }
     }
+
+    log(ModifierStackID$": Failed to remove any modifiers applied by"@Card.CardID@".", 'KFTurboCardGame');
 }
 
 final function ClearModifiers()
