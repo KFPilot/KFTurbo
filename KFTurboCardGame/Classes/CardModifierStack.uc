@@ -29,7 +29,6 @@ final function bool HasModifiers()
 
 final function AddModifier(float Modifier, TurboCard Card)
 {
-    local int Index;
     local string ID;
 
     ID = "";
