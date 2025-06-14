@@ -23,7 +23,7 @@ static function float GetValueFromVoteString(string VoteString)
         return -1.f;
     }
 
-    return Clamp(float(ValueString), default.MinVoteFloatValue, default.MaxVoteFloatValue);
+    return FClamp(float(ValueString), default.MinVoteFloatValue, default.MaxVoteFloatValue);
 }
 
 simulated function string GetVoteTitleString()

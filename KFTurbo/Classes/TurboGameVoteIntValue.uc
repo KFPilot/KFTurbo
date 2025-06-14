@@ -23,7 +23,7 @@ static function int GetValueFromVoteString(string VoteString)
         return -1;
     }
 
-    return Clamp(Round(int(ValueString)), default.MinVoteIntValue, default.MaxVoteIntValue);
+    return Clamp(int(Round(ValueString)), default.MinVoteIntValue, default.MaxVoteIntValue);
 }
 
 simulated function string GetVoteTitleString()
