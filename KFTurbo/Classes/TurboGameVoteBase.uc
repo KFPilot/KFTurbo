@@ -13,6 +13,7 @@ var protected float VoteDuration; //Duration of this vote. Once this time is rea
 var protected float FailedVoteCooldown; //Cooldown of this vote. If the vote fails, this cooldown will be applied.
 var protected float VotePercent; //Percent of the vote required for this vote to pass.
 var protected bool bCanSpectatorsVote; //If true, spectators can vote.
+var protected bool bCanVoteDuringEndGame; //If true, this vote can be initiated after the game is over.
 
 
 enum EVote
@@ -293,6 +294,11 @@ function int GetBroadcastDataForState(EVotingState State)
 static function bool CanInitiateVote(TurboGameReplicationInfo TGRI, TurboPlayerReplicationInfo Initiator, string VoteString)
 {
     if (TGRI == None || (Initiator.bOnlySpectator && !default.bCanSpectatorsVote))
+    {
+        return false;
+    }
+
+    if (!default.bCanVoteDuringEndGame && (TGRI.Level.Game.GetCurrentWaveNum() >= TGRI.Level.Game.GetFinalWaveNum()))
     {
         return false;
     }
@@ -580,6 +586,9 @@ defaultproperties
     VoteDuration=30.f
     FailedVoteCooldown=10.f
     VotePercent=0.51f
+
+    bCanSpectatorsVote=false
+    bCanVoteDuringEndGame=false
 
     bBroadcastSucceeded=true
     bBroadcastFailed=true

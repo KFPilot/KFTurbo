@@ -42,21 +42,12 @@ function OnVoteResult(Name Outcome)
 defaultproperties
 {
     VoteID="SKIPWANDER"
-    VoteDuration=-1.f
-    
-
-    VotePercent=0.51f
-    bCanSpectatorsVote=false
 
     VoteInitiatedString="%k%p%d started a vote to %kdisable zed wandering%d. Type %kvote yes%d or %kvote no%d in %kconsole%d to vote."
     VoteSucceededVoteString="%kVote%d to %kdisable zed wandering%d has %pksucceeded%d."
     VoteFailedVoteString="%kVote%d to %kdisable zed wandering%d has %nkfailed%d."
     VoteExpiredVoteString="%kVote%d to %kdisable zed wandering%d has %akexpired%d."
-    
-    bBroadcastSucceeded=true
-    bBroadcastFailed=true
-    bBroadcastExpired=true
 
-    VoteTitleString="End Trader"
+    VoteTitleString="Disable Zed Wandering"
     VoteDescriptionString="Accepting this vote will disable initial zed wandering."
 }

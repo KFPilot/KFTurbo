@@ -3,19 +3,9 @@
 //For more information see https://github.com/KFPilot/KFTurbo.
 class TurboGameVoteMaxMonsters extends TurboGameVoteFloatValue;
 
-static function bool CanInitiateVote(TurboGameReplicationInfo TGRI, TurboPlayerReplicationInfo Initiator, string VoteString)
+static function float GetCurrentVoteValue(TurboGameReplicationInfo TGRI, TurboPlayerReplicationInfo Initiator)
 {
-    if (!Super.CanInitiateVote(TGRI, Initiator, VoteString))
-    {
-        return false;
-    }
-
-    if (TGRI.Level.Game.GetCurrentWaveNum() >= TGRI.Level.Game.GetFinalWaveNum())
-    {
-        return false;
-    }
-
-    return true;
+    return KFTurboGameType(TGRI.Level.Game).AdminMaxMonstersModifier;
 }
 
 function OnVoteResult(Name Outcome)

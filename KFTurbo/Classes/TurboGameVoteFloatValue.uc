@@ -45,12 +45,18 @@ static function bool CanInitiateVote(TurboGameReplicationInfo TGRI, TurboPlayerR
     }
 
     Value = GetValueFromVoteString(VoteString);
-    if (Value < 0.f)
+    if (Value < 0.f || (Abs(Value - GetCurrentVoteValue(TGRI, Initiator)) < 0.001f))
     {
         return false;
     }
 
     return true;
+}
+
+//Used to determine if a vote being initiated is for a value that is already set.
+static function float GetCurrentVoteValue(TurboGameReplicationInfo TGRI, TurboPlayerReplicationInfo Initiator)
+{
+    return -1.f;
 }
 
 function InitiateVote(TurboPlayerReplicationInfo Initiator, optional string VoteString)

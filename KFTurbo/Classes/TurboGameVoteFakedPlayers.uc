@@ -3,19 +3,9 @@
 //For more information see https://github.com/KFPilot/KFTurbo.
 class TurboGameVoteFakedPlayers extends TurboGameVoteIntValue;
 
-static function bool CanInitiateVote(TurboGameReplicationInfo TGRI, TurboPlayerReplicationInfo Initiator, string VoteString)
+static function int GetCurrentVoteValue(TurboGameReplicationInfo TGRI, TurboPlayerReplicationInfo Initiator)
 {
-    if (!Super.CanInitiateVote(TGRI, Initiator, VoteString))
-    {
-        return false;
-    }
-
-    if (TGRI.Level.Game.GetCurrentWaveNum() >= TGRI.Level.Game.GetFinalWaveNum())
-    {
-        return false;
-    }
-
-    return true;
+    return KFTurboGameType(TGRI.Level.Game).GetFakedPlayerCount();
 }
 
 function OnVoteResult(Name Outcome)
@@ -25,12 +15,12 @@ function OnVoteResult(Name Outcome)
         return;
     }
 
-    KFTurboGameType(Level.Game).SetFakedPlayerCount(Clamp(Round(VoteIntValue), 1, 6));
+    KFTurboGameType(Level.Game).SetFakedPlayerCount(Clamp(VoteIntValue, MinVoteIntValue, MaxVoteIntValue));
 }
 
 defaultproperties
 {
-    MinVoteIntValue=1
+    MinVoteIntValue=0
     MaxVoteIntValue=6
 
     VoteID="FAKEDPLAYERS"

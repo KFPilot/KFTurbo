@@ -23,7 +23,7 @@ static function int GetValueFromVoteString(string VoteString)
         return -1;
     }
 
-    return Clamp(int(Round(ValueString)), default.MinVoteIntValue, default.MaxVoteIntValue);
+    return Clamp(int(Round(float(ValueString))), default.MinVoteIntValue, default.MaxVoteIntValue);
 }
 
 simulated function string GetVoteTitleString()
@@ -45,12 +45,18 @@ static function bool CanInitiateVote(TurboGameReplicationInfo TGRI, TurboPlayerR
     }
 
     Value = GetValueFromVoteString(VoteString);
-    if (Value < 0)
+    if (Value < 0 || Value == GetCurrentVoteValue(TGRI, Initiator))
     {
         return false;
     }
 
     return true;
+}
+
+//Used to determine if a vote being initiated is for a value that is already set.
+static function int GetCurrentVoteValue(TurboGameReplicationInfo TGRI, TurboPlayerReplicationInfo Initiator)
+{
+    return -1;
 }
 
 function InitiateVote(TurboPlayerReplicationInfo Initiator, optional string VoteString)
