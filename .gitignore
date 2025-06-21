@@ -1,0 +1,49 @@
+#Exclude all.
+/*
+
+#Necessary git files. 
+!.gitignore
+!README.md
+!changelog.md
+
+#KFTurbo's source code packages.
+!KFTurboFonts/
+!KFTurbo/
+!KFTurboServerAchievements/
+!KFTurboRandomizer/
+!KFTurboAchievementPack/
+!KFTurboTestMut/
+!KFTurboServer/
+!KFTurboCardGame/
+!KFTurboEmbeddable/
+!KFTurboHoldout/
+!KFTurboFontsJP/
+!KFTurboFontsCY/
+
+#Important config files.
+!System
+/System/*
+/System/**/*
+!/System/ServerPerks.ini
+!/System/ServerAchievements.ini
+!/System/KFTurboMapConfig.ini
+
+#Animation packages.
+!Animations
+/Animations/**
+!Animations/KFTurboContent.ukx
+!Animations/KFTurboExtra.ukx
+
+#Texture packages.
+!Textures
+/Textures/**
+!Textures/KFTurboHUD.utx
+!Textures/KFTurboVet.utx
+!Textures/TurboCardGame.utx
+!Textures/TurboHoldout.utx
+!Textures/KFTurboCharacters.utx
+
+#Relevant maps.
+!Maps
+/Maps/**
+!Maps/KFT-TurboSteamyTestMap.rom
