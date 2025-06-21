@@ -5,6 +5,7 @@
 !.gitignore
 !README.md
 !changelog.md
+!SETUP.md
 
 #KFTurbo's source code packages.
 !KFTurboFonts/
