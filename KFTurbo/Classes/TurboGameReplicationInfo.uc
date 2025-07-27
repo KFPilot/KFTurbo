@@ -94,6 +94,16 @@ function PlayerVote(TurboPlayerReplicationInfo Voter, string VoteString)
     }
 }
 
+function RevokePlayerVote(TurboPlayerReplicationInfo Voter)
+{
+    if (Voter == None || VoteInstance == None)
+    {
+        return;
+    }
+
+    VoteInstance.RevokePlayerVote(Voter);
+}
+
 function PlayerVoteComplete(TurboGameVoteBase CompletedVoteInstance, TurboGameVoteBase.EVotingState VoteState)
 {
     local TurboPlayerController PlayerController;

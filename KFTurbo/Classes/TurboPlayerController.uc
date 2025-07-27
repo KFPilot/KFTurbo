@@ -984,17 +984,28 @@ simulated function rotator RecoilHandler(rotator NewRotation, float DeltaTime)
 
 function BecomeSpectator()
 {
+	local TurboGameReplicationInfo TGRI;
+
 	if (PlayerReplicationInfo == None || PlayerReplicationInfo.bOnlySpectator)
 	{
-		Super.BecomeActivePlayer();
+		Super.BecomeSpectator();
 		return;
 	}
 
 	Super.BecomeSpectator();
 
-	if (PlayerReplicationInfo.bOnlySpectator && KFTurboGameType(Level.Game).bWaveInProgress)
+	if (PlayerReplicationInfo.bOnlySpectator)
 	{
-		bWasSpectatingWave = true;
+        TGRI = TurboGameReplicationInfo(Level.GRI);
+        if (TGRI != None && TGRI.VoteInstance != None && !TGRI.VoteInstance.CanSpectatorsVote())
+        {
+           TGRI.RevokePlayerVote(TurboPlayerReplicationInfo(PlayerReplicationInfo));
+        }
+
+		if (KFTurboGameType(Level.Game).bWaveInProgress)
+		{
+			bWasSpectatingWave = true;
+		}
 	}
 }
 

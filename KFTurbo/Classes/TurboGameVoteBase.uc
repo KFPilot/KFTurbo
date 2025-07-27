@@ -123,6 +123,10 @@ simulated function UpdateVoteInfo(Name Reason)
 }
 
 //These simulated functions use replicated data/data the remote handles and so are safe to use for UI.
+simulated final function bool CanSpectatorsVote()
+{
+    return bCanSpectatorsVote;
+}
 
 simulated static final function string GetVoteID()
 {
@@ -406,6 +410,32 @@ function PlayerVote(TurboPlayerReplicationInfo TPRI, optional string VoteString)
     EvaluateVote('ReceivedVote');
 }
 
+function RevokePlayerVote(TurboPlayerReplicationInfo TPRI)
+{
+    local int Index;
+    local bool bRemovedVote;
+
+    bRemovedVote = false;
+    for (Index = VoteList.Length - 1; Index >= 0; Index--)
+    {
+        if (VoteList[Index].TPRI != TPRI)
+        {
+            continue;
+        }
+
+        VoteList.Remove(Index, 1);
+        bRemovedVote = true;
+        break;
+    }
+    
+    if (!bRemovedVote)
+    {
+        return;
+    }
+
+    EvaluateVote('RevokedVote');
+}
+
 function OnVoteExpired()
 {
     //Allow the vote evaluator to know we're about to expire the vote so they can do something special if they want instead.
@@ -496,8 +526,8 @@ function EvaluateVote(Name Reason)
 {
     UpdateVoteCounts();
 
-    //If even the total vote number is not over the 51% threshold, don't bother checking.
-    if (Reason != 'Expired' && AdminOverrideVote == EVote.Unset && (float(TotalVoteCount) / float(TotalVoterCount) < VotePercent))
+    //If even the total vote number is not over the VotePercent threshold, don't bother checking.
+    if (Reason != 'Expired' && AdminOverrideVote == EVote.Unset && ((float(TotalVoteCount) / float(TotalVoterCount)) < VotePercent))
     {
         return;
     }

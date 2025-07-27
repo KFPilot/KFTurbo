@@ -221,6 +221,11 @@ function Logout(Controller Exiting)
     if (!Level.bLevelChange && TurboPlayerController(Exiting) != None)
     {
         DistributeCash(TurboPlayerController(Exiting));
+
+        if (TurboGameReplicationInfo(Level.GRI) != None)
+        {
+            TurboGameReplicationInfo(Level.GRI).RevokePlayerVote(TurboPlayerReplicationInfo(Exiting.PlayerReplicationInfo));
+        }
     }
 
     Super.Logout(Exiting);
