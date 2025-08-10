@@ -27,6 +27,8 @@ var byte PlayerFlags;
 
 var float JumpZMultiplier;
 
+var class<CashPickup> CashPickupClass;
+
 replication
 {
 	reliable if (bNetDirty && Role == ROLE_Authority)
@@ -900,23 +902,52 @@ function TossWeapon(Vector TossVel)
 	WeaponToToss.DropFrom(Location + 0.8 * CollisionRadius * X - 0.5 * CollisionRadius * Y);
 }
 
-exec function TossCash( int Amount )
+exec function TossCash(int Amount)
 {
-	// Relax the fix to cash tossing exploit.
-	if( CashTossTimer < Level.TimeSeconds && (LongTossCashTimer < Level.TimeSeconds || LongTossCashCount < 20) )
-	{
-		Super(KFHumanPawn_Story).TossCash(Amount);
-		CashTossTimer = Level.TimeSeconds + 0.1f;
+    local Vector X,Y,Z;
+    local CashPickup CashPickup;
+    local Vector TossVel;
+    local Actor A;
 
-		if( LongTossCashTimer < Level.TimeSeconds )
-		{
-			LongTossCashTimer = Level.TimeSeconds + 5.f;
-			LongTossCashCount = 0;
-		}
-		else
-		{
-			LongTossCashCount++;
-		} 
+	// Relax the fix to cash tossing exploit.
+	if (CashTossTimer > Level.TimeSeconds)
+	{
+		return;
+	}
+	
+	CashTossTimer = Level.TimeSeconds + 0.1f;
+	
+	Amount = Max(Amount, 50);
+	Amount = Min(Amount, int(Controller.PlayerReplicationInfo.Score));
+	if(Amount <= 0)
+	{
+		return;
+	}
+
+    GetAxes(Rotation, X, Y, Z);
+
+    TossVel = Vector(GetViewRotation());
+    TossVel = TossVel * ((Velocity Dot TossVel) + 500) + Vect(0,0,200);
+
+    CashPickup = Spawn(CashPickupClass, self,, Location + 0.8 * CollisionRadius * X - 0.5 * CollisionRadius * Y);
+
+	if (CashPickup == None)
+	{
+		return;
+	}
+	
+	CashPickup.CashAmount = Amount;
+	CashPickup.bDroppedCash = true;
+	CashPickup.RespawnTime = 0;
+	CashPickup.Velocity = TossVel;
+	CashPickup.DroppedBy = Controller;
+	CashPickup.InitDroppedPickupFor(None);
+	Controller.PlayerReplicationInfo.Score -= Amount;
+
+	//KFPawn::LastDropCashMessageTime doesn't appear to ever be set.
+	if (Level.Game.NumPlayers > 1 && Level.TimeSeconds - LastDropCashMessageTime > DropCashMessageDelay)
+	{
+		PlayerController(Controller).Speech('AUTO', 4, "");
 	}
 }
 
@@ -950,6 +981,7 @@ defaultproperties
 	bDebugServerBuyWeapon=false
 	HealthHealingTo=0
 	JumpZMultiplier=1.f
+	TossCashPickupClass=class'TurboCashPickup'
 
 	RequiredEquipment(0)="KFTurbo.W_Knife_Weap"
 	RequiredEquipment(1)="KFTurbo.W_9MM_Weap"

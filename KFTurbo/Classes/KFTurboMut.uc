@@ -34,6 +34,7 @@ var protected string GameType;
 
 var globalconfig bool bRequireAdminForDifficultyCommands;
 var globalconfig bool bAutoRestartEmptyIdleServer; //Server will restart after 1 hour of being empty and idle.
+var globalconfig bool bPreventImmediateCashRegrab; //Prevents annoyance where player's tossed cash can accidentally be picked up by tosser immediately.
 
 var bool bSkipInitialMonsterWander;
 
@@ -419,4 +420,6 @@ defaultproperties
 	bSkipInitialMonsterWander=false
 
 	bAutoRestartEmptyIdleServer=false
+
+	bPreventImmediateCashRegrab=false
 }
