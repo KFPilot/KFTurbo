@@ -13,14 +13,16 @@ function Tick(float dt)
 
 	Super.Tick(dt);
 
-	if(!bForcedRage && (bEnableForceRage && Level.TimeSeconds > TimeUntilForcedRage))
+	if (!bForcedRage && (bEnableForceRage && Level.TimeSeconds > TimeUntilForcedRage))
+	{
 		bForcedRage = true;
+	}
 
-	if(bForcedRage)
+	if (bForcedRage)
 	{
 	    ZFP = ZombieFleshPound(Pawn);
 
-	    if( ZFP != none && !ZFP.bFrustrated )
+	    if(ZFP != None && !ZFP.bFrustrated)
 	    {
 	        ZFP.StartCharging();
 	        ZFP.bFrustrated = true;
@@ -32,7 +34,7 @@ state ZombieCharge
 {
 	function BeginState()
 	{
-		if(!bEnableForceRage)
+		if (!bEnableForceRage)
 		{
 			bEnableForceRage = true;
 			TimeUntilForcedRage = Level.TimeSeconds + 180.f; //Forced raged in 3 minutes.			
@@ -42,6 +44,29 @@ state ZombieCharge
 	}
 }
 
+//If a Fleshpound kills a player, reset their forced rage timer/state.
+function NotifyKilled(Controller Killer, Controller Killed, pawn Other)
+{
+	if (Killer == self && KFHumanPawn(Other) != None)
+	{
+		ResetForcedRage();
+	}
+
+	Super.NotifyKilled(Killer, Killed, Other);
+}
+
+function ResetForcedRage()
+{
+	if (!bEnableForceRage)
+	{
+		return;
+	}
+
+	bForcedRage = false;
+	TimeUntilForcedRage = Level.TimeSeconds + 180.f;
+}
+
 defaultproperties
 {
+	
 }
