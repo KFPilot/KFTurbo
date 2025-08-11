@@ -4,11 +4,11 @@ var bool bHasLanded;
 var float CreationTime;
 var float PreventRegrabDelay;
 
-simulated function BeginPlay()
+simulated function PreBeginPlay()
 {
 	CreationTime = Level.TimeSeconds;
 
-	Super.BeginPlay();
+	Super.PreBeginPlay();
 }
 
 simulated function Landed(vector HitNormal)

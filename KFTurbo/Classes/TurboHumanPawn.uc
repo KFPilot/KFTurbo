@@ -907,7 +907,6 @@ exec function TossCash(int Amount)
     local Vector X,Y,Z;
     local CashPickup CashPickup;
     local Vector TossVel;
-    local Actor A;
 
 	// Relax the fix to cash tossing exploit.
 	if (CashTossTimer > Level.TimeSeconds)
@@ -981,7 +980,7 @@ defaultproperties
 	bDebugServerBuyWeapon=false
 	HealthHealingTo=0
 	JumpZMultiplier=1.f
-	TossCashPickupClass=class'TurboCashPickup'
+	CashPickupClass=class'TurboCashPickup'
 
 	RequiredEquipment(0)="KFTurbo.W_Knife_Weap"
 	RequiredEquipment(1)="KFTurbo.W_9MM_Weap"
