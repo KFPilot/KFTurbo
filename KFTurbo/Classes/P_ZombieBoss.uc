@@ -83,6 +83,7 @@ function TakeDamage(int Damage, Pawn InstigatedBy, Vector HitLocation, Vector Mo
 			ChargeDamage = 0;
 			LastForceChargeTime = Level.TimeSeconds;
 			ZombieBossAI.StrafingAbility = 10.f;
+			ZombieBossAI.bAdvancedTactics = true;
 			GoToState('LongDistanceSneakAround');
 		}
 	}
@@ -404,6 +405,7 @@ state LongDistanceSneakAround extends SneakAround
 	
 	function EndState()
 	{
+		ZombieBossAI.bAdvancedTactics = ZombieBossAI.default.bAdvancedTactics;
 		ZombieBossAI.StrafingAbility = ZombieBossAI.default.StrafingAbility;
 		Super.EndState();
 	}
