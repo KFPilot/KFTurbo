@@ -28,7 +28,6 @@ function Timer()
 	local int Index;
 	local array<TurboPlayerController> PlayerList;
 	local WeaponPickup Pickup;
-	PlayerList = class'TurboGameplayHelper'.static.GetPlayerControllerList(Level, true);
 
 	if (WeaponPickupList.Length == 0)
 	{
@@ -40,10 +39,14 @@ function Timer()
 		Pickup = WeaponPickupList[0];
 		WeaponPickupList.Remove(0, 1);
 		
-		if (Pickup == None || !Pickup.bThrown)
+		if (Pickup != None && !Pickup.bThrown)
 		{
 			Pickup = None;
-			continue;
+		}
+
+		if (Pickup != None)
+		{
+			break;
 		}
 	}
 
@@ -54,6 +57,7 @@ function Timer()
 
 	Pickup.LifeSpan = 15.f;
 
+	PlayerList = class'TurboGameplayHelper'.static.GetPlayerControllerList(Level, true);
 	for (Index = 0; Index < PlayerList.Length; Index++)
 	{
 		HoldoutPlayerController(PlayerList[Index]).ClientMarkPickupShortLived(Pickup);
@@ -61,7 +65,7 @@ function Timer()
 
 	if (WeaponPickupList.Length == 0)
 	{
-		SetTimer(0.125f, false);
+		SetTimer(0.25f, false);
 	}
 }
 
@@ -77,7 +81,7 @@ function bool CheckReplacement(Actor Other, out byte bSuperRelevant)
 	{
 		if (WeaponPickupList.Length == 0)
 		{
-			SetTimer(0.125f, false);
+			SetTimer(0.25f, false);
 		}
 
 		WeaponPickupList[WeaponPickupList.Length] = WeaponPickup(Other);
