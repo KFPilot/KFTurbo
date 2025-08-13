@@ -13,6 +13,7 @@ static final function bool PerformMeleeSwing(KFWeapon Weapon, KFMeleeFire MeleeF
 	local Pawn Victims;
 	local vector dir, lookdir;
 	local float DiffAngle, VictimDist;
+	local Pawn Instigator;
 
 	local TurboPlayerEventHandler.MonsterHitData HitData;
 
@@ -21,25 +22,26 @@ static final function bool PerformMeleeSwing(KFWeapon Weapon, KFMeleeFire MeleeF
 	bBroadcastedHit = false;
 	MyDamage = MeleeFire.MeleeDamage;
 
-	if (Weapon.bNoHit)
+	if (Weapon == None || MeleeFire.Instigator == None || Weapon.bNoHit)
 	{
 		return false;
 	}
 
+	Instigator = MeleeFire.Instigator;
 	MyDamage = MeleeFire.MeleeDamage;
-	StartTrace = MeleeFire.Instigator.Location + MeleeFire.Instigator.EyePosition();
+	StartTrace = Instigator.Location + Instigator.EyePosition();
 
-	if( MeleeFire.Instigator.Controller!=None && PlayerController(MeleeFire.Instigator.Controller)==None && MeleeFire.Instigator.Controller.Enemy!=None )
+	if(Instigator.Controller != None && Instigator.IsHumanControlled() && Instigator.Controller.Enemy != None)
 	{
-		PointRot = rotator(MeleeFire.Instigator.Controller.Enemy.Location-StartTrace); // Give aimbot for bots.
+		PointRot = rotator(Instigator.Controller.Enemy.Location-StartTrace); // Give aimbot for bots.
 	}
 	else
 	{
-		PointRot = MeleeFire.Instigator.GetViewRotation();
+		PointRot = Instigator.GetViewRotation();
 	}
 
 	EndTrace = StartTrace + vector(PointRot) * MeleeFire.weaponRange;
-	HitActor = MeleeFire.Instigator.Trace( HitLocation, HitNormal, EndTrace, StartTrace, true);
+	HitActor = Instigator.Trace(HitLocation, HitNormal, EndTrace, StartTrace, true);
 
 	if (HitActor != None)
 	{
@@ -61,7 +63,7 @@ static final function bool PerformMeleeSwing(KFWeapon Weapon, KFMeleeFire MeleeF
 			return false;
 		}
 
-		if (HitActor.IsA('Pawn') && !HitActor.IsA('Vehicle') && (Normal(HitActor.Location-MeleeFire.Instigator.Location) dot vector(HitActor.Rotation)) > 0)
+		if (HitActor.IsA('Pawn') && !HitActor.IsA('Vehicle') && (Normal(HitActor.Location - Instigator.Location) dot vector(HitActor.Rotation)) > 0)
 		{
 			bBackStabbed = true;
 			MyDamage *= 2.f;
@@ -72,7 +74,7 @@ static final function bool PerformMeleeSwing(KFWeapon Weapon, KFMeleeFire MeleeF
 		if (HitData.Monster != None)
 		{
 			HitData.Monster.bBackstabbed = bBackStabbed;
-			HitData.Monster.TakeDamage(MyDamage, MeleeFire.Instigator, HitLocation, vector(PointRot), MeleeFire.hitDamageClass);
+			HitData.Monster.TakeDamage(MyDamage, Instigator, HitLocation, vector(PointRot), MeleeFire.hitDamageClass);
 
 			if (!bSkipHitBroadcast && HitData.DamageDealt > 0)
 			{
@@ -85,44 +87,44 @@ static final function bool PerformMeleeSwing(KFWeapon Weapon, KFMeleeFire MeleeF
 				Weapon.PlaySound(MeleeFire.MeleeHitSounds[Rand(MeleeFire.MeleeHitSounds.length)],SLOT_None,MeleeFire.MeleeHitVolume,,,,false);
 			}
 
-			if (VSize(MeleeFire.Instigator.Velocity) > 300 && HitData.Monster.Mass <= MeleeFire.Instigator.Mass)
+			if (VSize(Instigator.Velocity) > 300 && HitData.Monster.Mass <= Instigator.Mass)
 			{
 				HitData.Monster.FlipOver();
 			}
 		}
 		else
 		{
-			HitActor.TakeDamage(MyDamage, MeleeFire.Instigator, HitLocation, vector(PointRot), MeleeFire.hitDamageClass);
+			HitActor.TakeDamage(MyDamage, Instigator, HitLocation, vector(PointRot), MeleeFire.hitDamageClass);
 			MeleeFire.Spawn(MeleeFire.HitEffectClass,,, HitLocation, rotator(HitLocation - StartTrace));
 		}
 	}
 
-	if (MeleeFire.WideDamageMinHitAngle > 0)
+	if (Weapon != None && MeleeFire.WideDamageMinHitAngle > 0)
 	{
-		foreach Weapon.VisibleCollidingActors( class 'Pawn', Victims, (MeleeFire.weaponRange * 2), StartTrace ) //, RadiusHitLocation
+		foreach Weapon.VisibleCollidingActors( class 'Pawn', Victims, (MeleeFire.weaponRange * 2), StartTrace)
 		{
 			if ( (HitActor != none && Victims == HitActor) || Victims.Health <= 0 )
 			{
 				continue;
 			}
 
-			if ( Victims != MeleeFire.Instigator )
+			if (Victims != Instigator)
 			{
-				VictimDist = VSizeSquared(MeleeFire.Instigator.Location - Victims.Location);
+				VictimDist = VSizeSquared(Instigator.Location - Victims.Location);
 
 				if( VictimDist > (((MeleeFire.weaponRange * 1.1) * (MeleeFire.weaponRange * 1.1)) + (Victims.CollisionRadius * Victims.CollisionRadius)) )
 				{
 					continue;
 				}
 
-				lookdir = Normal(Vector(MeleeFire.Instigator.GetViewRotation()));
-				dir = Normal(Victims.Location - MeleeFire.Instigator.Location);
+				lookdir = Normal(Vector(Instigator.GetViewRotation()));
+				dir = Normal(Victims.Location - Instigator.Location);
 
 				DiffAngle = lookdir dot dir;
 
 				if( DiffAngle > MeleeFire.WideDamageMinHitAngle )
 				{
-					Victims.TakeDamage(MyDamage * DiffAngle, MeleeFire.Instigator, (Victims.Location + Victims.CollisionHeight * vect(0,0,0.7)), vector(PointRot), MeleeFire.hitDamageClass) ;
+					Victims.TakeDamage(MyDamage * DiffAngle, Instigator, (Victims.Location + Victims.CollisionHeight * vect(0,0,0.7)), vector(PointRot), MeleeFire.hitDamageClass) ;
 
 					if(MeleeFire.MeleeHitSounds.Length > 0)
 					{
