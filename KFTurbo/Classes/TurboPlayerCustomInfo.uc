@@ -1,5 +1,6 @@
 //Killing Floor Turbo TurboPlayerCustomInfo
 //Actor that can contain custom info per-player. May replicate. Registration should be automatically handled via Tick.
+//Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
 class TurboPlayerCustomInfo extends ReplicationInfo;
 
