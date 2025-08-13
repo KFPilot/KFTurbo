@@ -282,25 +282,27 @@ function ForceDropCash()
         return;
     }
     
-    HumanPawn.TossCash(50);
+    HumanPawn.TossCash(666);
 }
-
 
 function KillRandomMonster()
 {
     local array<Monster> MonsterPawnList;
     local Monster SelectedMonster;
+    local PawnHelper.EMonsterTier MonsterTier;
 
     MonsterPawnList = class'TurboGameplayHelper'.static.GetMonsterPawnList(Level);
 
-    if (MonsterPawnList.Length < 4)
+    SelectedMonster = MonsterPawnList[Rand(MonsterPawnList.Length)];
+
+    if (SelectedMonster == None)
     {
         return;
     }
 
-    SelectedMonster = MonsterPawnList[Rand(MonsterPawnList.Length)];
+    MonsterTier = class'PawnHelper'.static.GetMonsterTier(SelectedMonster.Class);
     
-    if (SelectedMonster == None || ZombieBoss(SelectedMonster) != None)
+    if (MonsterTier != Trash || MonsterTier != Special)
     {
         return;
     }
