@@ -4,43 +4,21 @@
 class TurboHUDPlayerInfo extends TurboHUDOverlay
     hidecategories(Advanced,Collision,Display,Events,Force,Karma,LightColor,Lighting,Movement,Object,Sound);
 
-struct PlayerInfoHitData
-{
-	var float HitAmount;
-	var float Ratio;
-	var float FadeRate;
-};
-
 struct PlayerInfoData
 {
 	var TurboPlayerReplicationInfo TPRI;
 	var TurboHumanPawn HumanPawn;
-	var float DistanceSquared;
-	var TurboPlayerReplicationInfo.EConnectionState ConnectionState;
-	
-	var float CurrentHealth;
-	var float LastCheckedHealth;
-	var float PreviousHealth;
-	
-	var float CurrentHealToHealth;
-	var float PreviousHealToHealth;
-
-	var float CurrentShield;
-	var float PreviousShield;
-
-	var PlayerInfoHitData LastHit;
-	var bool bInitialized;
-	var float VisibilityFade;
-
-	var float VoiceSupportAnim;
-	var float VoiceAlertAnim;
+	var TurboHUDPlayerInfoEntry Entry;
 };
 
+//These are in GameReplicationInfo::PRIArray order.
 var array<PlayerInfoData> PlayerInfoDataList;
-var float PlayerCollectionTime;
+//These will be in player view distance order.
+var array<int> PlayerInfoDataDistanceOrderList;
 
-var() float HealthInterpRate;
-var() float ShieldInterpRate;
+var float NextPawnCollectionTime;
+var int LastPlayerStateListLength;
+var class<TurboHUDPlayerInfoEntry> PlayerInfoEntryClass;
 
 var() color HealthBarColor;
 var() color HealthLossBarColor;
@@ -77,193 +55,105 @@ simulated function Initialize(TurboHUDKillingFloor OwnerHUD)
 	MedicRequestScaleCurve.Points = MedicRequestScalePointList;
 }
 
-static final simulated function float GetHealthMax(PlayerInfoData PlayerInfo)
+simulated function Destroyed()
 {
-	if (PlayerInfo.HumanPawn != None)
-	{
-		return PlayerInfo.HumanPawn.HealthMax;
-	}
-
-	if (PlayerInfo.TPRI != None)
-	{
-		return PlayerInfo.TPRI.HealthMax;
-	}
-
-	return 100.f;
-}
-
-static final simulated function float GetHealth(PlayerInfoData PlayerInfo)
-{
-	if (PlayerInfo.HumanPawn != None)
-	{
-		return FClamp(float(PlayerInfo.HumanPawn.Health) / PlayerInfo.HumanPawn.HealthMax, 0.f, 1.f);
-	}
-
-	if (PlayerInfo.TPRI != None)
-	{
-		if (PlayerInfo.TPRI.PlayerHealth <= 0.f)
-		{
-			return 0.f;
-		}
-
-		return FClamp(float(PlayerInfo.TPRI.PlayerHealth) / float(PlayerInfo.TPRI.HealthMax), 0.f, 1.f);
-	}
-
-	return 0.f;
-}
-
-static final simulated function float GetHealthHealingTo(PlayerInfoData PlayerInfo)
-{
-	if (PlayerInfo.HumanPawn != None)
-	{
-		if (PlayerInfo.HumanPawn.HealthHealingTo == -1)
-		{
-			return 0.f;
-		}
-
-		return FClamp(float(PlayerInfo.HumanPawn.HealthHealingTo) / PlayerInfo.HumanPawn.HealthMax, 0.f, 1.f);
-	}
-
-	return 0.f;
-}
-
-static final simulated function float GetShield(PlayerInfoData PlayerInfo)
-{
-	if (PlayerInfo.HumanPawn != None)
-	{
-		return PlayerInfo.HumanPawn.ShieldStrength / 100.f;
-	}
-
-	return float(PlayerInfo.TPRI.ShieldStrength) / 100.f;
-}
-
-simulated final function TickPlayerInfo(float DeltaTime, out PlayerInfoData PlayerInfo)
-{
-	local float Value;
-	Value = GetHealth(PlayerInfo);
-	PlayerInfo.CurrentHealth = Value;
-	Value = GetShield(PlayerInfo);
-	PlayerInfo.CurrentShield = Value;
-	Value = GetHealthHealingTo(PlayerInfo);
-	PlayerInfo.CurrentHealToHealth = Value;
-
-	PlayerInfo.VisibilityFade = FMax(PlayerInfo.VisibilityFade - DeltaTime, 0.f);
-
-	if (!PlayerInfo.bInitialized)
-	{
-		PlayerInfo.LastCheckedHealth = PlayerInfo.CurrentHealth;
-		PlayerInfo.PreviousHealth = PlayerInfo.CurrentHealth;
-		PlayerInfo.PreviousShield = PlayerInfo.CurrentShield;
-		PlayerInfo.PreviousHealToHealth = PlayerInfo.CurrentHealToHealth;
-		PlayerInfo.LastHit.Ratio = 1.f; //Mark as done playing.
-		PlayerInfo.bInitialized = true;
-		return;
-	}
-
-	if (PlayerInfo.VoiceSupportAnim > 0.f)
-	{
-		PlayerInfo.VoiceSupportAnim = FMax(PlayerInfo.VoiceSupportAnim - (DeltaTime * 0.5f), 0.f);
-	}
-
-	if (PlayerInfo.VoiceAlertAnim > 0.f)
-	{
-		PlayerInfo.VoiceAlertAnim = FMax(PlayerInfo.VoiceAlertAnim - DeltaTime, 0.f);
-	}
-
-	if (PlayerInfo.LastHit.Ratio < 1.f)
-	{
-		PlayerInfo.LastHit.Ratio += PlayerInfo.LastHit.FadeRate * DeltaTime;
-		PlayerInfo.LastHit.Ratio = FMin(PlayerInfo.LastHit.Ratio, 1.f);
-	}
-
-	if (PlayerInfo.CurrentHealth != PlayerInfo.LastCheckedHealth)
-	{
-		if (PlayerInfo.CurrentHealth < PlayerInfo.LastCheckedHealth)
-		{
-			InitializeHitData(PlayerInfo);
-		}
-		PlayerInfo.LastCheckedHealth = PlayerInfo.CurrentHealth;
-	}
-
-	if (PlayerInfo.CurrentHealth < PlayerInfo.PreviousHealth)
-	{
-		PlayerInfo.PreviousHealth = Lerp(default.HealthInterpRate * DeltaTime, PlayerInfo.PreviousHealth, PlayerInfo.CurrentHealth);
-
-		if (Abs(PlayerInfo.PreviousHealth - PlayerInfo.CurrentHealth) < 0.01f)
-		{
-			PlayerInfo.PreviousHealth = PlayerInfo.CurrentHealth;
-		}
-	}
-	else if (PlayerInfo.CurrentHealth > PlayerInfo.PreviousHealth)
-	{
-		PlayerInfo.PreviousHealth = PlayerInfo.CurrentHealth;
-	}
-
-	if (PlayerInfo.CurrentHealToHealth <= 0.f)
-	{
-		PlayerInfo.PreviousHealToHealth = PlayerInfo.CurrentHealToHealth;
-	}
-	else if (PlayerInfo.CurrentHealToHealth != PlayerInfo.PreviousHealToHealth)
-	{
-		PlayerInfo.PreviousHealToHealth = Lerp(default.HealthInterpRate * 4.f * DeltaTime, FMax(PlayerInfo.PreviousHealToHealth, PlayerInfo.CurrentHealth), PlayerInfo.CurrentHealToHealth);
-
-		if (Abs(PlayerInfo.PreviousHealToHealth - PlayerInfo.CurrentHealToHealth) < 0.01f)
-		{
-			PlayerInfo.PreviousHealToHealth = PlayerInfo.CurrentHealToHealth;
-		}
-	}
-
-	if (PlayerInfo.CurrentShield < PlayerInfo.PreviousShield)
-	{
-		PlayerInfo.PreviousShield = Lerp(default.ShieldInterpRate * DeltaTime, PlayerInfo.PreviousShield, PlayerInfo.CurrentShield);
-
-		if (Abs(PlayerInfo.PreviousShield - PlayerInfo.CurrentShield) < 0.01f)
-		{
-			PlayerInfo.PreviousShield = PlayerInfo.CurrentShield;
-		}
-	}
-	else if (PlayerInfo.CurrentShield > PlayerInfo.PreviousShield)
-	{
-		PlayerInfo.PreviousShield = PlayerInfo.CurrentShield;
-	}
-}
-
-simulated final function InitializeHitData(out PlayerInfoData PlayerInfo)
-{
-	local float NewLostHealth;
-	NewLostHealth = PlayerInfo.PreviousHealth - PlayerInfo.CurrentHealth;
-	if ( PlayerInfo.LastHit.Ratio >= 1.f )
-	{
-		PlayerInfo.LastHit.HitAmount = NewLostHealth;
-		PlayerInfo.LastHit.FadeRate = Lerp(FMin(NewLostHealth / 0.5f, 1.f), 4.f, 1.f);
-		PlayerInfo.LastHit.Ratio = 0.f;
-		return;
-	}
-	
-	if (NewLostHealth < PlayerInfo.LastHit.HitAmount * 0.5f && PlayerInfo.LastHit.Ratio < 0.75f)
-	{
-		return;
-	}
-
-	PlayerInfo.LastHit.HitAmount = NewLostHealth;
-	PlayerInfo.LastHit.FadeRate = Lerp(FMin(NewLostHealth / 0.5f, 1.f), 4.f, 1.f);
-	PlayerInfo.LastHit.Ratio = 0.f;
+	Super.Destroyed();
 }
 
 simulated function Tick(float DeltaTime)
 {
-	local int Index, PlayerInfoIndex;
-	local PlayerReplicationInfo PRI;
-	local bool bFoundData;
-	local PlayerInfoData PlayerInfo;
-	local TurboHumanPawn HumanPawn;
-	local array<PlayerInfoData> SortedPlayerInfoList;
+	Super.Tick(DeltaTime);
 
 	if (TurboHUD == None || Level.GRI == None || !Level.GRI.bMatchHasBegun)
 	{
 		return;
 	}
-	
+
+	UpdatePlayerInfoList(DeltaTime);
+}
+
+final simulated function UpdatePlayerInfoList(float DeltaTime)
+{
+	if (ShouldRefreshPlayerInfoList(DeltaTime))
+	{
+		RefreshPlayerInfoList(DeltaTime);
+		NextPawnCollectionTime = Level.TimeSeconds + 0.1f;
+	}
+
+	if (Level.TimeSeconds > NextPawnCollectionTime)
+	{
+		UpdatePlayerInfoPawns(DeltaTime);
+		NextPawnCollectionTime = Level.TimeSeconds + 0.5f;
+	}
+
+	TickPlayerInfoList(DeltaTime);
+}
+
+//Returns true if we've detected some sort of diff in GameReplicationInfo::PRIArray.
+//Can return true even if player list is technically the same due to the scoreboard sorting this PRIArray. 
+simulated function bool ShouldRefreshPlayerInfoList(float DeltaTime)
+{
+	local array<PlayerReplicationInfo> PRIArray;
+	local PlayerReplicationInfo PRI;
+	local int Index, PlayerInfoIndex;
+	local bool bFoundAll, bFoundNew;
+
+	PRIArray = Level.GRI.PRIArray;
+
+	//Always refresh if this value differs.
+	if (LastPlayerStateListLength != PRIArray.Length)
+	{
+		LastPlayerStateListLength = PRIArray.Length;
+		return true;
+	}
+
+	PlayerInfoIndex = 0;
+	bFoundNew = false;
+
+	//This is a weird but quick way to check if our list has changed or not.
+	//Assumes both GameReplicationInfo::PRIArray and PlayerInfoDataList are in the same order.
+	for (Index = 0; Index < PRIArray.Length; Index++)
+	{
+		PRI = PRIArray[Index];
+
+		if (PRI == None || PRI.bOnlySpectator || PRI.bIsSpectator || TurboHUD.PlayerOwner.PlayerReplicationInfo == PRI)
+		{
+			continue;
+		}
+
+		if (PlayerInfoDataList.Length <= PlayerInfoIndex)
+		{
+			bFoundNew = true;
+			break;
+		}
+
+		if (PlayerInfoDataList[PlayerInfoIndex].TPRI == PRI)
+		{
+			PlayerInfoIndex++;
+			continue;
+		}
+		
+		bFoundNew = true;
+		break;
+	}
+
+	bFoundAll = PlayerInfoDataList.Length == PlayerInfoIndex;
+
+	return !bFoundAll || bFoundNew;
+}
+
+//Updates PlayerInfoDataList, removing no longer valid entries and adding newly found ones. 
+//Returns true if we added a new entry to the PlayerInfoDataList.
+simulated function bool RefreshPlayerInfoList(float DeltaTime)
+{
+	local array<PlayerReplicationInfo> PRIArray;
+	local PlayerReplicationInfo PRI;
+	local int Index, PlayerInfoIndex;
+	local bool bFoundEntry, bAddedNewEntry;
+
+	bAddedNewEntry = false;
+	PRIArray = Level.GRI.PRIArray;
+
 	for (PlayerInfoIndex = PlayerInfoDataList.Length - 1; PlayerInfoIndex >= 0; PlayerInfoIndex--)
 	{
 		PRI = PlayerInfoDataList[PlayerInfoIndex].TPRI;
@@ -274,120 +164,138 @@ simulated function Tick(float DeltaTime)
 			continue;
 		}
 	}
-	
-	if (Level.TimeSeconds > PlayerCollectionTime)
+
+	for (Index = 0; Index < PRIArray.Length; Index++)
 	{
-		PlayerCollectionTime = Level.TimeSeconds + 0.1f;
+		PRI = PRIArray[Index];
 
-		foreach CollidingActors(Class'TurboHumanPawn', HumanPawn, TurboHUD.HealthBarCutoffDist, TurboHUD.PlayerOwner.CalcViewLocation)
+		if (PRI == None || PRI.bOnlySpectator || PRI.bIsSpectator || TurboHUD.PlayerOwner.PlayerReplicationInfo == PRI)
 		{
-			PRI = HumanPawn.PlayerReplicationInfo;
-
-			if (PRI == None || TurboHUD.PlayerOwner.PlayerReplicationInfo == PRI || PRI.bOnlySpectator || PRI.bIsSpectator)
-			{
-				continue;
-			}
-
-			HumanPawn.bNoTeamBeacon = true;
-
-			bFoundData = false;
-			for (PlayerInfoIndex = PlayerInfoDataList.Length - 1; PlayerInfoIndex >= 0; PlayerInfoIndex--)
-			{
-				if (PlayerInfoDataList[PlayerInfoIndex].TPRI == PRI)
-				{
-					PlayerInfoDataList[PlayerInfoIndex].DistanceSquared = VSizeSquared(TurboHUD.PlayerOwner.CalcViewLocation - HumanPawn.Location);
-					PlayerInfoDataList[PlayerInfoIndex].HumanPawn = HumanPawn;
-					bFoundData = true;
-					break;
-				}
-			}
-
-			if (bFoundData)
-			{
-				continue;
-			}
-
-			PlayerInfoIndex = PlayerInfoDataList.Length;
-			PlayerInfoDataList.Length = PlayerInfoDataList.Length + 1;
-			PlayerInfoDataList[PlayerInfoIndex].TPRI = TurboPlayerReplicationInfo(PRI);
-			PlayerInfoDataList[PlayerInfoIndex].HumanPawn = HumanPawn;
-			PlayerInfoDataList[PlayerInfoIndex].DistanceSquared = VSizeSquared(TurboHUD.PlayerOwner.CalcViewLocation - HumanPawn.Location);
-			PlayerInfoDataList[PlayerInfoIndex].ConnectionState = PlayerInfoDataList[PlayerInfoIndex].TPRI.GetConnectionState();
-			PlayerInfoDataList[PlayerInfoIndex].bInitialized = false;
-		}
-	}
-	else
-	{
-		//Still want to update distance for sorter.
-		for (PlayerInfoIndex = PlayerInfoDataList.Length - 1; PlayerInfoIndex >= 0; PlayerInfoIndex--)
-		{
-			HumanPawn = PlayerInfoDataList[PlayerInfoIndex].HumanPawn;
-
-			if (HumanPawn == None)
-			{
-				continue;
-			}
-
-			PlayerInfoDataList[PlayerInfoIndex].DistanceSquared = VSizeSquared(TurboHUD.PlayerOwner.CalcViewLocation - HumanPawn.Location);
-			PlayerInfoDataList[PlayerInfoIndex].ConnectionState = PlayerInfoDataList[PlayerInfoIndex].TPRI.GetConnectionState();
-		}
-	}
-
-	//Sort entries.
-	for (PlayerInfoIndex = PlayerInfoDataList.Length - 1; PlayerInfoIndex >= 0; PlayerInfoIndex--)
-	{
-		bFoundData = false;
-		for (Index = 0; Index < SortedPlayerInfoList.Length; Index++)
-		{
-			if (SortedPlayerInfoList[Index].DistanceSquared < PlayerInfoDataList[PlayerInfoIndex].DistanceSquared)
-			{
-				continue;
-			}
-
-			bFoundData = true;
-			SortedPlayerInfoList.Insert(Index, 1);
-			SortedPlayerInfoList[Index] = PlayerInfoDataList[PlayerInfoIndex];
-			break;
-		}
-
-		if (bFoundData)
-		{
-			continue;
-		}
-
-		SortedPlayerInfoList[SortedPlayerInfoList.Length] = PlayerInfoDataList[PlayerInfoIndex];
-	}
-
-	PlayerInfoDataList = SortedPlayerInfoList;
-
-	//Tick entries.
-	for (PlayerInfoIndex = PlayerInfoDataList.Length - 1; PlayerInfoIndex >= 0; PlayerInfoIndex--)
-	{
-		if (PlayerInfoDataList[PlayerInfoIndex].TPRI == None)
-		{
-			PlayerInfoDataList.Remove(PlayerInfoIndex, 1);
 			continue;
 		}
 		
-		PlayerInfo = PlayerInfoDataList[PlayerInfoIndex];
-		TickPlayerInfo(DeltaTime, PlayerInfo);
-		PlayerInfoDataList[PlayerInfoIndex] = PlayerInfo;
+		bFoundEntry = false;
+		for (PlayerInfoIndex = 0; PlayerInfoIndex < PlayerInfoDataList.Length; PlayerInfoIndex++)
+		{
+			if (PlayerInfoDataList[PlayerInfoIndex].TPRI == PRI)
+			{
+				bFoundEntry = true;
+				break;
+			}
+		}
+
+		if (bFoundEntry)
+		{
+			continue;
+		}
+
+		PlayerInfoDataList.Length = PlayerInfoDataList.Length + 1;
+		PlayerInfoDataList[PlayerInfoDataList.Length - 1].TPRI = TurboPlayerReplicationInfo(PRI);
+		PlayerInfoDataList[PlayerInfoDataList.Length - 1].Entry = new PlayerInfoEntryClass();
+		bAddedNewEntry = true;
+	}
+
+	return bAddedNewEntry;
+}
+
+//Attempts to collect pawns around the player and relate them to entries in PlayerInfoDataList.
+simulated function UpdatePlayerInfoPawns(float DeltaTime)
+{
+	local TurboHumanPawn Pawn;
+	local PlayerReplicationInfo PRI;
+	local int PlayerInfoIndex;
+
+	foreach CollidingActors(Class'TurboHumanPawn', Pawn, TurboHUD.HealthBarCutoffDist, TurboHUD.PlayerOwner.CalcViewLocation)
+	{
+		if (Pawn.bDeleteMe || Pawn.Health <= 0)
+		{
+			continue;
+		}
+
+		PRI = Pawn.PlayerReplicationInfo;
+
+		if (PRI == None || TurboHUD.PlayerOwner.PlayerReplicationInfo == PRI || PRI.bOnlySpectator || PRI.bIsSpectator)
+		{
+			continue;
+		}
+
+		Pawn.bNoTeamBeacon = true;
+
+		for (PlayerInfoIndex = PlayerInfoDataList.Length - 1; PlayerInfoIndex >= 0; PlayerInfoIndex--)
+		{
+			if (PlayerInfoDataList[PlayerInfoIndex].HumanPawn != None || PlayerInfoDataList[PlayerInfoIndex].TPRI != PRI)
+			{
+				continue;
+			}
+			
+			PlayerInfoDataList[PlayerInfoIndex].HumanPawn = Pawn;
+			break;
+		}
 	}
 }
 
-static final simulated function bool ShouldDrawPlayerInfo(vector CameraPosition, vector CameraDirection, out PlayerInfoData PlayerInfo)
+//Ticks all PlayerInfoDataList entries. Also responsible for maintaining PlayerInfoDataDistanceOrderList for depth sorting.
+simulated function TickPlayerInfoList(float DeltaTime)
 {
-	if (PlayerInfo.TPRI == None || PlayerInfo.HumanPawn == None)
+	local int Index, TestIndex;
+	local bool bInserted;
+
+    for (Index = 0; Index < PlayerInfoDataList.Length; Index++)
+	{
+		if (PlayerInfoDataList[Index].HumanPawn != None)
+		{
+			PlayerInfoDataList[Index].Entry.DistanceSquared = VSizeSquared(TurboHUD.PlayerOwner.CalcViewLocation - PlayerInfoDataList[Index].HumanPawn.Location);
+		}
+		else
+		{
+			PlayerInfoDataList[Index].Entry.DistanceSquared = Square(TurboHUD.HealthBarCutoffDist);
+		}
+		
+		if (PlayerInfoDataList[Index].TPRI != None)
+		{
+			PlayerInfoDataList[Index].Entry.ConnectionState = PlayerInfoDataList[Index].TPRI.GetConnectionState();
+		}
+		
+		PlayerInfoDataList[Index].Entry.Tick(DeltaTime, PlayerInfoDataList[Index]);
+	}
+	
+	//Rebuild depth-sorted index list.
+	PlayerInfoDataDistanceOrderList.Length = 0;
+    for (Index = 0; Index < PlayerInfoDataList.Length; Index++)
+    {
+		bInserted = false;
+		for (TestIndex = 0; TestIndex < PlayerInfoDataDistanceOrderList.Length; TestIndex++)
+		{	
+			if (PlayerInfoDataList[Index].Entry.DistanceSquared > PlayerInfoDataList[PlayerInfoDataDistanceOrderList[TestIndex]].Entry.DistanceSquared)
+			{
+				PlayerInfoDataDistanceOrderList.Insert(TestIndex, 1);
+				PlayerInfoDataDistanceOrderList[TestIndex] = Index;
+				bInserted = true;
+				break;
+			}
+		}
+
+		if (!bInserted)
+		{
+			PlayerInfoDataDistanceOrderList.Length = PlayerInfoDataDistanceOrderList.Length + 1;
+			PlayerInfoDataDistanceOrderList[PlayerInfoDataDistanceOrderList.Length - 1] = Index;
+		}
+    }
+}
+
+static final simulated function bool ShouldDrawPlayerInfo(vector CameraPosition, vector CameraDirection, PlayerInfoData PlayerInfo)
+{
+	if (PlayerInfo.TPRI == None || PlayerInfo.HumanPawn == None || PlayerInfo.Entry == None)
 	{
 		return false;
 	}
 		
 	if (PlayerInfo.HumanPawn.FastTrace(PlayerInfo.HumanPawn.Location, CameraPosition))
 	{
-		PlayerInfo.VisibilityFade = 1.f;
+		PlayerInfo.Entry.VisibilityFade = 1.f;
 	}
 
-	if (PlayerInfo.CurrentHealth <= 0)
+	if (PlayerInfo.Entry.CurrentHealth <= 0)
 	{
 		return false;
 	}
@@ -407,7 +315,7 @@ final simulated function bool IsHoldingMedicGun()
 
 simulated function Render(Canvas C)
 {
-	local int Index;
+	local int Index, PlayerInfoIndex;
 	local vector CamPos, ViewDir, ScreenPos;
 	local rotator CamRot;
 	local KFHumanPawn HumanPawn;
@@ -423,21 +331,23 @@ simulated function Render(Canvas C)
 	C.GetCameraLocation(CamPos,CamRot);
 	ViewDir = vector(CamRot);
 
-	for (Index = PlayerInfoDataList.Length - 1; Index >= 0; Index--)
+	//Sample indices from PlayerInfoDataDistanceOrderList instead of directly iterating so draws are depth-ordered.
+	for (Index = PlayerInfoDataDistanceOrderList.Length - 1; Index >= 0; Index--)
 	{
-		HumanPawn = PlayerInfoDataList[Index].HumanPawn;
+		PlayerInfoIndex = PlayerInfoDataDistanceOrderList[Index];
+		HumanPawn = PlayerInfoDataList[PlayerInfoIndex].HumanPawn;
 
 		if (HumanPawn == None)
 		{
 			continue;
 		}
 
-		if (!ShouldDrawPlayerInfo(CamPos, ViewDir, PlayerInfoDataList[Index]))
+		if (!ShouldDrawPlayerInfo(CamPos, ViewDir, PlayerInfoDataList[PlayerInfoIndex]))
 		{
 			continue;
 		}
 
-		if (PlayerInfoDataList[Index].VisibilityFade <= 0.f)
+		if (PlayerInfoDataList[PlayerInfoIndex].Entry.VisibilityFade <= 0.f)
 		{
 			continue;
 		}
@@ -449,9 +359,9 @@ simulated function Render(Canvas C)
 
 		ScreenPos = C.WorldToScreen(HumanPawn.Location + (vect(0,0,1) * HumanPawn.CollisionHeight));
 		
-		if( ScreenPos.X>=0 && ScreenPos.Y>=0 && ScreenPos.X<=C.ClipX && ScreenPos.Y<=C.ClipY )
+		if (ScreenPos.X >= 0 && ScreenPos.Y >= 0 && ScreenPos.X <= C.ClipX && ScreenPos.Y <= C.ClipY)
 		{
-			DrawPlayerInfo(C, PlayerInfoDataList[Index], ScreenPos.X, ScreenPos.Y);
+			DrawPlayerInfo(C, PlayerInfoDataList[PlayerInfoIndex], ScreenPos.X, ScreenPos.Y);
 		}
 	}
 
@@ -463,7 +373,7 @@ simulated function Render(Canvas C)
 	class'TurboHUDKillingFloor'.static.ResetCanvas(C);
 }
 
-simulated final function DrawPlayerInfo(Canvas C, PlayerInfoData PlayerInfo, float ScreenLocX, float ScreenLocY)
+final simulated function DrawPlayerInfo(Canvas C, PlayerInfoData PlayerInfo, float ScreenLocX, float ScreenLocY)
 {
 	local float XL, YL, TempX, TempY, TempSize, TempStartSize;
 	local float Dist, OffsetX;
@@ -471,10 +381,6 @@ simulated final function DrawPlayerInfo(Canvas C, PlayerInfoData PlayerInfo, flo
 	local float OldZ;
 	local Material TempMaterial, TempStarMaterial;
 	local byte i, TempLevel;
-	local bool bDrawLostHealth;
-	local bool bDrawLostShield;
-	local float LastHitScale;
-	local float LastHitAlpha;
 
 	if (PlayerInfo.TPRI.bViewingMatineeCinematic)
 	{
@@ -486,9 +392,9 @@ simulated final function DrawPlayerInfo(Canvas C, PlayerInfoData PlayerInfo, flo
 	Dist = FClamp(Dist, 0, TurboHUD.HealthBarCutoffDist - TurboHUD.HealthBarFullVisDist);
 	Dist = Dist / (TurboHUD.HealthBarCutoffDist - TurboHUD.HealthBarFullVisDist);
 	BeaconAlpha = byte((1.f - Dist) * 255.f);
-	BeaconAlpha = byte(255.f * FMin(PlayerInfo.VisibilityFade * 2.f, 1.f));
+	BeaconAlpha = byte(255.f * FMin(PlayerInfo.Entry.VisibilityFade * 2.f, 1.f));
 
-	if ( BeaconAlpha == 0 )
+	if (BeaconAlpha == 0)
 	{
 		return;
 	}
@@ -533,12 +439,12 @@ simulated final function DrawPlayerInfo(Canvas C, PlayerInfoData PlayerInfo, flo
 		TempX += (TempSize * 0.8f);
 		TempY += (TempSize - (TempStartSize * 1.5f));
 
-		for ( i = 0; i < TempLevel; i++ )
+		for (i = 0; i < TempLevel; i++)
 		{
 			C.SetPos(TempX, TempY - (Counter * TempStartSize));
 			C.DrawTile(TempStarMaterial, TempStartSize, TempStartSize, 0, 0, TempStarMaterial.MaterialUSize(), TempStarMaterial.MaterialVSize());
 
-			if( ++Counter==5 )
+			if (++Counter == 5)
 			{
 				Counter = 0;
 				TempX+=TurboHUD.VetStarSize;
@@ -560,7 +466,7 @@ simulated final function DrawPlayerInfo(Canvas C, PlayerInfoData PlayerInfo, flo
 	TempX = int(ScreenLocX - (TurboHUD.BarHeight * 2.5f));
 	TempY = int(ScreenLocY - (TurboHUD.BarHeight * 0.75f));
 
-	if (PlayerInfo.PreviousShield > 0.f || PlayerInfo.CurrentShield > 0.f)
+	if (PlayerInfo.Entry.PreviousShield > 0.f || PlayerInfo.Entry.CurrentShield > 0.f)
 	{
 		TempY -= TurboHUD.BarHeight;
 	}
@@ -579,12 +485,12 @@ simulated final function DrawPlayerInfo(Canvas C, PlayerInfoData PlayerInfo, flo
 		C.DrawRect(ShoppingIcon, TurboHUD.BarHeight * 5.f, TurboHUD.BarHeight * 5.f);
 	}
 
-	if (PlayerInfo.ConnectionState != Normal)
+	if (PlayerInfo.Entry.ConnectionState != Normal)
 	{
 		TempY -= (TurboHUD.BarHeight * 2.5f);
 		C.SetPos(TempX + TurboHUD.BarHeight * 1.25f, TempY);
 
-		switch (PlayerInfo.ConnectionState)
+		switch (PlayerInfo.Entry.ConnectionState)
 		{
 			case PoorConnection:
 				C.DrawRect(PoorSignalIcon, TurboHUD.BarHeight * 2.5f, TurboHUD.BarHeight * 2.5f);
@@ -596,62 +502,80 @@ simulated final function DrawPlayerInfo(Canvas C, PlayerInfoData PlayerInfo, flo
 	}
 
 	// Health
-	bDrawLostHealth = PlayerInfo.PreviousHealth > PlayerInfo.CurrentHealth;
-	DrawBackplate(C, ScreenLocX, ScreenLocY, BeaconAlpha, 1.f);
-
-	if (PlayerInfo.PreviousHealToHealth > 0.f && PlayerInfo.PreviousHealToHealth > PlayerInfo.CurrentHealth)
-	{
-		HealToHealthBarColor.A = byte(float(default.HealToHealthBarColor.A) * (float(BeaconAlpha) / 255.f));
-		DrawBar(C, ScreenLocX + FMax((TurboHUD.BarLength * (PlayerInfo.CurrentHealth - 0.01f)), 0.f), ScreenLocY, FClamp((PlayerInfo.PreviousHealToHealth - PlayerInfo.CurrentHealth) + 0.01f, 0, 1), HealToHealthBarColor, 1.f);
-	}
-
-	if (bDrawLostHealth)
-	{
-		HealthLossBarColor.A = byte(float(default.HealthLossBarColor.A) * (float(BeaconAlpha) / 255.f));
-		DrawBar(C, ScreenLocX + FMax((TurboHUD.BarLength * (PlayerInfo.CurrentHealth - 0.01f)), 0.f), ScreenLocY, FClamp((PlayerInfo.PreviousHealth - PlayerInfo.CurrentHealth) + 0.01f, 0, 1), HealthLossBarColor, 1.f);
-	}
-
-	if (PlayerInfo.CurrentHealth > 0.f )
-	{
-		HealthBarColor.A = byte(float(default.HealthBarColor.A) * (float(BeaconAlpha) / 255.f));
-		DrawBar(C, ScreenLocX, ScreenLocY, FClamp(PlayerInfo.CurrentHealth, 0, 1), HealthBarColor, 1.f);
-	}
+	DrawHealthBar(C, ScreenLocX, ScreenLocY, BeaconAlpha, PlayerInfo.Entry);
 		
 	// Armor
-	if (PlayerInfo.PreviousShield > 0.f || PlayerInfo.CurrentShield > 0.f)
+	if (PlayerInfo.Entry.PreviousShield > 0.f || PlayerInfo.Entry.CurrentShield > 0.f)
 	{
-		bDrawLostShield = PlayerInfo.PreviousShield > PlayerInfo.CurrentShield;
-		DrawBackplate(C, ScreenLocX, ScreenLocY - (TurboHUD.BarHeight + 2.f), BeaconAlpha, 0.5f);
-		if (bDrawLostShield)
-		{
-			ShieldLossBarColor.A = byte(float(default.ShieldLossBarColor.A) * (float(BeaconAlpha) / 255.f));
-			DrawBar(C, ScreenLocX + FMax((TurboHUD.BarLength * (PlayerInfo.CurrentShield - 0.01f)), 0.f), ScreenLocY - (TurboHUD.BarHeight + 2.f), FClamp((PlayerInfo.PreviousShield - PlayerInfo.CurrentShield) + 0.01f, 0, 1), ShieldLossBarColor, 0.5f);
-		}
-		
-		if ( PlayerInfo.CurrentShield > 0.f )
-		{
-			ShieldBarColor.A = byte(float(default.ShieldBarColor.A) * (float(BeaconAlpha) / 255.f));
-			DrawBar(C, ScreenLocX, ScreenLocY - (TurboHUD.BarHeight + 2.f), FClamp(PlayerInfo.CurrentShield, 0, 1), ShieldBarColor, 0.5f);
-		}
+		DrawShieldBar(C, ScreenLocX, ScreenLocY, BeaconAlpha, PlayerInfo.Entry);
 	}
 
-	if ( PlayerInfo.LastHit.Ratio < 1.f)
+	// Hit Effect
+	if (PlayerInfo.Entry.LastHit.Ratio < 1.f)
 	{
-		LastHitScale = 1.f - ((PlayerInfo.LastHit.Ratio - 1.f) ** 4.f);
-		LastHitAlpha = 1.f - (((2.f * PlayerInfo.LastHit.Ratio) - 1.f) ** 4.f);
-		LastHitAlpha *= (float(BeaconAlpha) / 255.f);
-		LastHitAlpha *= (float(HealthHitBarColor.A) / 255.f);
-		
-		C.DrawColor = HealthHitBarColor;
-		C.DrawColor.A = (LastHitAlpha * 255.f);
-		C.SetPos((ScreenLocX - (0.5 * TurboHUD.BarLength)) + (TurboHUD.BarLength * FClamp(PlayerInfo.CurrentHealth, 0, 1)), (ScreenLocY - (TurboHUD.BarHeight * 0.5f)) - (0.25f * TurboHUD.BarHeight * (LastHitScale * 1.f)));
-		C.DrawTileStretched(TurboHUD.WhiteMaterial, (TurboHUD.BarLength * PlayerInfo.LastHit.HitAmount * 1.1f) + ((TurboHUD.BarLength * 0.05f) / PlayerInfo.LastHit.FadeRate), TurboHUD.BarHeight * (1.f + (LastHitScale * 0.5f)));
+		DrawHitEffect(C, ScreenLocX, ScreenLocY, BeaconAlpha, PlayerInfo.Entry);
 	}
 
 	C.Z = OldZ;
 }
 
-simulated final function DrawBackplate(Canvas C, float XCentre, float YCentre, byte Alpha, float HeightScale)
+final simulated function DrawHealthBar(Canvas C, float ScreenLocX, float ScreenLocY, byte BeaconAlpha, TurboHUDPlayerInfoEntry Entry)
+{
+	DrawBackplate(C, ScreenLocX, ScreenLocY, BeaconAlpha, 1.f);
+
+	if (Entry.PreviousHealToHealth > 0.f && Entry.PreviousHealToHealth > Entry.CurrentHealth)
+	{
+		HealToHealthBarColor.A = byte(float(default.HealToHealthBarColor.A) * (float(BeaconAlpha) / 255.f));
+		DrawBar(C, ScreenLocX + FMax((TurboHUD.BarLength * (Entry.CurrentHealth - 0.01f)), 0.f), ScreenLocY, FClamp((Entry.PreviousHealToHealth - Entry.CurrentHealth) + 0.01f, 0, 1), HealToHealthBarColor, 1.f);
+	}
+
+	if (Entry.PreviousHealth > Entry.CurrentHealth)
+	{
+		HealthLossBarColor.A = byte(float(default.HealthLossBarColor.A) * (float(BeaconAlpha) / 255.f));
+		DrawBar(C, ScreenLocX + FMax((TurboHUD.BarLength * (Entry.CurrentHealth - 0.01f)), 0.f), ScreenLocY, FClamp((Entry.PreviousHealth - Entry.CurrentHealth) + 0.01f, 0, 1), HealthLossBarColor, 1.f);
+	}
+
+	if (Entry.CurrentHealth > 0.f )
+	{
+		HealthBarColor.A = byte(float(default.HealthBarColor.A) * (float(BeaconAlpha) / 255.f));
+		DrawBar(C, ScreenLocX, ScreenLocY, FClamp(Entry.CurrentHealth, 0, 1), HealthBarColor, 1.f);
+	}
+}
+
+final simulated function DrawShieldBar(Canvas C, float ScreenLocX, float ScreenLocY, byte BeaconAlpha, TurboHUDPlayerInfoEntry Entry)
+{
+	DrawBackplate(C, ScreenLocX, ScreenLocY - (TurboHUD.BarHeight + 2.f), BeaconAlpha, 0.5f);
+	
+	if (Entry.PreviousShield > Entry.CurrentShield)
+	{
+		ShieldLossBarColor.A = byte(float(default.ShieldLossBarColor.A) * (float(BeaconAlpha) / 255.f));
+		DrawBar(C, ScreenLocX + FMax((TurboHUD.BarLength * (Entry.CurrentShield - 0.01f)), 0.f), ScreenLocY - (TurboHUD.BarHeight + 2.f), FClamp((Entry.PreviousShield - Entry.CurrentShield) + 0.01f, 0, 1), ShieldLossBarColor, 0.5f);
+	}
+	
+	if (Entry.CurrentShield > 0.f)
+	{
+		ShieldBarColor.A = byte(float(default.ShieldBarColor.A) * (float(BeaconAlpha) / 255.f));
+		DrawBar(C, ScreenLocX, ScreenLocY - (TurboHUD.BarHeight + 2.f), FClamp(Entry.CurrentShield, 0, 1), ShieldBarColor, 0.5f);
+	}
+}
+
+final simulated function DrawHitEffect(Canvas C, float ScreenLocX, float ScreenLocY, byte BeaconAlpha, TurboHUDPlayerInfoEntry Entry)
+{
+	local float LastHitScale;
+	local float LastHitAlpha;
+
+	LastHitScale = 1.f - ((Entry.LastHit.Ratio - 1.f) ** 4.f);
+	LastHitAlpha = 1.f - (((2.f * Entry.LastHit.Ratio) - 1.f) ** 4.f);
+	LastHitAlpha *= (float(BeaconAlpha) / 255.f);
+	LastHitAlpha *= (float(HealthHitBarColor.A) / 255.f);
+	
+	C.DrawColor = HealthHitBarColor;
+	C.DrawColor.A = (LastHitAlpha * 255.f);
+	C.SetPos((ScreenLocX - (0.5 * TurboHUD.BarLength)) + (TurboHUD.BarLength * FClamp(Entry.CurrentHealth, 0, 1)), (ScreenLocY - (TurboHUD.BarHeight * 0.5f)) - (0.25f * TurboHUD.BarHeight * (LastHitScale * 1.f)));
+	C.DrawTileStretched(TurboHUD.WhiteMaterial, (TurboHUD.BarLength * Entry.LastHit.HitAmount * 1.1f) + ((TurboHUD.BarLength * 0.05f) / Entry.LastHit.FadeRate), TurboHUD.BarHeight * (1.f + (LastHitScale * 0.5f)));
+}
+
+final simulated function DrawBackplate(Canvas C, float XCentre, float YCentre, byte Alpha, float HeightScale)
 {
 	BarBackplateColor.A = int(float(default.BarBackplateColor.A) * (float(Alpha) / 255.f));
 	C.DrawColor = BarBackplateColor;
@@ -659,34 +583,34 @@ simulated final function DrawBackplate(Canvas C, float XCentre, float YCentre, b
 	C.DrawTileStretched(TurboHUD.WhiteMaterial, TurboHUD.BarLength, TurboHUD.BarHeight * HeightScale);
 }
 
-simulated final function DrawBar(Canvas C, float XCentre, float YCentre, float BarPercentage, color Color, float HeightScale)
+final simulated function DrawBar(Canvas C, float XCentre, float YCentre, float BarPercentage, color Color, float HeightScale)
 {
 	C.DrawColor = Color;
 	C.SetPos(XCentre - 0.5 * TurboHUD.BarLength, YCentre - (0.5 * TurboHUD.BarHeight * HeightScale));
 	C.DrawTileStretched(TurboHUD.WhiteMaterial, TurboHUD.BarLength * BarPercentage, TurboHUD.BarHeight * HeightScale);
 }
 
-simulated final function StartVoiceSupportNotification(PlayerReplicationInfo Sender)
+simulated function StartVoiceSupportNotification(PlayerReplicationInfo Sender)
 {
 	local int PlayerInfoIndex;
 	for (PlayerInfoIndex = PlayerInfoDataList.Length - 1; PlayerInfoIndex >= 0; PlayerInfoIndex--)
 	{
 		if (PlayerInfoDataList[PlayerInfoIndex].TPRI == Sender)
 		{
-			PlayerInfoDataList[PlayerInfoIndex].VoiceSupportAnim = 1.f;
+			PlayerInfoDataList[PlayerInfoIndex].Entry.VoiceSupportAnim = 1.f;
 			break;
 		}
 	}
 }
 
-simulated final function StartVoiceAlertNotification(PlayerReplicationInfo Sender)
+simulated function StartVoiceAlertNotification(PlayerReplicationInfo Sender)
 {
 	local int PlayerInfoIndex;
 	for (PlayerInfoIndex = PlayerInfoDataList.Length - 1; PlayerInfoIndex >= 0; PlayerInfoIndex--)
 	{
 		if (PlayerInfoDataList[PlayerInfoIndex].TPRI == Sender)
 		{
-			PlayerInfoDataList[PlayerInfoIndex].VoiceAlertAnim = 1.f;
+			PlayerInfoDataList[PlayerInfoIndex].Entry.VoiceAlertAnim = 1.f;
 			break;
 		}
 	}
@@ -715,10 +639,11 @@ simulated function DrawMedicPlayerInfo(Canvas C)
 	local byte AlertOpacity;
 	local float AlertScale;
 	local float HealthPercent;
+	local TurboHUDPlayerInfoEntry PlayerInfoEntry;
 	
 	C.FontScaleX = 1.f;
 	C.FontScaleY = 1.f;
-	C.Font = TurboHUD.GetFontSizeIndex(C, -1);
+	C.Font = TurboHUD.GetFontSizeIndex(C, -4);
 
 	if (TurboHUD.bShowScoreBoard)
 	{
@@ -745,12 +670,14 @@ simulated function DrawMedicPlayerInfo(Canvas C)
 
 	for (PlayerInfoIndex = PlayerInfoDataList.Length - 1; PlayerInfoIndex >= 0; PlayerInfoIndex--)
 	{
-		if (PlayerInfoDataList[PlayerInfoIndex].CurrentHealth <= 0.f)
+		PlayerInfoEntry = PlayerInfoDataList[PlayerInfoIndex].Entry;
+
+		if (PlayerInfoEntry == None || PlayerInfoEntry.CurrentHealth <= 0.f)
 		{
 			continue;
 		}
 
-		HealthPercent = PlayerInfoDataList[PlayerInfoIndex].CurrentHealth;
+		HealthPercent = PlayerInfoEntry.PreviousHealth;
 
 		C.FontScaleX = 1.f;
 		C.FontScaleY = 1.f;
@@ -769,9 +696,9 @@ simulated function DrawMedicPlayerInfo(Canvas C)
 		C.FontScaleX = 0.667f;
 		C.FontScaleY = 0.667f;
 		C.SetPos((TempX - MinEntrySizeX) + 4.f, (TempY - EntrySizeY) - 8.f);
-		C.DrawTextClipped(int(HealthPercent * GetHealthMax(PlayerInfoDataList[PlayerInfoIndex]))$class'TurboHUDScoreboard'.default.HealthyString);
+		C.DrawTextClipped(int(HealthPercent * PlayerInfoEntry.GetHealthMax(PlayerInfoDataList[PlayerInfoIndex]))$class'TurboHUDScoreboard'.default.HealthyString);
 
-		AnimTime = 1.f - PlayerInfoDataList[PlayerInfoIndex].VoiceSupportAnim;
+		AnimTime = 1.f - PlayerInfoEntry.VoiceSupportAnim;
 		if (AnimTime < 1.f)	
 		{
 			AlertOpacity = Round(InterpCurveEval(MedicRequestOpacityCurve, AnimTime) * 160.f);
@@ -790,12 +717,9 @@ simulated function DrawMedicPlayerInfo(Canvas C)
 
 defaultproperties
 {
-	PlayerCollectionTime=0.1f
+	PlayerInfoEntryClass=class'TurboHUDPlayerInfoEntry'
 
 	PerkBackplate=Texture'KFTurbo.HUD.PerkBackplate_D'
-
-	HealthInterpRate=1.f;
-	ShieldInterpRate=2.f;
 
 	HealthBarColor=(R=232,G=41,B=41,A=255)
 	HealthLossBarColor=(R=222,G=171,B=47,A=255)
