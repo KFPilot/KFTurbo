@@ -90,7 +90,7 @@ final simulated function UpdatePlayerInfoList(float DeltaTime)
 }
 
 //Returns true if we've detected some sort of diff in GameReplicationInfo::PRIArray.
-//Can return true even if player list is technically the same due to the scoreboard sorting this PRIArray. 
+//Can return true even if player list is technically the same due to the scoreboard sorting the PRIArray. 
 simulated function bool ShouldRefreshPlayerInfoList(float DeltaTime)
 {
 	local array<PlayerReplicationInfo> PRIArray;
@@ -100,7 +100,7 @@ simulated function bool ShouldRefreshPlayerInfoList(float DeltaTime)
 
 	PRIArray = Level.GRI.PRIArray;
 
-	//Always refresh if this value differs.
+	//Always refresh if the length has changed.
 	if (LastPlayerStateListLength != PRIArray.Length)
 	{
 		LastPlayerStateListLength = PRIArray.Length;
