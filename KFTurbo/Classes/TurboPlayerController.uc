@@ -39,7 +39,7 @@ replication
 	reliable if( Role < ROLE_Authority )
 		Vote, VoteTest, ServerMarkActor, ServerNotifyShoppingState, ServerNotifyLoginMenuState;
 	reliable if( Role < ROLE_Authority )
-		ServerDebugSkipWave, ServerDebugRestartWave, ServerDebugSetWave, ServerDebugPreventGameOver;
+		ServerDebugSkipWave, ServerDebugRestartWave, ServerDebugSetWave, ServerDebugPreventGameOver, ServerDebugSpawnFriend;
 	reliable if( Role < ROLE_Authority )
 		AdminSetTraderTime, AdminSetMaxPlayers, AdminSetFakedPlayer, AdminSetPlayerHealth, AdminSetSpawnRate, AdminSetMaxMonsters, AdminShowSettings;
 }
@@ -788,6 +788,28 @@ exec function ServerDebugPreventGameOver()
 	{
 		TurboCommandHandler.PreventGameOver(Self);
 	}
+}
+
+exec function ServerDebugSpawnFriend()
+{
+	local TeamAI TeamAI;
+	local TurboHumanBot Soldier;
+
+	if (TurboCommandHandler == None || !TurboCommandHandler.CanExecuteCommand(self, true))
+	{
+		return;
+	}
+
+	foreach DynamicActors(class'TeamAI', TeamAI)
+	{
+		break;
+	}
+
+
+	Soldier = Spawn(class'TurboHumanBot');
+	Soldier.PlayerReplicationInfo.Team.TeamIndex = PlayerReplicationInfo.Team.TeamIndex;
+	Soldier.GiveWeapon("KFTurbo.W_Shotgun_Weap");
+	TeamAI.AddSquadWithLeader(Soldier.Controller, None);
 }
 
 exec function AdminSetTraderTime(int Time)
