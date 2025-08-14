@@ -38,7 +38,10 @@ var Texture PoorSignalIcon;
 var Texture NoSignalIcon;
 
 var Texture MedicBackplate;
-var Texture MedicCap;
+var Texture AlertIcon;
+var Texture MedicIcon;
+
+var int FontSizeOffset;
 
 var InterpCurve MedicRequestOpacityCurve;
 var array<InterpCurvePoint> MedicRequestOpacityPointList;
@@ -46,6 +49,8 @@ var InterpCurve MedicRequestMoveCurve;
 var array<InterpCurvePoint> MedicRequestMovePointList;
 var InterpCurve MedicRequestScaleCurve;
 var array<InterpCurvePoint> MedicRequestScalePointList;
+
+var bool bAllowSelfForDebug;
 
 simulated function Initialize(TurboHUDKillingFloor OwnerHUD)
 {
@@ -116,7 +121,7 @@ simulated function bool ShouldRefreshPlayerInfoList(float DeltaTime)
 	{
 		PRI = PRIArray[Index];
 
-		if (PRI == None || PRI.bOnlySpectator || PRI.bIsSpectator || TurboHUD.PlayerOwner.PlayerReplicationInfo == PRI)
+		if (PRI == None || PRI.bOnlySpectator || PRI.bIsSpectator || (!bAllowSelfForDebug && TurboHUD.PlayerOwner.PlayerReplicationInfo == PRI))
 		{
 			continue;
 		}
@@ -169,7 +174,7 @@ simulated function bool RefreshPlayerInfoList(float DeltaTime)
 	{
 		PRI = PRIArray[Index];
 
-		if (PRI == None || PRI.bOnlySpectator || PRI.bIsSpectator || TurboHUD.PlayerOwner.PlayerReplicationInfo == PRI)
+		if (PRI == None || PRI.bOnlySpectator || PRI.bIsSpectator || (!bAllowSelfForDebug && TurboHUD.PlayerOwner.PlayerReplicationInfo == PRI))
 		{
 			continue;
 		}
@@ -214,7 +219,7 @@ simulated function UpdatePlayerInfoPawns(float DeltaTime)
 
 		PRI = Pawn.PlayerReplicationInfo;
 
-		if (PRI == None || TurboHUD.PlayerOwner.PlayerReplicationInfo == PRI || PRI.bOnlySpectator || PRI.bIsSpectator)
+		if (PRI == None || (!bAllowSelfForDebug && TurboHUD.PlayerOwner.PlayerReplicationInfo == PRI) || PRI.bOnlySpectator || PRI.bIsSpectator)
 		{
 			continue;
 		}
@@ -371,6 +376,26 @@ simulated function Render(Canvas C)
 	}
 	
 	class'TurboHUDKillingFloor'.static.ResetCanvas(C);
+}
+
+simulated function OnScreenSizeChange(Canvas C, Vector2D CurrentClipSize, Vector2D PreviousClipSize)
+{
+	FontSizeOffset = 0;
+
+	if (CurrentClipSize.Y <= 1440)
+	{
+		FontSizeOffset++;
+	}
+
+	if (CurrentClipSize.Y <= 1080)
+	{
+		FontSizeOffset++;
+	}
+
+	if (CurrentClipSize.Y <= 820)
+	{
+		FontSizeOffset++;
+	}
 }
 
 final simulated function DrawPlayerInfo(Canvas C, PlayerInfoData PlayerInfo, float ScreenLocX, float ScreenLocY)
@@ -631,19 +656,22 @@ simulated function ReceivedVoiceMessage(PlayerReplicationInfo Sender, Name Messa
 simulated function DrawMedicPlayerInfo(Canvas C)
 {
 	local int PlayerInfoIndex;
-	local float TextSizeX, TextSizeY;
-	local float MinEntrySizeX, EntrySizeY;
+	local float TextSizeX, TextSizeY, HealthTextSizeX;
+	local float MinEntrySizeX, EntrySizeY, HealthOffsetX;
 	local float TempX, TempY;
 	local string PlayerName;
 	local float AnimTime;
+	local bool bIsMedicAlert;
+	local Texture Icon;
 	local byte AlertOpacity;
 	local float AlertScale;
 	local float HealthPercent;
 	local TurboHUDPlayerInfoEntry PlayerInfoEntry;
+	local string HealthString;
 	
 	C.FontScaleX = 1.f;
 	C.FontScaleY = 1.f;
-	C.Font = TurboHUD.GetFontSizeIndex(C, -4);
+	C.Font = TurboHUD.LoadFont(3 + FontSizeOffset);
 
 	if (TurboHUD.bShowScoreBoard)
 	{
@@ -662,9 +690,11 @@ simulated function DrawMedicPlayerInfo(Canvas C)
 		EntrySizeY = FMax(TextSizeY, EntrySizeY);
 	}
 
-	MinEntrySizeX += 24.f;
-	EntrySizeY += 4.f;
-
+	C.TextSize("000HP", HealthTextSizeX, TextSizeY);
+	MinEntrySizeX += (float(C.SizeX) * 0.02f) + (HealthTextSizeX * 1.5);
+	EntrySizeY += (float(C.SizeY) * 0.0035f);
+	HealthOffsetX = HealthTextSizeX * 0.25f;
+	
 	TempX = C.ClipX;
 	TempY = C.ClipY * (1.f - (class'TurboHUDPlayer'.default.CashBackplateSize.Y + (class'TurboHUDPlayer'.default.BackplateSpacing.Y * 2.f)));
 
@@ -683,8 +713,8 @@ simulated function DrawMedicPlayerInfo(Canvas C)
 		C.FontScaleY = 1.f;
 
 		C.SetDrawColor(0, 0, 0, 120);
-		C.SetPos(TempX - MinEntrySizeX, TempY - EntrySizeY);
-		C.DrawTileStretched(MedicBackplate, MinEntrySizeX + 4.f, EntrySizeY);
+		C.SetPos((TempX + EntrySizeY) - MinEntrySizeX, TempY - EntrySizeY);
+		C.DrawTileStretched(MedicBackplate, (MinEntrySizeX - EntrySizeY) + 4.f, EntrySizeY);
 
 		PlayerName = Left(PlayerInfoDataList[PlayerInfoIndex].TPRI.PlayerName, 12);
 
@@ -693,22 +723,30 @@ simulated function DrawMedicPlayerInfo(Canvas C)
 		C.SetPos(TempX - (TextSizeX + 10.f), TempY - ((EntrySizeY * 0.5f) + (TextSizeY * 0.5f)));
 		C.DrawTextClipped(PlayerName);
 		
-		C.FontScaleX = 0.667f;
-		C.FontScaleY = 0.667f;
-		C.SetPos((TempX - MinEntrySizeX) + 4.f, (TempY - EntrySizeY) - 8.f);
-		C.DrawTextClipped(int(HealthPercent * PlayerInfoEntry.GetHealthMax(PlayerInfoDataList[PlayerInfoIndex]))$class'TurboHUDScoreboard'.default.HealthyString);
+		HealthString = FillStringWithZeroes(Min(int(HealthPercent * PlayerInfoEntry.GetHealthMax(PlayerInfoDataList[PlayerInfoIndex])), 999), 3);
+		C.SetPos((TempX - MinEntrySizeX) + EntrySizeY + HealthOffsetX, (TempY - (EntrySizeY * 0.5f)) - (TextSizeY * 0.5f));
+		DrawTextMeticulous(C, HealthString $ class'TurboHUDScoreboard'.default.HealthyString, HealthTextSizeX);
 
-		AnimTime = 1.f - PlayerInfoEntry.VoiceSupportAnim;
+		if (PlayerInfoEntry.VoiceSupportAnim > 0.f)
+		{
+			Icon = MedicIcon;
+			C.SetDrawColor(255, 0, 0);
+		}
+		else
+		{
+			Icon = AlertIcon;
+			C.SetDrawColor(255, 215, 0);
+		}
+
+		AnimTime = 1.f - FMax(PlayerInfoEntry.VoiceSupportAnim, PlayerInfoEntry.VoiceAlertAnim);
 		if (AnimTime < 1.f)	
 		{
-			AlertOpacity = Round(InterpCurveEval(MedicRequestOpacityCurve, AnimTime) * 160.f);
-			C.SetDrawColor(255, 0, 0);
+			AlertOpacity = Round(InterpCurveEval(MedicRequestOpacityCurve, AnimTime) * 225.f);
 			C.DrawColor.A = AlertOpacity;
 
 			AlertScale = InterpCurveEval(MedicRequestScaleCurve, AnimTime);
-
-			C.SetPos((TempX - (MinEntrySizeX - (InterpCurveEval(MedicRequestMoveCurve, AnimTime) * 8.f))) - ((EntrySizeY * AlertScale * 0.8f)), TempY - (EntrySizeY * Lerp(0.5f, 1.f, AlertScale)));
-			C.DrawTileStretched(MedicCap, EntrySizeY * AlertScale * 0.75f, EntrySizeY * AlertScale);
+			C.SetPos(((TempX - MinEntrySizeX) + EntrySizeY + (InterpCurveEval(MedicRequestMoveCurve, AnimTime) * -8.f)) - (EntrySizeY * AlertScale), TempY - (EntrySizeY * Lerp(0.5f, 1.f, AlertScale)));
+			C.DrawRect(Icon, EntrySizeY * AlertScale, EntrySizeY * AlertScale);
 		}
 
 		TempY -= EntrySizeY + 2.f;
@@ -736,25 +774,28 @@ defaultproperties
 	PoorSignalIcon=Texture'KFTurbo.HUD.LowSignal_a01'
 	NoSignalIcon=Texture'KFTurbo.HUD.NoSignal_a01'
 
-	MedicBackplate=Texture'KFTurbo.HUD.EdgeBackplate_D'
-	MedicCap=Texture'KFTurbo.HUD.ContainerRoundedCap_D'
+	MedicBackplate=Texture'KFTurbo.HUD.ContainerSquare_D'
+	AlertIcon=Texture'KFTurbo.HUD.Alert_D'
+	MedicIcon=Texture'KFTurbo.HUD.Medic_D'
 
 	MedicRequestOpacityPointList(0)=(InVal=0.0,OutVal=0)
-	MedicRequestOpacityPointList(1)=(InVal=0.1,OutVal=1)
-	MedicRequestOpacityPointList(2)=(InVal=0.2,OutVal=0)
-	MedicRequestOpacityPointList(3)=(InVal=0.3,OutVal=1)
-	MedicRequestOpacityPointList(4)=(InVal=0.4,OutVal=0)
-	MedicRequestOpacityPointList(5)=(InVal=0.5,OutVal=1)
-	MedicRequestOpacityPointList(6)=(InVal=0.6,OutVal=0)
-	MedicRequestOpacityPointList(7)=(InVal=0.7,OutVal=1)
-	MedicRequestOpacityPointList(8)=(InVal=0.95,OutVal=1)
+	MedicRequestOpacityPointList(1)=(InVal=0.05,OutVal=1)
+	MedicRequestOpacityPointList(2)=(InVal=0.1,OutVal=0)
+	MedicRequestOpacityPointList(3)=(InVal=0.15,OutVal=1)
+	MedicRequestOpacityPointList(4)=(InVal=0.2,OutVal=0)
+	MedicRequestOpacityPointList(5)=(InVal=0.25,OutVal=1)
+	MedicRequestOpacityPointList(6)=(InVal=0.3,OutVal=0)
+	MedicRequestOpacityPointList(7)=(InVal=0.35,OutVal=1)
+	MedicRequestOpacityPointList(8)=(InVal=0.9,OutVal=1)
 	MedicRequestOpacityPointList(9)=(InVal=1.0,OutVal=0)
 
-	MedicRequestMovePointList(0)=(InVal=0.0,OutVal=0)
-	MedicRequestMovePointList(1)=(InVal=0.1,OutVal=1)
-	MedicRequestMovePointList(2)=(InVal=1.0,OutVal=1)
+	MedicRequestMovePointList(0)=(InVal=0.0,OutVal=0.5)
+	MedicRequestMovePointList(1)=(InVal=0.025,OutVal=0)
+	MedicRequestMovePointList(2)=(InVal=1.0,OutVal=0)
 
-	MedicRequestScalePointList(0)=(InVal=0.0,OutVal=1.25)
+	MedicRequestScalePointList(0)=(InVal=0.0,OutVal=1.4)
 	MedicRequestScalePointList(1)=(InVal=0.1,OutVal=1)
 	MedicRequestScalePointList(2)=(InVal=1.0,OutVal=1)
+
+	bAllowSelfForDebug=false
 }

@@ -138,12 +138,12 @@ final simulated function Tick(float DeltaTime, TurboHUDPlayerInfo.PlayerInfoData
 
 	if (VoiceSupportAnim > 0.f)
 	{
-		VoiceSupportAnim = FMax(VoiceSupportAnim - (DeltaTime * 0.5f), 0.f);
+		VoiceSupportAnim = FMax(VoiceSupportAnim - (0.3f * DeltaTime), 0.f);
 	}
 
 	if (VoiceAlertAnim > 0.f)
 	{
-		VoiceAlertAnim = FMax(VoiceAlertAnim - DeltaTime, 0.f);
+		VoiceAlertAnim = FMax(VoiceAlertAnim - (0.3f * DeltaTime), 0.f);
 	}
 
 	if (LastHit.Ratio < 1.f)
