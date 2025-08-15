@@ -661,7 +661,6 @@ simulated function DrawMedicPlayerInfo(Canvas C)
 	local float TempX, TempY;
 	local string PlayerName;
 	local float AnimTime;
-	local bool bIsMedicAlert;
 	local Texture Icon;
 	local byte AlertOpacity;
 	local float AlertScale;
