@@ -78,11 +78,17 @@ var bool bIsLargeCapacityMagazine;
 
 var bool bWeaponHasSecondaryAmmo;
 var bool bWeaponSecondaryCanFire;
-var bool bIsMedicGun;
 var float CurrentSpareSecondaryAmmo;
 var float CurrentMaxSecondaryAmmo;
 var float SecondaryAmmoFade;
 var float SecondaryAmmoFadeRate;
+var float SecondaryAmmoOffset;
+
+var bool bIsMedicGun;
+var float CurrentSpareMedicGunAmmo;
+var float CurrentMaxMedicGunAmmo;
+var float MedicGunAmmoFade;
+
 var localized string SecondaryAmmoHeader; //Can be anything - just make sure it's 3 or less characters.
 var localized string SecondaryMedicGunAmmoHeader; //Can be anything - just make sure it's 3 or less characters.
 
@@ -100,7 +106,7 @@ var bool bIsFlashlightOn;
 var float FlashlightPower;
 var float FlashlightPowerFade;
 var float FlashlightPowerFadeRate;
-var float FlashlightPosition;
+var float FlashlightOffset;
 var Texture FlashlightIcon;
 
 var int CurrentWeight;
@@ -256,25 +262,7 @@ simulated function Tick(float DeltaTime)
 		WeaponUpdate(DeltaTime, KFWeapon(CurrentPawn.Weapon));
 	}
 
-	if (bIsFlashlightOn || FlashlightPower < 100.f)
-	{
-		FlashlightPowerFade = FMin(FlashlightPowerFade + (DeltaTime * FlashlightPowerFadeRate), 1.f);
-	}
-	else
-	{
-		FlashlightPowerFade = FMax(FlashlightPowerFade - (DeltaTime * FlashlightPowerFadeRate), 0.f);
-	}
-
-	if (bWeaponHasSecondaryAmmo)
-	{
-		FlashlightPosition = Lerp(DeltaTime * SecondaryAmmoFadeRate * 4.f, FlashlightPosition, 1.f);
-		SecondaryAmmoFade = FMin(SecondaryAmmoFade + (DeltaTime * SecondaryAmmoFadeRate), 1.f);
-	}
-	else
-	{
-		FlashlightPosition = Lerp(DeltaTime * SecondaryAmmoFadeRate * 0.25f, FlashlightPosition, 0.f);
-		SecondaryAmmoFade = FMax(SecondaryAmmoFade - (DeltaTime * SecondaryAmmoFadeRate), 0.f);
-	}
+	TickSecondaryAmmoLayout(DeltaTime);
 
 	if (bIsReloading)
 	{
@@ -295,6 +283,47 @@ simulated function Tick(float DeltaTime)
 	}
 
 	CurrentCashBackplateX = Lerp(DeltaTime * 2.f, CurrentCashBackplateX, DesiredCashBackplateX);
+}
+
+simulated function TickSecondaryAmmoLayout(float DeltaTime)
+{
+	if (bIsFlashlightOn || FlashlightPower < 100.f)
+	{
+		FlashlightPowerFade = FMin(FlashlightPowerFade + (DeltaTime * FlashlightPowerFadeRate), 1.f);
+	}
+	else
+	{
+		FlashlightPowerFade = FMax(FlashlightPowerFade - (DeltaTime * FlashlightPowerFadeRate), 0.f);
+	}
+
+	if (bWeaponHasSecondaryAmmo || bIsMedicGun)
+	{
+		FlashlightOffset = Lerp(DeltaTime * SecondaryAmmoFadeRate * 4.f, FlashlightOffset, 1.f);
+	}
+	else
+	{
+		FlashlightOffset = Lerp(DeltaTime * SecondaryAmmoFadeRate * 1.f, FlashlightOffset, 0.f);
+	}
+
+	if (bWeaponHasSecondaryAmmo)
+	{
+		SecondaryAmmoFade = FMin(SecondaryAmmoFade + (DeltaTime * SecondaryAmmoFadeRate), 1.f);
+	}
+	else
+	{
+		SecondaryAmmoFade = FMax(SecondaryAmmoFade - (DeltaTime * SecondaryAmmoFadeRate), 0.f);
+	}
+
+	if (bIsMedicGun)
+	{
+		MedicGunAmmoFade = FMin(MedicGunAmmoFade + (DeltaTime * SecondaryAmmoFadeRate), 1.f);
+		SecondaryAmmoOffset = Lerp(DeltaTime * SecondaryAmmoFadeRate * 4.f, SecondaryAmmoOffset, 1.f);
+	}
+	else
+	{
+		MedicGunAmmoFade = FMax(MedicGunAmmoFade - (DeltaTime * SecondaryAmmoFadeRate), 0.f);
+		SecondaryAmmoOffset = Lerp(DeltaTime * SecondaryAmmoFadeRate * 1.f, SecondaryAmmoOffset, 0.f);
+	}
 }
 
 simulated function OnScreenSizeChange(Canvas C, Vector2D CurrentClipSize, Vector2D PreviousClipSize)
@@ -556,20 +585,19 @@ simulated function WeaponUpdate(float DeltaTime, KFWeapon Weapon)
 		return;
 	}
 
-	bIsMedicGun = KFMedicGun(Weapon) != None;
-	bWeaponHasSecondaryAmmo = (Weapon.bHasSecondaryAmmo && !Weapon.bReduceMagAmmoOnSecondaryFire) || bIsMedicGun;
+	bWeaponHasSecondaryAmmo = (Weapon.bHasSecondaryAmmo && !Weapon.bReduceMagAmmoOnSecondaryFire);
 	bWeaponSecondaryCanFire = true;
+
 	if (bWeaponHasSecondaryAmmo)
 	{
-		if (!bIsMedicGun)
-		{
-			Weapon.GetSecondaryAmmoCount(CurrentMaxSecondaryAmmo, CurrentSpareSecondaryAmmo);
-			bWeaponSecondaryCanFire = Weapon.ReadyToFire(1); //Ask if we can perform secondary fire.
-		}
-		else
-		{
-			MedicGunUpdate(DeltaTime, KFMedicGun(Weapon), bHasChangedWeapon);
-		}
+		Weapon.GetSecondaryAmmoCount(CurrentMaxSecondaryAmmo, CurrentSpareSecondaryAmmo);
+		bWeaponSecondaryCanFire = Weapon.ReadyToFire(1); //Ask if we can perform secondary fire.
+	}
+	
+	bIsMedicGun = KFMedicGun(Weapon) != None;
+	if (bIsMedicGun)
+	{
+		MedicGunUpdate(DeltaTime, KFMedicGun(Weapon), bHasChangedWeapon);
 	}
 
 	if (Weapon.MagCapacity == 1)
@@ -659,21 +687,21 @@ simulated function MedicGunUpdate(float DeltaTime, KFMedicGun MedicGun, bool bHa
 
 	if (bHasChangedWeapon)
 	{
-		CurrentSpareSecondaryAmmo = MedicGunCharge;
+		CurrentSpareMedicGunAmmo = MedicGunCharge;
 		return;
 	}
 
-	if (CurrentSpareSecondaryAmmo > MedicGunCharge)
+	if (CurrentSpareMedicGunAmmo > MedicGunCharge)
 	{
-		CurrentSpareSecondaryAmmo = MedicGunCharge;
+		CurrentSpareMedicGunAmmo = MedicGunCharge;
 		return;
 	}
 
-	CurrentSpareSecondaryAmmo = Lerp(DeltaTime * SyringeInterpRate, CurrentSpareSecondaryAmmo, MedicGunCharge);
+	CurrentSpareMedicGunAmmo = Lerp(DeltaTime * SyringeInterpRate, CurrentSpareMedicGunAmmo, MedicGunCharge);
 
-	if (Abs(CurrentSpareSecondaryAmmo - 100.f) < 0.5f)
+	if (Abs(CurrentSpareMedicGunAmmo - 100.f) < 0.5f)
 	{
-		CurrentSpareSecondaryAmmo = 100.f;
+		CurrentSpareMedicGunAmmo = 100.f;
 	}
 }
 
@@ -1031,7 +1059,7 @@ simulated final function DrawAlternativeAmmo(Canvas C, Vector2D RightAnchor)
 		TempX = RightAnchor.X;
 		TempY = RightAnchor.Y;
 
-		TempX += FlashlightPosition * ((SpacingX * 0.5f) + BackplateSizeX);
+		TempX += (FlashlightOffset + (SecondaryAmmoOffset * SecondaryAmmoFade)) * ((SpacingX * 0.5f) + BackplateSizeX);
 
 		C.DrawColor = BackplateColor;
 		C.DrawColor.A = Lerp(1.f - FlashlightPowerFade, C.DrawColor.A, 0);
@@ -1078,6 +1106,8 @@ simulated final function DrawAlternativeAmmo(Canvas C, Vector2D RightAnchor)
 		TempX = RightAnchor.X;
 		TempY = RightAnchor.Y;
 
+		TempX += SecondaryAmmoOffset * ((SpacingX * 0.5f) + BackplateSizeX);
+
 		C.DrawColor = BackplateColor;
 		C.DrawColor.A = Lerp(1.f - SecondaryAmmoFade, C.DrawColor.A, 0);
 
@@ -1108,17 +1138,57 @@ simulated final function DrawAlternativeAmmo(Canvas C, Vector2D RightAnchor)
 
 		C.SetPos(TempX - (TextSizeX * 0.465f), TempY - (TextSizeY * 0.5f));
 
-		if (!bIsMedicGun)
-		{
-			DrawTextMeticulous(C, SecondaryAmmoHeader, TextSizeX);
-		}
-		else
-		{
-			DrawTextMeticulous(C, SecondaryMedicGunAmmoHeader, TextSizeX);
-		}
+		DrawTextMeticulous(C, SecondaryAmmoHeader, TextSizeX);
 
 		//Draw Secondary Ammo amount.
 		FlashlightString = FillStringWithZeroes(Min(int(CurrentSpareSecondaryAmmo), 999), 3);
+		
+		C.FontScaleX = 1.f;
+		C.FontScaleY = 1.f;
+		C.Font = TurboHUD.LoadLargeNumberFont(BaseFontSize + 3);
+		C.TextSize(GetStringOfZeroes(3), TextSizeX, TextSizeY);
+		TempY = BackplateCenterY + (BackplateTextSizeY * 0.3f);
+		C.FontScaleX = BackplateTextSizeX / TextSizeX;
+		C.FontScaleY = C.FontScaleX;
+		C.TextSize(GetStringOfZeroes(Len(FlashlightString)), TextSizeX, TextSizeY);
+
+		C.SetPos(TempX - (TextSizeX * 0.5f), TempY - (TextSizeY * 0.5f));
+		DrawCounterTextMeticulous(C, FlashlightString, TextSizeX, EmptyDigitOpacityMultiplier);
+	}
+
+	if (MedicGunAmmoFade > 0.01f)
+	{
+		TempX = RightAnchor.X;
+		TempY = RightAnchor.Y;
+
+		C.DrawColor = BackplateColor;
+		C.DrawColor.A = Lerp(1.f - MedicGunAmmoFade, C.DrawColor.A, 0);
+
+		C.SetPos(TempX, TempY - BackplateSizeY);
+		C.DrawTileStretched(RoundedContainer, BackplateSizeX, BackplateSizeY);
+		
+		BackplateCenterX = TempX + (BackplateSizeX * 0.5f);
+		BackplateCenterY = TempY - (BackplateSizeY * 0.5f);
+	
+		C.DrawColor = C.MakeColor(255, 255, 255, Max(Lerp(1.f - MedicGunAmmoFade, 220, 0), 0));
+
+		TempX = BackplateCenterX;
+		TempY = BackplateCenterY - (BackplateTextSizeY * 0.25f);
+
+		C.FontScaleX = 1.f;
+		C.FontScaleY = 1.f;
+		C.Font = TurboHUD.LoadFont(BaseFontSize + 1);
+		C.TextSize(GetStringOfZeroes(3), TextSizeX, TextSizeY);
+		C.FontScaleX = (BackplateTextSizeX / TextSizeX);
+		C.FontScaleY = C.FontScaleX;
+		C.TextSize(GetStringOfZeroes(3), TextSizeX, TextSizeY);
+
+		C.SetPos(TempX - (TextSizeX * 0.465f), TempY - (TextSizeY * 0.5f));
+
+		DrawTextMeticulous(C, SecondaryMedicGunAmmoHeader, TextSizeX);
+
+		//Draw Secondary Ammo amount.
+		FlashlightString = FillStringWithZeroes(Min(int(CurrentSpareMedicGunAmmo), 999), 3);
 		
 		C.FontScaleX = 1.f;
 		C.FontScaleY = 1.f;
