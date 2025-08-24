@@ -47,7 +47,7 @@ function Texture GetIconForPickup(String VariantID)
         case "RET":
             return Texture'KFTurbo.HUD.LevelIcon_D';
         case "SCUD":
-            return Texture'KFTurbo.HUD.ScrubblesIcon_D';
+            return Texture'KFTurbo.HUD.SCRNFanIcon_D';
         case "CUBIC":
             return Texture'KFTurbo.HUD.CubicIcon_D';
         case "SHOWME":

@@ -7,7 +7,7 @@ defaultproperties
 {
      ItemName="Scuddles M4 203"
      
-     SkinRefs(0)="KFTurbo.Scrubbles.M4203_Scrubbles_CMB"
+     SkinRefs(0)="KFTurbo.SCRNFan.M4203_SCRNFan_CMB"
      PickupClass=Class'KFTurbo.W_V_M4203_Scuddles_Pickup'
      AttachmentClass=Class'KFTurbo.W_V_M4203_Scuddles_Attachment'
 }
