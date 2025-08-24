@@ -49,3 +49,6 @@
 !Maps
 /Maps/**
 !Maps/KFT-TurboSteamyTestMap.rom
+
+#Build automation.
+!RecompileTurbo.py
