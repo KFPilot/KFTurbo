@@ -5,7 +5,7 @@ class W_V_MP5M_DarkCamo_Weap extends W_MP5M_Weap;
 
 defaultproperties
 {
-     SkinRefs(0)="KFTurboWeaponSkins.Camo.MP5M_DarkCamo_CMB"
+     SkinRefs(0)="KFTurbo.Camo.MP5M_DarkCamo_CMB"
      SkinRefs(1)="KF_Weapons2_Trip_T.Special.Aimpoint_sight_shdr"
      PickupClass=Class'KFTurbo.W_V_MP5M_DarkCamo_Pickup'
      AttachmentClass=Class'KFTurbo.W_V_MP5M_DarkCamo_Attachment'

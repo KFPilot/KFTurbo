@@ -5,7 +5,7 @@ class W_V_Trenchgun_Biotics_Weap extends W_Trenchgun_Weap;
 
 defaultproperties
 {
-     SkinRefs(0)="KFTurboWeaponSkins.Biotics.Trenchgun_Biotics_CMB"
+     SkinRefs(0)="KFTurbo.BioticsLab.Trenchgun_BioticsLab_CMB"
      PickupClass=Class'KFTurbo.W_V_Trenchgun_Biotics_Pickup'
      AttachmentClass=Class'KFTurbo.W_V_Trenchgun_Biotics_Attachment'
      ItemName="Biotics Dragon's Breath Trenchgun"

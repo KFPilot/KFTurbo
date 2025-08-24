@@ -5,5 +5,5 @@ class W_V_SeekerSix_Biotics_Attachment extends SeekerSixAttachment;
 
 defaultproperties
 {
-    Skins(0)=Combiner'KFTurbo.BioticsLab.Seeker_Biotics_3rd_CMB'
+    Skins(0)=Combiner'KFTurbo.BioticsLab.Seeker_BioticsLab_3rd_CMB'
 }

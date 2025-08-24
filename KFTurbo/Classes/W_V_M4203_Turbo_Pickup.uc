@@ -8,5 +8,5 @@ defaultproperties
      ItemName="Turbo M4 203"
 
      InventoryType=Class'KFTurbo.W_V_M4203_Turbo_Weap'
-     Skins(0)=Combiner'KFTurboWeaponSkins.Turbo.M4203_3RD_Turbo_CMB'
+     Skins(0)=Combiner'KFTurbo.Turbo.M4203_3RD_Turbo_CMB'
 }

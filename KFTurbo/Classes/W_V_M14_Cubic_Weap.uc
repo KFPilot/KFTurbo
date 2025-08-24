@@ -7,7 +7,7 @@ defaultproperties
 {
      ItemName="Cubic M14EBR"
      
-     SkinRefs(0)="KFTurbo.Skell.M14_Cubic_CMB"
+     SkinRefs(0)="KFTurbo.Cubic.M14_Cubic_CMB"
      PickupClass=Class'KFTurbo.W_V_M14_Cubic_Pickup'
      AttachmentClass=Class'KFTurbo.W_V_M14_Cubic_Attachment'
 }

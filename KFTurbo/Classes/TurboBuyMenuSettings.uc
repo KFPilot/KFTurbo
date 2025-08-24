@@ -37,7 +37,7 @@ function Texture GetIconForPickup(String VariantID)
             return Texture'KFTurbo.HUD.NeonIcon_D';
 
         case "DARKCAMO":
-            //return Texture'KFTurbo.HUD.DarkCamoIcon_D';
+            return Texture'KFTurbo.HUD.DarkCamoIcon_D';
         case "FOUNDRY":
             return Texture'KFTurbo.HUD.FoundryIcon_D';
         case "BIOTICS":
@@ -49,7 +49,7 @@ function Texture GetIconForPickup(String VariantID)
         case "SCUD":
             return Texture'KFTurbo.HUD.ScrubblesIcon_D';
         case "CUBIC":
-            return Texture'KFTurbo.HUD.SkellIcon_D';
+            return Texture'KFTurbo.HUD.CubicIcon_D';
         case "SHOWME":
             return Texture'KFTurbo.HUD.ShowMeProIcon_D';
         case "PRIDE":

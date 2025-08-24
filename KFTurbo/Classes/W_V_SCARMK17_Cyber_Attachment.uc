@@ -75,9 +75,9 @@ defaultproperties
      bNetNotify=true
      //bFastAttachmentReplication=false
      
-     LoadedStateMaterialRefList(0)="KFTurboWeaponSkins.Cyber.Cyber_SCAR_3rd_SHDR"
-     LoadedStateMaterialRefList(1)="KFTurboWeaponSkins.Cyber.Cyber_SCAR_3rd_Warn_SHDR"
-     LoadedStateMaterialRefList(2)="KFTurboWeaponSkins.Cyber.Cyber_SCAR_3rd_Empty_SHDR"
-     LoadedStateMaterialRefList(3)="KFTurboWeaponSkins.Cyber.Cyber_SCAR_3rd_Reload_SHDR"
-     Skins(0)=Shader'KFTurboWeaponSkins.Cyber.Cyber_SCAR_3rd_SHDR'
+     LoadedStateMaterialRefList(0)="KFTurbo.Cyber.Cyber_SCAR_3rd_SHDR"
+     LoadedStateMaterialRefList(1)="KFTurbo.Cyber.Cyber_SCAR_3rd_Warn_SHDR"
+     LoadedStateMaterialRefList(2)="KFTurbo.Cyber.Cyber_SCAR_3rd_Empty_SHDR"
+     LoadedStateMaterialRefList(3)="KFTurbo.Cyber.Cyber_SCAR_3rd_Reload_SHDR"
+     Skins(0)=Shader'KFTurbo.Cyber.Cyber_SCAR_3rd_SHDR'
 }

@@ -7,7 +7,7 @@ defaultproperties
 {
      ItemName="Turbo L.A.W"
      
-     SkinRefs(0)="KFTurboWeaponSkins.Turbo.LAW_Turbo_CMB"
+     SkinRefs(0)="KFTurbo.Turbo.LAW_Turbo_CMB"
      PickupClass=Class'KFTurbo.W_V_LAW_Turbo_Pickup'
      AttachmentClass=Class'KFTurbo.W_V_LAW_Turbo_Attachment'
 }

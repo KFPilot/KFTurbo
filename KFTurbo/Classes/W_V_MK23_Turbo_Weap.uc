@@ -7,7 +7,7 @@ defaultproperties
 {
      ItemName="Turbo MK23"
 
-     SkinRefs(0)="KFTurboWeaponSkins.Turbo.MK23_Turbo_SHDR"
+     SkinRefs(0)="KFTurbo.Turbo.MK23_Turbo_SHDR"
      PickupClass=Class'KFTurbo.W_V_MK23_Turbo_Pickup'
      AttachmentClass=Class'KFTurbo.W_V_MK23_Turbo_Attachment'
 }

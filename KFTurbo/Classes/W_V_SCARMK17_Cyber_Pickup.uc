@@ -8,5 +8,5 @@ defaultproperties
      ItemName="Cyber SCARMK17"
 
      InventoryType=Class'KFTurbo.W_V_SCARMK17_Cyber_Weap'
-     Skins(0)=Texture'KFTurboWeaponSkins.Cyber.Cyber_SCAR_3rd_D'
+     Skins(0)=Texture'KFTurbo.Cyber.Cyber_SCAR_3rd_D'
 }

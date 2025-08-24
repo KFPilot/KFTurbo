@@ -132,13 +132,13 @@ defaultproperties
 {
      ItemName="Cyber SCARMK17"
      
-     LoadedStateMaterialRefList(0)="KFTurboWeaponSkins.Cyber.Cyber_SCAR_SHDR"
-     LoadedStateMaterialRefList(1)="KFTurboWeaponSkins.Cyber.Cyber_SCAR_Warn_SHDR"
-     LoadedStateMaterialRefList(2)="KFTurboWeaponSkins.Cyber.Cyber_SCAR_Empty_SHDR"
-     LoadedStateMaterialRefList(3)="KFTurboWeaponSkins.Cyber.Cyber_SCAR_Reload_SHDR"
+     LoadedStateMaterialRefList(0)="KFTurbo.Cyber.Cyber_SCAR_SHDR"
+     LoadedStateMaterialRefList(1)="KFTurbo.Cyber.Cyber_SCAR_Warn_SHDR"
+     LoadedStateMaterialRefList(2)="KFTurbo.Cyber.Cyber_SCAR_Empty_SHDR"
+     LoadedStateMaterialRefList(3)="KFTurbo.Cyber.Cyber_SCAR_Reload_SHDR"
 
-     SkinRefs(0)="KFTurboWeaponSkins.Cyber.Cyber_SCAR_SHDR"
-     SkinRefs(1)="KFTurboWeaponSkins.Cyber.Cyber_SCAR_SightDot_SHDR"
+     SkinRefs(0)="KFTurbo.Cyber.Cyber_SCAR_SHDR"
+     SkinRefs(1)="KFTurbo.Cyber.Cyber_SCAR_SightDot_SHDR"
      PickupClass=Class'KFTurbo.W_V_SCARMK17_Cyber_Pickup'
      AttachmentClass=Class'KFTurbo.W_V_SCARMK17_Cyber_Attachment'
      Skins(0)=None
