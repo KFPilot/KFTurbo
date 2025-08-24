@@ -15,17 +15,13 @@ defaultproperties
      PowerValue=40
      SpeedValue=80
      RangeValue=50
-     //Description=""
      ItemName="Thompson Incendiary SMG"
      ItemShortName="Thompson Incendiary"
-     //AmmoItemName=""
      AmmoMesh=StaticMesh'KillingFloorStatics.L85Ammo'
-     //EquipmentCategoryID=
      InventoryType=Class'KFTurbo.W_ThompsonSMG_Weap'
      PickupMessage="You got the Thompson Incendiary SMG"
-     //PickupSound=
      PickupForce="AssaultRiflePickup"
-     //StaticMesh=
-     //CollisionRadius=
-     //CollisionHeight=
+	 
+     VariantClasses(0)=Class'KFTurbo.W_ThompsonSMG_Pickup'
+     VariantClasses(1)=Class'KFTurbo.W_V_ThompsonSMG_Foundry_Pickup'
 }

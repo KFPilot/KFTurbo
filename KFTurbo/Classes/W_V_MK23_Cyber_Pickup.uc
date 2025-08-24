@@ -15,5 +15,5 @@ defaultproperties
      PickupMessage="You got the Cyber MK.23"
 
      InventoryType=Class'KFTurbo.W_V_MK23_Cyber_Weap'
-     Skins(0)=Shader'KFTurbo.Cyber.Cyber_MK23_3rd_SHDR'
+     Skins(0)=Shader'KFTurboWeaponSkins.Cyber.Cyber_MK23_3rd_SHDR'
 }

@@ -8,5 +8,5 @@ defaultproperties
      ItemName="Turbo SCARMK17"
 
      InventoryType=Class'KFTurbo.W_V_SCARMK17_Turbo_Weap'
-     Skins(0)=Combiner'KFTurbo.Turbo.SCAR_3RD_Turbo_CMB'
+     Skins(0)=Combiner'KFTurboWeaponSkins.Turbo.SCAR_3RD_Turbo_CMB'
 }

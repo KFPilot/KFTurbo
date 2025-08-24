@@ -7,9 +7,9 @@ defaultproperties
 {
      ItemName="Camo M4 203"
 
-     SkinRefs(0)="KFTurbo.Camo.M4_Camo_CMB1"
+     SkinRefs(0)="KFTurboWeaponSkins.Camo.M4_Camo_CMB1"
      AppID=258752
-     TraderInfoTexture=Texture'KFTurbo.Camo.Trader_M4203_Camo'
+     TraderInfoTexture=Texture'KFTurboWeaponSkins.Camo.Trader_M4203_Camo'
      PickupClass=Class'KFTurbo.W_V_M4203_Camo_Pickup'
      AttachmentClass=Class'KFTurbo.W_V_M4203_Camo_Attachment'
 }

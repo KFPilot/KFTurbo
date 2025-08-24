@@ -5,11 +5,14 @@
 class KFTurboMut extends Mutator
 	config(KFTurbo);
 
-#exec obj load file="..\Animations\KFTurboContent.ukx" package=KFTurbo
-#exec obj load file="..\Textures\KFTurboVet.utx" package=KFTurbo
-#exec obj load file="..\Animations\KFTurboExtra.ukx" package=KFTurbo
-#exec obj load file="..\Textures\KFTurboHUD.utx" package=KFTurbo
+#exec obj load file="..\Textures\KFTurboWeaponSkins.utx" package=KFTurbo
 #exec obj load file="..\Textures\KFTurboCharacters.utx" package=KFTurbo
+
+#exec obj load file="..\Textures\KFTurboVet.utx" package=KFTurbo
+#exec obj load file="..\Textures\KFTurboHUD.utx" package=KFTurbo
+
+#exec obj load file="..\Animations\KFTurboContent.ukx" package=KFTurbo
+#exec obj load file="..\Animations\KFTurboExtra.ukx" package=KFTurbo
 
 var TurboStatsGameRules StatsGameRules;
 var TurboStatsTcpLink StatsTcpLink;
@@ -46,6 +49,7 @@ simulated function PostBeginPlay()
 
 	//Make sure fonts are added to server packages.
 	AddToPackageMap("KFTurboFonts");
+	AddToPackageMap("KFTurboWeaponSkins");
 	AddToPackageMap("KFTurboFontsJP");
 	AddToPackageMap("KFTurboFontsCY");
 

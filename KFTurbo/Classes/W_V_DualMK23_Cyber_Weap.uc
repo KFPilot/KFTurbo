@@ -95,15 +95,15 @@ static function bool UnloadAssets()
 
 defaultproperties
 {
-     LoadedStateMaterialRefList(0)="KFTurbo.Cyber.Cyber_MK23_SHDR"
-     LoadedStateMaterialRefList(1)="KFTurbo.Cyber.Cyber_MK23_Warn_SHDR"
-     LoadedStateMaterialRefList(2)="KFTurbo.Cyber.Cyber_MK23_Empty_SHDR"
-     LoadedStateMaterialRefList(3)="KFTurbo.Cyber.Cyber_MK23_Reload_SHDR"
+     LoadedStateMaterialRefList(0)="KFTurboWeaponSkins.Cyber.Cyber_MK23_SHDR"
+     LoadedStateMaterialRefList(1)="KFTurboWeaponSkins.Cyber.Cyber_MK23_Warn_SHDR"
+     LoadedStateMaterialRefList(2)="KFTurboWeaponSkins.Cyber.Cyber_MK23_Empty_SHDR"
+     LoadedStateMaterialRefList(3)="KFTurboWeaponSkins.Cyber.Cyber_MK23_Reload_SHDR"
 
      ReloadAnim="Reload"
 
      ItemName="Dual Cyber MK23s"
-     SkinRefs(0)="KFTurbo.Turbo.MK23_Turbo_SHDR"
+     SkinRefs(0)="KFTurboWeaponSkins.Turbo.MK23_Turbo_SHDR"
      PickupClass=Class'KFTurbo.W_V_DualMK23_Cyber_Pickup'
      AttachmentClass=Class'KFTurbo.W_V_DualMK23_Cyber_Attachment'
      DemoReplacement=Class'KFTurbo.W_V_MK23_Cyber_Weap'

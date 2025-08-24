@@ -23,14 +23,27 @@ function Texture GetIconForPickup(String VariantID)
             return Texture'KFTurbo.HUD.GoldIcon_D';
         case "CAMO":
             return Texture'KFTurbo.HUD.CamoIcon_D';
-        case "VET":
-            return Texture'KFTurbo.HUD.NeonIcon_D';
         case "TURBO":
             return Texture'KFTurbo.HUD.TurboIcon_D';
         case "VM":
             return Texture'KFTurbo.HUD.VMIcon_D';
         case "WEST":
             return Texture'KFTurbo.HUD.WestLondonIcon_D';
+        case "CYB":
+            return Texture'KFTurbo.HUD.CyberIcon_D';
+        case "STP":
+            return Texture'KFTurbo.HUD.SteampunkIcon_D';
+        case "VET":
+            return Texture'KFTurbo.HUD.NeonIcon_D';
+
+        case "DARKCAMO":
+            //return Texture'KFTurbo.HUD.DarkCamoIcon_D';
+        case "FOUNDRY":
+            return Texture'KFTurbo.HUD.FoundryIcon_D';
+        case "BIOTICS":
+            return Texture'KFTurbo.HUD.BioticsIcon_D';
+
+
         case "RET":
             return Texture'KFTurbo.HUD.LevelIcon_D';
         case "SCUD":
@@ -39,10 +52,6 @@ function Texture GetIconForPickup(String VariantID)
             return Texture'KFTurbo.HUD.SkellIcon_D';
         case "SHOWME":
             return Texture'KFTurbo.HUD.ShowMeProIcon_D';
-        case "CYB":
-            return Texture'KFTurbo.HUD.CyberIcon_D';
-        case "STP":
-            return Texture'KFTurbo.HUD.SteampunkIcon_D';
         case "PRIDE":
             return Texture'KFTurbo.HUD.PrideIcon_D';
     }

@@ -5,5 +5,5 @@ class W_V_MP5M_DarkCamo_Attachment extends MP5MAttachment;
 
 defaultproperties
 {
-     Skins(0)=Texture'KFTurbo.Camo.MP5M_DarkCamo_3rd_D'
+     Skins(0)=Texture'KFTurboWeaponSkins.Camo.MP5M_DarkCamo_3rd_D'
 }

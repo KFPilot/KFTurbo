@@ -20,4 +20,6 @@ defaultproperties
      Weight=7.000000
      cost=1500
      InventoryType=Class'KFTurbo.W_Trenchgun_Weap'
+     VariantClasses(0)=Class'KFTurbo.W_Trenchgun_Pickup'
+     VariantClasses(1)=Class'KFTurbo.W_V_Trenchgun_Biotics_Pickup'
 }

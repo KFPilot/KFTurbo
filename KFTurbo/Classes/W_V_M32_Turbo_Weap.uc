@@ -7,7 +7,7 @@ defaultproperties
 {
      ItemName="Turbo M32 Grenade Launcher"
      
-     SkinRefs(0)="KFTurbo.Turbo.M32_Turbo_CMB"
+     SkinRefs(0)="KFTurboWeaponSkins.Turbo.M32_Turbo_CMB"
      PickupClass=Class'KFTurbo.W_V_M32_Turbo_Pickup'
      AttachmentClass=Class'KFTurbo.W_V_M32_Turbo_Attachment'
 }

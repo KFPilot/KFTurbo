@@ -15,6 +15,9 @@ const WLVariantID = "WEST"; //Westlondon sticker skins.
 const CyberVariantID = "CYB"; //Cyber Weapon skins.
 const SteampunkVariantID = "STP"; //Steampunk weapon skins.
 const VeterancyVariantID = "VET"; //Neon weapon (Veterancy weapons) skins.
+const DarkCamoVariantID = "DARKCAMO"; //Dark camo skins.
+const FoundryVariantID = "FOUNDRY"; //Foundry sticker skins.
+const BioticsVariantID = "BIOTICS"; //Biotics Lab sticker skins.
 
 const RetartVariantID = "RET";
 const ScuddlesVariantID = "SCUD";
@@ -366,6 +369,21 @@ simulated function SetupVariantWeaponEntry(out VariantWeapon Entry)
         Entry.VariantID = VeterancyVariantID;
         Entry.ItemStatus = 0;
     }
+    else if (IsGenericDarkCamoSkin(Entry.VariantClass))
+    {
+        Entry.VariantID = DarkCamoVariantID;
+        Entry.ItemStatus = 0;
+    }
+    else if (IsGenericFoundrySkin(Entry.VariantClass))
+    {
+        Entry.VariantID = FoundryVariantID;
+        Entry.ItemStatus = 0;
+    }
+    else if (IsGenericBioticsSkin(Entry.VariantClass))
+    {
+        Entry.VariantID = BioticsVariantID;
+        Entry.ItemStatus = 0;
+    }
     else
     {
         Entry.VariantID = DefaultID;
@@ -578,6 +596,21 @@ static final function bool IsGenericSteampunkSkin(class<Pickup> PickupClass)
 static final function bool IsGenericVeterancySkin(class<Pickup> PickupClass)
 {
 	return InStr(Caps(PickupClass), "_VET_") != -1;
+}
+
+static final function bool IsGenericDarkCamoSkin(class<Pickup> PickupClass)
+{
+	return InStr(Caps(PickupClass), "_DARKCAMO_") != -1;
+}
+
+static final function bool IsGenericFoundrySkin(class<Pickup> PickupClass)
+{
+	return InStr(Caps(PickupClass), "_FOUNDRY_") != -1;
+}
+
+static final function bool IsGenericBioticsSkin(class<Pickup> PickupClass)
+{
+	return InStr(Caps(PickupClass), "_BIOTICS_") != -1;
 }
 
 function ServerSetVeterancyTierPreference(class<TurboVeterancyTypes> PerkClass, int TierPreference)

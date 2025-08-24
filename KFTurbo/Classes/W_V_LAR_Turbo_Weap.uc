@@ -12,8 +12,8 @@ defaultproperties
      
      Skins(0)=None
      Skins(1)=None
-     SkinRefs(0)="KFTurbo.Turbo.LAR_Turbo_CMB"
-     SkinRefs(1)="KFTurbo.Turbo.LAR_Turbo_CMB"
+     SkinRefs(0)="KFTurboWeaponSkins.Turbo.LAR_Turbo_CMB"
+     SkinRefs(1)="KFTurboWeaponSkins.Turbo.LAR_Turbo_CMB"
 
      Mesh=None
      MeshRef="KF_Weapons_Trip.Winchester_Trip"

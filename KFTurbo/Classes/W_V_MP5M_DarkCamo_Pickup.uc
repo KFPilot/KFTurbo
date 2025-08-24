@@ -6,6 +6,6 @@ class W_V_MP5M_DarkCamo_Pickup extends W_MP5M_Pickup;
 defaultproperties
 {
      ItemName="Dark Camo MP5M Medic Gun"
-     InventoryType=Class'KFTurbo.W_V_MP5M_Camo_Weap'
-     Skins(0)=Texture'KFTurbo.Camo.MP5M_DarkCamo_3rd_D'
+     InventoryType=Class'KFTurbo.W_V_MP5M_DarkCamo_Weap'
+     Skins(0)=Texture'KFTurboWeaponSkins.Camo.MP5M_DarkCamo_3rd_D'
 }

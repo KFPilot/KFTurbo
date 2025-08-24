@@ -20,4 +20,7 @@ defaultproperties
      Weight=8.000000
      Cost=1700
      InventoryType=Class'KFTurbo.W_SeekerSix_Weap'
+	 
+     VariantClasses(0)=Class'KFTurbo.W_SeekerSix_Pickup'
+     VariantClasses(1)=Class'KFTurbo.W_V_SeekerSix_Biotics_Pickup'
 }

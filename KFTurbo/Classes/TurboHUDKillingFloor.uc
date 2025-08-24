@@ -32,6 +32,10 @@ var class<TextReactionSettings> TextReactionSettingsClass;
 var TextReactionSettings TextReactionSettings;
 
 var class<KFTurboFontHelper> FontHelperClass;
+var string FontHelperClassCYString;
+var class<KFTurboFontHelper> FontHelperClassCY;
+var string FontHelperClassJPString;
+var class<KFTurboFontHelper> FontHelperClassJP;
 
 //Overlays that are drawn before the player HUD but after victory/game over HUD.
 var array<HudOverlay> PreDrawOverlays;
@@ -1407,17 +1411,27 @@ simulated function SetFontLocale(string LocaleString)
 	switch(LocaleString)
 	{
 		case "ENG":
-			FontHelperClass=class'KFTurboFonts.KFTurboFontHelperEN';
+			FontHelperClass = class'KFTurboFonts.KFTurboFontHelperEN';
 			break;
 		case "JPN":
-			FontHelperClass=class'KFTurboFontsJP.KFTurboFontHelperJP';
+			if (FontHelperClassJP == None)
+			{
+				FontHelperClassJP = class<KFTurboFontHelper>(DynamicLoadObject(FontHelperClassJPString, Class));
+			}
+			FontHelperClass = FontHelperClassJP;
 			break;
 		case "CYR":
-			FontHelperClass=class'KFTurboFontsCY.KFTurboFontHelperCY';
+			if (FontHelperClassCY == None)
+			{
+				FontHelperClassCY = class<KFTurboFontHelper>(DynamicLoadObject(FontHelperClassCYString, Class));
+			}
+			FontHelperClass = FontHelperClassCY;
 			break;
-		default:
-			FontHelperClass=class'KFTurboFonts.KFTurboFontHelperEN';
-			break;
+	}
+
+	if (FontHelperClass == None)
+	{
+		FontHelperClass = class'KFTurboFonts.KFTurboFontHelperEN';
 	}
 }
 
@@ -1425,6 +1439,8 @@ defaultproperties
 {
 	TextReactionSettingsClass=class'TurboTextReactionSettings'
 	FontHelperClass=class'KFTurboFonts.KFTurboFontHelperEN'
+	FontHelperClassCYString = "KFTurboFontsCY.KFTurboFontHelperCY"
+	FontHelperClassJPString = "KFTurboFontsJP.KFTurboFontHelperJP"
 	
 	MerchantPortrait=Texture'KFTurbo.Merchant.Merchant_Portrait'
 	MerchantString="Merchant"
