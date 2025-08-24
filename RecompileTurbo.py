@@ -101,9 +101,9 @@ def DeleteTurboPackages():
             ErrorMessageSplit = str(Error).split('\'')[0]
             ErrorMessageSplit = ErrorMessageSplit.split(']')
             if len(ErrorMessageSplit) == 1:
-                print(f"{ErrorMessageSplit[0]} {FileName}")
+                print(f"\033[33m {ErrorMessageSplit[0]} {FileName} \033[0m")
             else:
-                print(f"{ErrorMessageSplit[1]} {FileName}")
+                print(f"\033[33m {ErrorMessageSplit[1]} {FileName} \033[0m")
 
 
 def ProcessUCCMake(Process):
