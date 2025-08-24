@@ -1416,14 +1416,14 @@ simulated function SetFontLocale(string LocaleString)
 		case "JPN":
 			if (FontHelperClassJP == None)
 			{
-				FontHelperClassJP = class<KFTurboFontHelper>(DynamicLoadObject(FontHelperClassJPString, Class));
+				FontHelperClassJP = class<KFTurboFontHelper>(DynamicLoadObject(FontHelperClassJPString, Class'Class'));
 			}
 			FontHelperClass = FontHelperClassJP;
 			break;
 		case "CYR":
 			if (FontHelperClassCY == None)
 			{
-				FontHelperClassCY = class<KFTurboFontHelper>(DynamicLoadObject(FontHelperClassCYString, Class));
+				FontHelperClassCY = class<KFTurboFontHelper>(DynamicLoadObject(FontHelperClassCYString, Class'Class'));
 			}
 			FontHelperClass = FontHelperClassCY;
 			break;
