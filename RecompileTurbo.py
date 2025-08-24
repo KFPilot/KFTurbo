@@ -98,7 +98,13 @@ def DeleteTurboPackages():
                 print(f"{str(Error).split('\'')[0]} {FileName}")
             pass
         except Exception as Error:
-            print(f"{str(Error).split('\'')[0]} {FileName}")
+            ErrorMessageSplit = str(Error).split('\'')[0]
+            ErrorMessageSplit = ErrorMessageSplit.split(']')
+            if len(ErrorMessageSplit) == 1:
+                print(f"{ErrorMessageSplit[0]} {FileName}")
+            else:
+                print(f"{ErrorMessageSplit[1]} {FileName}")
+
 
 def ProcessUCCMake(Process):
     HasReachedEnd = False
