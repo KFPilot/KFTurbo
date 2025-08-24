@@ -1034,10 +1034,17 @@ simulated function TickBossData(float DeltaTime)
 	}
 
 	BossMonster = BossData.BossMonster;
-	NewHealthPercent = (float(BossMonster.Health) / BossMonster.BossHealthMax);
-	NewLowestHealthPercent = (BossMonster.LowestHealth / BossMonster.BossHealthMax);
-
-	BossData.CurrentSyringeCount = 3 - BossMonster.SyringeCount;
+	if (BossMonster != None)
+	{
+		NewHealthPercent = (float(BossMonster.Health) / BossMonster.BossHealthMax);
+		NewLowestHealthPercent = (BossMonster.LowestHealth / BossMonster.BossHealthMax);
+		BossData.CurrentSyringeCount = 3 - BossMonster.SyringeCount;
+	}
+	else
+	{
+		NewHealthPercent = 0.f;
+		NewLowestHealthPercent = 0.f;
+	}
 
 	if (NewHealthPercent != BossData.LastCheckedHealth)
 	{
