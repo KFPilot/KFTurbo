@@ -122,7 +122,7 @@ def ProcessUCCMake(Process):
 
         if Line.startswith("Analyzing..."):
             ModuleName = PreviousLine.replace("-", "").split(' ')[0]
-            print(f"  Compiling {ModuleName}...")
+            print(f"\033[48;5;7m \033[0m Compiling {ModuleName}...")
         elif any (FlagString in Line.lower() for FlagString in ErrorStrings):
             if not HasReachedEnd:
                 print("\033[41m \033[0m   " + "\033[31m" + Line + "\033[0m")
