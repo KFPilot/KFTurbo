@@ -26,9 +26,9 @@ ArgumentParser = argparse.ArgumentParser()
 ArgumentParser.add_argument("--fonts", action="store_true", help="Rebuild all font packages. Will take a long time.")
 ArgumentParser.add_argument("--printremovefailure", action="store_true", help="Print when this script fails to delete files.")
 ArgumentParser.add_argument("--onlyturbo", action="store_true", help="Only rebuild KFTurbo and KFTurboServer.")
-ArgumentParser.add_argument("--onlyholdout", action="store_true", help="Only rebuild Turbo Card Game.")
+ArgumentParser.add_argument("--onlyholdout", action="store_true", help="Only rebuild Turbo Holdout.")
 ArgumentParser.add_argument("--onlyrandomizer", action="store_true", help="Only rebuild Turbo Randomizer.")
-ArgumentParser.add_argument("--onlycardgame", action="store_true", help="Only rebuild Turbo Holdout.")
+ArgumentParser.add_argument("--onlycardgame", action="store_true", help="Only rebuild Turbo Card Game.")
 ArgumentParser.add_argument("--verboseUCC", action="store_true", help="Will log all of UCC make.")
 ArgumentParser.add_argument("--stagefiles", action="store_true", help="Copies KFTurbo packages to staging directories.")
 
@@ -73,7 +73,11 @@ def UpdateBuildType():
     
 UpdateBuildType()
 
-StageFiles = Arguments.stagefiles
+StageFiles = Arguments.stagefiles and (BuildType is EBuildType.ALL)
+
+if (not StageFiles) and Arguments.stagefiles:
+    print("\033[41m \033[0m" + "\033[31m Staging files was requested but is not a full rebuild.\033[0m")
+
 RebuildFonts = Arguments.fonts
 VerboseUCC = Arguments.verboseUCC
 PrintRemoveFailure = Arguments.printremovefailure
@@ -93,10 +97,9 @@ def DeleteTurboPackages():
             continue
         try:
             os.remove(SystemPath.joinpath(FileName))
-        except FileNotFoundError:
+        except FileNotFoundError as Error:
             if PrintRemoveFailure:
                 print(f"{str(Error).split('\'')[0]} {FileName}")
-            pass
         except Exception as Error:
             ErrorMessageSplit = str(Error).split('\'')[0]
             ErrorMessageSplit = ErrorMessageSplit.split(']')
@@ -146,16 +149,16 @@ def RunUCCMake():
             UCCMakeProcess = subprocess.Popen([UCCMakePath, "make"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, bufsize=1)
             ProcessUCCMake(UCCMakeProcess)
         else:
-            UCCMakeResult = subprocess.run([UCCMakePath, "make"], text=True)
+            UCCMakeResult = subprocess.run([UCCMakePath, "make"], text=True, check=True)
     except subprocess.CalledProcessError as Error:
-        print(f"Failed to run UCC make. Received return code {e.returncode}.")
+        print(f"Failed to run UCC make. Received return code {Error.returncode}.")
     os.remove(SystemPath.joinpath("steam_appid.txt"))
     print("... UCC make finished.")
 
 def CheckIfAllFilesArePresent():
     MissingFiles = []
     for FileName in TurboFiles:
-        FilePath = SystemPath.joinpath(SystemPath, FileName)
+        FilePath = SystemPath.joinpath(FileName)
         if not FilePath.is_file():
             MissingFiles.append(FileName)
     if len(MissingFiles) != 0:
@@ -164,10 +167,10 @@ def CheckIfAllFilesArePresent():
 def CopyTurboFilesToTarget(Destination):
     print(f"Copying files to {Destination}...")
     for FileName in TurboFiles:
-        FilePath = SystemPath.joinpath(SystemPath, FileName)
+        FilePath = SystemPath.joinpath(FileName)
         shutil.copy2(FilePath, Destination)
     for StagingFileName in TurboStagingFiles:
-        StagingFilePath = SystemPath.joinpath(StagingFileName, FileName)
+        FilePath = SystemPath.joinpath(StagingFileName)
         shutil.copy2(FilePath, Destination)
 
 def CopyTurboFilesToDeployments():
