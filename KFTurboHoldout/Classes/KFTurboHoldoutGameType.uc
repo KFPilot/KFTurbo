@@ -4,7 +4,7 @@
 class KFTurboHoldoutGameType extends KFTurboGameTypePlus;
 
 const HOLDOUT_WAVE_COUNTDOWN = 5;
-const STARTING_CASH = 200;
+const HOLDOUT_STARTING_CASH = 200;
 
 var float ScoreMultiplier;
 
@@ -281,12 +281,6 @@ function ScoreKill(Controller Killer, Controller Other)
         GameRulesModifiers.ScoreKill(Killer, Other);
     }
 
-    //Lose 100 dosh on death.
-    if (Other.bIsPlayer && Other.PlayerReplicationInfo != None)
-    {
-        Other.PlayerReplicationInfo.Score = Max(100, Other.PlayerReplicationInfo.Score - 100);
-    }
-
     if (Killer == None || !Killer.bIsPlayer || (Killer == Other))
     {
         return;
@@ -363,7 +357,7 @@ final function HandleAssists(Controller Killer, KFMonsterController KilledMonste
 
 function int GetPlayerStartingCash()
 {
-    return STARTING_CASH;
+    return HOLDOUT_STARTING_CASH;
 }
 
 function FillPlayerAmmo() {}

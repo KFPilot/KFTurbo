@@ -4,6 +4,8 @@
 //For more information see https://github.com/KFPilot/KFTurbo.
 class KFTurboServerMut extends Mutator;
 
+var globalconfig bool bAutoRestartEmptyIdleServer; //Server will restart after 1 hour of being empty and idle.\
+
 var TurboRepLinkHandler RepLinkHandler;
 var TurboInfoTcpLink InfoTcpLink;
 
@@ -57,6 +59,11 @@ simulated function PostBeginPlay()
 	}
 
 	InfoTcpLink = SetupInfoTcpLink();
+
+	if (bAutoRestartEmptyIdleServer && Level.NetMode == NM_DedicatedServer)
+	{
+		Spawn(class'TurboIdleServerHandler',  Self);
+	}
 
 	//Listen for disabling stats/achievements/perk selection.
 	if (KFTurboGameType(Level.Game) != None)
@@ -185,6 +192,8 @@ simulated function String GetHumanReadableName()
 defaultproperties
 {
 	bAddToServerPackages=False
+	
+	bAutoRestartEmptyIdleServer=false
 
 	GroupName="KF-KFTurboServer"
 	FriendlyName="Killing Floor Turbo Server"

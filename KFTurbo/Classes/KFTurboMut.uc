@@ -36,7 +36,6 @@ var protected string GameStartTime;
 var protected string GameType;
 
 var globalconfig bool bRequireAdminForDifficultyCommands;
-var globalconfig bool bAutoRestartEmptyIdleServer; //Server will restart after 1 hour of being empty and idle.
 var globalconfig bool bPreventImmediateCashRegrab; //Prevents annoyance where player's tossed cash can accidentally be picked up by tosser immediately.
 
 var bool bSkipInitialMonsterWander;
@@ -77,11 +76,6 @@ simulated function PostBeginPlay()
 	if (bDebugClientPerkRepLink)
 	{
 		Spawn(class'TurboRepLinkTester', Self);
-	}
-
-	if (bAutoRestartEmptyIdleServer && Level.NetMode == NM_DedicatedServer)
-	{
-		Spawn(class'TurboIdleServerHandler',  Self);
 	}
 
 	Spawn(class'ServerWeaponLockerEventHandler',  Self);
@@ -424,8 +418,6 @@ defaultproperties
 	GameType="turbo"
 
 	bSkipInitialMonsterWander=false
-
-	bAutoRestartEmptyIdleServer=false
 
 	bPreventImmediateCashRegrab=false
 }
