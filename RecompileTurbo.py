@@ -85,7 +85,7 @@ GitHubStagingPath = LocalPath.joinpath("StagedKFTurboGitHub")
 ServerStagingPath = LocalPath.joinpath("StagedKFTurbo/System")
 
 WarningStrings = ["warning", "unused local"]
-ErrorStrings = ["error", "warning", "unresolved", "failed", "failure"]
+ErrorStrings = ["error", "unresolved", "failed", "failure"]
 
 def DeleteTurboPackages():
     for FileName in TurboFiles:
@@ -125,12 +125,12 @@ def ProcessUCCMake(Process):
             print(f"  Compiling {ModuleName}...")
         elif any (FlagString in Line.lower() for FlagString in ErrorStrings):
             if not HasReachedEnd:
-                print("    " + "\033[31m" + Line + "\033[0m")
+                print("\033[41m \033[0m   " + "\033[31m" + Line + "\033[0m")
             else:
                 print("  " + Line)
         elif any (FlagString in Line.lower() for FlagString in WarningStrings):
             if not HasReachedEnd:
-                print("    " + "\033[33m" + Line + "\033[0m")
+                print("\033[43m \033[0m   " + "\033[33m" + Line + "\033[0m")
             else:
                 print("  " + Line)
         PreviousLine = Line
