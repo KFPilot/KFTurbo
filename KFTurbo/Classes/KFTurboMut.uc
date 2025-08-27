@@ -84,6 +84,8 @@ simulated function PostBeginPlay()
 		Spawn(class'TurboIdleServerHandler',  Self);
 	}
 
+	Spawn(class'ServerWeaponLockerEventHandler',  Self);
+
 	SetupBroadcaster();
 	StatsGameRules = SetupTurboStatsGameRules();
 	StatsTcpLink = SetupStatTcpLink();
