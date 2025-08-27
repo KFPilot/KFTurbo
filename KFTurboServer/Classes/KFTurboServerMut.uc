@@ -5,6 +5,32 @@
 class KFTurboServerMut extends Mutator;
 
 var TurboRepLinkHandler RepLinkHandler;
+var TurboInfoTcpLink InfoTcpLink;
+
+static final function KFTurboServerMut FindMutator(GameInfo GameInfo)
+{
+    local KFTurboServerMut TurboServerMut;
+    local Mutator Mutator;
+
+	if (GameInfo == None)
+	{
+		return None;
+	}
+
+    for ( Mutator = GameInfo.BaseMutator; Mutator != None; Mutator = Mutator.NextMutator )
+    {
+        TurboServerMut = KFTurboServerMut(Mutator);
+
+        if (TurboServerMut == None)
+        {
+            continue;
+        }
+
+		return TurboServerMut;
+    }
+
+	return None;
+}
 
 simulated function PostBeginPlay()
 {
@@ -30,12 +56,32 @@ simulated function PostBeginPlay()
 		break;
 	}
 
+	InfoTcpLink = SetupInfoTcpLink();
+
 	//Listen for disabling stats/achievements/perk selection.
 	if (KFTurboGameType(Level.Game) != None)
 	{
 		KFTurboGameType(Level.Game).OnStatsAndAchievementsDisabled = OnStatsAndAchievementsDisabled;
 		KFTurboGameType(Level.Game).LockPerkSelection = LockPerkSelection;
 	}
+}
+
+function TurboInfoTcpLink SetupInfoTcpLink()
+{
+	local class<TurboInfoTcpLink> TcpLinkClass;
+	if (!class'TurboInfoTcpLink'.static.ShouldBroadcastInfo())
+	{
+		return None;
+	}
+
+	TcpLinkClass = class'TurboInfoTcpLink'.static.GetInfoTcpLinkClass();
+
+	if (TcpLinkClass == None)
+	{
+		return None;
+	}
+
+	return Spawn(TcpLinkClass, Self);
 }
 
 //ServerPerks likes to not do this - try to force it!
