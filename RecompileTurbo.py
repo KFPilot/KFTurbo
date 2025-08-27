@@ -203,15 +203,16 @@ def PerformCompile():
     RunUCCMake()
 
     PrintTask("Checking for expected files...")
+    FoundAllFiles = True
     try:
         CheckIfAllFilesArePresent()
         PrintSuccess("All expected files found.")
     except MissingPackagesError as Error:
         PrintError(f"{Error}")
-        return
+        FoundAllFiles = False
     print("... expected file check complete.")
     
-    if StageFiles:
+    if StageFiles and FoundAllFiles:
         PrintTask("Staging files...")
         CopyTurboFilesToDeployments()
         print("... staging files finished.")
