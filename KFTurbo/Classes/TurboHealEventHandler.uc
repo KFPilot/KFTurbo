@@ -25,6 +25,26 @@ static function TurboEventHandler CreateHandler(Actor Context)
     return Handler;
 }
 
+function RemoveEventHandler()
+{
+    local int Index;
+    local KFTurboGameType GameType;
+    GameType = KFTurboGameType(Level.Game);
+
+    Super.RemoveEventHandler();
+
+    for (Index = GameType.HealEventHandlerList.Length - 1; Index >= 0; Index--)
+    {
+        if (GameType.HealEventHandlerList[Index] != self)
+        {
+            continue;
+        }
+
+        GameType.HealEventHandlerList.Remove(Index, 1);
+        break;
+    }
+}
+
 //Event broadcasting.
 static final function BroadcastPawnDartHealed(Pawn Instigator, Pawn Target, int HealingAmount, HealingProjectile HealDart)
 {

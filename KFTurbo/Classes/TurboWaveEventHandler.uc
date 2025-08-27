@@ -30,6 +30,26 @@ static function TurboEventHandler CreateHandler(Actor Context)
     return Handler;
 }
 
+function RemoveEventHandler()
+{
+    local int Index;
+    local KFTurboGameType GameType;
+    GameType = KFTurboGameType(Level.Game);
+
+    Super.RemoveEventHandler();
+
+    for (Index = GameType.WaveEventHandlerList.Length - 1; Index >= 0; Index--)
+    {
+        if (GameType.WaveEventHandlerList[Index] != self)
+        {
+            continue;
+        }
+
+        GameType.WaveEventHandlerList.Remove(Index, 1);
+        break;
+    }
+}
+
 //Event broadcasting.
 static final function BroadcastGameStarted(KFTurboGameType GameType, int StartedWave)
 {

@@ -29,6 +29,26 @@ static function TurboEventHandler CreateHandler(Actor Context)
     return Handler;
 }
 
+function RemoveEventHandler()
+{
+    local int Index;
+    local KFTurboGameType GameType;
+    GameType = KFTurboGameType(Level.Game);
+
+    Super.RemoveEventHandler();
+
+    for (Index = GameType.GameplayEventHandlerList.Length - 1; Index >= 0; Index--)
+    {
+        if (GameType.GameplayEventHandlerList[Index] != self)
+        {
+            continue;
+        }
+
+        GameType.GameplayEventHandlerList.Remove(Index, 1);
+        break;
+    }
+}
+
 //Event broadcasting.
 static final function BroadcastPawnIgnited(Pawn Instigator, Pawn Target, class<KFWeaponDamageType> DamageType, int BurnDamage)
 {

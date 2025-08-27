@@ -13,6 +13,12 @@ function PostBeginPlay()
     Disable('Tick');
 }
 
+function Destroyed()
+{
+    RemoveEventHandler();
+    Super.Destroyed();
+}
+
 //This should be overridden to add the new handler to a relevant processing list.
 static function TurboEventHandler CreateHandler(Actor Context)
 {
@@ -34,6 +40,25 @@ static function TurboEventHandler CreateHandler(Actor Context)
     Handler = Context.Spawn(default.Class, Context);
     GameType.EventHandlerList[GameType.EventHandlerList.Length] = Handler;
     return Handler;
+}
+
+//Removes this event handler from all associated lists.
+//NOTE: Calling this while handling an event is dangerous as we're likely in the middle of iterating an event handler list.
+function RemoveEventHandler()
+{
+    local int Index;
+    local KFTurboGameType GameType;
+    GameType = KFTurboGameType(Level.Game);
+    for (Index = GameType.EventHandlerList.Length - 1; Index >= 0; Index--)
+    {
+        if (GameType.EventHandlerList[Index] != self)
+        {
+            continue;
+        }
+
+        GameType.EventHandlerList.Remove(Index, 1);
+        break;
+    }
 }
 
 defaultproperties

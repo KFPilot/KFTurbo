@@ -29,6 +29,26 @@ static function TurboEventHandler CreateHandler(Actor Context)
     return Handler;
 }
 
+function RemoveEventHandler()
+{
+    local int Index;
+    local KFTurboGameType GameType;
+    GameType = KFTurboGameType(Level.Game);
+
+    Super.RemoveEventHandler();
+
+    for (Index = GameType.WaveSpawnEventHandlerList.Length - 1; Index >= 0; Index--)
+    {
+        if (GameType.WaveSpawnEventHandlerList[Index] != self)
+        {
+            continue;
+        }
+
+        GameType.WaveSpawnEventHandlerList.Remove(Index, 1);
+        break;
+    }
+}
+
 //Event broadcasting.
 static final function BroadcastNextSpawnSquadGenerated(KFTurboGameType GameType,  out array < class<KFMonster> > NextSpawnSquad)
 {

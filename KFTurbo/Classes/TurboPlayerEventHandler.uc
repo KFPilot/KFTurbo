@@ -43,6 +43,26 @@ static function TurboEventHandler CreateHandler(Actor Context)
     return Handler;
 }
 
+function RemoveEventHandler()
+{
+    local int Index;
+    local KFTurboGameType GameType;
+    GameType = KFTurboGameType(Level.Game);
+
+    Super.RemoveEventHandler();
+
+    for (Index = GameType.GlobalPlayerEventHandlerList.Length - 1; Index >= 0; Index--)
+    {
+        if (GameType.GlobalPlayerEventHandlerList[Index] != self)
+        {
+            continue;
+        }
+
+        GameType.GlobalPlayerEventHandlerList.Remove(Index, 1);
+        break;
+    }
+}
+
 static function TurboEventHandler CreatePlayerHandler(TurboPlayerController Player)
 {
     local TurboEventHandler Handler;
