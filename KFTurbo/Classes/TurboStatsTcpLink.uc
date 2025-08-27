@@ -10,6 +10,7 @@ var globalconfig string StatsDomain;
 var globalconfig int StatsPort;
 var globalconfig string StatsTcpLinkClassOverride;
 
+var KFTurboMut Mutator;
 var IpAddr StatsAddress;
 
 var string CRLF;
@@ -50,6 +51,7 @@ static final function TurboStatsTcpLink FindStatsTcpLink(GameInfo GameInfo)
 function PostBeginPlay()
 {
     log("KFTurbo has created a stats TCP link!", 'KFTurbo');
+    Mutator = KFTurboMut(Owner);
 
 	CRLF = Chr(13) $ Chr(10);
 
@@ -225,8 +227,6 @@ gametype - The type of game being played. Can be "turbo", "turbocardgame", "turb
 final function string BuildGameStartPayload()
 {
     local string Payload;
-    local KFTurboMut Mutator;
-    Mutator = class'KFTurboMut'.static.FindMutator(Level.Game);
 
     Payload = "{%qtype%q:%qgamebegin%q,";
     Payload $= "%qversion%q:%q"$Mutator.GetTurboVersionID()$"%q,";
@@ -264,8 +264,6 @@ function SendGameEnd(int Result)
 final function string BuildGameEndPayload(int WaveNum, string Result)
 {
     local string Payload;
-    local KFTurboMut Mutator;
-    Mutator = class'KFTurboMut'.static.FindMutator(Level.Game);
 
     Payload = "{%qtype%q:%qgameend%q,";
     Payload $= "%qversion%q:%q"$Mutator.GetTurboVersionID()$"%q,";
@@ -303,8 +301,6 @@ function SendWaveStart()
 final function string BuildWaveStartPayload(int WaveNum)
 {
     local string Payload;
-    local KFTurboMut Mutator;
-    Mutator = class'KFTurboMut'.static.FindMutator(Level.Game);
 
     Payload = "{%qtype%q:%qwavestart%q,";
     Payload $= "%qversion%q:%q"$Mutator.GetTurboVersionID()$"%q,";
@@ -340,12 +336,11 @@ function SendWaveEnd()
 final function string BuildWaveEndPayload(int WaveNum)
 {
     local string Payload;
-    local KFTurboMut Mutator;
-    Mutator = class'KFTurboMut'.static.FindMutator(Level.Game);
 
     Payload = "{%qtype%q:%qwaveend%q,";
     Payload $= "%qversion%q:%q"$Mutator.GetTurboVersionID()$"%q,";
     Payload $= "%qsession%q:%q"$Mutator.GetSessionID()$"%q}";
+    Payload $= "%qwavenum%q:%q"$WaveNum$"%q}";
     
     Payload = Repl(Payload, "%q", Chr(34));
     return Payload;
@@ -395,12 +390,10 @@ function SendWaveStats(TurboWavePlayerStatCollector Stats)
 final function string BuildWaveStatsPayload(TurboWavePlayerStatCollector Stats)
 {
     local string Payload;
-    local KFTurboMut TurboMut;
-    TurboMut = class'KFTurboMut'.static.FindMutator(Level.Game);
 
     Payload = "{%qtype%q:%qwavestats%q,";
-    Payload $= "%qversion%q:%q"$TurboMut.GetTurboVersionID()$"%q,";
-    Payload $= "%qsession%q:%q"$TurboMut.GetSessionID()$"%q,";
+    Payload $= "%qversion%q:%q"$Mutator.GetTurboVersionID()$"%q,";
+    Payload $= "%qsession%q:%q"$Mutator.GetSessionID()$"%q,";
     Payload $= "%qwavenum%q:"$Stats.Wave$",";
     Payload $= "%qplayer%q:%q"$Stats.GetPlayerSteamID()$"%q,";
     Payload $= "%qplayername%q:%q"$Stats.GetPlayerName()$"%q,";
