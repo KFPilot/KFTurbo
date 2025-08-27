@@ -89,7 +89,19 @@ GitHubStagingPath = LocalPath.joinpath("StagedKFTurboGitHub")
 ServerStagingPath = LocalPath.joinpath("StagedKFTurbo/System")
 
 WarningStrings = ["warning", "unused local"]
-ErrorStrings = ["error", "unresolved", "failed", "failure"]
+ErrorStrings = ["error", "unresolved", "failed", "failure", "unknown property"]
+
+def PrintTask(String):
+    print("\033[48;5;7m  \033[0m " + String)
+def PrintError(String):
+    print("\033[41m \033[0m \033[31m" + String + "\033[0m")
+def PrintWarning(String):
+    print("\033[43m \033[0m \033[33m" + String + "\033[0m")
+def PrintStep(String):
+    print("\033[48;5;7m \033[0m " + String)
+def PrintSuccess(String):
+    print("\033[48;2;0;200;0m \033[0m \033[38;2;0;200;0m" + String + "\033[0m")
+
 
 def DeleteTurboPackages():
     for FileName in TurboFiles:
@@ -111,11 +123,14 @@ def DeleteTurboPackages():
 
 def ProcessUCCMake(Process):
     HasReachedEnd = False
+    FoundAnyErrors = False
     PreviousLine = ""
     while True:
         Line = Process.stdout.readline()
 
         if not Line:
+            if not FoundAnyErrors:
+                PrintSuccess("Compile completed without any errors.")
             break
 
         Line = Line.rstrip()
@@ -123,19 +138,20 @@ def ProcessUCCMake(Process):
         if Line.startswith("Compile"):
             HasReachedEnd = True
 
-        if Line.startswith("Analyzing..."):
+        if HasReachedEnd:
+            if Line.startswith("Compile aborted") or Line.startswith("Failure -"):
+                PrintError(Line)
+                FoundAnyErrors = True
+        elif Line.startswith("Analyzing..."):
             ModuleName = PreviousLine.replace("-", "").split(' ')[0]
-            print(f"\033[48;5;7m \033[0m Compiling {ModuleName}...")
+            PrintStep(f"Compiling {ModuleName}...")
         elif any (FlagString in Line.lower() for FlagString in ErrorStrings):
-            if not HasReachedEnd:
-                print("\033[41m \033[0m   " + "\033[31m" + Line + "\033[0m")
-            else:
-                print("  " + Line)
+            PrintError("  " + Line)
+            FoundAnyErrors = True
         elif any (FlagString in Line.lower() for FlagString in WarningStrings):
-            if not HasReachedEnd:
-                print("\033[43m \033[0m   " + "\033[33m" + Line + "\033[0m")
-            else:
-                print("  " + Line)
+            PrintWarning("  " + Line)
+            FoundAnyErrors = True
+
         PreviousLine = Line
 
         if not (Process.poll() is None):
@@ -143,7 +159,7 @@ def ProcessUCCMake(Process):
 
 def RunUCCMake():
     UCCMakePath = LocalPath.joinpath(SystemPath, "UCC.exe")
-    print("Running UCC make command...")
+    PrintTask("Running UCC make command...")
     try:
         if not VerboseUCC:
             UCCMakeProcess = subprocess.Popen([UCCMakePath, "make"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, bufsize=1)
@@ -165,7 +181,7 @@ def CheckIfAllFilesArePresent():
         raise MissingPackagesError("Missing files: " + " ".join(MissingFiles))
 
 def CopyTurboFilesToTarget(Destination):
-    print(f"Copying files to {Destination}...")
+    PrintStep(f"Copying files to {Destination}...")
     for FileName in TurboFiles:
         FilePath = SystemPath.joinpath(FileName)
         shutil.copy2(FilePath, Destination)
@@ -173,24 +189,31 @@ def CopyTurboFilesToTarget(Destination):
         FilePath = SystemPath.joinpath(StagingFileName)
         shutil.copy2(FilePath, Destination)
 
+
 def CopyTurboFilesToDeployments():
-    CopyTurboFilesToTarget(GitHubStagingPath)
-    CopyTurboFilesToTarget(ServerStagingPath)
-    print("KFTurbo files copied to staging folders successfully.")
+    try:
+        CopyTurboFilesToTarget(GitHubStagingPath)
+        CopyTurboFilesToTarget(ServerStagingPath)
+        PrintSuccess(f"Successfully copied files.")
+    except Exception as Error:
+        PrintError(f"{Error}")
 
 def PerformCompile():
     DeleteTurboPackages()
     RunUCCMake()
-    
+
+    PrintTask("Checking for expected files...")
     try:
         CheckIfAllFilesArePresent()
+        PrintSuccess("All expected files found.")
     except MissingPackagesError as Error:
-        print(f"{Error}")
+        PrintError(f"{Error}")
         return
-
-    print("KFTurbo compiled successfully.")
-
+    print("... expected file check complete.")
+    
     if StageFiles:
+        PrintTask("Staging files...")
         CopyTurboFilesToDeployments()
+        print("... staging files finished.")
 
 PerformCompile()
