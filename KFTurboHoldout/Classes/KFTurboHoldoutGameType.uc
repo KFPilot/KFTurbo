@@ -42,8 +42,8 @@ function PostBeginPlay()
     // Set wave spawn period
     KFLR.WaveSpawnPeriod = MIN_SPAWN_TIME;
 
-    StartingCash = STARTING_CASH;
-    MinRespawnCash = STARTING_CASH;
+    StartingCash = HOLDOUT_STARTING_CASH;
+    MinRespawnCash = HOLDOUT_STARTING_CASH;
     WaveNextSquadSpawnTime = MIN_SPAWN_TIME;
 }
 
