@@ -23,14 +23,15 @@ class EBuildType(Enum):
     CARDGAME = 4
 
 ArgumentParser = argparse.ArgumentParser()
+ArgumentParser.add_argument("-t","--onlyturbo", action="store_true", help="Only rebuild KFTurbo and KFTurboServer.")
+ArgumentParser.add_argument("-o","--onlyholdout", action="store_true", help="Only rebuild Turbo Holdout.")
+ArgumentParser.add_argument("-r","--onlyrandomizer", action="store_true", help="Only rebuild Turbo Randomizer.")
+ArgumentParser.add_argument("-c","--onlycardgame", action="store_true", help="Only rebuild Turbo Card Game.")
+ArgumentParser.add_argument("-v", "--verboseUCC", action="store_true", help="Will log all of UCC make.")
+ArgumentParser.add_argument("-s", "--stagefiles", action="store_true", help="Copies KFTurbo packages to staging directories.")
+ArgumentParser.add_argument("--extrastage", help="Copies KFTurbo packages to a specified directory (such as a local test server). --stagefiles flag must be set.")
 ArgumentParser.add_argument("--fonts", action="store_true", help="Rebuild all font packages. Will take a long time.")
 ArgumentParser.add_argument("--printremovefailure", action="store_true", help="Print when this script fails to delete files.")
-ArgumentParser.add_argument("--onlyturbo", action="store_true", help="Only rebuild KFTurbo and KFTurboServer.")
-ArgumentParser.add_argument("--onlyholdout", action="store_true", help="Only rebuild Turbo Holdout.")
-ArgumentParser.add_argument("--onlyrandomizer", action="store_true", help="Only rebuild Turbo Randomizer.")
-ArgumentParser.add_argument("--onlycardgame", action="store_true", help="Only rebuild Turbo Card Game.")
-ArgumentParser.add_argument("--verboseUCC", action="store_true", help="Will log all of UCC make.")
-ArgumentParser.add_argument("--stagefiles", action="store_true", help="Copies KFTurbo packages to staging directories.")
 
 Arguments = ArgumentParser.parse_args()
 
@@ -87,6 +88,10 @@ SystemPath = LocalPath.joinpath("System")
 
 GitHubStagingPath = LocalPath.joinpath("StagedKFTurboGitHub")
 ServerStagingPath = LocalPath.joinpath("StagedKFTurbo/System")
+ExtraStagingPath = None
+
+if Arguments.extrastage != None:
+    ExtraStagingPath = pathlib.Path(Arguments.extrastage)
 
 WarningStrings = ["warning", "unused local"]
 ErrorStrings = ["error", "unresolved", "failed", "failure", "unknown property"]
@@ -194,6 +199,8 @@ def CopyTurboFilesToDeployments():
     try:
         CopyTurboFilesToTarget(GitHubStagingPath)
         CopyTurboFilesToTarget(ServerStagingPath)
+        if ExtraStagingPath != None:
+            CopyTurboFilesToTarget(ExtraStagingPath)
         PrintSuccess(f"Successfully copied files.")
     except Exception as Error:
         PrintError(f"{Error}")
