@@ -1,4 +1,3 @@
-
 #Killing Floor Turbo RecompileTurbo.py
 #Simple script used to compile KFTurbo.
 #Makes working in VSCode on KFTurbo easier.
@@ -74,10 +73,10 @@ def UpdateBuildType():
     
 UpdateBuildType()
 
-StageFiles = Arguments.stagefiles and (BuildType is EBuildType.ALL)
+StageFiles = Arguments.stagefiles
 
-if (not StageFiles) and Arguments.stagefiles:
-    print("\033[41m \033[0m" + "\033[31m Staging files was requested but is not a full rebuild.\033[0m")
+if StageFiles and not (BuildType is EBuildType.ALL):
+    print("\033[43m  \033[0m" + "\033[33m Warning: --stagefiles files was specified when not performing a full rebuild.\033[0m")
 
 RebuildFonts = Arguments.fonts
 VerboseUCC = Arguments.verboseUCC
@@ -98,15 +97,14 @@ ErrorStrings = ["error", "unresolved", "failed", "failure", "unknown property"]
 
 def PrintTask(String):
     print("\033[48;5;7m  \033[0m " + String)
-def PrintError(String):
-    print("\033[41m \033[0m \033[31m" + String + "\033[0m")
-def PrintWarning(String):
-    print("\033[43m \033[0m \033[33m" + String + "\033[0m")
 def PrintStep(String):
     print("\033[48;5;7m \033[0m " + String)
+def PrintWarning(String):
+    print("\033[43m \033[0m \033[33m" + String + "\033[0m")
+def PrintError(String):
+    print("\033[41m \033[0m \033[31m" + String + "\033[0m")
 def PrintSuccess(String):
     print("\033[48;2;0;200;0m \033[0m \033[38;2;0;200;0m" + String + "\033[0m")
-
 
 def DeleteTurboPackages():
     for FileName in TurboFiles:
@@ -124,7 +122,6 @@ def DeleteTurboPackages():
                 print(f"\033[33m {ErrorMessageSplit[0]} {FileName} \033[0m")
             else:
                 print(f"\033[33m {ErrorMessageSplit[1]} {FileName} \033[0m")
-
 
 def ProcessUCCMake(Process):
     HasReachedEnd = False
@@ -193,7 +190,6 @@ def CopyTurboFilesToTarget(Destination):
     for StagingFileName in TurboStagingFiles:
         FilePath = SystemPath.joinpath(StagingFileName)
         shutil.copy2(FilePath, Destination)
-
 
 def CopyTurboFilesToDeployments():
     try:
