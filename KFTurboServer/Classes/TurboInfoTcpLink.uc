@@ -224,14 +224,7 @@ static final function string GeneratePlayerJSON(GameInfo GameInfo)
         }
 
         Player = PlayerList[Index];
-
-        if (Player.PlayerReplicationInfo.bOnlySpectator)
-        {
-            Data $= "{\"id\":\""$Player.GetPlayerIDHash()$"\",\"name\":\""$Player.PlayerReplicationInfo.PlayerName$"\",\"spectator\":\"true\"}";
-            continue;
-        }
-
-        Data $= "{\"id\":\""$Player.GetPlayerIDHash()$"\",\"name\":\""$Player.PlayerReplicationInfo.PlayerName$"\",\"spectator\":\"false\"}";
+        Data $= "{\"id\":\""$Player.GetPlayerIDHash()$"\",\"spectator\":\""$Player.PlayerReplicationInfo.bOnlySpectator$"\"}";
     }
 
     return Data;
