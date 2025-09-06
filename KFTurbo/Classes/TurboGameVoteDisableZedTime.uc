@@ -10,7 +10,7 @@ static function bool CanInitiateVote(TurboGameReplicationInfo TGRI, TurboPlayerR
         return false;
     }
 
-    if (!KFTurboGameType(TGRI.Level.Game).bZEDTimeActive)
+    if (!KFTurboGameType(TGRI.Level.Game).IsZedTimeEnabled())
     {
         return false;
     }
@@ -25,7 +25,7 @@ function OnVoteResult(Name Outcome)
         return;
     }
 
-    KFTurboGameType(Level.Game).bZEDTimeActive = false;
+    KFTurboGameType(Level.Game).SetZedTimeEnabled(false);
 }
 
 defaultproperties
