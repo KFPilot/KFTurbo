@@ -35,7 +35,7 @@ replication
 	reliable if( Role == ROLE_Authority )
 		ClientCloseBuyMenu;
 	reliable if( Role < ROLE_Authority )
-		ClientSetPipebombUsesSpecialGroup;
+		ServerSetPipebombUsesSpecialGroup;
 	reliable if( Role < ROLE_Authority )
 		Vote, VoteTest, ServerMarkActor, ServerNotifyShoppingState, ServerNotifyLoginMenuState;
 	reliable if( Role < ROLE_Authority )
@@ -921,6 +921,8 @@ exec function Vote(string VoteString)
 //Immediately creates a test vote. For testing purposes.
 exec function VoteTest()
 {
+	local TurboGameReplicationInfo TurboGRI;
+
 	if (Level.NetMode != NM_Standalone && (PlayerReplicationInfo == None || !PlayerReplicationInfo.bAdmin))
 	{
 		return;
@@ -931,12 +933,19 @@ exec function VoteTest()
 		return;
 	}
 
-	TurboGameReplicationInfo(Level.GRI).VoteInstance = Spawn(class'TurboGameVoteTest', Self);
-	TurboGameReplicationInfo(Level.GRI).VoteInstance.InitiateVote(TurboPlayerReplicationInfo(PlayerReplicationInfo));
-	
-	if (TurboGameReplicationInfo(Level.GRI).VoteInstance != None && TurboGameReplicationInfo(Level.GRI).VoteInstance.GetVoteState() < Expired)
+	TurboGRI = TurboGameReplicationInfo(Level.GRI);
+
+	if (TurboGRI != None)
 	{
-		TurboGameReplicationInfo(Level.GRI).RegisterVoteInstance(TurboGameReplicationInfo(Level.GRI).VoteInstance);
+		return;
+	}
+
+	TurboGRI.VoteInstance = Spawn(class'TurboGameVoteTest', Self);
+	TurboGRI.VoteInstance.InitiateVote(TurboPlayerReplicationInfo(PlayerReplicationInfo));
+	
+	if (TurboGRI.VoteInstance != None && TurboGRI.VoteInstance.GetVoteState() < Expired)
+	{
+		TurboGRI.RegisterVoteInstance(TurboGRI.VoteInstance);
 	}
 }
 
@@ -1124,7 +1133,7 @@ simulated function SetPipebombUsesSpecialGroup(bool bNewPipebombUsesSpecialGroup
 
 	if (Role != ROLE_Authority)
 	{
-		ClientSetPipebombUsesSpecialGroup(bNewPipebombUsesSpecialGroup);
+		ServerSetPipebombUsesSpecialGroup(bNewPipebombUsesSpecialGroup);
 	}
 
 	if (Pawn == None)
@@ -1149,7 +1158,7 @@ simulated function SetPipebombUsesSpecialGroup(bool bNewPipebombUsesSpecialGroup
 	}
 }
 
-function ClientSetPipebombUsesSpecialGroup(bool bNewPipebombUsesSpecialGroup)
+function ServerSetPipebombUsesSpecialGroup(bool bNewPipebombUsesSpecialGroup)
 {
 	local W_Pipebomb_Weap Pipebomb;
 
@@ -1194,6 +1203,6 @@ defaultproperties
 	bHasClosedLoginMenu=true //Starts as closed.
 	LoginMenuTime=-1.f
 
-	VoteCooldownTime=1.f
+	VoteCooldownTime=0.1f
 	SpectateUseTargetCooldown=0.1f
 }
