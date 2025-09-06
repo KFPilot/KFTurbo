@@ -4,6 +4,8 @@
 class TurboPlayerStatCollectorBase extends Info;
 
 var TurboPlayerReplicationInfo PlayerTPRI;
+var string PlayerID;
+
 var protected bool bIsCollector;
 var class<TurboPlayerStatCollectorBase> PlayerStatReplicatorClass;
 var float ResolveTimeout;
@@ -62,12 +64,18 @@ static final function TurboPlayerStatCollectorBase FindStats(TurboPlayerReplicat
 function PreBeginPlay()
 {
 	PlayerTPRI = TurboPlayerReplicationInfo(Owner);
+
+	if (PlayerTPRI != None)
+	{
+		PlayerID = ResolvePlayerSteamID();
+	}
+
 	ResolveTimeout = Level.TimeSeconds + 5.f;
 	Super.PreBeginPlay();
 }
 
 //Intentionally not simulated - we can't resolve Steam IDs this way on the remote (except maybe owning remote?).
-function string GetPlayerSteamID()
+function string ResolvePlayerSteamID()
 {
 	if (PlayerTPRI == None)
 	{
@@ -89,7 +97,7 @@ function string GetPlayerName()
 		return "";
 	}
 
-	return PlayerTPRI.PlayerName;
+	return class'TurboTcpLinkHelper'.static.Sanitize(PlayerTPRI.PlayerName);
 }
 
 simulated function Destroyed()

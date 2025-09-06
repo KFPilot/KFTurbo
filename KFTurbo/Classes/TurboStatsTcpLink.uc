@@ -411,7 +411,7 @@ final function string BuildWaveStatsPayload(TurboWavePlayerStatCollector Stats)
     Payload $= "%qversion%q:%q"$Mutator.GetTurboVersionID()$"%q,";
     Payload $= "%qsession%q:%q"$Mutator.GetSessionID()$"%q,";
     Payload $= "%qwavenum%q:"$Stats.Wave$",";
-    Payload $= "%qplayer%q:%q"$Stats.GetPlayerSteamID()$"%q,";
+    Payload $= "%qplayer%q:%q"$Stats.PlayerID$"%q,";
     Payload $= "%qplayername%q:%q"$Stats.GetPlayerName()$"%q,";
     Payload $= "%qperk%q:%q"$GetPerkID(Stats.PlayerTPRI)$"%q,";
     Payload $= "%qstats%q:{"$BuildStatsMap(Stats)$"},";
