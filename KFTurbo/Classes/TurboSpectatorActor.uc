@@ -231,7 +231,7 @@ simulated function UpdateVisibility(float DeltaTime)
 {
     if (IsLocalPlayerSpectator())
     {
-        bIsVisible = OwningController.ViewTarget != None && OwningController.ViewTarget != OwningController;
+        bIsVisible = OwningController.Pawn == None && OwningController.ViewTarget != None && OwningController.ViewTarget != OwningController;
         return;
     }
 
