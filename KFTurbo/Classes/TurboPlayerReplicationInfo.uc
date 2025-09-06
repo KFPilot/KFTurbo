@@ -3,6 +3,8 @@
 //For more information see https://github.com/KFPilot/KFTurbo.
 class TurboPlayerReplicationInfo extends KFPlayerReplicationInfo;
 
+var class<TurboSpectatorActor> SpectatorActorClass;
+
 enum EConnectionState
 {
     Normal,
@@ -51,6 +53,16 @@ function Timer()
     {
         ShieldStrength = 0.f;
 		HealthMax = 100;
+    }
+}
+
+simulated function PostBeginPlay()
+{
+    Super.PostBeginPlay();
+
+    if (Role == ROLE_Authority && SpectatorActorClass != None && TurboPlayerController(Owner) != None)
+    {
+        Spawn(SpectatorActorClass, Self);
     }
 }
 
@@ -173,6 +185,8 @@ simulated final function EConnectionState GetConnectionState()
 
 defaultproperties
 {
+    SpectatorActorClass=class'TurboSpectatorActorEye'
+
     ShieldStrength=0
 
     HealthMax=100
