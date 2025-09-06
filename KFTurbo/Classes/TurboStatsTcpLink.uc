@@ -2,7 +2,7 @@
 //Sends analytics data to a specified endpoint. All content is deferred over multiple frames.
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class TurboStatsTcpLink extends TcpLink
+class TurboStatsTcpLink extends TurboTcpLink
     config(KFTurbo);
 
 var globalconfig bool bBroadcastAnalytics;
@@ -12,13 +12,15 @@ var globalconfig string StatsTcpLinkClassOverride;
 
 var KFTurboMut Mutator;
 var IpAddr StatsAddress;
+var string VersionSessionJson; //Cache this. It's a small optimization over rebuilding it every time.
 
 var string CRLF;
 
 var array<string> DeferredDataList;
-var int DeferredDataIndex;
+var float LastDataSendTime;
 
 var int MaxRetryCount;
+var bool bIsFlushing;
 
 static function bool ShouldBroadcastAnalytics()
 {
@@ -61,6 +63,8 @@ function PostBeginPlay()
 
 function OnGameStart()
 {
+    VersionSessionJson = StringToJSON("version", Mutator.GetTurboVersionID()) $ "," $ StringToJSON("session", Mutator.GetSessionID());
+
     BindPort();
     Resolve(StatsDomain);
 }
@@ -89,6 +93,12 @@ event ResolveFailed()
 
 function Opened()
 {
+    if (bIsFlushing)
+    {
+        log("Connection to stats domain"@StatsDomain@" was opened after we started flushing stats. This should not be possible.", 'KFTurboStatsTcp');
+        return;
+    }
+
     log("Connection to stats domain"@StatsDomain@"opened. Sending game start payload.", 'KFTurboStatsTcp');
 
     DeferredDataList.Insert(0, 1);
@@ -98,6 +108,12 @@ function Opened()
 
 function SendData(string Data)
 {
+    if (bIsFlushing)
+    {
+        log("WARNING: SendData was called while flushing stats!", 'KFTurboStatsTcp');
+        return;
+    }
+
     if (DeferredDataList.Length > 50)
     {
         log("WARNING: Stats data buffer has exceeded 50 entries! Removing oldest entry before adding a new one.", 'KFTurboStatsTcp');
@@ -127,11 +143,17 @@ state ConnectionReady
 
     function Timer()
     {
+        if (Level.TimeSeconds < LastDataSendTime + 4.f)
+        {
+            return;
+        }
+
         SendData("keepalive");
     }
 
     function FlushData()
     {
+        bIsFlushing = true;
         GotoState('FlushAllData');
     }
 
@@ -145,6 +167,7 @@ Begin:
             continue;
         }
 
+        LastDataSendTime = Level.TimeSeconds;
         SendText(DeferredDataList[0]);
         DeferredDataList.Remove(0, 1);
     }
@@ -171,7 +194,7 @@ Begin:
 
     Sleep(1.f);
     Close();
-    Sleep(1.f);
+    Sleep(2.f * (float(default.MaxRetryCount) / float(MaxRetryCount)));
     BindPort();
     Resolve(StatsDomain);
 }
@@ -242,15 +265,9 @@ gametype - The type of game being played. Can be "turbo", "turbocardgame", "turb
 
 final function string BuildGameStartPayload()
 {
-    local string Payload;
-
-    Payload = "{%qtype%q:%qgamebegin%q,";
-    Payload $= "%qversion%q:%q"$Mutator.GetTurboVersionID()$"%q,";
-    Payload $= "%qsession%q:%q"$Mutator.GetSessionID()$"%q,";
-    Payload $= "%qgametype%q:%q"$Mutator.GetGameType()$"%q}";
-    
-    Payload = Repl(Payload, "%q", Chr(34));
-    return Payload;
+    return "{" $ StringToJSON("type", "gamebegin") $ ","
+        $ VersionSessionJson $ ","
+        $ StringToJSON("gametype", Mutator.GetGameType()) $ "}";
 }
 
 /*
@@ -279,16 +296,10 @@ function SendGameEnd(int Result)
 
 final function string BuildGameEndPayload(int WaveNum, string Result)
 {
-    local string Payload;
-
-    Payload = "{%qtype%q:%qgameend%q,";
-    Payload $= "%qversion%q:%q"$Mutator.GetTurboVersionID()$"%q,";
-    Payload $= "%qsession%q:%q"$Mutator.GetSessionID()$"%q,";
-    Payload $= "%qwavenum%q:"$WaveNum$",";
-    Payload $= "%qresult%q:%q"$Result$"%q}";
-    
-    Payload = Repl(Payload, "%q", Chr(34));
-    return Payload;
+    return "{" $ StringToJSON("type", "gameend") $ ","
+        $ VersionSessionJson $ ","
+        $ StringToJSON("wavenum", WaveNum) $ ","
+        $ DataToJSON("result", Result) $ "}";
 }
 
 /*
@@ -316,16 +327,10 @@ function SendWaveStart()
 
 final function string BuildWaveStartPayload(int WaveNum)
 {
-    local string Payload;
-
-    Payload = "{%qtype%q:%qwavestart%q,";
-    Payload $= "%qversion%q:%q"$Mutator.GetTurboVersionID()$"%q,";
-    Payload $= "%qsession%q:%q"$Mutator.GetSessionID()$"%q,";
-    Payload $= "%qwavenum%q:"$WaveNum$",";
-    Payload $= "%qplayerlist%q:["$GetPlayerList()$"]}";
-    
-    Payload = Repl(Payload, "%q", Chr(34));
-    return Payload;
+    return "{" $ StringToJSON("type", "wavestart") $ ","
+        $ VersionSessionJson $ ","
+        $ StringToJSON("wavenum", WaveNum) $ ","
+        $ DataToJSON("playerlist", GetPlayerList()) $ "}";
 }
 
 /*
@@ -351,15 +356,9 @@ function SendWaveEnd()
 
 final function string BuildWaveEndPayload(int WaveNum)
 {
-    local string Payload;
-
-    Payload = "{%qtype%q:%qwaveend%q,";
-    Payload $= "%qversion%q:%q"$Mutator.GetTurboVersionID()$"%q,";
-    Payload $= "%qsession%q:%q"$Mutator.GetSessionID()$"%q,";
-    Payload $= "%qwavenum%q:"$WaveNum$"}";
-    
-    Payload = Repl(Payload, "%q", Chr(34));
-    return Payload;
+    return "{" $ StringToJSON("type", "waveend") $ ","
+        $ VersionSessionJson $ ","
+        $ StringToJSON("wavenum", WaveNum) $ "}";
 }
 
 /*
@@ -405,20 +404,14 @@ function SendWaveStats(TurboWavePlayerStatCollector Stats)
 
 final function string BuildWaveStatsPayload(TurboWavePlayerStatCollector Stats)
 {
-    local string Payload;
-
-    Payload = "{%qtype%q:%qwavestats%q,";
-    Payload $= "%qversion%q:%q"$Mutator.GetTurboVersionID()$"%q,";
-    Payload $= "%qsession%q:%q"$Mutator.GetSessionID()$"%q,";
-    Payload $= "%qwavenum%q:"$Stats.Wave$",";
-    Payload $= "%qplayer%q:%q"$Stats.PlayerID$"%q,";
-    Payload $= "%qplayername%q:%q"$Stats.GetPlayerName()$"%q,";
-    Payload $= "%qperk%q:%q"$GetPerkID(Stats.PlayerTPRI)$"%q,";
-    Payload $= "%qstats%q:{"$BuildStatsMap(Stats)$"},";
-    Payload $= "%qdied%q:"$Locs(string(Stats.Deaths > 0))$"}";
-    
-    Payload = Repl(Payload, "%q", Chr(34));
-    return Payload;
+    return "{" $ StringToJSON("type", "wavestats") $ ","
+        $ VersionSessionJson $ ","
+        $ StringToJSON("wavenum", Stats.Wave) $ ","
+        $ StringToJSON("player", Stats.PlayerID) $ ","
+        $ StringToJSON("playername", Sanitize(Stats.GetPlayerName())) $ ","
+        $ StringToJSON("perk", GetPerkID(Stats.PlayerTPRI)) $ ","
+        $ DataToJSON("stats", BuildStatsMap(Stats)) $ ","
+        $ DataToJSON("died", Eval(Stats.Deaths > 0, "true", "false")) $ "}";
 }
 
 static final function string GetPerkID(TurboPlayerReplicationInfo TPRI)
@@ -451,42 +444,19 @@ static final function string GetPerkID(TurboPlayerReplicationInfo TPRI)
 
 static final function string BuildStatsMap(TurboWavePlayerStatCollector Stats)
 {
-    local string StatMap;
-    StatMap = "";
-    StatMap $= AppendStat("Kills", Stats.Kills);
-    StatMap $= AppendStat("KillsFP", Stats.KillsFleshpound);
-    StatMap $= AppendStat("KillsSC", Stats.KillsScrake);
-    
-    StatMap $= AppendStat("Damage", Stats.DamageDone);
-    StatMap $= AppendStat("DamageFP", Stats.DamageDoneFleshpound);
-    StatMap $= AppendStat("DamageSC", Stats.DamageDoneScrake);
-    
-    StatMap $= AppendStat("ShotsFired", Stats.ShotsFired);
-    StatMap $= AppendStat("MeleeSwings", Stats.MeleeSwings);
-    StatMap $= AppendStat("ShotsHit", Stats.ShotsHit);
-    StatMap $= AppendStat("ShotsHeadshot", Stats.ShotsHeadshot);
-
-    StatMap $= AppendStat("Reloads", Stats.Reloads);
-
-    StatMap $= AppendStat("Heals", Stats.HealingDone);
-
-    //Remove starting comma.
-    if (StatMap != "" && Left(StatMap, 1) == ",")
-    {
-        StatMap = Mid(StatMap, 1);
-    }
-
-    return StatMap;
-}
-
-static final function string AppendStat(string StatName, int StatAmount)
-{
-    if (StatAmount <= 0)
-    {
-        return "";
-    }
-
-    return ",%q"$StatName$"%q:"$StatAmount;
+    return "{" $ DataToJSON("Kills", Stats.Kills) $
+        Eval(Stats.KillsFleshpound > 0, "," $ DataToJSON("KillsFP", Stats.KillsFleshpound), "") $
+        Eval(Stats.KillsScrake > 0, "," $ DataToJSON("KillsSC", Stats.KillsScrake), "") $
+        Eval(Stats.DamageDone > 0, "," $ DataToJSON("Damage", Stats.DamageDone), "") $
+        Eval(Stats.DamageDoneFleshpound > 0, "," $ DataToJSON("DamageFP", Stats.DamageDoneFleshpound), "") $
+        Eval(Stats.DamageDoneScrake > 0, "," $ DataToJSON("DamageSC", Stats.DamageDoneScrake), "") $
+        Eval(Stats.ShotsFired > 0, "," $ DataToJSON("ShotsFired", Stats.ShotsFired), "") $
+        Eval(Stats.MeleeSwings > 0, "," $ DataToJSON("MeleeSwings", Stats.MeleeSwings), "") $
+        Eval(Stats.ShotsHit > 0, "," $ DataToJSON("ShotsHit", Stats.ShotsHit), "") $
+        Eval(Stats.ShotsHeadshot > 0, "," $ DataToJSON("ShotsHeadshot", Stats.ShotsHeadshot), "") $
+        Eval(Stats.Reloads > 0, "," $ DataToJSON("Reloads", Stats.Reloads), "") $
+        Eval(Stats.HealingDone > 0, "," $ DataToJSON("Heals", Stats.HealingDone), "") $
+        "}";
 }
 
 static final function string GetResultName(int GameResult)
@@ -510,7 +480,7 @@ final function string GetPlayerList()
 
     for (C = Level.ControllerList; C != None; C = C.NextController)
     {
-        if (!C.bIsPlayer || C.PlayerReplicationInfo == None || C.PlayerReplicationInfo.bOnlySpectator || PlayerController(C) == None)
+        if (!C.bIsPlayer || C.PlayerReplicationInfo == None || C.PlayerReplicationInfo.bOnlySpectator || TurboPlayerController(C) == None)
         {
             continue;
         }
@@ -518,12 +488,12 @@ final function string GetPlayerList()
         PlayerList $= ",%q"$PlayerController(C).GetPlayerIDHash()$"%q";
     }
 
-    if (PlayerList != "" && Left(PlayerList, 1) == ",")
+    if (PlayerList != "")
     {
         PlayerList = Mid(PlayerList, 1);
     }
 
-    return PlayerList;
+    return "["$PlayerList$"]";
 }
 
 defaultproperties
@@ -535,5 +505,5 @@ defaultproperties
     StatsPort=-1;
     StatsTcpLinkClassOverride=""
 
-    MaxRetryCount=5
+    MaxRetryCount=10
 }

@@ -97,7 +97,7 @@ function string GetPlayerName()
 		return "";
 	}
 
-	return class'TurboTcpLinkHelper'.static.Sanitize(PlayerTPRI.PlayerName);
+	return PlayerTPRI.PlayerName;
 }
 
 simulated function Destroyed()
