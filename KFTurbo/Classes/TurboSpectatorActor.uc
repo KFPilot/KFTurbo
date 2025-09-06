@@ -215,7 +215,7 @@ simulated function UpdateMovement(float DeltaTime)
         BufferLocation = OwningController.ViewTarget.Location;
         BufferRotation = OwningController.Rotation;
         
-        BufferLocation += vect(0.f, 0.f, 2.f) * OwningController.ViewTarget.CollisionHeight * Lerp(RandomOffset, 0.95f, 1.15f);
+        BufferLocation += vect(0.f, 0.f, 2.5f) * OwningController.ViewTarget.default.CollisionHeight * Lerp(RandomOffset, 0.95f, 1.25f);
     }
 
     if (ShouldUpdateMovementStep())
