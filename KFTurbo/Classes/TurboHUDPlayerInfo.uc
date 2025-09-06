@@ -82,13 +82,12 @@ final simulated function UpdatePlayerInfoList(float DeltaTime)
 	if (ShouldRefreshPlayerInfoList(DeltaTime))
 	{
 		RefreshPlayerInfoList(DeltaTime);
-		NextPawnCollectionTime = Level.TimeSeconds + 0.1f;
 	}
 
 	if (Level.TimeSeconds > NextPawnCollectionTime)
 	{
 		UpdatePlayerInfoPawns(DeltaTime);
-		NextPawnCollectionTime = Level.TimeSeconds + 0.5f;
+		NextPawnCollectionTime = Level.TimeSeconds + 0.25f;
 	}
 
 	TickPlayerInfoList(DeltaTime);
@@ -228,7 +227,7 @@ simulated function UpdatePlayerInfoPawns(float DeltaTime)
 
 		for (PlayerInfoIndex = PlayerInfoDataList.Length - 1; PlayerInfoIndex >= 0; PlayerInfoIndex--)
 		{
-			if (PlayerInfoDataList[PlayerInfoIndex].HumanPawn != None || PlayerInfoDataList[PlayerInfoIndex].TPRI != PRI)
+			if (PlayerInfoDataList[PlayerInfoIndex].TPRI != PRI)
 			{
 				continue;
 			}
@@ -290,7 +289,7 @@ simulated function TickPlayerInfoList(float DeltaTime)
 
 static final simulated function bool ShouldDrawPlayerInfo(vector CameraPosition, vector CameraDirection, PlayerInfoData PlayerInfo)
 {
-	if (PlayerInfo.TPRI == None || PlayerInfo.HumanPawn == None || PlayerInfo.Entry == None)
+	if (PlayerInfo.TPRI == None || PlayerInfo.HumanPawn == None || PlayerInfo.HumanPawn.bDeleteMe || PlayerInfo.Entry == None)
 	{
 		return false;
 	}
