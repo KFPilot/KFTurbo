@@ -50,7 +50,7 @@ static final function TurboStatsTcpLink FindStatsTcpLink(GameInfo GameInfo)
 
 function PostBeginPlay()
 {
-    log("KFTurbo has created a stats TCP link!", 'KFTurbo');
+    log("KFTurbo has created a stats TCP link!", 'KFTurboStatsTcp');
     Mutator = KFTurboMut(Owner);
 
 	CRLF = Chr(13) $ Chr(10);
@@ -67,13 +67,13 @@ function OnGameStart()
 
 event Resolved(IpAddr ResolvedAddress)
 {
-    log("Resolved domain stats domain"@StatsDomain$".", 'KFTurbo');
+    log("Resolved stats domain"@StatsDomain$".", 'KFTurboStatsTcp');
     StatsAddress = ResolvedAddress;
     StatsAddress.Port = StatsPort;
 
     if (!OpenNoSteam(StatsAddress))
     {
-        log("OpenNoSteam failed for stats domain"@StatsDomain$"!", 'KFTurbo');
+        log("OpenNoSteam failed for stats domain"@StatsDomain$"!", 'KFTurboStatsTcp');
         Close();
         LifeSpan = 1.f;
     }
@@ -81,7 +81,7 @@ event Resolved(IpAddr ResolvedAddress)
 
 event ResolveFailed()
 {
-    log("Failed to resolve stats domain.", 'KFTurbo');
+    log("Failed to resolve stats domain.", 'KFTurboStatsTcp');
 
     Close();
     LifeSpan = 1.f;
@@ -89,7 +89,7 @@ event ResolveFailed()
 
 function Opened()
 {
-    log("Connection to stats domain "@StatsDomain@"opened. Sending game start payload.", 'KFTurbo');
+    log("Connection to stats domain"@StatsDomain@"opened. Sending game start payload.", 'KFTurboStatsTcp');
 
     DeferredDataList.Insert(0, 1);
     DeferredDataList[0] = BuildGameStartPayload(); //Make sure this is the first thing we send out.
@@ -98,6 +98,16 @@ function Opened()
 
 function SendData(string Data)
 {
+    if (DeferredDataList.Length > 50)
+    {
+        log("WARNING: Stats data buffer has exceeded 50 entries! Removing oldest entry before adding a new one.", 'KFTurboStatsTcp');
+        DeferredDataList.Remove(0, 1);
+    }
+    else if (DeferredDataList.Length > 10)
+    {
+        log("WARNING: Stats data buffer has exceeded 10 entries. The tcp link is falling behind for an unknown reason.", 'KFTurboStatsTcp');
+    }
+
     DeferredDataList[DeferredDataList.Length] = Data;
 }
 
@@ -142,7 +152,7 @@ Begin:
 
 function Closed()
 {
-    log("Connection to stats domain"@StatsDomain@"closed.", 'KFTurbo');
+    log("Connection to stats domain"@StatsDomain@"was closed.", 'KFTurboStatsTcp');
     GotoState('ConnectionClosed');
 }
 
@@ -152,7 +162,7 @@ state ConnectionClosed
 Begin:
     if (MaxRetryCount <= 0)
     {
-        log("Connection to stats domain"@StatsDomain@"failed"@default.MaxRetryCount@"times. Stopping reconnection attempts.", 'KFTurbo');
+        log("Connection to stats domain"@StatsDomain@"failed"@default.MaxRetryCount@"times. Stopping reconnection attempts.", 'KFTurboStatsTcp');
         GotoState('ConnectionFailed');
         stop;
     }
@@ -174,6 +184,11 @@ state FlushAllData
 
     function Closed()
     {
+        if (DeferredDataList.Length != 0)
+        {
+            log("WARNING: Connection to stats domain was closed before buffer was finished sending! ", 'KFTurboStatsTcp');
+        }
+
         GotoState('ConnectionFailed');
     }
 
@@ -187,7 +202,7 @@ Begin:
             break;
         }
 
-		if(Level.bLevelChange)
+		if (Level.bLevelChange)
         {
 			Level.NextSwitchCountdown = FMax(Level.NextSwitchCountdown, 1.f);
         }
@@ -200,6 +215,7 @@ Begin:
     Close();
 }
 
+//Either we were unable to connect after retrying a few times or the connection was closed for an unknown reason while trying to flush data.
 state ConnectionFailed
 {
     function OnGameStart() {}
@@ -339,8 +355,8 @@ final function string BuildWaveEndPayload(int WaveNum)
 
     Payload = "{%qtype%q:%qwaveend%q,";
     Payload $= "%qversion%q:%q"$Mutator.GetTurboVersionID()$"%q,";
-    Payload $= "%qsession%q:%q"$Mutator.GetSessionID()$"%q}";
-    Payload $= "%qwavenum%q:%q"$WaveNum$"%q}";
+    Payload $= "%qsession%q:%q"$Mutator.GetSessionID()$"%q,";
+    Payload $= "%qwavenum%q:"$WaveNum$"}";
     
     Payload = Repl(Payload, "%q", Chr(34));
     return Payload;
@@ -374,7 +390,7 @@ playername - the username of the player this payload is for.
 perk - the perk this player was during the wave.
 stats - A map of tracked non-zero stats accrued during the wave.
     Map key list: Kills, KillsFP, KillsSC, Damage, DamageFP, DamageSC, ShotsFired, MeleeSwings, ShotsHit, ShotsHeadshot, Reloads, Heals, DamageTaken.
-died - Wether or not the player died this wave.
+died - Whether or not the player died this wave.
 */
 
 function SendWaveStats(TurboWavePlayerStatCollector Stats)
