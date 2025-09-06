@@ -44,6 +44,17 @@ function PlayerVote(TurboPlayerReplicationInfo Voter, string VoteString)
     local TurboGameVoteBase NewVoteInstance;
     local string VoteID, VoteValue;
 
+    if (VoteInstance != None)
+    {
+        VoteInstance.PlayerVote(Voter, VoteString);
+        return;
+    }
+
+    if (VoteString == "" || VoteString == "YES" || VoteString == "NO")
+    {
+        return;
+    }
+
     if (Divide(VoteString, " ", VoteID, VoteValue))
     {
         VoteID = Caps(VoteID);
@@ -51,17 +62,6 @@ function PlayerVote(TurboPlayerReplicationInfo Voter, string VoteString)
     else
     {
         VoteID = Caps(VoteString);
-    }
-
-    if (VoteInstance != None)
-    {
-        VoteInstance.PlayerVote(Voter, VoteString);
-        return;
-    }
-
-    if (VoteString == "YES" || VoteString == "NO")
-    {
-        return;
     }
 
     for (Index = VoteClassList.Length - 1; Index >= 0; Index--)
