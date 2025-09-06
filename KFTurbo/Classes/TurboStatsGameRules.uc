@@ -367,7 +367,7 @@ Begin:
 
 function CreateStatCollector(TurboHumanPawn Pawn)
 {
-    if (Pawn == None || Pawn.Health < 0 || Pawn.PlayerReplicationInfo == None || Pawn.PlayerReplicationInfo.bOnlySpectator || Pawn.PlayerReplicationInfo.bBot)
+    if (Pawn == None || Pawn.Health <= 0 || Pawn.PlayerReplicationInfo == None || Pawn.PlayerReplicationInfo.bOnlySpectator || Pawn.PlayerReplicationInfo.bBot)
     {
         return;
     }
