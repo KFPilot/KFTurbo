@@ -1018,7 +1018,7 @@ static final function int CheckEmotePrompt(string EmoteText)
 	return LastColonIndex;
 }
 
-static final function bool GetHintList(string EmoteText, array<SmileyMessageType> EmoteList, out array<string> HintList)
+static final function bool GetEmoteHintList(string EmoteText, array<SmileyMessageType> EmoteList, out array<string> HintList)
 {
 	local int Index, LastAllocatedIndex;
 	local int EmoteTextLength;
@@ -1081,7 +1081,7 @@ simulated function DrawEmoteHintPrompt(Canvas C, String Text, float DrawX, float
 	DrawX += XL;
 	Text = Mid(Text, LastColonIndex);
 
-	if (!GetHintList(Text, SmileyMsgs, HintList))
+	if (!GetEmoteHintList(Text, SmileyMsgs, HintList))
 	{
 		return;
 	}
@@ -1187,6 +1187,24 @@ simulated final function DrawScaledSmileyText( string S, canvas C, optional out 
 	AdditionalY = 0;
 	XXL = CurX;
 	C.SetPos(PX,PY);
+}
+
+static final function bool CheckVotePrompt(string VoteText)
+{
+	local array<string> StringSplitList;
+	if (StrCmp(VoteText, "vote ", 5) != 0)
+	{
+		return false;
+	}
+
+	Split(VoteText, " ", StringSplitList);
+
+	if (StringSplitList.Length > 2)
+	{
+		return false;
+	}
+
+	return true;
 }
 
 simulated function DrawHealthBar(Canvas C, Actor A, int Health, int MaxHealth, float Height)

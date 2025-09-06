@@ -41,7 +41,7 @@ simulated function TryChatAutoComplete()
 
 	EmoteText = Mid(ViewportOwner.Console.TypedStr, EmoteIndex);
 
-	if (!class'TurboHUDKillingFloor'.static.GetHintList(EmoteText, TurboHUDKillingFloor(ViewportOwner.Actor.myHUD).SmileyMsgs, HintList))
+	if (!class'TurboHUDKillingFloor'.static.GetEmoteHintList(EmoteText, TurboHUDKillingFloor(ViewportOwner.Actor.myHUD).SmileyMsgs, HintList))
 	{
 		return;
 	}
