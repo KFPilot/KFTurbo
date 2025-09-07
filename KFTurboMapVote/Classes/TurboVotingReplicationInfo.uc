@@ -123,11 +123,10 @@ function int TickedReplication_BatchMapList(int Index, int Last, bool bDedicated
 {
  	local array<VotingHandler.MapVoteMapList> MapInfoList;
  	local array<KFVotingHandler.FMapRepType> MapRepList;
-	local int BatchIndex, BatchTotal;
+	local int BatchIndex;
 	local int CountedBytes;
 
 	BatchIndex = 0;
-	BatchTotal = 1;
 
 	MapInfoList[BatchIndex] = TurboVotingHandler.GetMapList(Index);
 	MapRepList[BatchIndex] = TurboVotingHandler.RepArray[Index];
@@ -143,11 +142,10 @@ function int TickedReplication_BatchMapList(int Index, int Last, bool bDedicated
 		{
 			break;
 		}
-		
+
 		MapInfoList[BatchIndex] = TurboVotingHandler.GetMapList(Index + BatchIndex);
 		MapRepList[BatchIndex] = TurboVotingHandler.RepArray[Index + BatchIndex];
 		DebugLog("___ - " $ Index + BatchIndex $ " - " $ MapInfoList[BatchIndex].MapName);
-		BatchTotal = BatchIndex;
 	}
 
 	if (bDedicated)
@@ -164,7 +162,7 @@ function int TickedReplication_BatchMapList(int Index, int Last, bool bDedicated
 		}
 	}
 
-	return BatchTotal;
+	return MapInfoList.Length;
 }
 
 simulated function ReceiveMapInfo(VotingHandler.MapVoteMapList MapInfo)
