@@ -48,7 +48,6 @@ simulated function PostBeginPlay()
 
 	//Make sure fonts are added to server packages.
 	AddToPackageMap("KFTurboFonts");
-	AddToPackageMap("KFTurboWeaponSkins");
 	AddToPackageMap("KFTurboFontsJP");
 	AddToPackageMap("KFTurboFontsCY");
 
