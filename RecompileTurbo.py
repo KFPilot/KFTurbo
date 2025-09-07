@@ -20,12 +20,14 @@ class EBuildType(Enum):
     HOLDOUT = 2
     RANDOMIZER = 3
     CARDGAME = 4
+    MAPVOTE = 5
 
 ArgumentParser = argparse.ArgumentParser()
 ArgumentParser.add_argument("-t","--onlyturbo", action="store_true", help="Only rebuild KFTurbo and KFTurboServer.")
 ArgumentParser.add_argument("-o","--onlyholdout", action="store_true", help="Only rebuild Turbo Holdout.")
 ArgumentParser.add_argument("-r","--onlyrandomizer", action="store_true", help="Only rebuild Turbo Randomizer.")
 ArgumentParser.add_argument("-c","--onlycardgame", action="store_true", help="Only rebuild Turbo Card Game.")
+ArgumentParser.add_argument("-m","--onlymapvote", action="store_true", help="Only rebuild Turbo Map Vote.")
 ArgumentParser.add_argument("-v", "--verboseUCC", action="store_true", help="Will log all of UCC make.")
 ArgumentParser.add_argument("-s", "--stagefiles", action="store_true", help="Copies KFTurbo packages to staging directories.")
 ArgumentParser.add_argument("--extrastage", help="Copies KFTurbo packages to a specified directory (such as a local test server). --stagefiles flag must be set.")
@@ -38,7 +40,7 @@ Arguments = ArgumentParser.parse_args()
 BuildType = EBuildType.ALL
 
 #Files KFTurbo compiles.
-TurboFiles = ["KFTurboEmbeddable.u", "KFTurboServerAchievements.u", #Turbo-agnostic packages.
+TurboFiles = ["KFTurboMapVote.u", "KFTurboEmbeddable.u", "KFTurboServerAchievements.u", #Turbo-agnostic packages.
             "KFTurboFonts.u", "KFTurboFontsJP.u", "KFTurboFontsCY.u", #Asset packages.
             "KFTurbo.u", "KFTurboServer.u", #Turbo Core packages.
             "KFTurboAchievementPack.u", #Additional Turbo content packages.
@@ -70,6 +72,10 @@ def UpdateBuildType():
         BuildType = EBuildType.CARDGAME
         TurboFiles = [ "KFTurboCardGame.u" ]
         TurboStagingFiles = [ "KFTurboCardGame.ucl" ]
+    elif Arguments.onlymapvote:
+        BuildType = EBuildType.MAPVOTE
+        TurboFiles = [ "KFTurboMapVote.u" ]
+        TurboStagingFiles = [ ]
     
 UpdateBuildType()
 
