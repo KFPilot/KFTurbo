@@ -6,6 +6,9 @@ class TurboVotingReplicationInfo extends KFVotingReplicationInfo
 
 var TurboVotingHandler TurboVotingHandler;
 
+var float NextQueueSendTime;
+var int PendingAckSendCount; //Number of sent voting data that has yet to be acknowledged.
+
 var globalconfig bool bBatchMapListData; //Enables MapInfo batching.
 var globalconfig int MaxBatchCount; //Max number of MapInfos to try to fit in MaxBatchSizeBytes.
 var globalconfig int MaxBatchSizeBytes; //Maximum size a batch payload can be. This really shouldn't be anywhere close to 512 (max packet size).
@@ -55,7 +58,26 @@ simulated function Tick(float DeltaTime)
 		return;
 	}
 
-	if (TickedReplicationQueue.Length == 0 || bWaitingForReply)
+	if (TickedReplicationQueue.Length == 0)
+	{
+		return;
+	}
+
+	//Consume bWaitingForReply and convert it into a time delay.
+	if (bWaitingForReply)
+	{
+		bWaitingForReply = false;
+		NextQueueSendTime = Level.TimeSeconds + 0.1f;
+
+		if (bSendingMatchSetup && TickedReplicationQueue.Length == 0)
+		{
+			SendClientResponse(StatusID, CompleteID);
+			bSendingMatchSetup = false;
+		}
+		return;
+	}
+
+	if (NextQueueSendTime > Level.TimeSeconds)
 	{
 		return;
 	}
@@ -64,6 +86,11 @@ simulated function Tick(float DeltaTime)
   	bListening = Level.NetMode == NM_ListenServer && PlayerOwner != None && PlayerOwner.Player.Console != None;
 
 	if (!bDedicated && !bListening)
+	{
+		return;
+	}
+
+	if (bDedicated && PendingAckSendCount > 5)
 	{
 		return;
 	}
@@ -109,9 +136,14 @@ simulated function Tick(float DeltaTime)
 	{
 		TickedReplicationQueue[i].Index++;
 	}
+
+	//Track the number of options we've sent so we can track how many unacknowledged sends have occurred.
+	PendingAckSendCount++;
 	
-	if( TickedReplicationQueue[i].Index > TickedReplicationQueue[i].Last )
-		TickedReplicationQueue.Remove(i,1);
+	if (TickedReplicationQueue[i].Index > TickedReplicationQueue[i].Last)
+	{
+		TickedReplicationQueue.Remove(i, 1);
+	}
 }
 
 function TickedReplication_MapList(int Index, bool bDedicated)
@@ -195,7 +227,7 @@ simulated function ReceiveMapInfoBatch(MapInfoBatch MapInfoBatch)
 	ReplicationReply();
 }
 
-static final function MapInfoBatch EncodeMapInfoBatch(array<VotingHandler.MapVoteMapList> InMapInfoList,  array<KFVotingHandler.FMapRepType> InMapRepList)
+static function MapInfoBatch EncodeMapInfoBatch(array<VotingHandler.MapVoteMapList> InMapInfoList,  array<KFVotingHandler.FMapRepType> InMapRepList)
 {
 	local int Index;
 	local MapInfoBatch Batch;
@@ -224,7 +256,7 @@ static final function MapInfoBatch EncodeMapInfoBatch(array<VotingHandler.MapVot
 	return Batch;
 }
 
-static final function DecodeMapInfoBatch(MapInfoBatch InMapInfoBatch, out array<VotingHandler.MapVoteMapList> MapVoteList, out array<KFVotingHandler.FMapRepType> MapRepList)
+static function DecodeMapInfoBatch(MapInfoBatch InMapInfoBatch, out array<VotingHandler.MapVoteMapList> MapVoteList, out array<KFVotingHandler.FMapRepType> MapRepList)
 {
 	local int Index;
 	local array<string> EntryList;
@@ -248,6 +280,19 @@ static final function DecodeMapInfoBatch(MapInfoBatch InMapInfoBatch, out array<
 		Rep.Negative = class'TurboEncodingHelper'.static.HexToInt(ItemList[5]); 
 		MapRepList[MapRepList.Length] = Rep;
 	}
+}
+
+function ReplicationReply()
+{
+	PendingAckSendCount = Max(PendingAckSendCount - 1, 0);
+
+	Super.ReplicationReply();
+}
+
+function SendMapVote(int MapIndex, int p_GameIndex)
+{
+	DebugLog("MVRI.SendMapVote(" $ MapIndex $ ", " $ p_GameIndex $ ")");
+	VH.SubmitMapVote(MapIndex,p_GameIndex,Owner);
 }
 
 defaultproperties
