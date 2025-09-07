@@ -3,6 +3,8 @@
 //For more information see https://github.com/KFPilot/KFTurbo.
 class TurboMapVotingPage extends KFMapVotingPageX;
 
+var automated moComboBox co_GameDifficulty;
+
 simulated function GetVoteSelection(GUIComponent Sender, out int MapIndex, out int GameConfig)
 {
     if (Sender == lb_VoteCountListBox.List)
@@ -92,14 +94,28 @@ defaultproperties
      lb_VoteCountListBox=TurboCountColumnListBox'TurboVoteCountListBox'
 
     Begin Object Class=moComboBox Name=TurboGameTypeCombo
-        CaptionWidth=0.350000
+        CaptionWidth=0.2
         Caption="Game Type:"
         OnCreateComponent=TurboGameTypeCombo.InternalOnCreateComponent
-        WinTop=0.334309
-        WinLeft=0.199219
-        WinWidth=0.757809
+        WinTop=0.3
+        WinLeft=0.05
+        WinWidth=0.5
         WinHeight=0.037500
+        bBoundToParent=True
         bScaleToParent=True
     End Object
     co_GameType=moComboBox'TurboGameTypeCombo'
+
+    Begin Object Class=moComboBox Name=TurboGameDifficultyCombo
+        CaptionWidth=0.3
+        Caption="Difficulty:"
+        OnCreateComponent=TurboGameDifficultyCombo.InternalOnCreateComponent
+        WinTop=0.3
+        WinLeft=0.65
+        WinWidth=0.3
+        WinHeight=0.037500
+        bBoundToParent=True
+        bScaleToParent=True
+    End Object
+    co_GameDifficulty=moComboBox'TurboGameDifficultyCombo'
 }
