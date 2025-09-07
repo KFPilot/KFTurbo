@@ -34,7 +34,7 @@ simulated function PostBeginPlay()
 {
 	Super.PostBeginPlay();
 
-	MaxBatchSizeBytes = Min(MaxBatchSizeBytes, 384); //Safety to prevent this from being set too high.
+	MaxBatchSizeBytes = Min(MaxBatchSizeBytes, 400); //Safety to prevent this from being set too high.
 	TurboVotingHandler = TurboVotingHandler(VH);
 }
 
@@ -123,29 +123,31 @@ function int TickedReplication_BatchMapList(int Index, int Last, bool bDedicated
 {
  	local array<VotingHandler.MapVoteMapList> MapInfoList;
  	local array<KFVotingHandler.FMapRepType> MapRepList;
-	local int BatchIndex;
+	local int BatchIndex, BatchTotal;
 	local int CountedBytes;
 
 	BatchIndex = 0;
+	BatchTotal = 1;
+
 	MapInfoList[BatchIndex] = TurboVotingHandler.GetMapList(Index);
 	MapRepList[BatchIndex] = TurboVotingHandler.RepArray[Index];
 	CountedBytes += MAPINFO_SIZE_BYTES + (Len(MapInfoList[BatchIndex].MapName) * 4); //Assumes worst case for UTF8 map name - 4 bytes per character.
 
 	DebugLog("___Batch Sending ");
 	DebugLog("___ - " $ Index + BatchIndex $ " - " $ MapInfoList[BatchIndex].MapName);
-	while (CountedBytes < MaxBatchSizeBytes && MapInfoList.Length < MaxBatchCount)
+	while (MapInfoList.Length < MaxBatchCount)
 	{
-		BatchIndex++;
-		if (Index + BatchIndex >= Last)
+		CountedBytes += MAPINFO_SIZE_BYTES + (Len(MapInfoList[BatchIndex].MapName) * 4);
+		if (Index + BatchIndex >= Last || CountedBytes > MaxBatchSizeBytes)
 		{
-			BatchIndex--;
 			break;
 		}
 		
+		BatchIndex++;
 		MapInfoList[BatchIndex] = TurboVotingHandler.GetMapList(Index + BatchIndex);
 		MapRepList[BatchIndex] = TurboVotingHandler.RepArray[Index + BatchIndex];
-		CountedBytes += MAPINFO_SIZE_BYTES + (Len(MapInfoList[BatchIndex].MapName) * 4);
 		DebugLog("___ - " $ Index + BatchIndex $ " - " $ MapInfoList[BatchIndex].MapName);
+		BatchTotal = BatchIndex;
 	}
 
 	if (bDedicated)
@@ -162,7 +164,7 @@ function int TickedReplication_BatchMapList(int Index, int Last, bool bDedicated
 		}
 	}
 
-	return 1 + BatchIndex;
+	return BatchTotal;
 }
 
 simulated function ReceiveMapInfo(VotingHandler.MapVoteMapList MapInfo)
@@ -247,5 +249,5 @@ defaultproperties
 {
 	bBatchMapListData=true
 	MaxBatchCount=5
-	MaxBatchSizeBytes=256
+	MaxBatchSizeBytes=320
 }
