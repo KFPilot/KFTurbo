@@ -9,7 +9,7 @@ simulated function PreBeginPlay()
 
     if (Level.NetMode != NM_DedicatedServer)
     {
-        SetDrawScale(6.f);
+        SetDrawScale(4.f);
         SetDrawType(EDrawType.DT_StaticMesh);
         SetStaticMesh(StaticMesh'kf_gore_trip_sm.gibbs.eyeball');
     }
