@@ -467,7 +467,7 @@ simulated function DrawVoter(Canvas C, PlayerReplicationInfo PRI, float X, float
 	}
 	else
 	{
-		Opacity = 160;
+		Opacity = 120;
 	}
 
 	C.SetDrawColor(0, 0, 0, 120);
