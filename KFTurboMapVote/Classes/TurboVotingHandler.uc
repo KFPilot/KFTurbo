@@ -309,28 +309,34 @@ function PerformVoteTally(bool bForceMapSwitch)
 		}
 	}
 
-	RankingIndex = 0;
-	for (VoteTallyIndex = 0; VoteTallyIndex < VoteTallyList.Length; VoteTallyIndex++)
+	if (HighestVoteIndex != -1)
 	{
-		bFoundEntry = false;
-		for (RankingIndex = 0; RankingIndex < RankingList.Length; RankingIndex++)
+		RankingList[0] = HighestVoteIndex;
+	}
+	else
+	{
+		for (VoteTallyIndex = 0; VoteTallyIndex < VoteTallyList.Length; VoteTallyIndex++)
 		{
-			if (VoteTallyList[RankingList[RankingIndex]].VoteCount < VoteTallyList[VoteTallyIndex].VoteCount)
+			bFoundEntry = false;
+			for (RankingIndex = 0; RankingIndex < RankingList.Length; RankingIndex++)
 			{
-				RankingList.Insert(RankingIndex, 1);
-				RankingList[RankingIndex] = VoteTallyIndex;
-				bFoundEntry = true;
-				break;
+				if (VoteTallyList[RankingList[RankingIndex]].VoteCount < VoteTallyList[VoteTallyIndex].VoteCount)
+				{
+					RankingList.Insert(RankingIndex, 1);
+					RankingList[RankingIndex] = VoteTallyIndex;
+					bFoundEntry = true;
+					break;
+				}
 			}
-		}
 
-		if (bFoundEntry)
-		{
-			continue;
-		}
+			if (bFoundEntry)
+			{
+				continue;
+			}
 
-		log("___Ranking - " $ VoteTallyIndex $ " / " $ (RankingList.Length + 1),'MapVoteDebug');
-		RankingList[RankingList.Length] = VoteTallyIndex;
+			log("___Ranking - " $ VoteTallyIndex $ " / " $ (RankingList.Length + 1),'MapVoteDebug');
+			RankingList[RankingList.Length] = VoteTallyIndex;
+		}
 	}
 
 	if (PlayersThatVoted == 0 || RankingList.Length == 0)
@@ -345,6 +351,7 @@ function PerformVoteTally(bool bForceMapSwitch)
 	}
 	else if (RankingList.Length > 1 && VoteTallyList[RankingList[0]].VoteCount == VoteTallyList[RankingList[1]].VoteCount && VoteTallyList[RankingList[0]].VoteCount != 0)
 	{
+		log("TIE BREAKING",'MapVoteDebug');
 		TieCount = 1;
 		for (RankingIndex = 1; RankingIndex < RankingList.Length; RankingIndex++)
 		{
@@ -356,6 +363,9 @@ function PerformVoteTally(bool bForceMapSwitch)
 			TieCount++;
 		}
 
+		TempMapIndex = Rand(TieCount);
+		log(" - Time Count "$TieCount,'MapVoteDebug');
+		log(" - Index "$TempMapIndex,'MapVoteDebug');
 		TopTallyIndex = RankingList[Rand(TieCount)];
 	}
 	else
