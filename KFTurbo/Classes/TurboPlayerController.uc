@@ -1127,7 +1127,7 @@ state Spectating
 		
 		if (Role == ROLE_Authority && SpectatorActorClass != None && SpectatorActor == None)
 		{
-			SpectatorActor = Spawn(SpectatorActorClass, Self);
+			SpectatorActor = Spawn(SpectatorActorClass, PlayerReplicationInfo);
 		}
 	}
 
