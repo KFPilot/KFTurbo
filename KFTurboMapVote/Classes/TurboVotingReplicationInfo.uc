@@ -137,13 +137,13 @@ function int TickedReplication_BatchMapList(int Index, int Last, bool bDedicated
 	DebugLog("___ - " $ Index + BatchIndex $ " - " $ MapInfoList[BatchIndex].MapName);
 	while (MapInfoList.Length < MaxBatchCount)
 	{
+		BatchIndex++;
 		CountedBytes += MAPINFO_SIZE_BYTES + (Len(MapInfoList[BatchIndex].MapName) * 4);
 		if (Index + BatchIndex >= Last || CountedBytes > MaxBatchSizeBytes)
 		{
 			break;
 		}
 		
-		BatchIndex++;
 		MapInfoList[BatchIndex] = TurboVotingHandler.GetMapList(Index + BatchIndex);
 		MapRepList[BatchIndex] = TurboVotingHandler.RepArray[Index + BatchIndex];
 		DebugLog("___ - " $ Index + BatchIndex $ " - " $ MapInfoList[BatchIndex].MapName);
