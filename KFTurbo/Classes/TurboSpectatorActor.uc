@@ -229,13 +229,29 @@ simulated function UpdateMovement(float DeltaTime)
 
 simulated function UpdateVisibility(float DeltaTime)
 {
+    local bool bPreviousIsVisible;
     if (IsLocalPlayerSpectator())
     {
         bIsVisible = OwningController.Pawn == None && OwningController.ViewTarget != None && OwningController.ViewTarget != OwningController;
         return;
     }
 
+    bPreviousIsVisible = bIsVisible;
     bIsVisible = OwningController.Pawn == None;
+
+    if (bPreviousIsVisible != bIsVisible)
+    {
+        return;
+    }
+    
+    if (!bIsVisible)
+    {
+        NetUpdateFrequency = 1.f;
+    }
+    else
+    {
+        NetUpdateFrequency = default.NetUpdateFrequency;
+    }
 }
 
 simulated function TickVisibility(float DeltaTime)
@@ -432,7 +448,7 @@ defaultproperties
     RemoteRole=ROLE_SimulatedProxy
     bAlwaysRelevant=True
     bOnlyRelevantToOwner=False
-    NetUpdateFrequency=6.0
+    NetUpdateFrequency=8.0
     bNetNotify=True
     
     CollisionRadius=1.0

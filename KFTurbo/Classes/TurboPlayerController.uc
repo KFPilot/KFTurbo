@@ -15,6 +15,8 @@ var float ClientNextMarkTime, NextMarkTime;
 var float VoteCooldownTime, NextVoteTime;
 var float NextStartVoteTime;
 
+var class<TurboSpectatorActor> SpectatorActorClass;
+var TurboSpectatorActor SpectatorActor;
 var float NextSpectateUseTargetTime, SpectateUseTargetCooldown;
 
 var bool bInLoginMenu, bHasClosedLoginMenu;
@@ -1118,6 +1120,26 @@ state Spectating
 		bBehindView = true;
     	ClientSetBehindView(bBehindView);
 	}
+
+	function BeginState()
+	{
+		Super.BeginState();
+		
+		if (Role == ROLE_Authority && SpectatorActorClass != None && SpectatorActor == None)
+		{
+			SpectatorActor = Spawn(SpectatorActorClass, Self);
+		}
+	}
+
+	function EndState()
+	{
+		Super.EndState();
+		
+		if (Role == ROLE_Authority && SpectatorActor != None)
+		{
+			SpectatorActor.Destroy();
+		}
+	}
 }
 
 simulated function SetPipebombUsesSpecialGroup(bool bNewPipebombUsesSpecialGroup)
@@ -1196,6 +1218,8 @@ defaultproperties
 	LobbyMenuClassString="KFTurbo.TurboLobbyMenu"
 	PawnClass=Class'KFTurbo.TurboHumanPawn'
     PlayerReplicationInfoClass=Class'KFTurbo.TurboPlayerReplicationInfo'
+
+    SpectatorActorClass=class'TurboSpectatorActorEye'
 
 	WeaponRemappingSettings=class'WeaponRemappingSettingsImpl'
 
