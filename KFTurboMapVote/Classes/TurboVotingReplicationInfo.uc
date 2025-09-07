@@ -41,6 +41,19 @@ simulated function PostBeginPlay()
 	TurboVotingHandler = TurboVotingHandler(VH);
 }
 
+
+simulated final function InitTurboClient()
+{
+	local PlayerController PC;
+
+	bClientHasInit = true;
+	PC = Level.GetLocalPlayerController();
+	if (PC != None)
+	{
+		class'TurboMapVoteInteraction'.Static.AddVotingReplacement(PC);
+	}
+}
+
 simulated function Tick(float DeltaTime)
 {
 	local int i;
@@ -49,7 +62,7 @@ simulated function Tick(float DeltaTime)
 	
 	if (!bClientHasInit)
 	{
-		InitClient();
+		InitTurboClient();
 	}
 
 	if (!bBatchMapListData)

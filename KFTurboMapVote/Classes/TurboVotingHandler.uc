@@ -31,11 +31,15 @@ function AddMapVoteReplicationInfo(PlayerController Player)
 	MVRI[MVRI.Length] = VotingReplicationInfo;
 }
 
-function SubmitMapVote(int MapIndex, int GameIndex, Actor Voter)
+function SubmitMapVote(int MapIndex, int GameData, Actor Voter)
 {
 	local int VoteReplicationIndex;
 	local int PreviousMapVote, PreviousGameVote;
 	local int VoteCount;
+	local int GameIndex, DifficultyIndex;
+
+	Decode(GameData, GameIndex, DifficultyIndex);
+    log("MapIndex: "$MapIndex$" GameConfig: "$GameIndex$" Difficulty: "$DifficultyIndex);
 
 	if (bLevelSwitchPending)
 	{
@@ -72,7 +76,7 @@ function SubmitMapVote(int MapIndex, int GameIndex, Actor Voter)
 	PreviousMapVote = MVRI[VoteReplicationIndex].MapVote;
 	PreviousGameVote = MVRI[VoteReplicationIndex].GameVote;
 	MVRI[VoteReplicationIndex].MapVote = MapIndex;
-	MVRI[VoteReplicationIndex].GameVote = GameIndex;
+	MVRI[VoteReplicationIndex].GameVote = GameData;
 
 	VoteCount = GetVoteCount(Voter);
 	
@@ -121,20 +125,25 @@ function bool IsValidVote(int MapIndex, int GameIndex)
 	return Super.IsValidVote(MapIndex, GameIndex);
 }
 
-function string SetupGameMap(MapVoteMapList MapInfo, int GameIndex, MapHistoryInfo MapHistoryInfo)
+function string SetupGameMap(MapVoteMapList MapInfo, int GameData, MapHistoryInfo MapHistoryInfo)
 {
-	return Super.SetupGameMap(MapInfo, GameIndex, MapHistoryInfo);
+	local int GameIndex, DifficultyIndex;
+	local string Result;
+	Decode(GameData, GameIndex, DifficultyIndex);
+	Result = Super.SetupGameMap(MapInfo, GameIndex, MapHistoryInfo);
+	return Result;
 }
 
 //Returns true if this was an admin forced map change vote.
-function bool AdminForceMapChange(int MapIndex, int GameIndex, Actor Voter)
+function bool AdminForceMapChange(int MapIndex, int GameData, Actor Voter)
 {
-	if (GameIndex >= 0)
+	local int GameIndex, DifficultyIndex;
+	if (GameData >= 0)
 	{
 		return false;
 	}
 
-	GameIndex = (-GameIndex) - 1;
+	Decode(GameData, GameIndex, DifficultyIndex);
 
 	if (GameIndex >= GameConfig.Length || MapIndex < 0 || MapIndex >= MapList.Length)
 	{
@@ -342,6 +351,7 @@ function PerformVoteTally(bool bForceMapSwitch)
 	if (PlayersThatVoted == 0 || RankingList.Length == 0)
 	{
 		GetDefaultMap(TempMapIndex, TempGameConfig);
+		TempGameConfig = Encode(TempGameConfig, CurrentDifficultyConfig);
 
 		TopTallyIndex = 0;
 		VoteTallyList.Length = 1;
@@ -433,7 +443,7 @@ static final function int Encode(int GameIndex, int GameDifficulty)
 
 static final function Decode(int GameConfig, out int GameIndex, out int GameDifficulty)
 {
-	GameIndex = (GameIndex >> 3);
+	GameIndex = (GameConfig >> 3);
 	GameDifficulty = GameConfig & 7;
 }
 
