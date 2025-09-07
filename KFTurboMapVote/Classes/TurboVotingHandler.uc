@@ -4,10 +4,7 @@
 class TurboVotingHandler extends KFVotingHandler
 	config(KFMapVote);
 
-function PostBeginPlay()
-{
-	Super.PostBeginPlay();
-}
+var globalconfig bool bCanSpectatorsMapVote; //If true, spectators can map vote.
 
 function AddMapVoteReplicationInfo(PlayerController Player)
 {
@@ -24,7 +21,20 @@ function AddMapVoteReplicationInfo(PlayerController Player)
 	MVRI[MVRI.Length] = VotingReplicationInfo;
 }
 
+function SubmitMapVote(int MapIndex, int GameIndex, Actor Voter)
+{
+	//Not sure why KFMapVoteV2 allows for spectator map voting by default.
+	if (!bCanSpectatorsMapVote && PlayerController(Voter).PlayerReplicationInfo.bOnlySpectator)
+	{
+		PlayerController(Voter).ClientMessage(lmsgSpectatorsCantVote);
+		return;
+	}
+
+	Super.SubmitMapVote(MapIndex, GameIndex, Voter);
+}
+
 defaultproperties
 {
 	MapListLoaderType="KFTurboMapVote.TurboMapListLoader"
+	bCanSpectatorsMapVote=false
 }
