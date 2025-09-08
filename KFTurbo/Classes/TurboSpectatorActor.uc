@@ -373,7 +373,7 @@ simulated function TickMovementBuffer(float DeltaTime)
     TemporaryQuat = QuatFromAxisAngle(Z, -90.f);
     CurrentQuat = QuatProduct(CurrentQuat, TemporaryQuat);
 
-    SetRotation(RLerp(Rotation, QuatToRotator(CurrentQuat), DeltaTime * InterpolationRate * 0.6f));
+    SetRotation(RLerp(Rotation, QuatToRotator(CurrentQuat), DeltaTime * InterpolationRate * 0.25f));
     SetLocation(Location + (MovementBufferVelocity * DeltaTime * (InterpolationRate * 0.5f)));
     if (VSizeSquared(Location) < 2.f || (Normal(Location - NextStep.Location) dot Normal(StartingLocation - NextStep.Location)) <= 0.f)
     {
