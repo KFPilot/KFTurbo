@@ -88,7 +88,7 @@ function SubmitMapVote(int MapIndex, int GameData, Actor Voter)
 	Decode(GameData, GameIndex, DifficultyIndex);
     log("MapIndex: "$MapIndex$" GameConfig: "$GameIndex$" Difficulty: "$DifficultyIndex,'MapVoteDebug');
 
-	if (MapIndex < 0 || MapIndex >= MapCount || GameIndex >= GameConfig.Length || (MVRI[VoteReplicationIndex].GameVote == GameIndex && MVRI[VoteReplicationIndex].MapVote == MapIndex) || !MapList[MapIndex].bEnabled)
+	if (MapIndex < 0 || MapIndex >= MapCount || GameIndex >= GameConfig.Length || (MVRI[VoteReplicationIndex].GameVote == GameData && MVRI[VoteReplicationIndex].MapVote == MapIndex) || !MapList[MapIndex].bEnabled)
 	{
 		return;
 	}
