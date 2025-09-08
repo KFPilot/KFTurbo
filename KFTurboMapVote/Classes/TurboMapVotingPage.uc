@@ -30,7 +30,7 @@ simulated function InternalOnOpen()
 {
     local int Index;
 
-    if (MVRI == None || (MVRI != None && !MVRI.bMapVote))
+    if (TurboVRI == None || (TurboVRI != None && !TurboVRI.bMapVote))
     {
         Super.InternalOnOpen();
         return;
@@ -44,14 +44,25 @@ simulated function InternalOnOpen()
 		return;
     }
 
+    for (Index = 0; Index < TurboVRI.GameDifficultyConfig.Length; Index++)
+    {
+    	co_GameDifficulty.AddItem(ResolveDifficultyName(TurboVRI.GameDifficultyConfig[Index].DifficultyIndex), None, string(TurboVRI.GameDifficultyConfig[Index].DifficultyIndex));
+    }
+
     if (TurboVRI.GameDifficultyConfig.Length == 0)
     {
         co_GameDifficulty.SetVisibility(false);
     }
-
-    for (Index = 0; Index < TurboVRI.GameDifficultyConfig.Length; Index++)
+    else
     {
-    	co_GameDifficulty.AddItem(ResolveDifficultyName(TurboVRI.GameDifficultyConfig[Index].DifficultyIndex), None, string(Index));
+
+        Index = co_GameDifficulty.MyComboBox.List.FindExtra(string(TurboVRI.CurrentDifficultyConfig));
+
+        log ("Looking for game difficulty " $ TurboVRI.CurrentDifficultyConfig $ " result index " $ Index);
+        if (Index != -1)
+        {
+            co_GameDifficulty.SetIndex(Index);
+        }
     }
 
     Super.InternalOnOpen();
@@ -82,7 +93,7 @@ simulated function GetVoteSelection(GUIComponent Sender, out int MapIndex, out i
         {
             if (co_GameDifficulty.bVisible)
             {
-                Difficulty = TurboVRI.GameDifficultyConfig[int(co_GameDifficulty.GetExtra())].DifficultyIndex;
+                Difficulty = int(co_GameDifficulty.GetExtra());
             }
             else
             {

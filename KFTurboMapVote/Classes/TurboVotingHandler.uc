@@ -20,11 +20,22 @@ struct VoteTallyEntry
 
 function PostBeginPlay()
 {
+	local int Index, Difficulty;
 	Super.PostBeginPlay();
 
 	if (bMapVote)
 	{
-		CurrentDifficultyConfig = InvasionGameReplicationInfo(Level.GRI).BaseDifficulty;
+		CurrentDifficultyConfig = 0;
+		Difficulty = Level.Game.GameDifficulty;
+
+		for (Index = 0; Index < DifficultyConfig.Length; Index++)
+		{
+			if (DifficultyConfig[Index] == Difficulty)
+			{
+				CurrentDifficultyConfig = Difficulty;
+				break;
+			}
+		}
 	}
 }
 
@@ -75,7 +86,7 @@ function SubmitMapVote(int MapIndex, int GameData, Actor Voter)
 	}
 
 	Decode(GameData, GameIndex, DifficultyIndex);
-    log("MapIndex: "$MapIndex$" GameConfig: "$GameIndex$" Difficulty: "$DifficultyIndex);
+    log("MapIndex: "$MapIndex$" GameConfig: "$GameIndex$" Difficulty: "$DifficultyIndex,'MapVoteDebug');
 
 	if (MapIndex < 0 || MapIndex >= MapCount || GameIndex >= GameConfig.Length || (MVRI[VoteReplicationIndex].GameVote == GameIndex && MVRI[VoteReplicationIndex].MapVote == MapIndex) || !MapList[MapIndex].bEnabled)
 	{
@@ -86,11 +97,11 @@ function SubmitMapVote(int MapIndex, int GameData, Actor Voter)
 	{
 		return;
 	}
-
+	
 	DifficultyIndex = GetCorrectedGameDifficulty(DifficultyIndex);
 	GameData = Encode(GameIndex, DifficultyIndex); //Encode the GameData value again with a potentially corrected Game Difficulty.
 
-	log("___" $ VoteReplicationIndex $ " - " $ PlayerController(Voter).PlayerReplicationInfo.PlayerName $ " voted for " $ MapList[MapIndex].MapName $ "(" $ GameConfig[GameIndex].Acronym $ ")",'MapVote');
+	log("___" $ VoteReplicationIndex $ " - " $ PlayerController(Voter).PlayerReplicationInfo.PlayerName $ " voted for " $ MapList[MapIndex].MapName $ "(" $ GameConfig[GameIndex].Acronym $ "-" $ GetDifficultyName(DifficultyIndex) $ ")",'MapVote');
 
 	//Cache previous vote and update to new one.
 	PreviousMapVote = MVRI[VoteReplicationIndex].MapVote;
@@ -151,6 +162,12 @@ function string SetupGameMap(MapVoteMapList MapInfo, int GameData, MapHistoryInf
 	local string Result;
 	Decode(GameData, GameIndex, DifficultyIndex);
 	Result = Super.SetupGameMap(MapInfo, GameIndex, MapHistoryInfo);
+
+	if (DifficultyConfig.Length != 0)
+	{
+		Result $= "?difficulty="$DifficultyIndex;
+	}
+
 	return Result;
 }
 
@@ -371,7 +388,15 @@ function PerformVoteTally(bool bForceMapSwitch)
 	if (PlayersThatVoted == 0 || RankingList.Length == 0)
 	{
 		GetDefaultMap(TempMapIndex, TempGameConfig);
-		TempGameConfig = Encode(TempGameConfig, CurrentDifficultyConfig);
+
+		if (bDefaultToCurrentDifficulty || DifficultyConfig.Length <= CurrentDifficultyConfig)
+		{
+			TempGameConfig = Encode(TempGameConfig, InvasionGameReplicationInfo(Level.GRI).BaseDifficulty);
+		}
+		else
+		{
+			TempGameConfig = Encode(TempGameConfig, DifficultyConfig[0]);
+		}
 
 		TopTallyIndex = 0;
 		VoteTallyList.Length = 1;
@@ -496,4 +521,5 @@ defaultproperties
 {
 	MapListLoaderType="KFTurboMapVote.TurboMapListLoader"
 	bCanSpectatorsMapVote=false
+	bDefaultToCurrentDifficulty=true
 }

@@ -16,6 +16,7 @@ struct MapVoteDifficultyConfig
 
 var array<MapVoteDifficultyConfig> GameDifficultyConfig;
 var int GameDifficultyCount;
+var int CurrentDifficultyConfig;
 struct DifficultyConfigTickedReplication
 {
 	var int Index;
@@ -42,9 +43,9 @@ struct MapInfoBatch
 };
 replication
 {
-	reliable if( Role==ROLE_Authority && bNetInitial)
-		GameDifficultyCount;
-	reliable if(Role == ROLE_Authority && bMapVote)
+	reliable if (Role==ROLE_Authority && bNetInitial)
+		GameDifficultyCount, CurrentDifficultyConfig;
+	reliable if (Role == ROLE_Authority && bMapVote)
 		ReceiveMapInfoBatch, ReceiveDifficulty;
 }
 
@@ -65,6 +66,7 @@ simulated function GetServerData()
 
 	Super.GetServerData();
 	GameDifficultyCount = TurboVotingHandler.DifficultyConfig.Length;
+	CurrentDifficultyConfig = TurboVotingHandler.CurrentDifficultyConfig;
 	SetupDifficultyTickedReplication(GameDifficultyCount);
 }
 
