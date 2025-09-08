@@ -8,6 +8,8 @@ var globalconfig bool bCanSpectatorsMapVote; //If true, spectators can map vote.
 
 var() config bool bDefaultToCurrentDifficulty;
 var() config int CurrentDifficultyConfig;
+var() config int DefaultDifficultyConfig;
+var() config array<int> DifficultyConfig;
 
 struct VoteTallyEntry
 {
@@ -15,6 +17,16 @@ struct VoteTallyEntry
 	var int GameConfig;
 	var int VoteCount;
 };
+
+function PostBeginPlay()
+{
+	Super.PostBeginPlay();
+
+	if (bMapVote)
+	{
+		CurrentDifficultyConfig = InvasionGameReplicationInfo(Level.GRI).BaseDifficulty;
+	}
+}
 
 function AddMapVoteReplicationInfo(PlayerController Player)
 {
@@ -37,9 +49,6 @@ function SubmitMapVote(int MapIndex, int GameData, Actor Voter)
 	local int PreviousMapVote, PreviousGameVote;
 	local int VoteCount;
 	local int GameIndex, DifficultyIndex;
-
-	Decode(GameData, GameIndex, DifficultyIndex);
-    log("MapIndex: "$MapIndex$" GameConfig: "$GameIndex$" Difficulty: "$DifficultyIndex);
 
 	if (bLevelSwitchPending)
 	{
@@ -65,10 +74,21 @@ function SubmitMapVote(int MapIndex, int GameData, Actor Voter)
 		return;
 	}
 
+	Decode(GameData, GameIndex, DifficultyIndex);
+    log("MapIndex: "$MapIndex$" GameConfig: "$GameIndex$" Difficulty: "$DifficultyIndex);
+
 	if (MapIndex < 0 || MapIndex >= MapCount || GameIndex >= GameConfig.Length || (MVRI[VoteReplicationIndex].GameVote == GameIndex && MVRI[VoteReplicationIndex].MapVote == MapIndex) || !MapList[MapIndex].bEnabled)
 	{
 		return;
 	}
+
+	if (!IsValidVote(MapIndex, GameIndex))
+	{
+		return;
+	}
+
+	DifficultyIndex = GetCorrectedGameDifficulty(DifficultyIndex);
+	GameData = Encode(GameIndex, DifficultyIndex); //Encode the GameData value again with a potentially corrected Game Difficulty.
 
 	log("___" $ VoteReplicationIndex $ " - " $ PlayerController(Voter).PlayerReplicationInfo.PlayerName $ " voted for " $ MapList[MapIndex].MapName $ "(" $ GameConfig[GameIndex].Acronym $ ")",'MapVote');
 
@@ -87,10 +107,10 @@ function SubmitMapVote(int MapIndex, int GameData, Actor Voter)
 	{
 		TextMessage = repl(TextMessage, "%votecount%", string(VoteCount));
 	}
-	TextMessage = repl(TextMessage, "%mapname%", MapList[MapIndex].MapName $ "(" $ GameConfig[GameIndex].Acronym $ ")");
+	TextMessage = repl(TextMessage, "%mapname%", MapList[MapIndex].MapName $ "(" $ GameConfig[GameIndex].Acronym $ " - " $ GetDifficultyName(DifficultyIndex) $ ")");
 	Level.Game.Broadcast(self,TextMessage);
 
-	UpdateVoteCount(MapIndex, GameIndex, VoteCount);
+	UpdateVoteCount(MapIndex, GameData, VoteCount);
 
 	//Previous vote has to be undone.
 	if (PreviousMapVote > -1 && PreviousGameVote > -1)
@@ -396,12 +416,13 @@ function PerformVoteTally(bool bForceMapSwitch)
 		Decode(TempGameConfig, TempGameIndex, TempGameDifficulty);
 
 		TextMessage = lmsgMapWon;
-		TextMessage = repl(TextMessage, "%mapname%", MapList[TempMapIndex].MapName $ "(" $ GameConfig[TempGameIndex].Acronym $ ")");
+		TextMessage = repl(TextMessage, "%mapname%", MapList[TempMapIndex].MapName $ "(" $ GameConfig[TempGameIndex].Acronym $ " - " $ GetDifficultyName(TempGameDifficulty) $ ")");
 		Level.Game.Broadcast(self, TextMessage);
 
 		CloseAllVoteWindows();
 
 		ServerTravelString = SetupGameMap(MapList[TempMapIndex], TempGameConfig, History.PlayMap(MapList[TempMapIndex].MapName));
+
 		log("ServerTravelString = " $ ServerTravelString ,'MapVoteDebug');
 
 		History.Save();
@@ -445,6 +466,30 @@ static final function Decode(int GameConfig, out int GameIndex, out int GameDiff
 {
 	GameIndex = (GameConfig >> 3);
 	GameDifficulty = GameConfig & 7;
+}
+
+function int GetCorrectedGameDifficulty(int GameDifficulty)
+{
+	local int Index;
+	for (Index = 0; Index < DifficultyConfig.Length; Index++)
+	{
+		if (DifficultyConfig[Index] == GameDifficulty)
+		{
+			return GameDifficulty;
+		}
+	}
+
+	if (bDefaultToCurrentDifficulty)
+	{
+		return CurrentDifficultyConfig;
+	}
+
+	return DefaultDifficultyConfig;
+}
+
+function string GetDifficultyName(int Index)
+{
+	return class'TurboMapVotingPage'.static.ResolveDifficultyName(Index);
 }
 
 defaultproperties

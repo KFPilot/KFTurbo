@@ -9,6 +9,20 @@ var TurboVotingHandler TurboVotingHandler;
 var float NextQueueSendTime;
 var int PendingAckSendCount; //Number of sent voting data that has yet to be acknowledged.
 
+struct MapVoteDifficultyConfig
+{
+	var int DifficultyIndex;
+};
+
+var array<MapVoteDifficultyConfig> GameDifficultyConfig;
+var int GameDifficultyCount;
+struct DifficultyConfigTickedReplication
+{
+	var int Index;
+	var int Last;
+};
+var DifficultyConfigTickedReplication DifficultyTickedReplicationQueue;
+
 var globalconfig bool bBatchMapListData; //Enables MapInfo batching.
 var globalconfig int MaxBatchCount; //Max number of MapInfos to try to fit in MaxBatchSizeBytes.
 var globalconfig int MaxBatchSizeBytes; //Maximum size a batch payload can be. This really shouldn't be anywhere close to 512 (max packet size).
@@ -26,11 +40,12 @@ struct MapInfoBatch
 {
 	var string Data;
 };
-
 replication
 {
+	reliable if( Role==ROLE_Authority && bNetInitial)
+		GameDifficultyCount;
 	reliable if(Role == ROLE_Authority && bMapVote)
-		ReceiveMapInfoBatch;
+		ReceiveMapInfoBatch, ReceiveDifficulty;
 }
 
 simulated function PostBeginPlay()
@@ -41,6 +56,17 @@ simulated function PostBeginPlay()
 	TurboVotingHandler = TurboVotingHandler(VH);
 }
 
+simulated function GetServerData()
+{
+	if (Level.NetMode == NM_Client)
+	{
+		return;
+	}
+
+	Super.GetServerData();
+	GameDifficultyCount = TurboVotingHandler.DifficultyConfig.Length;
+	SetupDifficultyTickedReplication(GameDifficultyCount);
+}
 
 simulated final function InitTurboClient()
 {
@@ -108,6 +134,14 @@ simulated function Tick(float DeltaTime)
 		return;
 	}
 
+	if (DifficultyTickedReplicationQueue.Index < DifficultyTickedReplicationQueue.Last)
+	{
+		TickedReplication_DifficultyList(DifficultyTickedReplicationQueue.Index, bDedicated);
+		DifficultyTickedReplicationQueue.Index++;
+		PendingAckSendCount++;
+		return;
+	}
+
 	i = TickedReplicationQueue.Length - 1;
 
 	bWasBatched = false;
@@ -159,9 +193,34 @@ simulated function Tick(float DeltaTime)
 	}
 }
 
-function TickedReplication_MapList(int Index, bool bDedicated)
+function SetupDifficultyTickedReplication(int Last)
 {
-	Super.TickedReplication_MapList(Index, bDedicated);
+	DifficultyTickedReplicationQueue.Last = Last;
+}
+
+function TickedReplication_DifficultyList(int Index, bool bDedicated)
+{
+	DebugLog("___Sending Difficulty" $ Index $ " - " $ TurboVotingHandler.DifficultyConfig[Index]);
+
+	if (bDedicated)
+	{
+		ReceiveDifficulty(TurboVotingHandler.DifficultyConfig[Index]);
+		bWaitingForReply = True;
+	}
+	else
+	{
+		GameDifficultyConfig.Length = GameDifficultyConfig.Length + 1;
+		GameDifficultyConfig[GameDifficultyConfig.Length - 1].DifficultyIndex = TurboVotingHandler.DifficultyConfig[Index];
+	}
+}
+
+simulated function ReceiveDifficulty(int Difficulty)
+{
+	DebugLog("___Difficulty Received: "$Difficulty);
+	GameDifficultyConfig.Length = GameDifficultyConfig.Length + 1;
+	GameDifficultyConfig[GameDifficultyConfig.Length - 1].DifficultyIndex = Difficulty;
+
+	ReplicationReply();
 }
 
 function int TickedReplication_BatchMapList(int Index, int Last, bool bDedicated)
@@ -310,6 +369,7 @@ function SendMapVote(int MapIndex, int p_GameIndex)
 
 defaultproperties
 {
+	bDebugLog=true
 	bBatchMapListData=true
 	MaxBatchCount=5
 	MaxBatchSizeBytes=320

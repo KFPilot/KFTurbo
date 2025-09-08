@@ -3,6 +3,18 @@
 //For more information see https://github.com/KFPilot/KFTurbo.
 class TurboCountColumnListBox extends MVCountColumnListBox;
 
+function InitComponent(GUIController MyController, GUIComponent MyOwner)
+{
+	DefaultListClass = string(Class'TurboCountColumnList');
+	
+    Super(MapVoteCountMultiColumnListBox).InitComponent(MyController, MyOwner);
+
+	if (PlayerOwner().PlayerReplicationInfo.bAdmin)
+    {
+		ContextMenu.AddItem("Admin Force Map");
+    }
+}
+
 function InternalOnClick(GUIContextMenu Sender, int Index)
 {
     if (Sender == None || NotifyContextSelect(Sender, Index) || TurboMapVotingPage(MenuOwner) == None)
