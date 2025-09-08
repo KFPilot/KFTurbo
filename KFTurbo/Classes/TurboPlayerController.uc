@@ -1104,14 +1104,16 @@ state Spectating
 		GetAxes(Rotation, XAxis, YAxis, ZAxis);
 		HitActor = Trace(YAxis, ZAxis, Location + (XAxis * 500.f), Location, true, vect(16, 16, 16));
 
-		if (HitActor == None)
+		if (Pawn(HitActor) == None)
 		{
-			return;
-		}
-
-		if (Pawn(HitActor.Base) != None)
-		{
-			HitActor = HitActor.Base;
+			if (Pawn(HitActor.Base) != None)
+			{
+				HitActor = HitActor.Base;
+			}
+			else
+			{
+				return;
+			}
 		}
 
 		SetViewTarget(HitActor);
