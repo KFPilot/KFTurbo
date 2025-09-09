@@ -612,7 +612,7 @@ simulated final function DrawKillFeedEntry(Canvas C, out float DrawY, out KillFe
 
 	if (bIsElite)
 	{
-		C.Font = TurbohUD.LoadBoldItalicFont(0 + FontSizeOffset);
+		C.Font = TurboHUD.LoadBoldItalicFont(0 + FontSizeOffset);
 	}
 	else
 	{
