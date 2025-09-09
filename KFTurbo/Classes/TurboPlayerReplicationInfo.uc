@@ -174,11 +174,11 @@ simulated final function EConnectionState GetConnectionState()
         {
             ConnectionTimeStamp[int(EConnectionState.PoorConnection)] = Level.TimeSeconds + 10.f;
         }
-        else if (PacketLoss <= 25)
+        else if (PacketLoss <= 30)
         {
             ConnectionTimeStamp[int(EConnectionState.BadConnection)] = Level.TimeSeconds + 10.f;
         }
-        else if (PacketLoss <= 25)
+        else if (PacketLoss <= 70)
         {
             ConnectionTimeStamp[int(EConnectionState.BrokenConnection)] = Level.TimeSeconds + 10.f;
         }
