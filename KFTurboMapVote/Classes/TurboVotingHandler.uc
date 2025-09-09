@@ -11,6 +11,8 @@ var() config int CurrentDifficultyConfig;
 var() config int DefaultDifficultyConfig;
 var() config array<int> DifficultyConfig;
 
+var bool bDecodeDuringSetupGameMap;
+
 struct VoteTallyEntry
 {
 	var int MapIndex;
@@ -66,7 +68,7 @@ function SubmitMapVote(int MapIndex, int GameData, Actor Voter)
 		return;
 	}
 
-	if (AdminForceMapChange(MapIndex, GameIndex, Voter))
+	if (AdminForceMapChange(MapIndex, GameData, Voter))
 	{
 		return;
 	}
@@ -158,14 +160,24 @@ function bool IsValidVote(int MapIndex, int GameIndex)
 
 function string SetupGameMap(MapVoteMapList MapInfo, int GameData, MapHistoryInfo MapHistoryInfo)
 {
-	local int GameIndex, DifficultyIndex;
+	local int GameIndex, Difficulty;
 	local string Result;
-	Decode(GameData, GameIndex, DifficultyIndex);
+
+	if (bDecodeDuringSetupGameMap)
+	{
+		Decode(GameData, GameIndex, Difficulty);
+	}
+	else
+	{
+		GameIndex = GameData;
+		Difficulty = GetCorrectedGameDifficulty(-1); //Give us whatever difficulty was configured to be the default.
+	}
+
 	Result = Super.SetupGameMap(MapInfo, GameIndex, MapHistoryInfo);
 
-	if (DifficultyConfig.Length != 0)
+	if (InStr(Result, "?difficulty") == -1)
 	{
-		Result $= "?difficulty="$DifficultyIndex;
+		Result $= "?difficulty="$Difficulty;
 	}
 
 	return Result;
@@ -174,13 +186,13 @@ function string SetupGameMap(MapVoteMapList MapInfo, int GameData, MapHistoryInf
 //Returns true if this was an admin forced map change vote.
 function bool AdminForceMapChange(int MapIndex, int GameData, Actor Voter)
 {
-	local int GameIndex, DifficultyIndex;
+	local int GameIndex, Difficulty;
 	if (GameData >= 0)
 	{
 		return false;
 	}
 
-	Decode(GameData, GameIndex, DifficultyIndex);
+	Decode(GameData, GameIndex, Difficulty);
 
 	if (GameIndex >= GameConfig.Length || MapIndex < 0 || MapIndex >= MapList.Length)
 	{
@@ -193,7 +205,7 @@ function bool AdminForceMapChange(int MapIndex, int GameData, Actor Voter)
 	}
 
 	TextMessage = lmsgAdminMapChange;
-	TextMessage = Repl(TextMessage, "%mapname%", MapList[MapIndex].MapName $ "(" $ GameConfig[GameIndex].Acronym $ ")");
+	TextMessage = Repl(TextMessage, "%mapname%", MapList[MapIndex].MapName $ "(" $ GameConfig[GameIndex].Acronym $ " - " $ GetDifficultyName(Difficulty) $ ")");
 	Level.Game.Broadcast(self, TextMessage);
 
 	log("Admin has forced map switch to " $ MapList[MapIndex].MapName $ "(" $ GameConfig[GameIndex].Acronym $ ")", 'MapVote');
@@ -201,7 +213,9 @@ function bool AdminForceMapChange(int MapIndex, int GameData, Actor Voter)
 	CloseAllVoteWindows();
 
 	bLevelSwitchPending = true;
-	ServerTravelString = SetupGameMap(MapList[MapIndex], GameIndex, History.PlayMap(MapList[MapIndex].MapName));
+	bDecodeDuringSetupGameMap = true;
+	ServerTravelString = SetupGameMap(MapList[MapIndex], GameData, History.PlayMap(MapList[MapIndex].MapName));
+	bDecodeDuringSetupGameMap = false;
 	log("ServerTravelString = " $ ServerTravelString, 'MapVoteDebug');
 
 	Level.ServerTravel(ServerTravelString, false);
@@ -446,7 +460,9 @@ function PerformVoteTally(bool bForceMapSwitch)
 
 		CloseAllVoteWindows();
 
+		bDecodeDuringSetupGameMap = true;
 		ServerTravelString = SetupGameMap(MapList[TempMapIndex], TempGameConfig, History.PlayMap(MapList[TempMapIndex].MapName));
+		bDecodeDuringSetupGameMap = false;
 
 		log("ServerTravelString = " $ ServerTravelString ,'MapVoteDebug');
 
@@ -522,4 +538,5 @@ defaultproperties
 	MapListLoaderType="KFTurboMapVote.TurboMapListLoader"
 	bCanSpectatorsMapVote=false
 	bDefaultToCurrentDifficulty=true
+	bDecodeDuringSetupGameMap=false
 }
