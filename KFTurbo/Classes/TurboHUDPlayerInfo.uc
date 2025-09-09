@@ -369,7 +369,7 @@ simulated function Render(Canvas C)
 		}
 	}
 
-	if (class'V_FieldMedic'.static.IsFieldMedic(TurboHUD.KFPRI) || IsHoldingMedicGun())
+	if (TurboHUD.PawnOwner != None && (class'V_FieldMedic'.static.IsFieldMedic(TurboHUD.KFPRI) || IsHoldingMedicGun()))
 	{
 		DrawMedicPlayerInfo(C);
 	}
