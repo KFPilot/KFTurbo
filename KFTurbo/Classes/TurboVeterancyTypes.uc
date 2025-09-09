@@ -205,7 +205,7 @@ static function float GetCostScaling(KFPlayerReplicationInfo KFPRI, class<Pickup
 
 static function ApplyCostScalingModifier(KFPlayerReplicationInfo KFPRI, class<Pickup> Item, out float Multiplier)
 {
-	Multiplier *= TurboGameReplicationInfo(KFPRI.Level.GRI).GetTraderCostMultiplier(KFPRI, Item);
+	TurboGameReplicationInfo(KFPRI.Level.GRI).GetTraderCostMultiplier(KFPRI, Item, Multiplier);
 }
 
 static function float GetAmmoCostScaling(KFPlayerReplicationInfo KFPRI, class<Pickup> Item)
@@ -218,7 +218,7 @@ static function float GetAmmoCostScaling(KFPlayerReplicationInfo KFPRI, class<Pi
 
 static function ApplyAmmoCostScalingModifier(KFPlayerReplicationInfo KFPRI, class<Pickup> Item, out float Multiplier)
 {
-	Multiplier *= TurboGameReplicationInfo(KFPRI.Level.GRI).GetTraderCostMultiplier(KFPRI, Item);
+	TurboGameReplicationInfo(KFPRI.Level.GRI).GetTraderCostMultiplier(KFPRI, Item, Multiplier);
 
 	if (class<FragPickup>(Item) != None)
 	{

@@ -33,7 +33,7 @@ simulated function float GetMedicMaxAmmoMultiplier(KFPlayerReplicationInfo KFPRI
 simulated function float GetWeaponPenetrationMultiplier(KFPlayerReplicationInfo KFPRI, WeaponFire Other) { if (NextGameModifierLink != None) { return NextGameModifierLink.GetWeaponPenetrationMultiplier(KFPRI, Other); } return 1.f; }
 simulated function float GetWeaponSpreadRecoilMultiplier(KFPlayerReplicationInfo KFPRI, WeaponFire Other) { if (NextGameModifierLink != None) { return NextGameModifierLink.GetWeaponSpreadRecoilMultiplier(KFPRI, Other); } return 1.f; }
 
-simulated function float GetTraderCostMultiplier(KFPlayerReplicationInfo KFPRI, class<Pickup> Item) { if (NextGameModifierLink != None) { return NextGameModifierLink.GetTraderCostMultiplier(KFPRI, Item); } return 1.f; }
+simulated function GetTraderCostMultiplier(KFPlayerReplicationInfo KFPRI, class<Pickup> Item, out float Multiplier) { if (NextGameModifierLink != None) { return NextGameModifierLink.GetTraderCostMultiplier(KFPRI, Item, Multiplier); } }
 simulated function float GetTraderGrenadeCostMultiplier(KFPlayerReplicationInfo KFPRI, class<Pickup> Item) { if (NextGameModifierLink != None) { return NextGameModifierLink.GetTraderGrenadeCostMultiplier(KFPRI, Item); } return 1.f; }
 
 simulated function float GetPlayerMovementSpeedMultiplier(KFPlayerReplicationInfo KFPRI, KFGameReplicationInfo KFGRI) { if (NextGameModifierLink != None) { return NextGameModifierLink.GetPlayerMovementSpeedMultiplier(KFPRI, KFGRI); } return 1.f; }

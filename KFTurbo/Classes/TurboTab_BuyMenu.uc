@@ -132,6 +132,19 @@ function DoFillAllAmmo()
 	Super.DoFillAllAmmo();
 }
 
+function DoBuyKevlar()
+{
+	local KFPlayerReplicationInfo KFPRI;
+	KFPRI = KFPlayerReplicationInfo(PlayerOwner().PlayerReplicationInfo);
+
+    if (KFPRI.ClientVeteranSkill != None && KFPRI.ClientVeteranSkill.static.GetCostScaling(KFPRI, class'Vest') < 0.f)
+    {
+        return;
+    }
+
+	Super.DoBuyKevlar();
+}
+
 function OnAnychange()
 {
 	LastBuyable = TheBuyable;

@@ -199,14 +199,18 @@ simulated function float GetWeaponSpreadRecoilMultiplier(KFPlayerReplicationInfo
     return Multiplier;
 }
 
-simulated function float GetTraderCostMultiplier(KFPlayerReplicationInfo KFPRI, class<Pickup> Item)
+simulated function GetTraderCostMultiplier(KFPlayerReplicationInfo KFPRI, class<Pickup> Item, out float Multiplier)
 {
+    Super.GetTraderCostMultiplier(KFPRI, Item, Multiplier);
+
     if (bDisableArmorPurchase && class<Vest>(Item) != None)
     {
-        return -1.f;
+        Multiplier = -1.f;
     }
-    
-    return Super.GetTraderCostMultiplier(KFPRI, Item) * TraderCostMultiplier; 
+    else
+    {
+        Multiplier *= TraderCostMultiplier;
+    }
 }
 simulated function float GetTraderGrenadeCostMultiplier(KFPlayerReplicationInfo KFPRI, class<Pickup> Item) { return Super.GetTraderGrenadeCostMultiplier(KFPRI, Item) * TraderGrenadeCostMultiplier; }
 

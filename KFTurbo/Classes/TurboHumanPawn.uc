@@ -836,6 +836,19 @@ function ServerSellWeapon( Class<Weapon> WClass )
 	}
 }
 
+function ServerBuyKevlar()
+{
+	local KFPlayerReplicationInfo KFPRI;
+	KFPRI = KFPlayerReplicationInfo(PlayerReplicationInfo);
+
+    if (KFPRI.ClientVeteranSkill != None && KFPRI.ClientVeteranSkill.static.GetCostScaling(KFPRI, class'Vest') < 0.f)
+    {
+        return;
+    }
+
+	Super.ServerBuyKevlar();
+}
+
 function AddDefaultInventory()
 {
 	Super.AddDefaultInventory();
