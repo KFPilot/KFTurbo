@@ -60,6 +60,9 @@ var Texture PingIcon;
 var Texture PoorSignalIcon;
 var Texture NoSignalIcon;
 
+var Texture SignalIcon[5];
+var Texture SignalColor[5];
+
 var localized string ThousandSuffix;
 var localized string MillionSuffix;
 var localized string SeparatorCharacter;
@@ -398,15 +401,10 @@ simulated final function DrawPlayerEntry(Canvas Canvas, TurboPlayerReplicationIn
 		TempX = (CenterX + (SizeX * 0.5f));
 		TempY = CenterY - (SizeY * 0.4f);
 		Canvas.SetPos(TempX + (SizeY * 0.1f), TempY);
-		switch (TurboPRI.GetConnectionState())
-		{
-			case PoorConnection:
-				Canvas.DrawRect(PoorSignalIcon, (SizeY * 0.8f), (SizeY * 0.8f));
-				break;
-			case NoConnection:
-				Canvas.DrawRect(NoSignalIcon, (SizeY * 0.8f), (SizeY * 0.8f));
-				break;
-		}
+
+		Canvas.DrawColor = SignalColor[int(TurboPRI.GetConnectionState())];
+		Canvas.DrawColor.A = 255;
+		Canvas.DrawRect(SignalIcon[int(TurboPRI.GetConnectionState())], (SizeY * 0.8f), (SizeY * 0.8f));
 	}
 }
 
@@ -453,9 +451,18 @@ defaultproperties
 	PingIconColor=(R=40,G=40,B=40,A=230)
 	PingIcon=Texture'KFTurbo.Scoreboard.ScoreboardPing_D'
 
-	PoorSignalIcon=Texture'KFTurbo.HUD.LowSignal_a01'
-	NoSignalIcon=Texture'KFTurbo.HUD.NoSignal_a01'
-	
+	SignalIcon(0)=None //No icon for Normal connection state...
+	SignalIcon(1)=Texture'KFTurbo.HUD.LowSignal_a01'
+	SignalIcon(2)=Texture'KFTurbo.HUD.LowSignal_a01'
+	SignalIcon(3)=Texture'KFTurbo.HUD.NoSignal_a01'
+	SignalIcon(4)=Texture'KFTurbo.HUD.NoSignal_a01'
+
+	SignalColor(0)=(R=0,G=0,B=0,A=0)
+	SignalColor(1)=(R=255,G=255,B=255,A=255)
+	SignalColor(2)=(R=255,G=255,B=120,A=255)
+	SignalColor(3)=(R=255,G=120,B=60,A=255)
+	SignalColor(4)=(R=255,G=60,B=30,A=255)
+
 	ThousandSuffix="K"
 	MillionSuffix="M"
 	SeparatorCharacter="."
