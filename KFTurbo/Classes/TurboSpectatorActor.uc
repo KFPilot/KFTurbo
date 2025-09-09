@@ -20,6 +20,7 @@ struct MovementStepData
     var Rotator Rotation;
     var float TimeStamp;
     var float Time;
+    var float Speed;
 };
 
 var MovementStepData MovementStep;
@@ -63,10 +64,12 @@ simulated function PostBeginPlay()
         MovementStep.Location = Location;
         MovementStep.Rotation = Rotation;
         MovementStep.TimeStamp = Level.TimeSeconds;
+        MovementStep.Speed = 1.f;
         OwningPRI = TurboPlayerReplicationInfo(Owner);
         OwningController = TurboPlayerController(OwningPRI.Owner);
     }
 
+    LastMovementStepTime = Level.TimeSeconds;
     RandomOffset = FRand();
 }
 
@@ -224,6 +227,15 @@ simulated function UpdateMovement(float DeltaTime)
         MovementStep.Rotation = BufferRotation;
         MovementStep.TimeStamp = Level.TimeSeconds;
         LastSendTime = Level.TimeSeconds + (FRand() * 0.1f);
+
+        if (OwningController.ViewTarget == None || OwningController.ViewTarget == OwningController)
+        {
+            MovementStep.Speed = 1.f;
+        }
+        else
+        {
+            MovementStep.Speed = 4.f;
+        }
     }
 }
 
@@ -364,9 +376,9 @@ simulated function TickMovementBuffer(float DeltaTime)
 
     StartingLocation = Location;
     Displacement = (NextStep.Location - Location);
-    MovementBufferVelocity.X = Lerp(DeltaTime * InterpolationRate, MovementBufferVelocity.X, Displacement.X);
-    MovementBufferVelocity.Y = Lerp(DeltaTime * InterpolationRate, MovementBufferVelocity.Y, Displacement.Y);
-    MovementBufferVelocity.Z = Lerp(DeltaTime * InterpolationRate, MovementBufferVelocity.Z, Displacement.Z);
+    MovementBufferVelocity.X = Lerp(DeltaTime * InterpolationRate * NextStep.Speed, MovementBufferVelocity.X, Displacement.X);
+    MovementBufferVelocity.Y = Lerp(DeltaTime * InterpolationRate * NextStep.Speed, MovementBufferVelocity.Y, Displacement.Y);
+    MovementBufferVelocity.Z = Lerp(DeltaTime * InterpolationRate * NextStep.Speed, MovementBufferVelocity.Z, Displacement.Z);
 
     GetAxes(NextStep.Rotation, X, Y, Z);
     CurrentQuat = QuatFromRotator(NextStep.Rotation);
@@ -374,7 +386,7 @@ simulated function TickMovementBuffer(float DeltaTime)
     CurrentQuat = QuatProduct(CurrentQuat, TemporaryQuat);
 
     SetRotation(RLerp(Rotation, QuatToRotator(CurrentQuat), DeltaTime * InterpolationRate * 0.25f));
-    SetLocation(Location + (MovementBufferVelocity * DeltaTime * (InterpolationRate * 0.5f)));
+    SetLocation(Location + (MovementBufferVelocity * DeltaTime * (InterpolationRate * 0.5f * NextStep.Speed)));
     if (VSizeSquared(Location) < 2.f || (Normal(Location - NextStep.Location) dot Normal(StartingLocation - NextStep.Location)) <= 0.f)
     {
         SetLocation(NextStep.Location);
