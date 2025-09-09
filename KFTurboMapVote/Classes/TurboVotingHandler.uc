@@ -500,13 +500,13 @@ function GetDefaultMap(out int MapIndex, out int GameIndex)
 
 static final function int Encode(int GameIndex, int GameDifficulty)
 {
-	return (GameDifficulty & 7) | (GameIndex << 3);
+	return (GameDifficulty & 15) | (GameIndex << 4);
 }
 
 static final function Decode(int GameConfig, out int GameIndex, out int GameDifficulty)
 {
-	GameIndex = (GameConfig >> 3);
-	GameDifficulty = GameConfig & 7;
+	GameIndex = (GameConfig >> 4);
+	GameDifficulty = GameConfig & 15;
 }
 
 function int GetCorrectedGameDifficulty(int GameDifficulty)
