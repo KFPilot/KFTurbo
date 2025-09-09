@@ -122,20 +122,7 @@ static function float AddExtraAmmoFor(KFPlayerReplicationInfo KFPRI, Class<Ammun
 }
 
 static function ApplyAdjustedExtraAmmo(KFPlayerReplicationInfo KFPRI, class<Ammunition> AmmoType, out float Multiplier)
-{
-	if (!IsHighDifficulty(KFPRI))
-	{
-		Super.ApplyAdjustedExtraAmmo(KFPRI, AmmoType, Multiplier);
-		return;
-	}
-
-	switch (AmmoType)
-	{
-		case class'FragAmmo':
-			Multiplier *= 1.3334f;
-			break;
-	}
-	
+{	
 	Super.ApplyAdjustedExtraAmmo(KFPRI, AmmoType, Multiplier);
 }
 
@@ -201,7 +188,7 @@ static function string GetCustomLevelInfo(byte Level)
 defaultproperties
 {
 	HighDifficultyExtraAmmoMultiplier=1.5f
-	HighDifficultyExtraGrenadeAmmoMultiplier=1.3334f
+	HighDifficultyExtraGrenadeAmmoMultiplier=1.7778f
 	
 	OnHUDIcon=Texture'KillingFloorHUD.Perks.Perk_Support'
     OnHUDGoldIcon=Texture'KFTurbo.Perks.Support_D'
