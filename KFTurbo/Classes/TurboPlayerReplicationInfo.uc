@@ -7,10 +7,14 @@ enum EConnectionState
 {
     Normal,
     PoorConnection,
+    BadConnection,
+    BrokenConnection,
     NoConnection
 };
-var float LastPoorConnectionTime;
-var float LastNoConnectionTime;
+
+var float ConnectionTimeStamp[5]; //Last time a connection of a type was detected.
+var float LastConnectionStateTime;
+var EConnectionState LastConnectionState;
 
 var int ShieldStrength;
 
@@ -155,24 +159,45 @@ simulated function UnregisterCustomInfo(TurboPlayerCustomInfo CustomInfo)
 
 simulated final function EConnectionState GetConnectionState()
 {
-    if (PacketLoss >= 50)
+    local int Index;
+
+    if (LastConnectionStateTime == Level.TimeSeconds)
     {
-        LastNoConnectionTime = Level.TimeSeconds + 10.f;
-    }
-    else if (PacketLoss >= 5)
-    {
-        LastPoorConnectionTime = Level.TimeSeconds + 10.f;
+        return LastConnectionState;
     }
 
-    if (LastNoConnectionTime > 0.f && Level.TimeSeconds < LastNoConnectionTime)
+    LastConnectionStateTime = Level.TimeSeconds;
+
+    if (PacketLoss >= 2)
     {
-        return NoConnection;
-    }
-    else if (LastPoorConnectionTime > 0.f && Level.TimeSeconds < LastPoorConnectionTime)
-    {
-        return PoorConnection;
+        if (PacketLoss <= 10)
+        {
+            ConnectionTimeStamp[int(EConnectionState.PoorConnection)] = Level.TimeSeconds + 10.f;
+        }
+        else if (PacketLoss <= 25)
+        {
+            ConnectionTimeStamp[int(EConnectionState.BadConnection)] = Level.TimeSeconds + 10.f;
+        }
+        else if (PacketLoss <= 25)
+        {
+            ConnectionTimeStamp[int(EConnectionState.BrokenConnection)] = Level.TimeSeconds + 10.f;
+        }
+        else
+        {
+            ConnectionTimeStamp[int(EConnectionState.NoConnection)] = Level.TimeSeconds + 10.f;
+        }
     }
 
+    for (Index = int(EConnectionState.NoConnection); Index > 0; Index--)
+    {
+        if (ConnectionTimeStamp[Index] > Level.TimeSeconds)
+        {
+            LastConnectionState = EConnectionState(Index);
+            return LastConnectionState;
+        }
+    }
+
+    LastConnectionState = Normal;
     return Normal;
 }
 
@@ -184,4 +209,6 @@ defaultproperties
     HealthHealed=0
 
     bVotedForTraderEnd=false
+
+    LastConnectionState=Normal
 }
