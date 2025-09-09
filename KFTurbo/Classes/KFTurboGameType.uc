@@ -44,16 +44,30 @@ const MAX_FORCED_PLAYER_HEALTH = 6; //Used to keep monster health at 6 players o
 
 var protected bool bZedTimeEnabled; //Allows for zed time to be disabled.
 
+var bool bHasVisibleSpectatorMutator;
+
 //Events that KFTurboServerMut binds to for bridging communication with ServerPerksMut.
 Delegate OnStatsAndAchievementsDisabled();
 Delegate LockPerkSelection(bool bLock);
 
-event InitGame(string Options, out string Error)
+function InitGame(string Options, out string Error)
 {
     Super.InitGame(Options, Error);
 
     bNoLateJoiners = false;
     InitializeMapConfigurationObject();
+}
+
+function AddMutator(string InMutatorClass, optional bool bUserAdded)
+{
+    Super.AddMutator(InMutatorClass, bUserAdded);
+
+    InMutatorClass = Locs(InMutatorClass);
+    //Most visible spectator mutators I could find are some permutation of the word "visible" (vis) and "spectator" (spec).
+    if (InStr(InMutatorClass, "vis") != -1 && InStr(InMutatorClass, "spec") != -1)
+    {
+        bHasVisibleSpectatorMutator = true;
+    }
 }
 
 function ProcessServerTravel(string URL, bool bItems)

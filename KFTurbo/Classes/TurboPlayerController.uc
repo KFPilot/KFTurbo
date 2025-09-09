@@ -1127,7 +1127,7 @@ state Spectating
 	{
 		Super.BeginState();
 		
-		if (Role == ROLE_Authority && SpectatorActorClass != None && SpectatorActor == None)
+		if (Role == ROLE_Authority && SpectatorActorClass != None && SpectatorActor == None && KFTurboGameType(Level.Game).bHasVisibleSpectatorMutator)
 		{
 			SpectatorActor = Spawn(SpectatorActorClass, PlayerReplicationInfo);
 		}
