@@ -517,8 +517,10 @@ final simulated function DrawPlayerInfo(Canvas C, PlayerInfoData PlayerInfo, flo
 		switch (PlayerInfo.Entry.ConnectionState)
 		{
 			case PoorConnection:
+			case BadConnection:
 				C.DrawRect(PoorSignalIcon, TurboHUD.BarHeight * 2.5f, TurboHUD.BarHeight * 2.5f);
 				break;
+			case BrokenConnection:
 			case NoConnection:
 				C.DrawRect(NoSignalIcon, TurboHUD.BarHeight * 2.5f, TurboHUD.BarHeight * 2.5f);
 				break;
