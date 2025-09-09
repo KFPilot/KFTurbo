@@ -171,7 +171,7 @@ static final function DrawCounterTextMeticulous(Canvas C, String String, float S
 }
 
 //A MakeColor that doesn't randomly map 0 to 255.
-static final function Color MakeColor(byte R, byte G, byte B, optional byte A)
+static final function Color MakeColor(byte R, byte G, byte B, byte A)
 {
 	local Color C;
 
