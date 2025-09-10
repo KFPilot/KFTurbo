@@ -6,20 +6,6 @@ class TurboMapVotingPage extends KFMapVotingPageX;
 var() editconst noexport TurboVotingReplicationInfo TurboVRI;
 var automated moComboBox co_GameDifficulty;
 
-
-//Helps keep track of what difficulty we're actually talking about.
-enum EDifficultyConfig
-{
-	Skip0,
-	Beginner,	//1
-	Normal,		//2
-	Skip3,
-	Hard,		//4
-	Suicidal,	//5
-	Skip6,
-	HellOnEarth	//7
-};
-
 simulated function InitComponent(GUIController MyController, GUIComponent MyOwner)
 {
     Super.InitComponent(MyController, MyOwner);
@@ -46,7 +32,7 @@ simulated function InternalOnOpen()
 
     for (Index = 0; Index < TurboVRI.GameDifficultyConfig.Length; Index++)
     {
-    	co_GameDifficulty.AddItem(ResolveDifficultyName(TurboVRI.GameDifficultyConfig[Index].DifficultyIndex), None, string(TurboVRI.GameDifficultyConfig[Index].DifficultyIndex));
+    	co_GameDifficulty.AddItem(TurboVRI.GetDifficultyName(TurboVRI.GameDifficultyConfig[Index].DifficultyIndex), None, string(TurboVRI.GameDifficultyConfig[Index].DifficultyIndex));
     }
 
     if (TurboVRI.GameDifficultyConfig.Length == 0)
@@ -55,7 +41,6 @@ simulated function InternalOnOpen()
     }
     else
     {
-
         Index = co_GameDifficulty.MyComboBox.List.FindExtra(string(TurboVRI.CurrentDifficultyConfig));
 
         log ("Looking for game difficulty " $ TurboVRI.CurrentDifficultyConfig $ " result index " $ Index);
@@ -134,25 +119,6 @@ simulated function SendVote(GUIComponent Sender)
 		    PlayerOwner().ClientMessage(lmsgMapDisabled);
         }
 	}
-}
-
-static simulated function string ResolveDifficultyName(int Index)
-{
-    switch (EDifficultyConfig(Index))
-    {
-        case Beginner:
-            return class'LobbyMenu'.default.BeginnerString;
-        case Normal:
-            return class'LobbyMenu'.default.NormalString;
-        case Hard:
-            return class'LobbyMenu'.default.HardString;
-        case Suicidal:
-            return class'LobbyMenu'.default.SuicidalString;
-        case HellOnEarth:
-            return class'LobbyMenu'.default.HellOnEarthString;
-    }
-
-    return "UNKNOWN";
 }
 
 defaultproperties

@@ -13,6 +13,11 @@ var() config array<int> DifficultyConfig;
 
 var bool bDecodeDuringSetupGameMap;
 
+//Neither of these are replicated. Defined here 
+var class<TurboMapVoteMessage> TurboMapVoteSubmitMessage; 
+var class<TurboMapVoteMessage> TurboMapVoteCompleteMessage;
+var class<TurboMapVoteMessage> TurboMapVoteAdminMessage; 
+
 struct VoteTallyEntry
 {
 	var int MapIndex;
@@ -41,11 +46,16 @@ function PostBeginPlay()
 	}
 }
 
+function class<TurboVotingReplicationInfo> GetVotingReplicationInfoClass()
+{
+	return class'TurboVotingReplicationInfo';
+}
+
 function AddMapVoteReplicationInfo(PlayerController Player)
 {
 	local TurboVotingReplicationInfo VotingReplicationInfo;
 
-	VotingReplicationInfo = Spawn(class'TurboVotingReplicationInfo', Player, , Player.Location);
+	VotingReplicationInfo = Spawn(GetVotingReplicationInfoClass(), Player, , Player.Location);
 	if (VotingReplicationInfo == None)
 	{
 		Log("___Failed to spawn VotingReplicationInfo", 'MapVote');
@@ -103,7 +113,7 @@ function SubmitMapVote(int MapIndex, int GameData, Actor Voter)
 	DifficultyIndex = GetCorrectedGameDifficulty(DifficultyIndex);
 	GameData = Encode(GameIndex, DifficultyIndex); //Encode the GameData value again with a potentially corrected Game Difficulty.
 
-	log("___" $ VoteReplicationIndex $ " - " $ PlayerController(Voter).PlayerReplicationInfo.PlayerName $ " voted for " $ MapList[MapIndex].MapName $ "(" $ GameConfig[GameIndex].Acronym $ "-" $ GetDifficultyName(DifficultyIndex) $ ")",'MapVote');
+	log("___" $ VoteReplicationIndex $ " - " $ PlayerController(Voter).PlayerReplicationInfo.PlayerName $ " voted for " $ MapList[MapIndex].MapName $ "(" $ GameConfig[GameIndex].Acronym $ " - Difficulty " $ DifficultyIndex $ ")", 'MapVote');
 
 	//Cache previous vote and update to new one.
 	PreviousMapVote = MVRI[VoteReplicationIndex].MapVote;
@@ -112,16 +122,7 @@ function SubmitMapVote(int MapIndex, int GameData, Actor Voter)
 	MVRI[VoteReplicationIndex].GameVote = GameData;
 
 	VoteCount = GetVoteCount(Voter);
-	
-	//Broadcast casted vote.
-	TextMessage = Eval(VoteCount == 1, lmsgMapVotedFor, lmsgMapVotedForWithCount);
-	TextMessage = repl(TextMessage, "%playername%", PlayerController(Voter).PlayerReplicationInfo.PlayerName);
-	if (VoteCount != 1)
-	{
-		TextMessage = repl(TextMessage, "%votecount%", string(VoteCount));
-	}
-	TextMessage = repl(TextMessage, "%mapname%", MapList[MapIndex].MapName $ "(" $ GameConfig[GameIndex].Acronym $ " - " $ GetDifficultyName(DifficultyIndex) $ ")");
-	Level.Game.Broadcast(self,TextMessage);
+	TurboMapVoteSubmitMessage.static.BroadcastMapVoteMessage(Level.Game, MapIndex, GameIndex, DifficultyIndex, PlayerController(Voter).PlayerReplicationInfo);
 
 	UpdateVoteCount(MapIndex, GameData, VoteCount);
 
@@ -204,9 +205,7 @@ function bool AdminForceMapChange(int MapIndex, int GameData, Actor Voter)
 		return false;
 	}
 
-	TextMessage = lmsgAdminMapChange;
-	TextMessage = Repl(TextMessage, "%mapname%", MapList[MapIndex].MapName $ "(" $ GameConfig[GameIndex].Acronym $ " - " $ GetDifficultyName(Difficulty) $ ")");
-	Level.Game.Broadcast(self, TextMessage);
+	TurboMapVoteAdminMessage.static.BroadcastMapVoteMessage(Level.Game, MapIndex, GameIndex, Difficulty, PlayerController(Voter).PlayerReplicationInfo);
 
 	log("Admin has forced map switch to " $ MapList[MapIndex].MapName $ "(" $ GameConfig[GameIndex].Acronym $ ")", 'MapVote');
 
@@ -453,10 +452,7 @@ function PerformVoteTally(bool bForceMapSwitch)
 		}
 
 		Decode(TempGameConfig, TempGameIndex, TempGameDifficulty);
-
-		TextMessage = lmsgMapWon;
-		TextMessage = repl(TextMessage, "%mapname%", MapList[TempMapIndex].MapName $ "(" $ GameConfig[TempGameIndex].Acronym $ " - " $ GetDifficultyName(TempGameDifficulty) $ ")");
-		Level.Game.Broadcast(self, TextMessage);
+		TurboMapVoteCompleteMessage.static.BroadcastMapVoteMessage(Level.Game, TempMapIndex, TempGameIndex, TempGameDifficulty);
 
 		CloseAllVoteWindows();
 
@@ -528,15 +524,15 @@ function int GetCorrectedGameDifficulty(int GameDifficulty)
 	return DefaultDifficultyConfig;
 }
 
-function string GetDifficultyName(int Index)
-{
-	return class'TurboMapVotingPage'.static.ResolveDifficultyName(Index);
-}
-
 defaultproperties
 {
 	MapListLoaderType="KFTurboMapVote.TurboMapListLoader"
 	bCanSpectatorsMapVote=false
 	bDefaultToCurrentDifficulty=true
 	bDecodeDuringSetupGameMap=false
+	
+
+	TurboMapVoteSubmitMessage=class'TurboMapVoteSubmitMessage'
+	TurboMapVoteCompleteMessage=class'TurboMapVoteCompleteMessage'
+	TurboMapVoteAdminMessage=class'TurboMapVoteAdminMessage'
 }

@@ -4,6 +4,7 @@
 class TurboVotingReplicationInfo extends KFVotingReplicationInfo
 	config(KFMapVote);
 
+var class<TurboVotingHandler> TurboVotingHandlerClass;
 var TurboVotingHandler TurboVotingHandler;
 
 var float NextQueueSendTime;
@@ -28,6 +29,8 @@ var globalconfig bool bBatchMapListData; //Enables MapInfo batching.
 var globalconfig int MaxBatchCount; //Max number of MapInfos to try to fit in MaxBatchSizeBytes.
 var globalconfig int MaxBatchSizeBytes; //Maximum size a batch payload can be. This really shouldn't be anywhere close to 512 (max packet size).
 
+var string BatchMapDataFormat;
+
 //Assumed worst case size of a MapVoteMapList entry in a MapInfoBatch.
 // PlayCount - 8
 // Sequence - 8
@@ -43,8 +46,8 @@ struct MapInfoBatch
 };
 replication
 {
-	reliable if (Role==ROLE_Authority && bNetInitial)
-		GameDifficultyCount, CurrentDifficultyConfig;
+	reliable if (Role == ROLE_Authority && bNetInitial)
+		TurboVotingHandlerClass, GameDifficultyCount, CurrentDifficultyConfig;
 	reliable if (Role == ROLE_Authority && bMapVote)
 		ReceiveMapInfoBatch, ReceiveDifficulty;
 }
@@ -55,6 +58,7 @@ simulated function PostBeginPlay()
 
 	MaxBatchSizeBytes = Min(MaxBatchSizeBytes, 400); //Safety to prevent this from being set too high.
 	TurboVotingHandler = TurboVotingHandler(VH);
+	TurboVotingHandlerClass = TurboVotingHandler.Class;
 }
 
 simulated function GetServerData()
@@ -309,21 +313,21 @@ static function MapInfoBatch EncodeMapInfoBatch(array<VotingHandler.MapVoteMapLi
 	{
 		if (Index > 0)
 		{
-			Batch.Data $= "," $ InMapInfoList[Index].MapName $
-				"|" $ class'TurboEncodingHelper'.static.IntToHex(InMapInfoList[Index].PlayCount) $
-				"|"$ class'TurboEncodingHelper'.static.IntToHex(InMapInfoList[Index].Sequence) $
-				"|"$ Eval(InMapInfoList[Index].bEnabled, "1", "0") $
-				"|" $ class'TurboEncodingHelper'.static.IntToHex(InMapInfoList[Index].PlayCount) $
-				"|"$ class'TurboEncodingHelper'.static.IntToHex(InMapInfoList[Index].Sequence);
+			Batch.Data $= "," $ Repl(Repl(Repl(Repl(Repl(Repl(default.BatchMapDataFormat, "%m", InMapInfoList[Index].MapName),
+				"%p", class'TurboEncodingHelper'.static.IntToHex(InMapInfoList[Index].PlayCount)),
+				"%s", class'TurboEncodingHelper'.static.IntToHex(InMapInfoList[Index].Sequence)),
+				"%e", Eval(InMapInfoList[Index].bEnabled, "1", "0")),
+				"%rp", class'TurboEncodingHelper'.static.IntToHex(InMapRepList[Index].Positive)),
+				"%rn", class'TurboEncodingHelper'.static.IntToHex(InMapRepList[Index].Negative));
 		}
 		else
 		{
-			Batch.Data $= InMapInfoList[Index].MapName $
-				"|" $ class'TurboEncodingHelper'.static.IntToHex(InMapInfoList[Index].PlayCount) $
-				"|"$ class'TurboEncodingHelper'.static.IntToHex(InMapInfoList[Index].Sequence) $
-				"|"$ Eval(InMapInfoList[Index].bEnabled, "1", "0") $
-				"|" $ class'TurboEncodingHelper'.static.IntToHex(InMapRepList[Index].Positive) $
-				"|"$ class'TurboEncodingHelper'.static.IntToHex(InMapRepList[Index].Negative);
+			Batch.Data = Repl(Repl(Repl(Repl(Repl(Repl(default.BatchMapDataFormat, "%m", InMapInfoList[Index].MapName),
+				"%p", class'TurboEncodingHelper'.static.IntToHex(InMapInfoList[Index].PlayCount)),
+				"%s", class'TurboEncodingHelper'.static.IntToHex(InMapInfoList[Index].Sequence)),
+				"%e", Eval(InMapInfoList[Index].bEnabled, "1", "0")),
+				"%rp", class'TurboEncodingHelper'.static.IntToHex(InMapRepList[Index].Positive)),
+				"%rn", class'TurboEncodingHelper'.static.IntToHex(InMapRepList[Index].Negative));
 		}
 	}
 
@@ -369,10 +373,25 @@ function SendMapVote(int MapIndex, int p_GameIndex)
 	VH.SubmitMapVote(MapIndex,p_GameIndex,Owner);
 }
 
+simulated function string GetDifficultyName(int Difficulty)
+{
+	if (TurboVotingHandlerClass == None || TurboVotingHandlerClass.default.TurboMapVoteSubmitMessage == None)
+	{
+		return class'TurboMapVoteMessage'.static.ResolveDifficultyName(Difficulty);
+	}
+
+	return TurboVotingHandlerClass.default.TurboMapVoteSubmitMessage.static.ResolveDifficultyName(Difficulty);
+}
+
 defaultproperties
 {
-	bDebugLog=true
+	bDebugLog=false
+
+	TurboVotingHandlerClass=class'TurboVotingHandler'
+
 	bBatchMapListData=true
 	MaxBatchCount=5
 	MaxBatchSizeBytes=320
+
+	BatchMapDataFormat="%m|%p|%e|%s|%rp|%rn"
 }
