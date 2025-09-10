@@ -446,6 +446,11 @@ simulated function DrawVoter(Canvas C, PlayerReplicationInfo PRI, float X, float
 		return;
 	}
 
+	if (Len(PlayerName) > 15)
+	{
+		PlayerName = Left(PlayerName, 15);
+	}
+
 	X += XOffset * VoteIndex;
 	C.TextSize(PlayerName, TextSizeX, TextSizeY);
 	Y -= TextSizeY;
