@@ -57,11 +57,8 @@ var(Layout) float PingTextSizeY;
 var(Color) Color PingIconColor;
 var Texture PingIcon;
 
-var Texture PoorSignalIcon;
-var Texture NoSignalIcon;
-
 var Texture SignalIcon[5];
-var Texture SignalColor[5];
+var Color SignalColor[5];
 
 var localized string ThousandSuffix;
 var localized string MillionSuffix;
