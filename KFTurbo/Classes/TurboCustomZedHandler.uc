@@ -27,6 +27,7 @@ var bool bRandomizeProgressAtWaveStart;
 var float ReplacementRateMultiplier;
 
 var bool bDebugReplacement;
+var bool bAllowRandomness;
 
 function PostBeginPlay()
 {
@@ -38,6 +39,14 @@ function PostBeginPlay()
     if (!bDebugReplacement)
     {
         ConsoleCommand("Suppress KFTurboCustomZedHandler");
+    }
+
+    bAllowRandomness = !KFTurboGameTypePlus(Level.Game).IsHighDifficulty();
+    bRandomizeProgressAtWaveStart = bAllowRandomness;
+
+    if (bAllowRandomness)
+    {
+        ReplacementRateMultiplier *= 0.5f;
     }
 }
 
@@ -74,7 +83,14 @@ function NextSpawnSquadGenerated(KFTurboGameType GameType, out array < class<KFM
 
 final function bool IncrementMonsterProgress(int Index)
 {
-    ReplacementList[Index].ReplacementProgress += (0.95f + (FRand() * 0.1f)) * ReplacementList[Index].ReplacementRate * ReplacementRateMultiplier;
+    if (bAllowRandomness)
+    {
+        ReplacementList[Index].ReplacementProgress += (0.95f + (FRand() * 0.1f)) * ReplacementList[Index].ReplacementRate * ReplacementRateMultiplier;
+    }
+    else
+    {
+        ReplacementList[Index].ReplacementProgress += ReplacementList[Index].ReplacementRate * ReplacementRateMultiplier;
+    }
 
     log("Incremented progress for monster replacement index"@Index@"to"@ReplacementList[Index].ReplacementProgress, 'KFTurboCustomZedHandler');
     if (ReplacementList[Index].ReplacementProgress < 1.f)
