@@ -47,6 +47,8 @@ function PostBeginPlay()
     WaveNextSquadSpawnTime = MIN_SPAWN_TIME;
 }
 
+function SpawnTurboPlusActors() {}
+
 event InitGame( string Options, out string Error )
 {
     SetFinalWaveOverride(20);

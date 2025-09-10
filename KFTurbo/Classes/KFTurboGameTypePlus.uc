@@ -14,6 +14,8 @@ const INITIAL_CASH = 42069;
 const MIN_SPAWN_TIME = 0.01f;
 const WAVE_COUNTDOWN = 60;
 
+var KFTurboPlusArmorRegen ArmorRegenActor;
+
 // Function called before the game begins
 function PreBeginPlay()
 {
@@ -62,6 +64,16 @@ function PostBeginPlay()
     StartingCash = INITIAL_CASH;
     MinRespawnCash = INITIAL_CASH;
     WaveNextSquadSpawnTime = MIN_SPAWN_TIME;
+
+    SpawnTurboPlusActors();
+}
+
+function SpawnTurboPlusActors()
+{
+    if (class'KFTurboPlusArmorRegen'.static.ShouldPerformArmorRegen())
+    {
+        ArmorRegenActor = Spawn(class'KFTurboPlusArmorRegen'.static.GetArmorRegenActorClass(), self);
+    }
 }
 
 event InitGame( string Options, out string Error )
