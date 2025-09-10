@@ -275,7 +275,7 @@ simulated function Tick(float DeltaTime)
             }
             else
             {
-                bUpdated = FadeZone(ZoneInfoList[Index], DeltaTime, -128.f, 720.f) || bUpdated;
+                bUpdated = FadeZone(ZoneInfoList[Index], DeltaTime, -128.f, 820.f) || bUpdated;
             }
         }
     }
