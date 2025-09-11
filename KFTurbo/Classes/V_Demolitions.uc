@@ -214,6 +214,7 @@ static function AddDefaultInventory(KFPlayerReplicationInfo KFPRI, Pawn P)
 {
 	KFHumanPawn(P).CreateInventoryVeterancy(string(class'W_PipeBomb_Weap'), default.StartingWeaponSellPriceLevel5);
 	KFHumanPawn(P).CreateInventoryVeterancy(string(class'W_M4203_Weap'), default.StartingWeaponSellPriceLevel6);
+	Super.AddDefaultInventory(KFPRI, P);
 }
 
 static function string GetCustomLevelInfo(byte Level)

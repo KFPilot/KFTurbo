@@ -391,6 +391,15 @@ static function byte PreDrawPerk(Canvas C, byte Level, out Material PerkIcon, ou
 	return Level % Default.LevelRankRequirement;
 }
 
+static function AddDefaultInventory(KFPlayerReplicationInfo KFPRI, Pawn P)
+{
+	//High difficulty modes should provide armor when spawning a player.
+	if (IsHighDifficulty(KFPRI))
+	{
+		P.ShieldStrength = 100.f;
+	}
+}
+
 defaultproperties
 {
 	LevelRankRequirement=5

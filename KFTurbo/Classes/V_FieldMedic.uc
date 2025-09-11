@@ -223,6 +223,7 @@ static function AddDefaultInventory(KFPlayerReplicationInfo KFPRI, Pawn P)
 {
 	P.ShieldStrength = 100;
 	KFHumanPawn(P).CreateInventoryVeterancy(string(class'W_MP7M_Weap'), default.StartingWeaponSellPriceLevel6);
+	Super.AddDefaultInventory(KFPRI, P);
 }
 
 static function string GetCustomLevelInfo(byte Level)
