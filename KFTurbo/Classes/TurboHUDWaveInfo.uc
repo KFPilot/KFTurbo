@@ -612,6 +612,7 @@ simulated final function DrawKillFeedEntry(Canvas C, out float DrawY, out KillFe
 
 	if (bIsElite)
 	{
+		KillTextString = Caps(KillTextString);
 		C.Font = TurboHUD.LoadBoldItalicFont(0 + FontSizeOffset);
 	}
 	else
@@ -638,7 +639,7 @@ simulated final function DrawKillFeedEntry(Canvas C, out float DrawY, out KillFe
 	BaseTextScale = C.FontScaleX;
 
 	C.TextSize(KillCountString, TextSizeX, TextSizeY);
-	EntrySizeX += TextSizeX;
+	EntrySizeX += TextSizeX * GetBonusScale(Entry);
 	KillTextX = EntrySizeX;
 	BaseTextSizeY = TextSizeY;
 
@@ -659,12 +660,25 @@ simulated final function DrawKillFeedEntry(Canvas C, out float DrawY, out KillFe
 		C.DrawTileStretched(LeftEdgeContainer, (EntrySizeX + 2.f + 24.f), EntrySizeY);
 	}
 
-	DrawX = 8.f - DrawOffsetX;
-	C.SetDrawColor(255, 255, 255);
+	if (bIsElite)
+	{
+		C.DrawColor = LerpColor(Entry.TriggerRatio, MakeColor(255, 255, 255, 255), MakeColor(255, 0, 0, 255));
+	}
+	else
+	{
+		C.DrawColor = MakeColor(255, 255, 255, 255);
+	}
+
 	C.DrawColor.A = byte(FadeOutRatio * 255.f);
 
+	DrawX = 8.f - DrawOffsetX;
 	C.SetPos(DrawX + KillTextX, DrawY + (EntrySizeY * 0.5f) - (BaseTextSizeY * 0.45f));
 	C.DrawTextClipped(KillTextString);
+
+	if (bIsElite)
+	{
+		C.DrawColor = MakeColor(255, 255, 255, 255);
+	}
 
 	C.FontScaleX *= GetBonusScale(Entry);
 	C.FontScaleY = C.FontScaleX;
@@ -693,7 +707,7 @@ static final function bool TickKillFeedEntry(out KillFeedEntry Entry, float Delt
 {
 	Entry.LifeTime = FMax(Entry.LifeTime - DeltaTime, 0.f);
 	Entry.InitialRatio = Lerp(DeltaTime * 10.f, Entry.InitialRatio, 0.f);
-	Entry.TriggerRatio = Lerp(DeltaTime * 10.f, Entry.TriggerRatio, 0.f);
+	Entry.TriggerRatio = Lerp(DeltaTime * 4.f, Entry.TriggerRatio, 0.f);
 	return Entry.LifeTime > 0.f;
 }
 
@@ -1384,9 +1398,9 @@ defaultproperties
 	LeftEdgeContainer=Texture'KFTurbo.HUD.EdgeBackplate_R_D'
 	SquareContainer=Texture'KFTurbo.HUD.ContainerSquare_D'
 	
-	TrashMonsterKillLifeTime=3.f
+	TrashMonsterKillLifeTime=4.f
 	TrashMonsterKillCountExtension=0.1f
-	EliteMonsterKillLifeTime=5.f
+	EliteMonsterKillLifeTime=8.f
 	EliteMonsterKillCountExtension=0.2f
 	FontSizeOffset=0
 
