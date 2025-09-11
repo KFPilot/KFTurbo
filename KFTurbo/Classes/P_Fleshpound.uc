@@ -99,9 +99,13 @@ function TakeDamage( int Damage, Pawn InstigatedBy, Vector Hitlocation, Vector M
         {
             Damage *= 0.62f;
         }
+		else if (bIsHeadshot && class<DamTypeDBShotgun>(DamageType) != None && IsInDamageBoostRadius(InstigatedBy))
+		{
+			Damage *= 0.6f; //20% damage increase at point blank due to some odd reduction being applied.
+		}
 		else
 		{
-			Damage *= 0.5;
+			Damage *= 0.5f;
 		}
     }
     else if (WeaponDamageType != None && WeaponDamageType.default.bIsExplosive)
@@ -142,6 +146,14 @@ function TakeDamage( int Damage, Pawn InstigatedBy, Vector Hitlocation, Vector M
     {
         class'PawnHelper'.static.PostTakeDamage(Self, Damage, InstigatedBy, HitLocation, Momentum, DamageType, HitIndex, AfflictionData);
     }
+}
+
+function bool IsInDamageBoostRadius(Actor Other)
+{
+    local float Distance;
+    Distance = VSize(Location - Other.Location);
+    Distance -= (CollisionRadius + Other.CollisionRadius);
+    return Distance < 8.f;
 }
 
 function TakeFireDamage(int Damage, pawn DamageInstigator)
