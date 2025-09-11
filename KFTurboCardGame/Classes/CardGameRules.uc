@@ -964,7 +964,10 @@ function ModifyActor(Actor Other)
                     ClotPawnList[ClotPawnList.Length] = P_Clot(Other);
                     return;
                 case Bloat:
-                    BloatPawnList[BloatPawnList.Length] = P_Bloat(Other);
+                    if (Other.Class != class'P_Bloat_Fathead')
+                    {
+                        BloatPawnList[BloatPawnList.Length] = P_Bloat(Other);
+                    }
                     return;
                 case Husk:
                     HuskPawnList[HuskPawnList.Length] = P_Husk(Other);
