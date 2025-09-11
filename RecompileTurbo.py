@@ -98,6 +98,7 @@ ExtraStagingPath = None
 if Arguments.extrastage != None:
     ExtraStagingPath = pathlib.Path(Arguments.extrastage)
 
+StepStrings = ["font "]
 WarningStrings = ["warning", "unused local"]
 ErrorStrings = ["error", "unresolved", "failed", "failure", "unknown property"]
 
@@ -159,6 +160,8 @@ def ProcessUCCMake(Process):
         elif any (FlagString in Line.lower() for FlagString in WarningStrings):
             PrintWarning("  " + Line)
             FoundAnyErrors = True
+        elif any (FlagString in Line.lower() for FlagString in StepStrings):
+            PrintStep("  " + Line)
 
         PreviousLine = Line
 
