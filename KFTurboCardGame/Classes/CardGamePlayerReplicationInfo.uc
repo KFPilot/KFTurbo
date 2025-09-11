@@ -10,17 +10,12 @@ var int VoteIndex;
 
 var array< class<TurboCard> > SelectedCardList;
 
-var class<CriticalHitEffect> HitEffectList[4];
-
 replication
 {
 	reliable if ( bNetDirty && Role == ROLE_Authority )
 		OwningReplicationInfo, TurboCardReplicationInfo, VoteIndex;
 	reliable if ( Role < ROLE_Authority )
         SetVoteIndex;
-
-	reliable if ( Role == ROLE_Authority )
-        OnCriticalHit;
 }
 
 static simulated final function CardGamePlayerReplicationInfo GetCardGameLRI(PlayerReplicationInfo PRI)
@@ -94,16 +89,6 @@ function ResetVote()
     ForceNetUpdate();
 }
 
-simulated function OnCriticalHit(Vector Location, int CriticalHitCount)
-{
-    if (Level.NetMode == NM_DedicatedServer || CriticalHitCount <= 0)
-    {
-        return;
-    }
-
-    Spawn(HitEffectList[Min(CriticalHitCount - 1, ArrayCount(HitEffectList) - 1)], OwningReplicationInfo.Owner,, Location);
-}
-
 //Make NetUpdateTime want to update now.
 simulated function ForceNetUpdate()
 {
@@ -114,9 +99,4 @@ defaultproperties
 {
     VoteIndex = 0
     NetUpdateFrequency=0.1
-    
-    HitEffectList(0)=class'CriticalHitEffect'
-    HitEffectList(1)=class'CriticalHitEffectDouble'
-    HitEffectList(2)=class'CriticalHitEffectTriple'
-    HitEffectList(3)=class'CriticalHitEffectMax'
 }

@@ -16,6 +16,8 @@ var float PerpetualCriticalHitCooldown;
 
 var int NonCriticalHitCount;
 
+var class<CriticalHitEffect> HitEffectList[4];
+
 var float LastGrenadeThrowTime;
 var float GrenadeBoostTime;
 
@@ -26,10 +28,16 @@ var float HealBoostBoostCooldown;
 var int RackEmUpHeadshotCount;
 var float RackEmUpHeadshotStackExpireTime;
 
+var float LastDropWeaponTime;
+var float MinDropWeaponTime;
+
 replication
 {
     reliable if (Role == ROLE_Authority)
         LastGrenadeThrowTime, LastHealBoostTime, RackEmUpHeadshotCount, RackEmUpHeadshotStackExpireTime;
+
+	reliable if (Role == ROLE_Authority)
+        ClientCriticalHit;
 }
 
 simulated function PostBeginPlay()
@@ -160,6 +168,26 @@ final simulated function ResetPlayerHeadshot()
 	ForceNetUpdate();
 }
 
+final simulated function bool CanPlayerDropWeapon()
+{
+	return Level.TimeSeconds > LastDropWeaponTime + MinDropWeaponTime;
+}
+
+final simulated function PlayerDroppedWeapon()
+{
+	LastDropWeaponTime = Level.TimeSeconds;
+}
+
+simulated function ClientCriticalHit(Vector Location, int CriticalHitCount)
+{
+    if (Level.NetMode == NM_DedicatedServer || CriticalHitCount <= 0 || PlayerTPRI == None)
+    {
+        return;
+    }
+
+    Spawn(HitEffectList[Min(CriticalHitCount - 1, ArrayCount(HitEffectList) - 1)], PlayerTPRI.Owner,, Location);
+}
+
 defaultproperties
 {
 	bHasCheatedDeath=false
@@ -172,6 +200,11 @@ defaultproperties
 	PerpetualCriticalHitCooldown=10.f
 
 	NonCriticalHitCount=0
+    
+    HitEffectList(0)=class'CriticalHitEffect'
+    HitEffectList(1)=class'CriticalHitEffectDouble'
+    HitEffectList(2)=class'CriticalHitEffectTriple'
+    HitEffectList(3)=class'CriticalHitEffectMax'
 
 	LastGrenadeThrowTime=0.f
 	GrenadeBoostTime=5.f
@@ -179,6 +212,8 @@ defaultproperties
 	LastHealBoostTime=0.f
 	HealBoostBoostTime=5.f
 	HealBoostBoostCooldown=10.f
+
+	MinDropWeaponTime=0.f
 
 	//Replicates now that the client has to be aware of certain properties on here.
     RemoteRole=ROLE_SimulatedProxy
