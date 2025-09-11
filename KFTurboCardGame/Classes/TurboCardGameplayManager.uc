@@ -43,6 +43,7 @@ var CardDeltaStack ProConCardSelectionCountDelta;
 var CardFlag CurseOfRaFlag;
 var CurseOfRaManager CurseOfRaManager;
 var CardFlag BlackoutFlag;
+var CardFlag ButterFingersFlag;
 
 //FRIENDLY FIRE
 var CardModifierAdditiveStack FriendlyFireModifier;
@@ -545,6 +546,11 @@ function BlackoutFlagChanged(CardFlag Flag, bool bIsEnabled)
     CardClientModifier.bBlackout = bIsEnabled;
     CardClientModifier.UpdateBlackout();
     CardClientModifier.ForceNetUpdate();
+}
+
+function ButterFingersFlagChanged(CardFlag Flag, bool bIsEnabled)
+{
+    CardGameRules.bZedDamageDropsWeapon = bIsEnabled;
 }
 
 //FRIENDLY FIRE
@@ -1396,6 +1402,14 @@ defaultproperties
         OnFlagSetChanged=BlackoutFlagChanged
     End Object
     BlackoutFlag=CardFlag'BlackoutCardFlag'
+
+    Begin Object Name=ButterFingersCardFlag Class=CardFlag
+        FlagID="ButterFingers"
+        OnFlagSetChanged=ButterFingersFlagChanged
+    End Object
+    ButterFingersFlag=CardFlag'ButterFingersCardFlag'
+
+    //ButterFingersFlag
 
 //FRIENDLY FIRE
     Begin Object Name=FriendlyFireModifierStack Class=CardModifierAdditiveStack
