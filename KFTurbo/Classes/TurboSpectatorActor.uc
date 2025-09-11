@@ -88,7 +88,12 @@ auto state AwaitingInitialize
             return;
         }
 
-        if (Level.GetLocalPlayerController() != None && Level.GetLocalPlayerController().PlayerReplicationInfo == OwningPRI)
+        if (Level.NetMode != NM_DedicatedServer && (Level.GetLocalPlayerController() == None || Level.GetLocalPlayerController().PlayerReplicationInfo == None))
+        {
+            return;
+        }
+
+        if (Level.GetLocalPlayerController().PlayerReplicationInfo == OwningPRI)
         {
             log("Spectator Actor for "@OwningPRI.PlayerName@" is the local player's.", 'KFTurboSpectatorActor');
             OwningController = TurboPlayerController(Level.GetLocalPlayerController());
