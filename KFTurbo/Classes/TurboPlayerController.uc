@@ -223,6 +223,12 @@ event ClientOpenMenu(string Menu, optional bool bDisconnect,optional string Msg1
 	Super.ClientOpenMenu(Menu, bDisconnect, Msg1, Msg2);	
 }
 
+//Returns true if player joined in the last 10 seconds.
+final simulated function bool PlayerJoinedRecently()
+{
+	return PlayerReplicationInfo == None || PlayerReplicationInfo.StartTime == 0.f || Level.GRI == None || (Abs(Level.GRI.ElapsedTime - PlayerReplicationInfo.StartTime) < 10);
+}
+
 simulated event ReceiveLocalizedMessage(class<LocalMessage> Message, optional int Switch, optional PlayerReplicationInfo RelatedPRI_1, optional PlayerReplicationInfo RelatedPRI_2, optional Object OptionalObject )
 {
 	local class<TurboLocalMessage> TurboLocalMessage;
@@ -242,6 +248,10 @@ simulated event ReceiveLocalizedMessage(class<LocalMessage> Message, optional in
 			Message = class'TurboMessagePickup';
 			break;
 		case class'ServerPerks.KFVetEarnedMessageSR':
+			if (PlayerJoinedRecently())
+			{
+				return;
+			}
 			Message = class'TurboMessageVeterancy';
 			break;
 	}
