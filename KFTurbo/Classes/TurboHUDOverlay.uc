@@ -181,3 +181,12 @@ static final function Color MakeColor(byte R, byte G, byte B, byte A)
 	C.A = A;
 	return C;
 }
+
+static final function Color LerpColor(float Alpha, Color A, Color B)
+{
+	A.R = Round(FClamp((float(A.R) + Alpha * (float(B.R)-float(A.R))), 0.f, 255.f));
+	A.G = Round(FClamp((float(A.G) + Alpha * (float(B.G)-float(A.G))), 0.f, 255.f));
+	A.B = Round(FClamp((float(A.B) + Alpha * (float(B.B)-float(A.B))), 0.f, 255.f));
+	A.A = Round(FClamp((float(A.A) + Alpha * (float(B.A)-float(A.A))), 0.f, 255.f));
+	return A;
+}
