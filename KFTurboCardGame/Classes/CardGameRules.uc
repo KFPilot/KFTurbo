@@ -112,6 +112,8 @@ var array<MassDetonationEntry> MassDetonationList;
 
 var bool bKillsGiveShield;
 
+var bool bZedDamageDropsWeapon;
+
 static final function bool IsBerserker(Pawn Pawn)
 {
     if (Pawn == None || KFPlayerReplicationInfo(Pawn.PlayerReplicationInfo) == None)
@@ -299,6 +301,11 @@ function int NetDamage(int OriginalDamage, int Damage, Pawn Injured, Pawn Instig
     local class<KFWeaponDamageType> WeaponDamageType;
     local TurboPlayerCardCustomInfo InjuredCardInfo, InstigatorCardInfo;
     local float DamageMultiplier;
+
+    //I hate how much we cast these so I'm just going to do them all once.
+    local TurboHumanPawn InjuredHumanPawn, InstigatorHumanPawn;
+    local KFMonster InjuredMonster, InstigatorMonster;
+
     Damage = Super.NetDamage(OriginalDamage, Damage, Injured, InstigatedBy, HitLocation, Momentum, DamageType);
 
     if (Damage <= 0)
@@ -308,8 +315,27 @@ function int NetDamage(int OriginalDamage, int Damage, Pawn Injured, Pawn Instig
 
     DamageMultiplier = 1.f;
 
+    InjuredHumanPawn = TurboHumanPawn(Injured);
+    if (InjuredHumanPawn == None)
+    {
+        InjuredMonster = KFMonster(Injured);
+    }
+
+    InstigatorHumanPawn = TurboHumanPawn(InstigatedBy);
+    if (InstigatorHumanPawn == None)
+    {
+        InstigatorMonster = KFMonster(InstigatedBy);
+    }
+    else
+    {
+        if (InstigatedBy.Controller == None || InstigatedBy.Controller.PlayerReplicationInfo == None || !InstigatedBy.Controller.bIsPlayer)
+        {
+            InstigatorCardInfo = FindCustomInfo(TurboPlayerReplicationInfo(InstigatedBy.PlayerReplicationInfo));
+        }
+    }
+
     //Check for outright damage blocking effects first.
-    if (KFHumanPawn(Injured) != None)
+    if (InjuredHumanPawn != None)
     {
         InjuredCardInfo = FindCustomInfo(TurboPlayerReplicationInfo(Injured.PlayerReplicationInfo));
         if (bCheatDeathEnabled && IsInCheatDeathGracePeriod(InjuredCardInfo))
@@ -343,13 +369,8 @@ function int NetDamage(int OriginalDamage, int Damage, Pawn Injured, Pawn Instig
     WeaponDamageType = class<KFWeaponDamageType>(DamageType);
     if (WeaponDamageType != None)
     {
-        if (KFHumanPawn(InstigatedBy) != None)
-        {            
-            if (InstigatedBy.Controller == None || InstigatedBy.Controller.PlayerReplicationInfo == None || !InstigatedBy.Controller.bIsPlayer)
-            {
-                InstigatorCardInfo = FindCustomInfo(TurboPlayerReplicationInfo(InstigatedBy.PlayerReplicationInfo));
-            }
-
+        if (InstigatorHumanPawn != None)
+        {
             if (LowHealthDamageMultiplier != 1.f && ((float(InstigatedBy.Health) / InstigatedBy.HealthMax) < 0.75f))
             {
                 DamageMultiplier *= LowHealthDamageMultiplier;
@@ -386,26 +407,19 @@ function int NetDamage(int OriginalDamage, int Damage, Pawn Injured, Pawn Instig
                 DamageMultiplier *= PlayerRangedDamageMultiplier;
             }
 
-            if ((OnPerkDamageMultiplier != 1.f || OffPerkDamageMultiplier != 1.f) && KFHumanPawn(InstigatedBy) != None && KFPlayerReplicationInfo(InstigatedBy.PlayerReplicationInfo) != None)
+            if ((OnPerkDamageMultiplier != 1.f || OffPerkDamageMultiplier != 1.f) && KFPlayerReplicationInfo(InstigatedBy.PlayerReplicationInfo) != None)
             {
-                ApplyPerkDamageModifiers(DamageMultiplier, KFHumanPawn(InstigatedBy), KFPlayerReplicationInfo(InstigatedBy.PlayerReplicationInfo), WeaponDamageType);
-            }
-
-            if (KFMonster(Injured) != None)
-            {
-                DamageMultiplier *= GetCriticalHitMultiplier(InstigatedBy, InstigatorCardInfo, HitLocation);
-
-                MonsterNetDamage(DamageMultiplier, KFMonster(Injured), InstigatedBy, InstigatorCardInfo, HitLocation, Momentum, WeaponDamageType);
+                ApplyPerkDamageModifiers(DamageMultiplier, InstigatorHumanPawn, KFPlayerReplicationInfo(InstigatedBy.PlayerReplicationInfo), WeaponDamageType);
             }
         }
 
-        if (KFHumanPawn(Injured) != None && WeaponDamageType.default.bIsExplosive)
+        if (InjuredHumanPawn != None && WeaponDamageType.default.bIsExplosive)
         {
             DamageMultiplier *= ExplosiveDamageTakenMultiplier;
         }
     }
     
-    if (KFMonster(InstigatedBy) != None)
+    if (InstigatorMonster != None)
     {
         DamageMultiplier *= MonsterDamageMultiplier;
 
@@ -425,25 +439,25 @@ function int NetDamage(int OriginalDamage, int Damage, Pawn Injured, Pawn Instig
         }
     }
 
-    if (KFHumanPawn(InstigatedBy) != None)
+    if (InstigatorHumanPawn != None)
     {
         if (Level.TimeDilation < 0.75f)
         {
             DamageMultiplier *= SlomoDamageMultiplier;
         }
     
-        if (P_Fleshpound(Injured) != None)
+        if (InjuredMonster != None && P_Fleshpound(Injured) != None)
         {
             DamageMultiplier *= FleshpoundDamageMultiplier;
         }
 
-        if (P_Scrake(Injured) != None)
+        if (InjuredMonster != None && P_Scrake(Injured) != None)
         {
             DamageMultiplier *= ScrakeDamageMultiplier;
         }
     }
 
-    if (KFHumanPawn(Injured) != None)
+    if (InjuredHumanPawn != None)
     {
         if (PlayerBurnDamageModifier != 1.f && class<TurboHumanBurned_DT>(DamageType) != None)
         {
@@ -453,27 +467,39 @@ function int NetDamage(int OriginalDamage, int Damage, Pawn Injured, Pawn Instig
         {
             DamageMultiplier *= FallDamageTakenMultiplier;
         }
-        else if (KFMonster(InstigatedBy) != None)
-        {
-            if (MutatorOwner.TurboCardGameplayManagerInfo.BleedManager != None && class<ZombieMeleeDamage>(DamageType) != None && class<TurboHumanBleed_DT>(DamageType) == None)
-            {
-                MutatorOwner.TurboCardGameplayManagerInfo.BleedManager.ApplyBleedToPlayer(KFHumanPawn(Injured));
-            }
-        }
     }
 
     //Apply damage multipliers all at once.
     Damage = float(Damage) * DamageMultiplier;
 
-    if (KFMonster(InstigatedBy) != None && KFHumanPawn(Injured) != None)
+    if (Damage <= 0.f)
     {
-        ApplyThornsDamage(Damage, KFHumanPawn(Injured), KFMonster(InstigatedBy));
+        return 0.f;
+    }
+
+    
+    if (InstigatorCardInfo != None && InjuredMonster != None)
+    {
+        DamageMultiplier *= GetCriticalHitMultiplier(InstigatedBy, InstigatorCardInfo, HitLocation);
+
+        MonsterNetDamage(DamageMultiplier, InjuredMonster, InstigatedBy, InstigatorCardInfo, HitLocation, Momentum, WeaponDamageType);
+    }
+
+
+    if (InstigatorMonster != None && InjuredHumanPawn != None)
+    {
+        ApplyThornsDamage(Damage, InjuredHumanPawn, InstigatorMonster);
+        
+        if (MutatorOwner.TurboCardGameplayManagerInfo.BleedManager != None && class<ZombieMeleeDamage>(DamageType) != None && class<TurboHumanBleed_DT>(DamageType) == None)
+        {
+            MutatorOwner.TurboCardGameplayManagerInfo.BleedManager.ApplyBleedToPlayer(InjuredHumanPawn);
+        }
     }
     
     //If resulting damage was more than 1, check russian roulette if it's enabled.
-    if (Damage > 0.f && bRussianRouletteEnabled && FRand() < 0.001 && class<TurboHumanBurned_DT>(DamageType) == None)
+    if (bRussianRouletteEnabled && FRand() < 0.001 && class<TurboHumanBurned_DT>(DamageType) == None)
     {
-        PerformRussianRouletteEffect(Injured, TurboHumanPawn(Injured) != None);
+        PerformRussianRouletteEffect(Injured, InjuredHumanPawn != None);
 
         if (InstigatedBy == None)
         {
@@ -483,6 +509,11 @@ function int NetDamage(int OriginalDamage, int Damage, Pawn Injured, Pawn Instig
         {
             Injured.Died(InstigatedBy.Controller, class'RussianRoulette_DT', Injured.Location);
         }
+    }
+
+    if (bZedDamageDropsWeapon)
+    {
+        PlayerDropWeapon(InjuredHumanPawn, InjuredCardInfo);
     }
 
 	return Damage;
@@ -622,7 +653,7 @@ function float GetCriticalHitMultiplier(Pawn InstigatedBy, TurboPlayerCardCustom
     if (!bHasPerformedCriticalHitEffect)
     {
         bHasPerformedCriticalHitEffect = true;
-        class'CardGamePlayerReplicationInfo'.static.GetCardGameLRI(InstigatedBy.Controller.PlayerReplicationInfo).OnCriticalHit(HitLocation, NumCriticalHits);
+        PlayerCardInfo.ClientCriticalHit(HitLocation, NumCriticalHits);
     }
     
     return CriticalHitDamageMultiplier * float(NumCriticalHits);
@@ -648,6 +679,22 @@ function PerformRussianRouletteEffect(Pawn KilledPawn, bool bWasPlayer)
     {
         Spawn(class'RouletteEffect', KilledPawn,, KilledPawn.Location + (vect(0, 0, 1) * KilledPawn.CollisionHeight));
     }
+}
+
+function PlayerDropWeapon(TurboHumanPawn Injured, TurboPlayerCardCustomInfo PlayerCardInfo)
+{
+    if (!PlayerCardInfo.CanPlayerDropWeapon() || FRand() > 0.05f)
+    {
+        return;
+    }
+
+    if (KFWeapon(Injured.Weapon) == None || KFWeapon(Injured.Weapon).bKFNeverThrow)
+    {
+        return;
+    }
+
+    Injured.TossWeapon(vect(0,0,0));
+    PlayerCardInfo.PlayerDroppedWeapon();
 }
 
 function ScoreKill(Controller Killer, Controller Killed)
@@ -1195,6 +1242,8 @@ defaultproperties
     bSuddenDeathEnabled=false
     bPerformingSuddenDeath=false
     bMassDetonationEnabled=false
+    bKillsGiveShield=false
+    bZedDamageDropsWeapon=false
     bCheatDeathEnabled=false
     PlayerThornsDamageMultiplier=1.f
 
