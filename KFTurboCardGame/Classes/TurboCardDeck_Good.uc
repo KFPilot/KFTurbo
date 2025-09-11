@@ -53,14 +53,7 @@ function ActivateExplosiveRange(TurboCardGameplayManager GameplayManager, TurboC
 
 function ActivateFreeArmor(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
-    if (bActivate)
-    {
-        GameplayManager.FreeArmorFlag.SetFlag(Card);
-    }
-    else
-    {
-        GameplayManager.FreeArmorFlag.ClearFlag();
-    }
+    Card.UpdateFlag(GameplayManager.FreeArmorFlag, bActivate);
 }
 
 function ActivateIncreaseSelectableCards(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)

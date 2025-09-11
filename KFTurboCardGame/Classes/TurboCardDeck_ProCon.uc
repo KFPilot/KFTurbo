@@ -96,15 +96,14 @@ function ActivateTradeIn(TurboCardGameplayManager GameplayManager, TurboCard Car
 
 function ActivateExtraMoneyTraderTime(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
+    Card.UpdateFlag(GameplayManager.ShortTermRewardFlag, bActivate);
     if (bActivate)
     {
         GameplayManager.TraderTimeModifier.AddModifier(0.85f, Card);
-        GameplayManager.ShortTermRewardFlag.SetFlag(Card);
     }
     else
     {
         GameplayManager.TraderTimeModifier.RemoveModifier(Card);
-        GameplayManager.ShortTermRewardFlag.ClearFlag();
     }
 }
 
@@ -403,14 +402,7 @@ function ActivateUnlicensedPractitioner(TurboCardGameplayManager GameplayManager
 
 function ActivateRussianRoulette(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
-    if (bActivate)
-    {
-        GameplayManager.RussianRouletteFlag.SetFlag(Card);
-    }
-    else
-    {
-        GameplayManager.RussianRouletteFlag.ClearFlag();
-    }
+    Card.UpdateFlag(GameplayManager.RussianRouletteFlag, bActivate);
 }
 
 function ActivateConcentratedHeal(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)

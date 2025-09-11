@@ -41,15 +41,15 @@ function ActivateHairtriggerFleshpounds(TurboCardGameplayManager GameplayManager
 
 function ActivateOverclockedHusks(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
+    Card.UpdateFlag(GameplayManager.HuskAmountBoostFlag, bActivate);
+
     if (bActivate)
     {
         GameplayManager.MonsterHuskRefireTimeModifier.AddModifier(0.0000001f, Card);
-        GameplayManager.HuskAmountBoostFlag.SetFlag(Card);
     }
     else
     {
         GameplayManager.MonsterHuskRefireTimeModifier.RemoveModifier(Card);
-        GameplayManager.HuskAmountBoostFlag.ClearFlag();
     }
 }
 
@@ -93,26 +93,12 @@ function ActivateSuperSiren(TurboCardGameplayManager GameplayManager, TurboCard 
 
 function ActivateDisablePerkSwitching(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
-    if (bActivate)
-    {
-        GameplayManager.LockPerkSelectionFlag.SetFlag(Card);
-    }
-    else
-    {
-        GameplayManager.LockPerkSelectionFlag.ClearFlag();
-    }
+    Card.UpdateFlag(GameplayManager.LockPerkSelectionFlag, bActivate);
 }
 
 function ActivateCashSlowsPlayers(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
-    if (bActivate)
-    {
-        GameplayManager.PlayerGreedSlowsFlag.SetFlag(Card);
-    }
-    else
-    {
-        GameplayManager.PlayerGreedSlowsFlag.ClearFlag();
-    }
+    Card.UpdateFlag(GameplayManager.PlayerGreedSlowsFlag, bActivate);
 }
 
 function ActivateSuperSlowPlayers(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
@@ -129,38 +115,17 @@ function ActivateSuperSlowPlayers(TurboCardGameplayManager GameplayManager, Turb
 
 function ActivateFreezeTag(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
-    if (bActivate)
-    {
-        GameplayManager.PlayerFreezeTagFlag.SetFlag(Card);
-    }
-    else
-    {
-        GameplayManager.PlayerFreezeTagFlag.ClearFlag();
-    }
+    Card.UpdateFlag(GameplayManager.PlayerFreezeTagFlag, bActivate);
 }
 
 function ActivateSuddenDeath(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
-    if (bActivate)
-    {
-        GameplayManager.SuddenDeathFlag.SetFlag(Card);
-    }
-    else
-    {
-        GameplayManager.SuddenDeathFlag.ClearFlag();
-    }
+    Card.UpdateFlag(GameplayManager.SuddenDeathFlag, bActivate);
 }
 
 function ActivateBleedingPlayers(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
-    if (bActivate)
-    {
-        GameplayManager.BleedDamageFlag.SetFlag(Card);
-    }
-    else
-    {
-        GameplayManager.BleedDamageFlag.ClearFlag();
-    }
+    Card.UpdateFlag(GameplayManager.BleedDamageFlag, bActivate);
 }
 
 function ActivateLightWeightPlayers(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
@@ -179,14 +144,7 @@ function ActivateLightWeightPlayers(TurboCardGameplayManager GameplayManager, Tu
 
 function ActivatePoorlyOiledMachine(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
-    if (bActivate)
-    {
-        GameplayManager.PlayerLowHealthSlowsFlag.SetFlag(Card);
-    }
-    else
-    {
-        GameplayManager.BleedDamageFlag.ClearFlag();
-    }
+    Card.UpdateFlag(GameplayManager.PlayerLowHealthSlowsFlag, bActivate);
 }
 
 function ActivateSlipperyFloor(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
@@ -217,14 +175,7 @@ function ActivateNoodleArms(TurboCardGameplayManager GameplayManager, TurboCard 
 
 function ActivateInPlainSight(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
-    if (bActivate)
-    {
-        GameplayManager.PlainSightSpawnFlag.SetFlag(Card);
-    }
-    else
-    {
-        GameplayManager.PlainSightSpawnFlag.ClearFlag();
-    }
+    Card.UpdateFlag(GameplayManager.PlainSightSpawnFlag, bActivate);
 }
 
 function ActivateHandCramps(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
@@ -241,14 +192,7 @@ function ActivateHandCramps(TurboCardGameplayManager GameplayManager, TurboCard 
 
 function ActivateDoorless(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
-    if (bActivate)
-    {
-        GameplayManager.ExplodeDoorFlag.SetFlag(Card);
-    }
-    else
-    {
-        GameplayManager.ExplodeDoorFlag.ClearFlag();
-    }
+    Card.UpdateFlag(GameplayManager.ExplodeDoorFlag, bActivate);
 }
 
 function ActivateSmallerBlind(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
@@ -265,50 +209,22 @@ function ActivateSmallerBlind(TurboCardGameplayManager GameplayManager, TurboCar
 
 function ActivateBorrowedTime(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
-    if (bActivate)
-    {
-        GameplayManager.BorrowedTimeFlag.SetFlag(Card);
-    }
-    else
-    {
-        GameplayManager.BorrowedTimeFlag.ClearFlag();
-    }
+    Card.UpdateFlag(GameplayManager.BorrowedTimeFlag, bActivate);
 }
 
 function ActivateBankRun(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
-    if (bActivate)
-    {
-        GameplayManager.BankRunFlag.SetFlag(Card);
-    }
-    else
-    {
-        GameplayManager.BankRunFlag.ClearFlag();
-    }
+    Card.UpdateFlag(GameplayManager.BankRunFlag, bActivate);
 }
 
 function ActivateNoRestForTheWicked(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
-    if (bActivate)
-    {
-        GameplayManager.NoRestForTheWickedFlag.SetFlag(Card);
-    }
-    else
-    {
-        GameplayManager.NoRestForTheWickedFlag.ClearFlag();
-    }
+    Card.UpdateFlag(GameplayManager.NoRestForTheWickedFlag, bActivate);
 }
 
 function ActivateCurseOfRa(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
-    if (bActivate)
-    {
-        GameplayManager.CurseOfRaFlag.SetFlag(Card);
-    }
-    else
-    {
-        GameplayManager.CurseOfRaFlag.ClearFlag();
-    }
+    Card.UpdateFlag(GameplayManager.CurseOfRaFlag, bActivate);
 }
 
 function ActivateGarbageDay(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
@@ -325,26 +241,12 @@ function ActivateGarbageDay(TurboCardGameplayManager GameplayManager, TurboCard 
 
 function ActivateNoJunkies(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
-    if (bActivate)
-    {
-        GameplayManager.NoSyringeFlag.SetFlag(Card);
-    }
-    else
-    {
-        GameplayManager.NoSyringeFlag.ClearFlag();
-    }
+    Card.UpdateFlag(GameplayManager.NoSyringeFlag, bActivate);
 }
 
 function ActivateMarkedForDeath(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
-    if (bActivate)
-    {
-        GameplayManager.MarkedForDeathFlag.SetFlag(Card);
-    }
-    else
-    {
-        GameplayManager.MarkedForDeathFlag.ClearFlag();
-    }
+    Card.UpdateFlag(GameplayManager.MarkedForDeathFlag, bActivate);
 }
 
 function ActivateRestrictedExplosives(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
@@ -361,26 +263,12 @@ function ActivateRestrictedExplosives(TurboCardGameplayManager GameplayManager, 
 
 function ActivateOopsAllScrakes(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
-    if (bActivate)
-    {
-        GameplayManager.ScrakeMonsterReplacementFlag.SetFlag(Card);
-    }
-    else
-    {
-        GameplayManager.ScrakeMonsterReplacementFlag.ClearFlag();
-    }
+    Card.UpdateFlag(GameplayManager.ScrakeMonsterReplacementFlag, bActivate);
 }
 
 function ActivateMixedSignals(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
-    if (bActivate)
-    {
-        GameplayManager.RandomTraderChangeFlag.SetFlag(Card);
-    }
-    else
-    {
-        GameplayManager.RandomTraderChangeFlag.ClearFlag();
-    }
+    Card.UpdateFlag(GameplayManager.RandomTraderChangeFlag, bActivate);
 }
 
 function ActivateHighThroughput(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
@@ -438,6 +326,11 @@ function ActivateBlackout(TurboCardGameplayManager GameplayManager, TurboCard Ca
 function ActivateUnusualMutation(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
     Card.UpdateModifier(GameplayManager.SpecialVariantSpawnModifier, 5.f, bActivate);
+}
+
+function ActivateButterFingers(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
+{
+    Card.UpdateFlag(GameplayManager.ButterFingersFlag, bActivate);
 }
 
 defaultproperties
@@ -866,4 +759,16 @@ defaultproperties
         OnActivateCard=ActivateUnusualMutation
     End Object
     DeckCardObjectList(38)=TurboCard'UnusualMutation'
+    
+    Begin Object Name=ButterFingers Class=TurboCard_Evil
+        CardName(0)="Butter"
+        CardName(1)="Fingers"
+        CardDescriptionList(0)="Player receive"
+        CardDescriptionList(1)="a 5% chance to"
+        CardDescriptionList(2)="drop their weapon"
+        CardDescriptionList(3)="when hit by a zed."
+        CardID="EVIL_BUTTERFING"
+        OnActivateCard=ActivateButterFingers
+    End Object
+    DeckCardObjectList(39)=TurboCard'ButterFingers'
 }

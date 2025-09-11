@@ -65,7 +65,7 @@ final function UpdateFlag(CardFlag Flag, bool bActivate)
 	}
 	else
 	{
-		Flag.ClearFlag();
+		Flag.ClearFlag(Self);
 	}
 }
 

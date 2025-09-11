@@ -193,14 +193,7 @@ function ActivateSirenScreemNullify(TurboCardGameplayManager GameplayManager, Tu
 
 function ActivateCheatDeath(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
-    if (bActivate)
-    {
-        GameplayManager.CheatDeathFlag.SetFlag(Card);
-    }
-    else
-    {
-        GameplayManager.CheatDeathFlag.ClearFlag();
-    }
+    Card.UpdateFlag(GameplayManager.CheatDeathFlag, bActivate);
 }
 
 function ActivateUnshakeable(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
@@ -281,28 +274,20 @@ function ActivatePackedShells(TurboCardGameplayManager GameplayManager, TurboCar
 
 function ActivateSuperGrenades(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
+    Card.UpdateFlag(GameplayManager.SuperGrenadesFlag, bActivate);
     if (bActivate)
     {
         GameplayManager.PlayerGrenadeMaxAmmoModifier.AddModifier(2.f, Card);
-        GameplayManager.SuperGrenadesFlag.SetFlag(Card);
     }
     else
     {
         GameplayManager.PlayerGrenadeMaxAmmoModifier.RemoveModifier(Card);
-        GameplayManager.SuperGrenadesFlag.ClearFlag();
     }
 }
 
 function ActivateSubstitute(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
-    if (bActivate)
-    {
-        GameplayManager.PlayerDamageSubstituteFlag.SetFlag(Card);
-    }
-    else
-    {
-        GameplayManager.PlayerDamageSubstituteFlag.ClearFlag();
-    }
+    Card.UpdateFlag(GameplayManager.PlayerDamageSubstituteFlag, bActivate);
 }
 
 function ActivateDeepestAmmoPockets(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
@@ -331,14 +316,7 @@ function ActivateFastHands(TurboCardGameplayManager GameplayManager, TurboCard C
 
 function ActivateMassDetonation(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
-    if (bActivate)
-    {
-        GameplayManager.PlayerMassDetonationFlag.SetFlag(Card);
-    }
-    else
-    {
-        GameplayManager.PlayerMassDetonationFlag.ClearFlag();
-    }
+    Card.UpdateFlag(GameplayManager.PlayerMassDetonationFlag, bActivate);
 }
 
 function ActivateEverythingMustGo(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
