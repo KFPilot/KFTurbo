@@ -8,10 +8,10 @@ defaultproperties
 	MaxMonsters=50
 	TotalMonsters=48
 	WaveDifficulty=2.75f
-	RegularSequenceSize=20
+	RegularSequenceSize=18
 	MinMixInSquadCount=6
-	MaxMixInSquadCount=7
-	BeatSize=5
+	MaxMixInSquadCount=6
+	BeatSize=4
 	NextSquadSpawnTime=0.f
 
     //REGULARS
@@ -64,11 +64,13 @@ defaultproperties
 	//BEATS
 	Begin Object Class=TurboMonsterSquad Name=ChallengeBeatSquad0
 		Squad(0)=(Monster=Fleshpound,Count=1)
+		Squad(1)=(Monster=Scrake,Count=1)
 	End Object
 	BeatSquad(6)=TurboMonsterSquad'ChallengeBeatSquad0'
 
 	Begin Object Class=TurboMonsterSquad Name=ChallengeBeatSquad1
 		Squad(0)=(Monster=Fleshpound,Count=1)
+		Squad(1)=(Monster=Scrake,Count=1)
 	End Object
 	BeatSquad(7)=TurboMonsterSquad'ChallengeBeatSquad1'
 }

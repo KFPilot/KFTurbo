@@ -64,11 +64,10 @@ defaultproperties
 
 	Begin Object Class=TurboPlusWaveChallenge Name=Wave7
           MaxMonsters=50
-          TotalMonsters=80
+          TotalMonsters=77
 	     RegularSequenceSize=18
 	     WaveDifficulty=2.75f
 	     NextSquadSpawnTime=0.15f
-          BeatSize=3
 	End Object
 	WaveList(6)=TurboMonsterWave'Wave7'
 
