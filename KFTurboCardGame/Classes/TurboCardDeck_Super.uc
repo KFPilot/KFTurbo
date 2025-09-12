@@ -562,6 +562,7 @@ defaultproperties
         CardName(0)="Cheating Death"
         CardDescriptionList(0)="All players can"
         CardDescriptionList(1)="cheat death once."
+        CardDescriptionList(2)="Does not reset."
         OnActivateCard=ActivateCheatDeath
         CardID="SUPER_CHEATDEATH"
     End Object
