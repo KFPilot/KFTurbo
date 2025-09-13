@@ -3,71 +3,84 @@
 //For more information see https://github.com/KFPilot/KFTurbo.
 class TurboLobbyMenu extends SRLobbyMenu;
 
+var TurboHUDKillingFloor TurboHUD;
+var ClientPerkRepLink CPRL;
+
 function bool ShowPerkMenu(GUIComponent Sender)
 {
-	if (PlayerOwner() != none)
+	if (PlayerOwner() != None)
+	{
 		PlayerOwner().ClientOpenMenu(string(Class'TurboProfilePage'), false);
+	}
+
 	return true;
+}
+
+function InitComponent(GUIController MyController, GUIComponent MyOwner)
+{
+	Super.InitComponent(MyController, MyOwner);
+
+	TurboHUD = TurboHUDKillingFloor(PlayerOwner().myHUD);
+	CPRL = TurboPlayerController(PlayerOwner()).GetClientPerkRepLink();
+}
+
+function HandleClientNotReady()
+{
+	if (CurrentVeterancyLevel == 255)
+	{
+		return;
+	}
+
+	CurrentVeterancyLevel = 255;
+	lb_PerkEffects.SetContent("None perk active");
+}
+
+function UpdatePerkInformation(class<TurboVeterancyTypes> SelectedVeterancy, int CurrentLevel)
+{
+	if(CurrentVeterancy != SelectedVeterancy || CurrentVeterancyLevel != CurrentLevel)
+	{
+		CurrentVeterancy = SelectedVeterancy;
+		CurrentVeterancyLevel = CurrentLevel;
+		lb_PerkEffects.SetContent(SelectedVeterancy.static.GetVetInfoText(CurrentLevel, 1));
+	}
 }
 
 function DrawPerk(Canvas Canvas)
 {
 	local float X, Y, Width, Height;
-	local int LevelIndex;
-	local float TempX, TempY;
-	local float TempWidth, TempHeight;
-	local float IconSize, ProgressBarWidth;
-	local string PerkName, PerkLevelString;
 	local KFPlayerReplicationInfo KFPRI;
-	local GameReplicationInfo GRI;
-	local Material M,SM;
+	local class<TurboVeterancyTypes> SelectedVeterancy;
 
 	DrawPortrait();
 
-	if( !bMOTDHidden )
-	{
-		X = 9.f/Canvas.ClipX;
-		Y = 32.f/Canvas.ClipY;
-		tb_ServerMOTD.WinWidth = ADBackground.WinWidth-X*2.f;
-		tb_ServerMOTD.WinHeight = ADBackground.WinHeight-Y*1.25f;
-		tb_ServerMOTD.WinLeft = ADBackground.WinLeft+X;
-		tb_ServerMOTD.WinTop = ADBackground.WinTop+Y;
-
-		if( !bMOTDInit )
-		{
-			GRI = PlayerOwner().Level.GRI;
-			if( GRI!=None && GRI.MessageOfTheDay!="" )
-			{
-				bMOTDInit = true;
-				tb_ServerMOTD.SetContent(GRI.MessageOfTheDay);
-			}
-		}
-	}
-
 	KFPRI = KFPlayerReplicationInfo(PlayerOwner().PlayerReplicationInfo);
 
-	if ( KFPRI==None || KFPRI.ClientVeteranSkill==None )
+	if (KFPRI == None || KFPRI.ClientVeteranSkill == None)
 	{
-		if( CurrentVeterancyLevel!=255 )
-		{
-			CurrentVeterancyLevel = 255;
-			lb_PerkEffects.SetContent("None perk active");
-		}
+		HandleClientNotReady();
 		return;
 	}
 
-	LevelIndex = KFPRI.ClientVeteranSkillLevel;
-
-	if (class<SRVeterancyTypes>(KFPRI.ClientVeteranSkill) != None)
+	if (CPRL == None || !CPRL.bRepCompleted)
 	{
-		PerkName = class<SRVeterancyTypes>(KFPRI.ClientVeteranSkill).Static.GetVetInfoText(LevelIndex, 3);
+		if (CPRL == None)
+		{
+			CPRL = TurboPlayerController(PlayerOwner()).GetClientPerkRepLink();
+		}
+
+		HandleClientNotReady();
+		return;
 	}
-	else
+	
+	SelectedVeterancy = class<TurboVeterancyTypes>(KFPRI.ClientVeteranSkill);
+
+	if (SelectedVeterancy == None)
 	{
-		PerkName = KFPRI.ClientVeteranSkill.default.VeterancyName;
+		HandleClientNotReady();
+		return;
 	}
 
-	PerkLevelString = "Lv" @ LevelIndex;
+	UpdatePerkInformation(SelectedVeterancy, KFPRI.ClientVeteranSkillLevel);
 
 	//Get the position size etc in pixels
 	X = (i_BGPerk.WinLeft + 0.00125) * Canvas.ClipX;
@@ -81,71 +94,8 @@ function DrawPerk(Canvas Canvas)
 
 	Width -= 6.f;
 	Height -= 34.f;
-
-	// Offset for the Background
-	TempX = X;
-	TempY = Y;
-
-	// Initialize the Canvas
-	Canvas.Style = 1;
-	Canvas.Font = class'ROHUD'.Static.GetSmallMenuFont(Canvas);
-	Canvas.SetDrawColor(255, 255, 255, 255);
-
-	// Draw Item Background
-	Canvas.SetPos(TempX, TempY);
-	//Canvas.DrawTileStretched(ItemBackground, Width, Height);
 	
-	IconSize = Height - ItemSpacing;
-
-	// Draw Item Background
-	Canvas.DrawTileStretched(PerkBackground, IconSize, IconSize);
-	Canvas.SetPos(TempX + IconSize - 1.0, Y + 8.0);
-	Canvas.DrawTileStretched(InfoBackground, Width - IconSize, Height - ItemSpacing - 16);
-
-	// Offset and Calculate Icon's Size
-	TempX += ItemBorder * Height * 0.25f;
-	TempY += ItemBorder * Height * 0.25f;
-	IconSize = Height - (ItemBorder * 0.5f * Height);
-
-	// Draw Icon
-	Canvas.SetPos(TempX, TempY);
-	if( Class<SRVeterancyTypes>(KFPRI.ClientVeteranSkill)!=None )
-		Class<SRVeterancyTypes>(KFPRI.ClientVeteranSkill).Static.PreDrawPerk(Canvas,KFPRI.ClientVeteranSkillLevel,M,SM);
-	else M = KFPRI.ClientVeteranSkill.default.OnHUDIcon;
-	Canvas.DrawTile(M, IconSize, IconSize, 0, 0, M.MaterialUSize(), M.MaterialVSize());
-
-	TempX += IconSize + (IconToInfoSpacing * Width);
-	TempY += ItemBorder * Height * 0.75f;
-	TempY += TextTopOffset * Height;
-
-	ProgressBarWidth = Width - (TempX - X) - (IconToInfoSpacing * Width);
-
-	// Select Text Color
-	Canvas.SetDrawColor(0, 0, 0, 255);
-
-	// Draw the Perk's Level name
-	Canvas.StrLen(PerkName, TempWidth, TempHeight);
-	Canvas.SetPos(TempX, TempY);
-	Canvas.DrawText(PerkName);
-
-	// Draw the Perk's Level
-	if (PerkLevelString != "")
-	{
-		Canvas.StrLen(PerkLevelString, TempWidth, TempHeight);
-		Canvas.SetPos(TempX + ProgressBarWidth - TempWidth, TempY);
-		Canvas.DrawText(PerkLevelString);
-	}
-
-	TempY += TempHeight + (0.01 * Height);
-
-	if (CurrentVeterancy != KFPRI.ClientVeteranSkill || CurrentVeterancyLevel!=LevelIndex)
-	{
-		CurrentVeterancy = KFPRI.ClientVeteranSkill;
-		CurrentVeterancyLevel = LevelIndex;
-		lb_PerkEffects.SetContent(Class<SRVeterancyTypes>(KFPRI.ClientVeteranSkill).Static.GetVetInfoText(LevelIndex,1));
-	}
-
-	//PerkProgress = KFSteamStatsAndAchievements(PlayerOwner().SteamStatsAndAchievements).GetPerkProgress(CurIndex);
+	class'TurboHUDPerkEntryDrawer'.static.Draw(Canvas, TurboHUD, X, Y, Width, Height, SelectedVeterancy, KFPRI.ClientVeteranSkillLevel, SelectedVeterancy.static.GetTotalProgress(CPRL, KFPRI.ClientVeteranSkillLevel + 1), 0.f, 0.f, true);
 }
 
 defaultproperties

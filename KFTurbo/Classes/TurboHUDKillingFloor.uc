@@ -46,6 +46,16 @@ var localized string MerchantString;
 var(Turbo) Plane InvactiveModulate;
 var(Turbo) Plane ActiveModulate;
 
+//Adds CachedPlayerName. HUD::TextMessages is still maintained in case some other code relied on it.
+struct TurboConsoleMessage
+{
+	var string Text;
+	var color TextColor;
+	var float MessageLife;
+	var PlayerReplicationInfo PRI;
+	var string CachedPlayerName;
+};
+var TurboConsoleMessage TurboTextMessages[8];
 
 simulated event PostRender(Canvas Canvas)
 {
@@ -784,7 +794,7 @@ simulated final function float GetTextMessageLifeTime(string M, class<LocalMessa
 
 function AddTextMessage(string M, class<LocalMessage> MessageClass, PlayerReplicationInfo PRI)
 {
-	local int i;
+	local int Index;
 
 	if (TextReactionSettings != None)
 	{
@@ -796,67 +806,87 @@ function AddTextMessage(string M, class<LocalMessage> MessageClass, PlayerReplic
 		PlayerOwner.PlayBeepSound();
 	}
 
-    for( i=0; i<ConsoleMessageCount; i++ )
+    for (Index = 0; Index < ConsoleMessageCount; Index++)
     {
-        if ( TextMessages[i].Text == "" )
+        if (TextMessages[Index].Text == "")
 		{
             break;
 		}
     }
 
-    if( i == ConsoleMessageCount )
+    if (Index == ConsoleMessageCount)
     {
-        for( i=0; i<ConsoleMessageCount-1; i++ )
+        for(Index = 0; Index < ConsoleMessageCount - 1; Index++)
 		{
-            TextMessages[i] = TextMessages[i+1];
+            TextMessages[Index] = TextMessages[Index + 1];
+			TurboTextMessages[Index] = TurboTextMessages[Index + 1];
 		}
     }
 
-	TextMessages[i].Text = M;
-	TextMessages[i].MessageLife = Level.TimeSeconds + GetTextMessageLifeTime(M, MessageClass, PRI);
-	TextMessages[i].TextColor = MessageClass.static.GetConsoleColor(PRI);
+	TextMessages[Index].Text = M;
+	TextMessages[Index].MessageLife = Level.TimeSeconds + GetTextMessageLifeTime(M, MessageClass, PRI);
+	TextMessages[Index].TextColor = MessageClass.static.GetConsoleColor(PRI);
+	
+	TurboTextMessages[Index].Text = M;
+	TurboTextMessages[Index].MessageLife = Level.TimeSeconds + GetTextMessageLifeTime(M, MessageClass, PRI);
+	TurboTextMessages[Index].TextColor = MessageClass.static.GetConsoleColor(PRI);
 
-	if(MessageClass==class'SayMessagePlus' || MessageClass == class'TeamSayMessagePlus')
+	if (MessageClass == class'SayMessagePlus' || MessageClass == class'TeamSayMessagePlus')
 	{
-		TextMessages[i].PRI = PRI;
+		TextMessages[Index].PRI = PRI;
+		TurboTextMessages[Index].PRI = PRI;
 	}
 	else
 	{
-		TextMessages[i].PRI = None;
+		TextMessages[Index].PRI = None;
+		TurboTextMessages[Index].PRI = None;
+	}
+
+	if (TurboTextMessages[Index].PRI != None)
+	{
+		TurboTextMessages[Index].CachedPlayerName = TurboTextMessages[Index].PRI.PlayerName;
 	}
 }
 
 //Added drop shadow.
 function DisplayMessages(Canvas C)
 {
-	local int i, j, XPos, YPos,MessageCount;
-	local float XL, YL, XXL, YYL;
+	local int Index, MessageIndex, MessageCount;
+	local TurboConsoleMessage Message;
+	local string PlayerName;
+	local int XPos, YPos;
+	local float XL, YL, YYL;
 	local float InitialClip;
+	
 	InitialClip = C.ClipX;
 	C.ClipX = C.SizeX;
 
-	for( i = 0; i < ConsoleMessageCount; i++ )
+	for (Index = 0; Index < ConsoleMessageCount; Index++)
 	{
-		if ( TextMessages[i].Text == "" )
-			break;
-		else if( TextMessages[i].MessageLife < Level.TimeSeconds )
+		if (TextMessages[Index].Text == "")
 		{
-			TextMessages[i].Text = "";
-
-			if( i < ConsoleMessageCount - 1 )
-			{
-				for( j=i; j<ConsoleMessageCount-1; j++ )
-					TextMessages[j] = TextMessages[j+1];
-			}
-			TextMessages[j].Text = "";
 			break;
 		}
-		else
-			MessageCount++;
+
+		if (TextMessages[Index].MessageLife < Level.TimeSeconds)
+		{
+			TextMessages[Index].Text = "";
+			TurboTextMessages[Index].Text = "";
+
+			for (MessageIndex = Index; MessageIndex < ConsoleMessageCount - 1; MessageIndex++)
+			{
+				TextMessages[MessageIndex].Text = "";
+				TurboTextMessages[MessageIndex].Text = "";
+			}
+
+			break;
+		}
+		
+		MessageCount++;
 	}
 
 	YPos = (ConsoleMessagePosY * HudCanvasScale * C.SizeY) + (((1.0 - HudCanvasScale) / 2.0) * C.SizeY);
-	if ( PlayerOwner == none || PlayerOwner.PlayerReplicationInfo == none || !PlayerOwner.PlayerReplicationInfo.bWaitingPlayer )
+	if (PlayerOwner == None || PlayerOwner.PlayerReplicationInfo == None || !PlayerOwner.PlayerReplicationInfo.bWaitingPlayer)
 	{
 		XPos = (ConsoleMessagePosX * HudCanvasScale * C.SizeX) + (((1.0 - HudCanvasScale) / 2.0) * C.SizeX);
 	}
@@ -873,57 +903,39 @@ function DisplayMessages(Canvas C)
 	{
 		C.Font = GetConsoleFont(C);
 	}
-	C.DrawColor = LevelActionFontColor;
 
 	C.TextSize ("A", XL, YL);
 
-	YPos -= YL * MessageCount+1; // DP_LowerLeft
+	YPos -= (YL * MessageCount) + 1; // DP_LowerLeft
 	YPos -= YL; // Room for typing prompt
 
-	for( i=0; i<MessageCount; i++ )
+	for(Index = 0; Index < MessageCount; Index++)
 	{
-		if ( TextMessages[i].Text == "" )
+		if (TurboTextMessages[Index].Text == "")
 		{
 			break;
 		}
 
+		Message = TurboTextMessages[Index];
+
+		PlayerName = Message.CachedPlayerName;
+		if (Message.PRI != None)
+		{
+			PlayerName = Message.PRI.PlayerName;
+		}
+
+		PlayerName $= Message.Text;
+
 		C.DrawColor = C.MakeColor(0, 0, 0, 120);
 		C.SetPos(XPos + 2.f, YPos + 2.f);
-		if( TextMessages[i].PRI!=None )
-		{
-			XL = Class'SRScoreBoard'.Static.DrawCountryName(C,TextMessages[i].PRI,XPos + 2.f,YPos + 2.f);
-			C.SetPos( XPos + XL + 2.f, YPos + 2.f );
-		}
-
-		if( SmileyMsgs.Length!=0 )
-		{
-			DrawScaledSmileyText(class'GUIComponent'.static.StripColorCodes(TextMessages[i].Text),C,,YYL);
-		}
-		else
-		{
-			C.DrawText(class'GUIComponent'.static.StripColorCodes(TextMessages[i].Text),false);
-		}
+		DrawScaledSmileyText(class'GUIComponent'.static.StripColorCodes(PlayerName), C,, YYL);
+		
+		YYL = 0;
 
 		C.DrawColor = C.MakeColor(255, 255, 255, 255);
-		YYL = 0;
-		XXL = 0;
-		
 		C.SetPos(XPos, YPos);
-		if( TextMessages[i].PRI!=None )
-		{
-			XL = Class'SRScoreBoard'.Static.DrawCountryName(C,TextMessages[i].PRI,XPos,YPos);
-			C.SetPos( XPos+XL, YPos );
-		}
-
-		if( SmileyMsgs.Length!=0 )
-		{
-			DrawScaledSmileyText(TextMessages[i].Text,C,,YYL);
-		}
-		else
-		{
-			C.DrawText(TextMessages[i].Text,false);
-		}
-		YPos += (YL+YYL);
+		DrawScaledSmileyText(PlayerName, C,, YYL);
+		YPos += (YL + YYL);
 	}
 	
 	C.ClipX = InitialClip;
@@ -1411,6 +1423,8 @@ static final function ResetCanvas(Canvas Canvas)
 	Canvas.OrgY        = Canvas.default.OrgY;
 	Canvas.CurX        = Canvas.default.CurX;
 	Canvas.CurY        = Canvas.default.CurY;
+	Canvas.ClipX       = Canvas.SizeX;
+	Canvas.ClipY       = Canvas.SizeY;
 	Canvas.Style	   = ERenderStyle.STY_Alpha;
 	Canvas.DrawColor   = default.WhiteColor;
 	Canvas.CurYL       = Canvas.default.CurYL;
