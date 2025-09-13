@@ -19,6 +19,8 @@ simulated function InternalOnOpen()
     if (TurboVRI == None || (TurboVRI != None && !TurboVRI.bMapVote))
     {
         Super.InternalOnOpen();
+        f_Chat.SetVisibility(false);
+        f_Chat.bAcceptsInput = false;
         return;
     }
 
@@ -42,8 +44,6 @@ simulated function InternalOnOpen()
     else
     {
         Index = co_GameDifficulty.MyComboBox.List.FindExtra(string(TurboVRI.CurrentDifficultyConfig));
-
-        log ("Looking for game difficulty " $ TurboVRI.CurrentDifficultyConfig $ " result index " $ Index);
         if (Index != -1)
         {
             co_GameDifficulty.SetIndex(Index);
@@ -51,6 +51,8 @@ simulated function InternalOnOpen()
     }
 
     Super.InternalOnOpen();
+    f_Chat.SetVisibility(false);
+    f_Chat.bAcceptsInput = false;
 }
 
 simulated function GetVoteSelection(GUIComponent Sender, out int MapIndex, out int GameConfig)
@@ -123,40 +125,45 @@ simulated function SendVote(GUIComponent Sender)
 
 defaultproperties
 {
-     Begin Object class=TurboMultiColumnListBox Name=TurboMapListBox
-         HeaderColumnPerc(0)=0.450000
-         HeaderColumnPerc(1)=0.150000
-         HeaderColumnPerc(2)=0.150000
-         HeaderColumnPerc(3)=0.250000
-         bVisibleWhenEmpty=True
-         OnCreateComponent=TurboMapListBox.InternalOnCreateComponent
-         StyleName="ServerBrowserGrid"
-         WinTop=0.371020
-         WinLeft=0.020000
-         WinWidth=0.960000
-         WinHeight=0.293104
-         bBoundToParent=True
-         bScaleToParent=True
-         OnRightClick=TurboMapListBox.InternalOnRightClick
-     End Object
-     lb_MapListBox=TurboMultiColumnListBox'TurboMapListBox'
+    WinLeft=0.1
+    WinTop=0.05
+    WinWidth=0.8
+    WinHeight=0.9
 
-     Begin Object class=TurboCountColumnListBox Name=TurboVoteCountListBox
-         HeaderColumnPerc(0)=0.450000
-         HeaderColumnPerc(1)=0.300000
-         HeaderColumnPerc(2)=0.100000
-         HeaderColumnPerc(3)=0.150000
-         bVisibleWhenEmpty=True
-         OnCreateComponent=TurboVoteCountListBox.InternalOnCreateComponent
-         WinTop=0.052930
-         WinLeft=0.020000
-         WinWidth=0.960000
-         WinHeight=0.223770
-         bBoundToParent=True
-         bScaleToParent=True
-         OnRightClick=TurboVoteCountListBox.InternalOnRightClick
-     End Object
-     lb_VoteCountListBox=TurboCountColumnListBox'TurboVoteCountListBox'
+    Begin Object class=TurboMultiColumnListBox Name=TurboMapListBox
+        HeaderColumnPerc(0)=0.450000
+        HeaderColumnPerc(1)=0.150000
+        HeaderColumnPerc(2)=0.150000
+        HeaderColumnPerc(3)=0.250000
+        bVisibleWhenEmpty=True
+        OnCreateComponent=TurboMapListBox.InternalOnCreateComponent
+        StyleName="ServerBrowserGrid"
+        WinTop=0.371020
+        WinLeft=0.020000
+        WinWidth=0.960000
+        WinHeight=0.6
+        bBoundToParent=True
+        bScaleToParent=True
+        OnRightClick=TurboMapListBox.InternalOnRightClick
+    End Object
+    lb_MapListBox=TurboMultiColumnListBox'TurboMapListBox'
+
+    Begin Object class=TurboCountColumnListBox Name=TurboVoteCountListBox
+        HeaderColumnPerc(0)=0.450000
+        HeaderColumnPerc(1)=0.300000
+        HeaderColumnPerc(2)=0.100000
+        HeaderColumnPerc(3)=0.150000
+        bVisibleWhenEmpty=True
+        OnCreateComponent=TurboVoteCountListBox.InternalOnCreateComponent
+        WinTop=0.052930
+        WinLeft=0.020000
+        WinWidth=0.960000
+        WinHeight=0.223770
+        bBoundToParent=True
+        bScaleToParent=True
+        OnRightClick=TurboVoteCountListBox.InternalOnRightClick
+    End Object
+    lb_VoteCountListBox=TurboCountColumnListBox'TurboVoteCountListBox'
 
     Begin Object Class=moComboBox Name=TurboGameTypeCombo
         CaptionWidth=0.2

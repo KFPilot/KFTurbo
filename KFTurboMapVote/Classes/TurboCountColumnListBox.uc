@@ -15,6 +15,13 @@ function InitComponent(GUIController MyController, GUIComponent MyOwner)
     }
 }
 
+function InitBaseList(GUIListBase LocalList)
+{
+    Super.InitBaseList(LocalList);
+
+    TurboCountColumnList(LocalList).UpdateFontScale();
+}
+
 function InternalOnClick(GUIContextMenu Sender, int Index)
 {
     if (Sender == None || NotifyContextSelect(Sender, Index) || TurboMapVotingPage(MenuOwner) == None)
