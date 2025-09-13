@@ -56,9 +56,12 @@ simulated function PostBeginPlay()
 {
 	Super.PostBeginPlay();
 
-	MaxBatchSizeBytes = Min(MaxBatchSizeBytes, 400); //Safety to prevent this from being set too high.
-	TurboVotingHandler = TurboVotingHandler(VH);
-	TurboVotingHandlerClass = TurboVotingHandler.Class;
+	if (Role == ROLE_Authority)
+	{
+		MaxBatchSizeBytes = Min(MaxBatchSizeBytes, 400); //Safety to prevent this from being set too high.
+		TurboVotingHandler = TurboVotingHandler(VH);
+		TurboVotingHandlerClass = TurboVotingHandler.Class;
+	}
 }
 
 simulated function GetServerData()
@@ -383,6 +386,15 @@ simulated function string GetDifficultyName(int Difficulty)
 	return TurboVotingHandlerClass.default.TurboMapVoteSubmitMessage.static.ResolveDifficultyName(Difficulty);
 }
 
+simulated function OpenWindow()
+{
+	if (GetController().FindMenuByClass(Class'TurboMapVotingPage') == None)
+	{
+		GetController().OpenMenu(string(Class'TurboMapVotingPage'));
+		GetController().OpenMenu(string(Class'MVLikePage'));
+	}
+}
+
 defaultproperties
 {
 	bDebugLog=false
@@ -393,5 +405,5 @@ defaultproperties
 	MaxBatchCount=5
 	MaxBatchSizeBytes=320
 
-	BatchMapDataFormat="%m|%p|%e|%s|%rp|%rn"
+	BatchMapDataFormat="%m|%p|%s|%e|%rp|%rn"
 }
