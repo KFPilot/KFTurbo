@@ -227,7 +227,7 @@ simulated function CheckForVoiceCommandMark(Name Type, int Index)
 	}
 }
 
-simulated function SetVeterancyTierPreference(class<TurboVeterancyTypes> PerkClass, int TierPreference)
+simulated function SetVeterancyTierPreference(class<TurboVeterancyTypes> PerkClass, int TierPreference, optional bool bSkipSaveConfig)
 {
 	local TurboRepLink TurboRepLink;
 
@@ -266,7 +266,11 @@ simulated function SetVeterancyTierPreference(class<TurboVeterancyTypes> PerkCla
 	}
 
 	TurboRepLink.SetVeterancyTierPreference(PerkClass, TierPreference);
-	SaveConfig();
+
+	if (!bSkipSaveConfig)
+	{
+		SaveConfig();
+	}
 }
 
 simulated function bool InitializeVeterancyTierPreferences()
