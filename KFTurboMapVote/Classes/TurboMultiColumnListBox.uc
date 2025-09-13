@@ -20,8 +20,7 @@ function InitComponent(GUIController MyController, GUIComponent MyOwner)
 function InitBaseList(GUIListBase LocalList)
 {
     Super.InitBaseList(LocalList);
-
-    log("LocalList:"@LocalList);
+    
     TurboMultiColumnList(LocalList).UpdateFontScale();
 }
 
