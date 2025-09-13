@@ -261,7 +261,7 @@ simulated function AttachToActor(Actor Other)
 
     if (Other != None)
     {
-        Log("Attaching to: "$Other);
+        Log("Attaching to: "$Other, 'KFTurboSpectatorActor');
         AttachActor = Other;
         SetBase(Other);
     }
@@ -465,7 +465,7 @@ defaultproperties
     bTickVisibility=True
     bIsVisible=False
 
-    bDebugSpectatorActor=true
+    bDebugSpectatorActor=False
 
     DrawType=DT_None
     bHidden=True //Default bHidden is True to let us warm up before showing the actor.
