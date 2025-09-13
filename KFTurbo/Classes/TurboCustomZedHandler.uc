@@ -41,9 +41,6 @@ function PostBeginPlay()
         ConsoleCommand("Suppress KFTurboCustomZedHandler");
     }
 
-    bAllowRandomness = !KFTurboGameTypePlus(Level.Game).IsHighDifficulty();
-    bRandomizeProgressAtWaveStart = bAllowRandomness;
-
     if (bAllowRandomness)
     {
         ReplacementRateMultiplier *= 0.5f;
@@ -53,6 +50,10 @@ function PostBeginPlay()
 function WaveStarted(KFTurboGameType GameType, int StartedWave)
 {
     local int Index;
+    
+    bAllowRandomness = !KFTurboGameTypePlus(Level.Game).IsHighDifficulty();
+    bRandomizeProgressAtWaveStart = bAllowRandomness;
+
     if (bRandomizeProgressAtWaveStart)
     {
         for (Index = 0; Index < ReplacementList.Length; Index++)
