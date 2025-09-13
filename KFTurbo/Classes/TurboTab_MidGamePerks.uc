@@ -17,6 +17,29 @@ function bool OnSaveButtonClicked(GUIComponent Sender)
 	return true;
 }
 
+function OnPerkSelected(GUIComponent Sender)
+{
+	local ClientPerkRepLink ST;
+	local byte Index;
+
+	ST = Class'ClientPerkRepLink'.Static.FindStats(PlayerOwner());
+
+	if (ST == None || ST.CachePerks.Length == 0)
+	{
+		if (ST != None)
+        {
+			ST.ServerRequestPerks();
+        }
+
+		lb_PerkEffects.SetContent(PleaseWaitStr);
+        return;
+	}
+
+    Index = lb_PerkSelect.GetIndex();
+    lb_PerkEffects.SetContent(ST.CachePerks[Index].PerkClass.Static.GetVetInfoText(ST.CachePerks[Index].CurrentLevel - 1, 1));
+    lb_PerkProgress.List.PerkChanged(None, Index);
+}
+
 defaultproperties
 {
      Begin Object Class=TurboPerkSelectListBox Name=PerkSelectList
