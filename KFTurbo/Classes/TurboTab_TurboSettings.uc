@@ -4,21 +4,22 @@
 class TurboTab_TurboSettings extends SRTab_Base;
 
 var automated GUISectionBackground LeftSection, RightSection, MiddleSection;
-var automated GUIButton DesiredRankButton;
 var automated moCheckbox MerchantReplacementCheckBox;
 var automated moCheckbox ShiftToTradeCheckBox;
 var automated moCheckbox F3ToVoteYesCheckBox;
 var automated moCheckbox PipebombGroupCheckBox;
 var automated moCheckbox UseBaseGameChatFontBox;
 var automated moComboBox FontLocaleComboBox;
-var Color PerkLabelTextColor;
-var localized string TierOptionList[9];
 
-var bool bHasInitialized;
-var array< class<TurboVeterancyTypes> > VeterancyClassList;
-var array< GUIComboBox > VeterancyTierComboBoxList;
+var automated moButton NeonWeaponConfigureButton;
 
 var string LocaleOptionList[3]; //3 for now (ENG/JPN/CYR). KOR will be added eventually but need to figure out the character set.
+
+//Returns the container responsible for holding custom options.
+function GUISectionBackground GetCustomOptionContainer()
+{
+    return RightSection;
+}
 
 function ShowPanel(bool bShow)
 {
@@ -29,161 +30,64 @@ function ShowPanel(bool bShow)
         return;
 	}
 
-    if (!bHasInitialized)
-    {
-        if (!IsVeterancyTierPreferenceReady())
-        {
-            DesiredRankButton.DisableMe();
-            return;
-        }
-        
-        DesiredRankButton.EnableMe();
-        InitializePage();
-        bHasInitialized = true;
-        return;
-    }
-
     UpdatePage();
 }
 
-function bool IsVeterancyTierPreferenceReady()
+function InitComponent(GUIController MyController, GUIComponent MyOwner)
 {
     local TurboPlayerController PlayerController;
-	local ClientPerkRepLink CPRL;
-	local TurboRepLink TRL;
-
+    Super.InitComponent(MyController, MyOwner);
     PlayerController = TurboPlayerController(PlayerOwner());
 
-    if (PlayerController.TurboInteraction == None || !PlayerController.TurboInteraction.bHasInitializedPerkTierPreference)
-    {
-        return false;
-    }
-
-    CPRL = PlayerController.GetClientPerkRepLink();
-
-    if (CPRL == None || !CPRL.bRepCompleted)
-    {
-        return false;
-    }
-
-    TRL = PlayerController.GetTurboRepLink();
-
-    if (TRL == None)
-    {
-        return false;
-    }
-    
-    return true;
-}
-
-function InitializePage()
-{
-    local TurboPlayerController PlayerController;
-    local ClientPerkRepLink CPRL;
-    local TurboRepLink TRL;
-    local int Index, ComboIndex;
-    local float GUITop;
-    local GUILabel Label;
-    local GUIComboBox ComboBox;
-
-    PlayerController = TurboPlayerController(PlayerOwner());
-    CPRL = PlayerController.GetClientPerkRepLink();
-    TRL = PlayerController.GetTurboRepLink();
-
-    VeterancyClassList.Length = CPRL.CachePerks.Length;
-    VeterancyTierComboBoxList.Length = VeterancyClassList.Length;
-    GUITop = LeftSection.WinTop + 0.03f;
-
-    for (Index = 0; Index < VeterancyClassList.Length; Index++)
-    {
-        VeterancyClassList[Index] = class<TurboVeterancyTypes>(CPRL.CachePerks[Index].PerkClass);
-        Label = GUILabel(AddComponent(string(class'GUILabel')));
-        Label.Caption = VeterancyClassList[Index].default.VeterancyName;
-        Label.bBoundToParent = true;
-        Label.bScaleToParent = true;
-        Label.TextColor = PerkLabelTextColor;
-        Label.WinTop = GUITop;
-        Label.WinLeft = 0.04f;
-        Label.WinHeight = 0.04f;
-        Label.WinWidth = 0.16f;
-        GUITop += 0.04f;
-
-        ComboBox = GUIComboBox(AddComponent(string(class'GUIComboBox')));
-        VeterancyTierComboBoxList[Index] = ComboBox;
-        ComboBox.bBoundToParent = true;
-        ComboBox.bScaleToParent = true;
-        ComboBox.WinTop = GUITop;
-        ComboBox.WinLeft = 0.04f;
-        ComboBox.WinHeight = 0.04f;
-        ComboBox.WinWidth = 0.16f;
-        GUITop += 0.06f;
-
-        for (ComboIndex = 0; ComboIndex < ArrayCount(TierOptionList); ComboIndex++)
-        {
-            ComboBox.AddItem(TierOptionList[ComboIndex]);
-        }
-
-        ComboBox.SetIndex(TRL.GetVeterancyTierPreference(VeterancyClassList[Index]));
-    }
-
-    RightSection.ManageComponent(MerchantReplacementCheckBox);
+    LeftSection.ManageComponent(MerchantReplacementCheckBox);
     MerchantReplacementCheckBox.Checked(class'TurboInteraction'.static.UseMerchantReplacement(PlayerController));
-    RightSection.ManageComponent(ShiftToTradeCheckBox);
+    LeftSection.ManageComponent(ShiftToTradeCheckBox);
     ShiftToTradeCheckBox.Checked(class'TurboInteraction'.static.IsShiftTradeEnabled(PlayerController));
-    RightSection.ManageComponent(F3ToVoteYesCheckBox);
+    LeftSection.ManageComponent(F3ToVoteYesCheckBox);
     F3ToVoteYesCheckBox.Checked(class'TurboInteraction'.static.IsF3VoteYesEnabled(PlayerController));
-    RightSection.ManageComponent(PipebombGroupCheckBox);
+    LeftSection.ManageComponent(PipebombGroupCheckBox);
     PipebombGroupCheckBox.Checked(class'TurboInteraction'.static.ShouldPipebombUseSpecialGroup(PlayerController));
-    RightSection.ManageComponent(UseBaseGameChatFontBox);
+    LeftSection.ManageComponent(UseBaseGameChatFontBox);
     UseBaseGameChatFontBox.Checked(class'TurboInteraction'.static.ShouldUseBaseGameFontForChat(PlayerController));
     
     FontLocaleComboBox.bIgnoreChange = true;
-    RightSection.ManageComponent(FontLocaleComboBox);
+    LeftSection.ManageComponent(FontLocaleComboBox);
     FontLocaleComboBox.AddItem(LocaleOptionList[0]);
     FontLocaleComboBox.AddItem(LocaleOptionList[1]);
     FontLocaleComboBox.AddItem(LocaleOptionList[2]);
     FontLocaleComboBox.SetIndex(GetFontLocaleIndex(class'TurboInteraction'.static.GetFontLocale(PlayerController)));
     FontLocaleComboBox.bIgnoreChange = false;
+
+    MiddleSection.ManageComponent(NeonWeaponConfigureButton);
     
     if (PlayerController.HasExtraOptions())
     {
-        MiddleSection.bNoCaption = false;
-        MiddleSection.bVisible = true;
+        GetCustomOptionContainer().bNoCaption = false;
+        GetCustomOptionContainer().SetVisibility(true);
 
-        PlayerController.GenerateExtraOptions(Self, FontLocaleComboBox.TabOrder + 1);
+        PlayerController.GenerateExtraOptions(Self, NeonWeaponConfigureButton.TabOrder + 1);
     }
 }
 
 function UpdatePage()
 {
-    local TurboRepLink TRL;
-    local int Index;
+    local TurboPlayerController PlayerController;
+    PlayerController = TurboPlayerController(PlayerOwner());
+    MerchantReplacementCheckBox.Checked(class'TurboInteraction'.static.UseMerchantReplacement(PlayerController));
+    ShiftToTradeCheckBox.Checked(class'TurboInteraction'.static.IsShiftTradeEnabled(PlayerController));
+    F3ToVoteYesCheckBox.Checked(class'TurboInteraction'.static.IsF3VoteYesEnabled(PlayerController));
+    PipebombGroupCheckBox.Checked(class'TurboInteraction'.static.ShouldPipebombUseSpecialGroup(PlayerController));
+    UseBaseGameChatFontBox.Checked(class'TurboInteraction'.static.ShouldUseBaseGameFontForChat(PlayerController));
+    FontLocaleComboBox.SetIndex(GetFontLocaleIndex(class'TurboInteraction'.static.GetFontLocale(PlayerController)));
 
-    TRL = TurboPlayerController(PlayerOwner()).GetTurboRepLink();
-    for (Index = 0; Index < VeterancyClassList.Length; Index++)
+    if (class'TurboGUINeonWeaponSkins'.static.IsVeterancyTierPreferenceReady(PlayerController))
     {
-        VeterancyTierComboBoxList[Index].SetIndex(TRL.GetVeterancyTierPreference(VeterancyClassList[Index]));
+        NeonWeaponConfigureButton.MyButton.EnableMe();
     }
-}
-
-function bool ApplyDesiredRank(GUIComponent Sender)
-{
-	local TurboInteraction TurboInteraction;
-    local int Index;
-
-    TurboInteraction = TurboPlayerController(PlayerOwner()).TurboInteraction;
-
-    if (TurboInteraction == None)
+    else
     {
-        return true;
+        NeonWeaponConfigureButton.MyButton.DisableMe();
     }
-
-    for (Index = 0; Index < VeterancyClassList.Length; Index++)
-    {
-        TurboInteraction.SetVeterancyTierPreference(VeterancyClassList[Index], VeterancyTierComboBoxList[Index].GetIndex());
-    }
-
-    return true;
 }
 
 function OnMerchantReplacementChanged(GUIComponent Sender)
@@ -285,32 +189,26 @@ function int GetFontLocaleIndex(string Locale)
     return 0;
 }
 
+function OnConfigureNeonWeaponSkinsClicked(GUIComponent Sender)
+{
+	if (Controller.FindMenuByClass(Class'TurboGUINeonWeaponSkins') == None)
+	{
+		Controller.OpenMenu(string(Class'TurboGUINeonWeaponSkins'));
+	}
+}
+
 defaultproperties
 {
-    bHasInitialized = false
-
-    PerkLabelTextColor=(R=255,G=255,B=255,A=255)
-
-    TierOptionList(0)="0 (Red)"
-    TierOptionList(1)="1 (Green)"
-    TierOptionList(2)="2 (Blue)"
-    TierOptionList(3)="3 (Pink)"
-    TierOptionList(4)="4 (Purple)"
-    TierOptionList(5)="5 (Orange)"
-    TierOptionList(6)="6 (Gold)"
-    TierOptionList(7)="7 (Platinum)"
-    TierOptionList(8)="8 (Shining)"
-
     LocaleOptionList(0)="ENG"
     LocaleOptionList(1)="JPN"
     LocaleOptionList(2)="CYR"
 
     Begin Object Class=GUISectionBackground Name=BGLeftSection
         bFillClient=True
-        Caption="Neon Weapon Tier Limit"
+        Caption="Turbo Settings"
         WinTop=0.0125
         WinLeft=0.02
-        WinWidth=0.3
+        WinWidth=0.32
         WinHeight=0.825
         OnPreDraw=BGLeftSection.InternalPreDraw
     End Object
@@ -318,12 +216,11 @@ defaultproperties
 
     Begin Object Class=GUISectionBackground Name=BGMiddleSection
         bFillClient=True
-        bNoCaption=true
-        bVisible=false
-        Caption="Custom Game Settings"
+        bVisible=true
+        Caption="Turbo Settings"
         WinTop=0.0125
-        WinLeft=0.35
-        WinWidth=0.3
+        WinLeft=0.34
+        WinWidth=0.32
         WinHeight=0.825
         OnPreDraw=BGMiddleSection.InternalPreDraw
     End Object
@@ -331,32 +228,23 @@ defaultproperties
 
     Begin Object Class=GUISectionBackground Name=BGRightSection
         bFillClient=True
-        Caption="Turbo Settings"
+        bNoCaption=true
+        bVisible=false
+        Caption="Custom Game Settings"
         WinTop=0.0125
-        WinLeft=0.68
-        WinWidth=0.3
+        WinLeft=0.66
+        WinWidth=0.32
         WinHeight=0.825
         OnPreDraw=BGRightSection.InternalPreDraw
     End Object
     RightSection=GUISectionBackground'BGRightSection'
 
-    Begin Object Class=GUIButton Name=ApplyDesiredRankButton
-        Caption="Apply"
-        TabOrder=50
-        WinTop=0.740000
-        WinLeft=0.04
-        WinWidth=0.100000
-        WinHeight=0.050000
-        OnClick=ApplyDesiredRank
-        OnKeyEvent=ApplyDesiredRankButton.InternalOnKeyEvent
-    End Object
-    DesiredRankButton=GUIButton'ApplyDesiredRankButton'
-
+    //Column 1 options (TabOrder 1 - 9)
     Begin Object Class=moCheckBox Name=MerchantReplacement
         Caption="Use Merchant"
         OnCreateComponent=MerchantReplacement.InternalOnCreateComponent
         Hint="Replaces default Trader with Merchant."
-        TabOrder=51
+        TabOrder=1
         OnChange=TurboTab_TurboSettings.OnMerchantReplacementChanged
     End Object
     MerchantReplacementCheckBox=moCheckBox'MerchantReplacement'
@@ -365,7 +253,7 @@ defaultproperties
         Caption="Press Shift To Trade"
         OnCreateComponent=ShiftTradeMenu.InternalOnCreateComponent
         Hint="Open trader menu in KFTurbo+ and Test Mode by pressing Shift key."
-        TabOrder=52
+        TabOrder=2
         OnChange=TurboTab_TurboSettings.OnShiftToTradeChanged
     End Object
     ShiftToTradeCheckBox=moCheckBox'ShiftTradeMenu'
@@ -374,7 +262,7 @@ defaultproperties
         Caption="Press F3 To Vote Yes"
         OnCreateComponent=F3ToVoteYes.InternalOnCreateComponent
         Hint="Pressing F3 will vote yes."
-        TabOrder=53
+        TabOrder=3
         OnChange=TurboTab_TurboSettings.OnF3ToVoteYesChanged
     End Object
     F3ToVoteYesCheckBox=moCheckBox'F3ToVoteYes'
@@ -383,7 +271,7 @@ defaultproperties
         Caption="Move Pipebomb Special Group"
         OnCreateComponent=PipebombGroupChange.InternalOnCreateComponent
         Hint="Moves the Pipebomb to inventory group 5."
-        TabOrder=54
+        TabOrder=4
         OnChange=TurboTab_TurboSettings.OnPipebombGroupChange
     End Object
     PipebombGroupCheckBox=moCheckBox'PipebombGroupChange'
@@ -392,7 +280,7 @@ defaultproperties
         Caption="Use Base Game Font For Chat"
         OnCreateComponent=UseBaseGameChatFont.InternalOnCreateComponent
         Hint="Chat text will use the base game's font to help with readability in non-english locales."
-        TabOrder=55
+        TabOrder=5
         OnChange=TurboTab_TurboSettings.OnUseBaseGameChatFontChange
     End Object
     UseBaseGameChatFontBox=moCheckBox'UseBaseGameChatFont'
@@ -401,8 +289,18 @@ defaultproperties
         Caption="Font Locale"
         OnCreateComponent=FontLocale.InternalOnCreateComponent
         Hint="Selects which locale font pack to use for UI."
-        TabOrder=56
+        TabOrder=6
         OnChange=TurboTab_TurboSettings.OnFontLocaleChange
     End Object
     FontLocaleComboBox=moComboBox'FontLocale'
+
+    //Column 2 options (TabOrder 11 - 19)
+    Begin Object Class=moButton Name=NeonWeaponSkinsButton
+        Caption="Neon Weapons"
+        ButtonCaption="Configure"
+        TabOrder=11
+        ComponentWidth=0.4
+        OnChange=OnConfigureNeonWeaponSkinsClicked
+    End Object
+    NeonWeaponConfigureButton=moButton'NeonWeaponSkinsButton'
 }

@@ -44,7 +44,7 @@ simulated function GenerateCardOptions(TurboTab_TurboSettings SettingsTab, int T
 	Checkbox.OnCreateComponent=Checkbox.InternalOnCreateComponent;
 	Checkbox.OnChange=OnReduceCardVisibilityOptionChanged;
 	Checkbox.TabOrder = TabOrder;
-    SettingsTab.MiddleSection.ManageComponent(Checkbox);
+    SettingsTab.GetCustomOptionContainer().ManageComponent(Checkbox);
 }
 
 static final function bool SendVoteKeyPressEvent(PlayerController PlayerController, Interactions.EInputKey Key)
