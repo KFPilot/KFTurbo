@@ -18,9 +18,10 @@ struct MovementStepData
 {
     var Vector Location;
     var Rotator Rotation;
-    var float TimeStamp;
     var float Time;
-    var float Speed;
+
+    var Actor AttachParent;
+    var Vector RelativeLocation;
 };
 
 var MovementStepData MovementStep;
@@ -31,7 +32,11 @@ var float LastMovementStepTime;
 var Vector MovementBufferVelocity;
 var float InterpolationRate;
 var float CurrentRoll;
+var Actor AttachActor;
+
 var float RandomOffset;
+var Vector RandomDirection;
+var Rotator CurrentRotation;
 
 var TurboPlayerReplicationInfo OwningPRI;
 var TurboPlayerController OwningController;
@@ -63,14 +68,13 @@ simulated function PostBeginPlay()
     {
         MovementStep.Location = Location;
         MovementStep.Rotation = Rotation;
-        MovementStep.TimeStamp = Level.TimeSeconds;
-        MovementStep.Speed = 1.f;
         OwningPRI = TurboPlayerReplicationInfo(Owner);
         OwningController = TurboPlayerController(OwningPRI.Owner);
     }
 
     LastMovementStepTime = Level.TimeSeconds;
     RandomOffset = FRand();
+    RandomDirection = VRand();
 }
 
 auto state AwaitingInitialize
@@ -142,11 +146,7 @@ simulated function PostNetReceive()
 {
     Super.PostNetReceive();
 
-    if (LastMovementStepTimeStamp != MovementStep.TimeStamp)
-    {
-        UpdateMovementStep();
-        LastMovementStepTimeStamp = MovementStep.TimeStamp;
-    }
+    UpdateMovementStep();
 }
 
 simulated function Tick(float DeltaTime)
@@ -213,6 +213,7 @@ simulated function bool ShouldUpdateMovementStep()
 
 simulated function UpdateMovement(float DeltaTime)
 {
+    local Vector AttachOffset;
     if (OwningController.ViewTarget == None || OwningController.ViewTarget == OwningController)
     {
         BufferLocation = OwningController.Location;
@@ -222,26 +223,53 @@ simulated function UpdateMovement(float DeltaTime)
     {
         BufferLocation = OwningController.ViewTarget.Location;
         BufferRotation = OwningController.Rotation;
-        
-        BufferLocation += vect(0.f, 0.f, 2.f) * OwningController.ViewTarget.default.CollisionHeight * Lerp(RandomOffset, 0.95f, 1.25f);
+        AttachOffset = (vect(0.f, 0.f, 2.f) * OwningController.ViewTarget.default.CollisionHeight * Lerp(RandomOffset, 0.95f, 1.05f)) + (RandomDirection * 5.f);
     }
 
     if (ShouldUpdateMovementStep())
     {
         MovementStep.Location = BufferLocation;
         MovementStep.Rotation = BufferRotation;
-        MovementStep.TimeStamp = Level.TimeSeconds;
         LastSendTime = Level.TimeSeconds + (FRand() * 0.1f);
 
         if (OwningController.ViewTarget == None || OwningController.ViewTarget == OwningController)
         {
-            MovementStep.Speed = 1.f;
+            MovementStep.AttachParent = None;
         }
         else
         {
-            MovementStep.Speed = 4.f;
+            MovementStep.AttachParent = OwningController.ViewTarget;
+        }
+
+        if (MovementStep.AttachParent != None)
+        {
+            MovementStep.Location += AttachOffset;
+            MovementStep.RelativeLocation = AttachOffset;
         }
     }
+}
+
+simulated function AttachToActor(Actor Other)
+{
+    if (AttachActor == Other)
+    {
+        return;
+    }
+
+    SetBase(None);
+    AttachActor = None;
+
+    if (Other != None)
+    {
+        Log("Attaching to: "$Other);
+        AttachActor = Other;
+        SetBase(Other);
+    }
+}
+
+simulated function DetachFromActor()
+{
+    AttachToActor(None);
 }
 
 simulated function UpdateVisibility(float DeltaTime)
@@ -294,19 +322,6 @@ simulated function TickVisibility(float DeltaTime)
 
 simulated function bool ShouldAddStep()
 {
-    local MovementStepData ComparedStep;
-    if (MovementBuffer.Length != 0)
-    {
-        ComparedStep = MovementBuffer[0];
-    }
-    else
-    {
-        ComparedStep.Location = Location;
-        ComparedStep.Rotation = Rotation;
-        ComparedStep.TimeStamp = Level.TimeSeconds;
-        ComparedStep.Time = 0.f;
-    }
-
     return true;
 }
 
@@ -337,61 +352,57 @@ simulated function UpdateMovementStep()
 simulated function TickMovementBuffer(float DeltaTime)
 {
     local int Index;
-    local bool bFoundNextStep;
     local MovementStepData NextStep;
     local Vector StartingLocation, Displacement;
-    local float TotalTimeRemaining;
 
     local Quat CurrentQuat, TemporaryQuat;
     local Vector X, Y, Z;
 
-    bFoundNextStep = false;
-    TotalTimeRemaining = 0.f;
-    for (Index = MovementBuffer.Length - 1; Index >= 0; Index--)
-    {
-        NextStep = MovementBuffer[Index];
-
-        if (bFoundNextStep)
-        {
-            TotalTimeRemaining += MovementBuffer[Index].Time;
-            continue;
-        }
-        
-        bFoundNextStep = true;
-        MovementBuffer[Index].Time -= (DeltaTime);
-        if (MovementBuffer[Index].Time <= 0.f)
-        {
-            DeltaTime = -(MovementBuffer[Index].Time);
-            MovementBuffer[Index].Time = 0.f;
-
-            if (MovementBuffer.Length != 1)
-            {
-                MovementBuffer.Remove(Index, 1);
-            }
-            continue;
-        }
-
-        TotalTimeRemaining += MovementBuffer[Index].Time;
-    }
-
-    if (!bFoundNextStep)
+    if (MovementBuffer.Length == 0)
     {
         return;
     }
 
-    StartingLocation = Location;
-    Displacement = (NextStep.Location - Location);
-    MovementBufferVelocity.X = Lerp(DeltaTime * InterpolationRate * NextStep.Speed, MovementBufferVelocity.X, Displacement.X);
-    MovementBufferVelocity.Y = Lerp(DeltaTime * InterpolationRate * NextStep.Speed, MovementBufferVelocity.Y, Displacement.Y);
-    MovementBufferVelocity.Z = Lerp(DeltaTime * InterpolationRate * NextStep.Speed, MovementBufferVelocity.Z, Displacement.Z);
+    for (Index = MovementBuffer.Length - 1; Index >= 0; Index--)
+    {
+        MovementBuffer[Index].Time -= (DeltaTime);
+        NextStep = MovementBuffer[Index];
+
+        if (NextStep.Time > 0.f)
+        {
+            break;
+        }
+        
+        MovementBuffer[Index].Time = 0.f;
+
+        if (MovementBuffer.Length != 1)
+        {
+            MovementBuffer.Remove(Index, 1);
+        }
+    }
+    
+    AttachToActor(NextStep.AttachParent);
 
     GetAxes(NextStep.Rotation, X, Y, Z);
     CurrentQuat = QuatFromRotator(NextStep.Rotation);
     TemporaryQuat = QuatFromAxisAngle(Z, -90.f);
     CurrentQuat = QuatProduct(CurrentQuat, TemporaryQuat);
+    SetRotation(RLerp(CurrentRotation, QuatToRotator(CurrentQuat), DeltaTime * InterpolationRate * 0.25f));
+    CurrentRotation = Rotation;
 
-    SetRotation(RLerp(Rotation, QuatToRotator(CurrentQuat), DeltaTime * InterpolationRate * 0.25f));
-    SetLocation(Location + (MovementBufferVelocity * DeltaTime * (InterpolationRate * 0.5f * NextStep.Speed)));
+    if (NextStep.AttachParent != None)
+    {
+        SetRelativeLocation(NextStep.RelativeLocation);
+        return;
+    }
+
+    StartingLocation = Location;
+    Displacement = (NextStep.Location - Location);
+    
+    MovementBufferVelocity.X = Lerp(DeltaTime * InterpolationRate, MovementBufferVelocity.X, Displacement.X);
+    MovementBufferVelocity.Y = Lerp(DeltaTime * InterpolationRate, MovementBufferVelocity.Y, Displacement.Y);
+    MovementBufferVelocity.Z = Lerp(DeltaTime * InterpolationRate, MovementBufferVelocity.Z, Displacement.Z);
+    SetLocation(Location + (MovementBufferVelocity * DeltaTime * (InterpolationRate * 0.5f)));
     if (VSizeSquared(Location) < 2.f || (Normal(Location - NextStep.Location) dot Normal(StartingLocation - NextStep.Location)) <= 0.f)
     {
         SetLocation(NextStep.Location);
@@ -454,17 +465,18 @@ defaultproperties
     bTickVisibility=True
     bIsVisible=False
 
-    bDebugSpectatorActor=false
+    bDebugSpectatorActor=true
 
     DrawType=DT_None
     bHidden=True //Default bHidden is True to let us warm up before showing the actor.
-    bSkipActorPropertyReplication=True
-    bReplicateMovement=False
+    
     Physics=PHYS_None
     
     RemoteRole=ROLE_SimulatedProxy
     bAlwaysRelevant=True
     bOnlyRelevantToOwner=False
+    bSkipActorPropertyReplication=True
+    bReplicateMovement=False
     NetUpdateFrequency=8.0
     bNetNotify=True
     
