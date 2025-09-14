@@ -101,7 +101,7 @@ function TakeDamage( int Damage, Pawn InstigatedBy, Vector Hitlocation, Vector M
         }
 		else if (bIsHeadshot && class<DamTypeDBShotgun>(DamageType) != None && IsInDamageBoostRadius(InstigatedBy))
 		{
-			Damage *= 0.6f; //20% damage increase at point blank due to some odd reduction being applied.
+			Damage *= 0.625f; //20% damage increase at point blank due to some odd reduction being applied.
 		}
 		else
 		{
