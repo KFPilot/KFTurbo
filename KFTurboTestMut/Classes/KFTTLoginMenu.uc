@@ -1,6 +1,9 @@
 class KFTTLoginMenu extends KFGui.KFInvasionLoginMenu;
 
 function InitComponent(GUIController MyController, GUIComponent MyComponent) {
+	MyController.RegisterStyle(class'TurboGUIStyleSectionLabel');
+	MyController.RegisterStyle(class'TurboGUIStyleLabel');
+
 	Super(FloatingWindow).InitComponent(MyController, MyComponent);
 	
 	if (Panels.length > 0)
