@@ -2,7 +2,7 @@
 //KFTurbo's HUD. Leverages TurboHUDOverlays for most of the UI elements.
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class TurboHUDKillingFloor extends SRHUDKillingFloor;
+class TurboHUDKillingFloor extends TurboHUDKillingFloorBase;
 
 var Sound WinSound, LoseSound;
 var float EndGameHUDAnimationDuration;
@@ -30,12 +30,6 @@ var TurboHUDOverlay WaveStatsHUD;
 
 var class<TextReactionSettings> TextReactionSettingsClass;
 var TextReactionSettings TextReactionSettings;
-
-var class<KFTurboFontHelper> FontHelperClass;
-var string FontHelperClassCYString;
-var class<KFTurboFontHelper> FontHelperClassCY;
-var string FontHelperClassJPString;
-var class<KFTurboFontHelper> FontHelperClassJP;
 
 //Overlays that are drawn before the player HUD but after victory/game over HUD.
 var array<HudOverlay> PreDrawOverlays;
@@ -799,13 +793,14 @@ simulated final function float GetTextMessageLifeTime(string M, class<LocalMessa
 	return MessageClass.Default.LifeTime;
 }
 
-function AddTextMessage(string M, class<LocalMessage> MessageClass, PlayerReplicationInfo PRI)
+function AddTextMessage(string Message, class<LocalMessage> MessageClass, PlayerReplicationInfo PRI)
 {
 	local int Index;
+	local bool bIsSayMessage, bIsTeamSayMessage;
 
 	if (TextReactionSettings != None)
 	{
-		TextReactionSettings.ReceivedMessage(TurboPlayerController(PlayerOwner), M, MessageClass, PRI);
+		TextReactionSettings.ReceivedMessage(TurboPlayerController(PlayerOwner), Message, MessageClass, PRI);
 	}
 
 	if( bMessageBeep && MessageClass.Default.bBeep )
@@ -829,25 +824,36 @@ function AddTextMessage(string M, class<LocalMessage> MessageClass, PlayerReplic
 			TurboTextMessages[Index] = TurboTextMessages[Index + 1];
 		}
     }
-
-	TextMessages[Index].Text = M;
-	TextMessages[Index].MessageLife = Level.TimeSeconds + GetTextMessageLifeTime(M, MessageClass, PRI);
-	TextMessages[Index].TextColor = MessageClass.static.GetConsoleColor(PRI);
 	
-	TurboTextMessages[Index].Text = M;
-	TurboTextMessages[Index].MessageLife = Level.TimeSeconds + GetTextMessageLifeTime(M, MessageClass, PRI);
+	TurboTextMessages[Index].Text = Message;
+	TurboTextMessages[Index].MessageLife = Level.TimeSeconds + GetTextMessageLifeTime(Message, MessageClass, PRI);
 	TurboTextMessages[Index].TextColor = MessageClass.static.GetConsoleColor(PRI);
 
-	if (MessageClass == class'SayMessagePlus' || MessageClass == class'TeamSayMessagePlus')
+	bIsSayMessage = MessageClass == class'SayMessagePlus';
+	bIsTeamSayMessage = MessageClass == class'TeamSayMessagePlus';
+	if (bIsSayMessage || bIsTeamSayMessage)
 	{
 		TextMessages[Index].PRI = PRI;
 		TurboTextMessages[Index].PRI = PRI;
+
+		if (bIsSayMessage)
+		{
+			TurboTextMessages[Index].TextColor = class'TurboHUDOverlay'.static.MakeColor(255, 255, 255, 255);
+		}
+		else
+		{
+			TurboTextMessages[Index].TextColor = class'TurboHUDOverlay'.static.MakeColor(180, 180, 180, 255);
+		}
 	}
 	else
 	{
 		TextMessages[Index].PRI = None;
 		TurboTextMessages[Index].PRI = None;
 	}
+
+	TextMessages[Index].Text = Message;
+	TextMessages[Index].MessageLife = Level.TimeSeconds + GetTextMessageLifeTime(Message, MessageClass, PRI);
+	TextMessages[Index].TextColor = MessageClass.static.GetConsoleColor(PRI);
 
 	if (TurboTextMessages[Index].PRI != None)
 	{
@@ -1329,95 +1335,6 @@ simulated function UpdateTraderPortrait(bool bReplaceWithMerchant)
 	}
 }
 
-static function font GetConsoleFont(Canvas C)
-{
-	local int FontSize;
-
-	if( default.OverrideConsoleFontName != "" )
-	{
-		if( default.OverrideConsoleFont != None )
-			return default.OverrideConsoleFont;
-		default.OverrideConsoleFont = Font(DynamicLoadObject(default.OverrideConsoleFontName, class'Font'));
-		if( default.OverrideConsoleFont != None )
-			return default.OverrideConsoleFont;
-		Log("Warning: HUD couldn't dynamically load font "$default.OverrideConsoleFontName);
-		default.OverrideConsoleFontName = "";
-	}
-
-	FontSize = Default.ConsoleFontSize;
-	if ( C.ClipX < 640 )
-		FontSize++;
-	if ( C.ClipX < 800 )
-		FontSize++;
-	if ( C.ClipX < 1024 )
-		FontSize++;
-	if ( C.ClipX < 1280 )
-		FontSize++;
-	if ( C.ClipX < 1600 )
-		FontSize++;
-	
-	return TurboHUDKillingFloor(C.Viewport.Actor.myHUD).LoadFont(Min(8,FontSize));
-}
-
-static function font GetDefaultConsoleFont(Canvas C)
-{
-	local int FontSize;
-
-	if( default.OverrideConsoleFontName != "" )
-	{
-		if( default.OverrideConsoleFont != None )
-			return default.OverrideConsoleFont;
-		default.OverrideConsoleFont = Font(DynamicLoadObject(default.OverrideConsoleFontName, class'Font'));
-		if( default.OverrideConsoleFont != None )
-			return default.OverrideConsoleFont;
-		Log("Warning: HUD couldn't dynamically load font "$default.OverrideConsoleFontName);
-		default.OverrideConsoleFontName = "";
-	}
-
-	FontSize = Default.ConsoleFontSize;
-	if ( C.ClipX < 640 )
-		FontSize++;
-	if ( C.ClipX < 800 )
-		FontSize++;
-	if ( C.ClipX < 1024 )
-		FontSize++;
-	if ( C.ClipX < 1280 )
-		FontSize++;
-	if ( C.ClipX < 1600 )
-		FontSize++;
-	return class'SRHUDKillingFloor'.static.LoadFontStatic(Min(8,FontSize));
-}
-
-static function Font LoadFontStatic(int i)
-{
-	return default.FontHelperClass.static.LoadFontStatic(i);
-}
-
-simulated function Font LoadFont(int i)
-{
-	return FontHelperClass.static.LoadFontStatic(i);
-}
-
-final simulated function Font LoadLargeNumberFont(int i)
-{
-	return FontHelperClass.static.LoadLargeNumberFont(i);
-}
-
-final simulated function Font LoadBoldFont(int i)
-{
-	return FontHelperClass.static.LoadBoldFontStatic(i);
-}
-
-final simulated function Font LoadBoldItalicFont(int i)
-{
-	return FontHelperClass.static.LoadBoldItalicFontStatic(i);
-}
-
-final simulated function Font LoadItalicFont(int i)
-{
-	return FontHelperClass.static.LoadItalicFontStatic(i);
-}
-
 //Resets all but modulator to expected values.
 static final function ResetCanvas(Canvas Canvas)
 {
@@ -1438,55 +1355,6 @@ static final function ResetCanvas(Canvas Canvas)
 	Canvas.bCenter     = false;
 	Canvas.bNoSmooth   = false;
 	Canvas.Z           = 1.0;
-}
-
-simulated function SetFontLocale(string LocaleString)
-{
-	CleanupFontPackage();
-
-	switch(LocaleString)
-	{
-		case "ENG":
-			FontHelperClass = class'KFTurboFonts.KFTurboFontHelperEN';
-			break;
-		case "JPN":
-			if (FontHelperClassJP == None)
-			{
-				FontHelperClassJP = class<KFTurboFontHelper>(DynamicLoadObject(FontHelperClassJPString, Class'Class'));
-			}
-			FontHelperClass = FontHelperClassJP;
-			break;
-		case "CYR":
-			if (FontHelperClassCY == None)
-			{
-				FontHelperClassCY = class<KFTurboFontHelper>(DynamicLoadObject(FontHelperClassCYString, Class'Class'));
-			}
-			FontHelperClass = FontHelperClassCY;
-			break;
-	}
-
-	if (FontHelperClass == None)
-	{
-		FontHelperClass = class'KFTurboFonts.KFTurboFontHelperEN';
-	}
-
-	default.FontHelperClass = FontHelperClass;
-}
-
-simulated function CleanupFontPackage()
-{
-	if (default.FontHelperClass != None)
-	{
-		default.FontHelperClass.static.Cleanup();
-	}
-
-	if (FontHelperClass != None)
-	{
-		FontHelperClass.static.Cleanup();
-	}
-
-	FontHelperClass = None;
-	default.FontHelperClass = None;
 }
 
 defaultproperties
