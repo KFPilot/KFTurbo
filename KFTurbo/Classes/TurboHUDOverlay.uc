@@ -127,6 +127,31 @@ static final function DrawTextMeticulous(Canvas C, coerce String String, float S
 	}
 }
 
+static final function DrawTextSpaced(Canvas C, coerce String String, float Offset)
+{
+	local String StringToDraw;
+	local float TempX, TempY, SubStringSizeX, SubStringSizeY;
+	TempX = C.CurX;
+	TempY = C.CurY;
+
+	while (Len(String) > 0)
+	{
+		StringToDraw = Left(String, 1);
+		
+		C.SetPos(TempX, TempY);
+		C.DrawText(StringToDraw);
+
+		if (Len(String) == 1)
+		{
+			break;
+		}
+
+		C.TextSize(StringToDraw, SubStringSizeX, SubStringSizeY);
+		TempX += Offset + SubStringSizeX;
+		String = Right(String, Len(String) - 1);
+	}
+}
+
 static final function DrawCounterTextMeticulous(Canvas C, String String, float SizeX, float EmptyDigitOpacityMultiplier)
 {
 	local String StringToDraw;
