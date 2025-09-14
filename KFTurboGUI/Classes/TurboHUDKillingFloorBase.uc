@@ -37,7 +37,7 @@ static function font GetConsoleFont(Canvas C)
 	if ( C.ClipX < 1600 )
 		FontSize++;
 	
-	return TurboHUDKillingFloorBase(C.Viewport.Actor.myHUD).LoadFont(Min(8,FontSize));
+	return class'SRHUDKillingFloor'.static.LoadFontStatic(Min(8,FontSize));
 }
 
 static function font GetDefaultConsoleFont(Canvas C)
