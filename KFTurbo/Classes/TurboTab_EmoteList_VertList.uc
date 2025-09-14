@@ -43,7 +43,7 @@ function DrawEmote(Canvas Canvas, int CurIndex, float X, float Y, float Width, f
 	local int EmoteIndex;
 	local float EmoteEntryWidth;
 	local float TempX, TempY;
-	local float TextSizeX, TextSizeY;
+	local float TextSizeX, TextSizeY, BaseTextSizeY;
 	local string EmoteText;
 	local float RatioX;
 
@@ -54,6 +54,19 @@ function DrawEmote(Canvas Canvas, int CurIndex, float X, float Y, float Width, f
 
 	Height *= 0.95f;
 	EmoteEntryWidth = Width / float(EMOTES_PER_ENTRY);
+
+	Canvas.FontScaleY = 1.f;
+	Canvas.FontScaleX = 1.f;
+	Canvas.Font = class'TurboHUDKillingFloor'.Static.GetLargeMenuFont(Canvas);
+	Canvas.TextSize("Ap", TextSizeX, BaseTextSizeY);
+
+	if (BaseTextSizeY > Height * 0.9f)
+	{
+		Canvas.FontScaleY = (Height * 0.9f) / BaseTextSizeY;
+		Canvas.FontScaleX = Canvas.FontScaleY;
+	}
+
+	Canvas.TextSize("A", TextSizeX, BaseTextSizeY);
 
 	for (EmoteIndex = (CurIndex * EMOTES_PER_ENTRY) + (EMOTES_PER_ENTRY - 1); EmoteIndex >= (CurIndex * EMOTES_PER_ENTRY); EmoteIndex--)
 	{
@@ -83,13 +96,19 @@ function DrawEmote(Canvas Canvas, int CurIndex, float X, float Y, float Width, f
 		
 		TempX += RatioX * Height * 0.9f;
 
-		Canvas.SetDrawColor(0, 0, 0, 255);
-		Canvas.Font = class'TurboHUDKillingFloor'.Static.GetSmallMenuFont(Canvas);
 		EmoteText = Locs(SmileyTags[EmoteIndex].SmileyTag);
+
 		Canvas.TextSize(EmoteText, TextSizeX, TextSizeY);
 
-		TempY += (Height * 0.5f) - (TextSizeY * 0.5f);
-		Canvas.SetPos(((X + Width) - (Height * 0.2f)) - TextSizeX, TempY);
+		TempX = ((X + Width) - (Height * 0.2f)) - TextSizeX;
+		TempY += (Height * 0.5f) - (BaseTextSizeY * 0.5f);
+
+		Canvas.SetDrawColor(0, 0, 0, 200);
+		Canvas.SetPos(TempX + 2.f, TempY + 2.f);
+		Canvas.DrawText(EmoteText);
+
+		Canvas.SetDrawColor(200, 200, 200, 255);
+		Canvas.SetPos(TempX, TempY);
 		Canvas.DrawText(EmoteText);
 
 		X -= EmoteEntryWidth;
@@ -103,8 +122,8 @@ function float GetEmoteEntryHeight(Canvas C)
 
 defaultproperties
 {
-	IconBackground=Texture'KF_InterfaceArt_tex.Menu.Item_box_box'
-	EntryBackplate=Texture'KF_InterfaceArt_tex.Menu.Item_box_bar'
+	IconBackground=Texture'KFTurbo.Perk.PerkBoxUnselected_D'
+	EntryBackplate=Texture'KFTurbo.Perk.PerkBackplateUnselected_D'
 	FontScale=FNS_Medium
 
 	OnPreDraw=PreDraw
