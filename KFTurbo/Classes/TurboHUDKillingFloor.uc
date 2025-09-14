@@ -57,6 +57,13 @@ struct TurboConsoleMessage
 };
 var TurboConsoleMessage TurboTextMessages[8];
 
+simulated function Destroyed()
+{
+	Super.Destroyed();
+
+	CleanupFontPackage();
+}
+
 simulated event PostRender(Canvas Canvas)
 {
 	ResScaleX = Canvas.SizeX / 640.0;
@@ -1435,11 +1442,8 @@ static final function ResetCanvas(Canvas Canvas)
 
 simulated function SetFontLocale(string LocaleString)
 {
-	if (FontHelperClass != None)
-	{
-		FontHelperClass.static.Cleanup();
-	}
-	
+	CleanupFontPackage();
+
 	switch(LocaleString)
 	{
 		case "ENG":
@@ -1465,6 +1469,24 @@ simulated function SetFontLocale(string LocaleString)
 	{
 		FontHelperClass = class'KFTurboFonts.KFTurboFontHelperEN';
 	}
+
+	default.FontHelperClass = FontHelperClass;
+}
+
+simulated function CleanupFontPackage()
+{
+	if (default.FontHelperClass != None)
+	{
+		default.FontHelperClass.static.Cleanup();
+	}
+
+	if (FontHelperClass != None)
+	{
+		FontHelperClass.static.Cleanup();
+	}
+
+	FontHelperClass = None;
+	default.FontHelperClass = None;
 }
 
 defaultproperties
