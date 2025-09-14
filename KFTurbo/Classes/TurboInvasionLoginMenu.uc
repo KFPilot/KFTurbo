@@ -9,7 +9,6 @@ function InitComponent(GUIController MyController, GUIComponent MyOwner)
 {
     local int i;
     local string s;
-    local eFontScale FS;
 	local SRMenuAddition M;
 
 	MyController.RegisterStyle(class'TurboGUIStyleSectionLabel');
