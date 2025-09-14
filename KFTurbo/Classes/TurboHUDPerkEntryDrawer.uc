@@ -38,7 +38,7 @@ static final function SetupNameFont(Canvas Canvas, TurboHUDKillingFloor TurboHUD
 	Canvas.FontScaleX = 1.f;
 	Canvas.FontScaleY = 1.f;
 	Canvas.TextSize("A", TextSizeX, TextSizeY);
-	Canvas.FontScaleY = (Height * 0.7f) / TextSizeY;
+	Canvas.FontScaleY = (Height * 0.5f) / TextSizeY;
 	Canvas.FontScaleX = Canvas.FontScaleY;
 }
 

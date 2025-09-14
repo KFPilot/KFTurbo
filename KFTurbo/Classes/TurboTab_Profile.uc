@@ -3,8 +3,6 @@
 //For more information see https://github.com/KFPilot/KFTurbo.
 class TurboTab_Profile extends SRTab_Profile;
 
-
-
 function OnPerkSelected(GUIComponent Sender)
 {
 	local ClientPerkRepLink ST;
@@ -86,13 +84,21 @@ function bool PickModel(GUIComponent Sender)
 
 defaultproperties
 {
-     Begin Object Class=TurboPerkSelectListBox Name=PerkSelectList
-         OnCreateComponent=PerkSelectList.InternalOnCreateComponent
-         WinTop=0.082969
-         WinLeft=0.323418
-         WinWidth=0.318980
-         WinHeight=0.654653
-     End Object
-     lb_PerkSelect=TurboPerkSelectListBox'KFTurbo.TurboTab_Profile.PerkSelectList'
+	Begin Object Class=TurboPerkSelectListBox Name=PerkSelectList
+		OnCreateComponent=PerkSelectList.InternalOnCreateComponent
+		WinTop=0.082969
+		WinLeft=0.323418
+		WinWidth=0.318980
+		WinHeight=0.654653
+	End Object
+	lb_PerkSelect=TurboPerkSelectListBox'KFTurbo.TurboTab_Profile.PerkSelectList'
 
+	Begin Object Class=TurboPerkProgressListBox Name=PerkProgressList
+		OnCreateComponent=PerkProgressList.InternalOnCreateComponent
+		WinTop=0.439668
+		WinLeft=0.670121
+		WinWidth=0.319980
+		WinHeight=0.292235
+	End Object
+	lb_PerkProgress=TurboPerkProgressListBox'PerkProgressList'
 }
