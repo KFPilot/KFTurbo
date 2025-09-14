@@ -69,6 +69,36 @@ static function font GetDefaultConsoleFont(Canvas C)
 	return class'SRHUDKillingFloor'.static.LoadFontStatic(Min(8,FontSize));
 }
 
+static function font GetChatFont(Canvas C)
+{
+	local int FontSize;
+
+	if( default.OverrideConsoleFontName != "" )
+	{
+		if( default.OverrideConsoleFont != None )
+			return default.OverrideConsoleFont;
+		default.OverrideConsoleFont = Font(DynamicLoadObject(default.OverrideConsoleFontName, class'Font'));
+		if( default.OverrideConsoleFont != None )
+			return default.OverrideConsoleFont;
+		Log("Warning: HUD couldn't dynamically load font "$default.OverrideConsoleFontName);
+		default.OverrideConsoleFontName = "";
+	}
+
+	FontSize = Default.ConsoleFontSize;
+	if ( C.ClipX < 640 )
+		FontSize++;
+	if ( C.ClipX < 800 )
+		FontSize++;
+	if ( C.ClipX < 1024 )
+		FontSize++;
+	if ( C.ClipX < 1280 )
+		FontSize++;
+	if ( C.ClipX < 1600 )
+		FontSize++;
+	
+	return class'TurboHUDKillingFloorBase'.static.LoadFontStatic(Min(8,FontSize));
+}
+
 static function Font LoadFontStatic(int i)
 {
 	return default.FontHelperClass.static.LoadFontStatic(i);

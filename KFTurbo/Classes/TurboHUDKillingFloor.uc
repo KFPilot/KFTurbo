@@ -871,7 +871,7 @@ function DisplayMessages(Canvas C)
 	}
 	else
 	{
-		C.Font = GetConsoleFont(C);
+		C.Font = GetChatFont(C);
 	}
 	C.DrawColor = LevelActionFontColor;
 
