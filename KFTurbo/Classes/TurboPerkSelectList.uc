@@ -141,7 +141,7 @@ function TickHover()
 		}
 		else if (HoverRatioList[ItemIndex] != 0.f)
 		{
-			HoverRatioList[ItemIndex] = Lerp(DeltaTime * 8.f, HoverRatioList[ItemIndex], 0.f);
+			HoverRatioList[ItemIndex] = Lerp(DeltaTime * 4.f, HoverRatioList[ItemIndex], 0.f);
 
 			if (Abs(HoverRatioList[ItemIndex]) < 0.001f)
 			{
