@@ -15,7 +15,7 @@ var float ProgressBarHeight;
 
 var Color PerkTextColor;
 
-static final function SetupNameFont(Canvas Canvas, TurboHUDKillingFloor TurboHUD, float Width, float Height)
+static final function float SetupNameFont(Canvas Canvas, TurboHUDKillingFloor TurboHUD, float Width, float Height)
 {
 	local float TextSizeX, TextSizeY;
 	if (Height < 50)
@@ -40,6 +40,8 @@ static final function SetupNameFont(Canvas Canvas, TurboHUDKillingFloor TurboHUD
 	Canvas.TextSize("A", TextSizeX, TextSizeY);
 	Canvas.FontScaleY = (Height * 0.5f) / TextSizeY;
 	Canvas.FontScaleX = Canvas.FontScaleY;
+
+	return TextSizeX * Canvas.FontScaleX;
 }
 
 static final function SetupProgressFont(Canvas Canvas, TurboHUDKillingFloor TurboHUD, float BarWidth, float BarHeight)
@@ -75,7 +77,7 @@ static final function Draw(Canvas Canvas, TurboHUDKillingFloor TurboHUD, float X
     local float TempNameX, TempNameY;
 	local float PerkIconOffset;
 	local float IconSize, ProgressBarWidth;
-	local float TempWidth, TempHeight, LevelTextX;
+	local float TempWidth, TempHeight, LevelTextX, CharacterSizeX;
 	local Material M,SM;
     local Color TextColor;
     local string PerkLevelString;
@@ -167,7 +169,7 @@ static final function Draw(Canvas Canvas, TurboHUDKillingFloor TurboHUD, float X
 	Canvas.SetPos(TempX, TempY);
 	Canvas.DrawTileStretched(default.ProgressBarFill, ProgressBarWidth * FClamp(Progress, 0.f, 1.f), default.ProgressBarHeight * Height * 0.667f);
 
-	SetupNameFont(Canvas, TurboHUD, Width, Height);
+	CharacterSizeX = SetupNameFont(Canvas, TurboHUD, Width, Height);
 	
     PerkLevelString = class'KFPerkSelectList'.default.LvAbbrString @ Level;
     Canvas.TextSize(PerkLevelString, LevelTextX, TempHeight);
@@ -194,12 +196,17 @@ static final function Draw(Canvas Canvas, TurboHUDKillingFloor TurboHUD, float X
 
 	// Draw the Perk's Level Name
     Canvas.SetDrawColor(0, 0, 0, 128);
-	Canvas.SetPos(TempNameX + 2.f, TempNameY + 2.f);
+	Canvas.SetPos(TempNameX + 2.f + (CharacterSizeX * 0.2f), TempNameY + 2.f);
 	Canvas.ClipX = (TempNameX + ProgressBarWidth - LevelTextX);
-	Canvas.DrawTextClipped(PerkClass.default.VeterancyName);
+
+	Canvas.TextSize(PerkClass.default.VeterancyName, TempWidth, TempHeight);
+	class'TurboHUDOverlay'.static.DrawTextSpaced(Canvas, PerkClass.default.VeterancyName, CharacterSizeX * 0.1f);
+
+	//Canvas.DrawTextClipped(PerkClass.default.VeterancyName);
     Canvas.DrawColor = TextColor;
-	Canvas.SetPos(TempNameX, TempNameY);
-	Canvas.DrawTextClipped(PerkClass.default.VeterancyName);
+	Canvas.SetPos(TempNameX + (CharacterSizeX * 0.2f), TempNameY);
+	class'TurboHUDOverlay'.static.DrawTextSpaced(Canvas, PerkClass.default.VeterancyName, CharacterSizeX * 0.1f);
+	//Canvas.DrawTextClipped(PerkClass.default.VeterancyName);
 	Canvas.ClipX = Canvas.SizeX;
 
 	// Draw the Perk's Level
