@@ -38,7 +38,7 @@ static function bool IgnoreLocalMessage(TurboPlayerController PlayerController, 
 
 defaultproperties
 {
-    HowToTradeHint="During %ktrader time%d, %kpress SHIFT%d to open the %ktrader menu%d anywhere. The %kconsole command TRADE%d can also be used."
+    HowToTradeHint="%kPress SHIFT%d to open the %ktrader menu%d anywhere. The %kconsole command TRADE%d can also be used."
 
     Lifetime=15
     bIsSpecial=false
