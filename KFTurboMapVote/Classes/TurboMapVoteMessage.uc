@@ -96,4 +96,5 @@ defaultproperties
 {
     DrawColor=(B=255,G=255,R=255,A=255)
     KeywordColor=(R=120,G=145,B=255,A=255)
+    bIsSpecial=false
 }
