@@ -9,7 +9,11 @@
 !LICENSE
 
 #KFTurbo's source code packages.
+!KFTurboMapVote/
 !KFTurboFonts/
+!KFTurboFontsJP/
+!KFTurboFontsCY/
+!KFTurboGUI/
 !KFTurbo/
 !KFTurboServerAchievements/
 !KFTurboRandomizer/
@@ -17,11 +21,8 @@
 !KFTurboTestMut/
 !KFTurboServer/
 !KFTurboCardGame/
-!KFTurboMapVote/
 !KFTurboEmbeddable/
 !KFTurboHoldout/
-!KFTurboFontsJP/
-!KFTurboFontsCY/
 
 #Important config files.
 !System
