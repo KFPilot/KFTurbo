@@ -40,17 +40,6 @@ var localized string MerchantString;
 var(Turbo) Plane InvactiveModulate;
 var(Turbo) Plane ActiveModulate;
 
-//Adds CachedPlayerName. HUD::TextMessages is still maintained in case some other code relied on it.
-struct TurboConsoleMessage
-{
-	var string Text;
-	var color TextColor;
-	var float MessageLife;
-	var PlayerReplicationInfo PRI;
-	var string CachedPlayerName;
-};
-var TurboConsoleMessage TurboTextMessages[8];
-
 simulated function Destroyed()
 {
 	Super.Destroyed();
@@ -793,14 +782,13 @@ simulated final function float GetTextMessageLifeTime(string M, class<LocalMessa
 	return MessageClass.Default.LifeTime;
 }
 
-function AddTextMessage(string Message, class<LocalMessage> MessageClass, PlayerReplicationInfo PRI)
+function AddTextMessage(string M, class<LocalMessage> MessageClass, PlayerReplicationInfo PRI)
 {
-	local int Index;
-	local bool bIsSayMessage, bIsTeamSayMessage;
+	local int i;
 
 	if (TextReactionSettings != None)
 	{
-		TextReactionSettings.ReceivedMessage(TurboPlayerController(PlayerOwner), Message, MessageClass, PRI);
+		TextReactionSettings.ReceivedMessage(TurboPlayerController(PlayerOwner), M, MessageClass, PRI);
 	}
 
 	if( bMessageBeep && MessageClass.Default.bBeep )
@@ -808,102 +796,67 @@ function AddTextMessage(string Message, class<LocalMessage> MessageClass, Player
 		PlayerOwner.PlayBeepSound();
 	}
 
-    for (Index = 0; Index < ConsoleMessageCount; Index++)
+    for( i=0; i<ConsoleMessageCount; i++ )
     {
-        if (TextMessages[Index].Text == "")
+        if ( TextMessages[i].Text == "" )
 		{
             break;
 		}
     }
 
-    if (Index == ConsoleMessageCount)
+    if( i == ConsoleMessageCount )
     {
-        for(Index = 0; Index < ConsoleMessageCount - 1; Index++)
+        for( i=0; i<ConsoleMessageCount-1; i++ )
 		{
-            TextMessages[Index] = TextMessages[Index + 1];
-			TurboTextMessages[Index] = TurboTextMessages[Index + 1];
+            TextMessages[i] = TextMessages[i+1];
 		}
     }
-	
-	TurboTextMessages[Index].Text = Message;
-	TurboTextMessages[Index].MessageLife = Level.TimeSeconds + GetTextMessageLifeTime(Message, MessageClass, PRI);
-	TurboTextMessages[Index].TextColor = MessageClass.static.GetConsoleColor(PRI);
 
-	bIsSayMessage = MessageClass == class'SayMessagePlus';
-	bIsTeamSayMessage = MessageClass == class'TeamSayMessagePlus';
-	if (bIsSayMessage || bIsTeamSayMessage)
+	TextMessages[i].Text = M;
+	TextMessages[i].MessageLife = Level.TimeSeconds + GetTextMessageLifeTime(M, MessageClass, PRI);
+	TextMessages[i].TextColor = MessageClass.static.GetConsoleColor(PRI);
+
+	if(MessageClass==class'SayMessagePlus' || MessageClass == class'TeamSayMessagePlus')
 	{
-		TextMessages[Index].PRI = PRI;
-		TurboTextMessages[Index].PRI = PRI;
-
-		if (bIsSayMessage)
-		{
-			TurboTextMessages[Index].TextColor = class'TurboHUDOverlay'.static.MakeColor(255, 255, 255, 255);
-		}
-		else
-		{
-			TurboTextMessages[Index].TextColor = class'TurboHUDOverlay'.static.MakeColor(180, 180, 180, 255);
-		}
+		TextMessages[i].PRI = PRI;
 	}
 	else
 	{
-		TextMessages[Index].PRI = None;
-		TurboTextMessages[Index].PRI = None;
-	}
-
-	TextMessages[Index].Text = Message;
-	TextMessages[Index].MessageLife = Level.TimeSeconds + GetTextMessageLifeTime(Message, MessageClass, PRI);
-	TextMessages[Index].TextColor = MessageClass.static.GetConsoleColor(PRI);
-
-	if (TurboTextMessages[Index].PRI != None)
-	{
-		TurboTextMessages[Index].CachedPlayerName = TurboTextMessages[Index].PRI.PlayerName;
-	}
-	else
-	{
-		TurboTextMessages[Index].CachedPlayerName = "";
+		TextMessages[i].PRI = None;
 	}
 }
 
 //Added drop shadow.
 function DisplayMessages(Canvas C)
 {
-	local int Index, MessageIndex, MessageCount;
-	local TurboConsoleMessage Message;
-	local string PlayerName;
-	local int XPos, YPos;
-	local float XL, YL, YYL;
+	local int i, j, XPos, YPos,MessageCount;
+	local float XL, YL, XXL, YYL;
 	local float InitialClip;
-	
 	InitialClip = C.ClipX;
 	C.ClipX = C.SizeX;
 
-	for (Index = 0; Index < ConsoleMessageCount; Index++)
+	for( i = 0; i < ConsoleMessageCount; i++ )
 	{
-		if (TextMessages[Index].Text == "")
-		{
+		if ( TextMessages[i].Text == "" )
 			break;
-		}
-
-		if (TextMessages[Index].MessageLife < Level.TimeSeconds)
+		else if( TextMessages[i].MessageLife < Level.TimeSeconds )
 		{
-			TextMessages[Index].Text = "";
-			TurboTextMessages[Index].Text = "";
+			TextMessages[i].Text = "";
 
-			for (MessageIndex = Index; MessageIndex < ConsoleMessageCount - 1; MessageIndex++)
+			if( i < ConsoleMessageCount - 1 )
 			{
-				TextMessages[MessageIndex].Text = "";
-				TurboTextMessages[MessageIndex].Text = "";
+				for( j=i; j<ConsoleMessageCount-1; j++ )
+					TextMessages[j] = TextMessages[j+1];
 			}
-
+			TextMessages[j].Text = "";
 			break;
 		}
-		
-		MessageCount++;
+		else
+			MessageCount++;
 	}
 
 	YPos = (ConsoleMessagePosY * HudCanvasScale * C.SizeY) + (((1.0 - HudCanvasScale) / 2.0) * C.SizeY);
-	if (PlayerOwner == None || PlayerOwner.PlayerReplicationInfo == None || !PlayerOwner.PlayerReplicationInfo.bWaitingPlayer)
+	if ( PlayerOwner == none || PlayerOwner.PlayerReplicationInfo == none || !PlayerOwner.PlayerReplicationInfo.bWaitingPlayer )
 	{
 		XPos = (ConsoleMessagePosX * HudCanvasScale * C.SizeX) + (((1.0 - HudCanvasScale) / 2.0) * C.SizeX);
 	}
@@ -920,39 +873,57 @@ function DisplayMessages(Canvas C)
 	{
 		C.Font = GetConsoleFont(C);
 	}
+	C.DrawColor = LevelActionFontColor;
 
 	C.TextSize ("A", XL, YL);
 
-	YPos -= (YL * MessageCount) + 1; // DP_LowerLeft
+	YPos -= YL * MessageCount+1; // DP_LowerLeft
 	YPos -= YL; // Room for typing prompt
 
-	for(Index = 0; Index < MessageCount; Index++)
+	for( i=0; i<MessageCount; i++ )
 	{
-		if (TurboTextMessages[Index].Text == "")
+		if ( TextMessages[i].Text == "" )
 		{
 			break;
 		}
 
-		Message = TurboTextMessages[Index];
-
-		PlayerName = Message.CachedPlayerName;
-		if (Message.PRI != None)
-		{
-			PlayerName = Message.PRI.PlayerName;
-		}
-
-		PlayerName $= Message.Text;
-
 		C.DrawColor = C.MakeColor(0, 0, 0, 120);
 		C.SetPos(XPos + 2.f, YPos + 2.f);
-		DrawScaledSmileyText(class'GUIComponent'.static.StripColorCodes(PlayerName), C,, YYL);
-		
-		YYL = 0;
+		if( TextMessages[i].PRI!=None )
+		{
+			XL = Class'SRScoreBoard'.Static.DrawCountryName(C,TextMessages[i].PRI,XPos + 2.f,YPos + 2.f);
+			C.SetPos( XPos + XL + 2.f, YPos + 2.f );
+		}
+
+		if( SmileyMsgs.Length!=0 )
+		{
+			DrawScaledSmileyText(class'GUIComponent'.static.StripColorCodes(TextMessages[i].Text),C,,YYL);
+		}
+		else
+		{
+			C.DrawText(class'GUIComponent'.static.StripColorCodes(TextMessages[i].Text),false);
+		}
 
 		C.DrawColor = C.MakeColor(255, 255, 255, 255);
+		YYL = 0;
+		XXL = 0;
+		
 		C.SetPos(XPos, YPos);
-		DrawScaledSmileyText(PlayerName, C,, YYL);
-		YPos += (YL + YYL);
+		if( TextMessages[i].PRI!=None )
+		{
+			XL = Class'SRScoreBoard'.Static.DrawCountryName(C,TextMessages[i].PRI,XPos,YPos);
+			C.SetPos( XPos+XL, YPos );
+		}
+
+		if( SmileyMsgs.Length!=0 )
+		{
+			DrawScaledSmileyText(TextMessages[i].Text,C,,YYL);
+		}
+		else
+		{
+			C.DrawText(TextMessages[i].Text,false);
+		}
+		YPos += (YL+YYL);
 	}
 	
 	C.ClipX = InitialClip;
