@@ -855,6 +855,17 @@ function PreventGameOver()
     bPreventGameOver = true;
 }
 
+function bool CheckMaxLives(PlayerReplicationInfo Scorer)
+{
+    //This function gets called when a player logout occurs even if the match has not started.
+    if (bWaitingToStartMatch)
+    {
+        return false;
+    }
+
+    return Super.CheckMaxLives(Scorer);
+}
+
 function bool CheckEndGame(PlayerReplicationInfo Winner, string Reason)
 {
     local bool bGameIsOver, bResult;
