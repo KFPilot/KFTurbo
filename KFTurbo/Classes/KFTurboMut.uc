@@ -50,6 +50,8 @@ simulated function PostBeginPlay()
 	AddToPackageMap("KFTurboFonts");
 	AddToPackageMap("KFTurboFontsJP");
 	AddToPackageMap("KFTurboFontsCY");
+	
+	AddToPackageMap("KFTurboGUI");
 
 	if(Role != ROLE_Authority)
 	{
