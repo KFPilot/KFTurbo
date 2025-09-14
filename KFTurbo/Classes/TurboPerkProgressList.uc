@@ -17,10 +17,13 @@ function bool PreDraw(canvas Canvas)
     return true;
 }
 
-
 static final function UpdateFont(Canvas Canvas, TurboHUDKillingFloor TurboHUD, float Width, float Height)
 {
 	local float TextSizeX, TextSizeY;
+	if (Height < 70)
+	{
+		Canvas.Font = TurboHUD.LoadFont(5);
+	}
 	if (Height < 100)
 	{
 		Canvas.Font = TurboHUD.LoadFont(4);
@@ -45,10 +48,11 @@ function DrawPerk(Canvas Canvas, int CurIndex, float X, float Y, float Width, fl
 {
 	local float TempX, TempY;
     local float TextSizeX, TextSizeY;
-    local float Padding;
+    local float Padding, BarHeight;
 
 	class'TurboHUDKillingFloor'.static.ResetCanvas(Canvas);
     Padding = Height / 16.f;
+    BarHeight = Height * 0.25f;
     
     UpdateFont(Canvas, TurboHUD, Width, Height);
 
@@ -69,20 +73,20 @@ function DrawPerk(Canvas Canvas, int CurIndex, float X, float Y, float Width, fl
 
     TempX = X + (Padding * 2.f);
     TempY = (Y + Height) - (Padding * 2.f);
-    TempY -= Height * 0.2f;
+    TempY -= BarHeight;
 	Canvas.SetDrawColor(255, 255, 255, 255);
 	Canvas.SetPos(TempX, TempY);
-	Canvas.DrawTileStretched(ProgressBarBackground, Width - (Padding * 4.f), Height * 0.2f);
+	Canvas.DrawTileStretched(ProgressBarBackground, Width - (Padding * 4.f), BarHeight);
 	Canvas.DrawColor = class'TurboLocalMessage'.default.KeywordColor;
 	Canvas.SetPos(TempX + 2.f, TempY + 2.f);
-	Canvas.DrawTileStretched(ProgressBarForeground, ((Width - (Padding * 4.f)) - 4.f) * RequirementProgress[CurIndex], (Height * 0.2f) - 4.f);
+	Canvas.DrawTileStretched(ProgressBarForeground, ((Width - (Padding * 4.f)) - 4.f) * RequirementProgress[CurIndex], BarHeight - 4.f);
 
     TempX += Width - (Padding * 4.f);
     
 	Canvas.SetDrawColor(255, 255, 255, 255);
 	Canvas.TextSize(RequirementProgressString[Index], TextSizeX, TextSizeY);
-    Canvas.FontScaleX *= ((Height * 0.35f) / TextSizeY);
-    Canvas.FontScaleY *= Canvas.FontScaleX;
+    Canvas.FontScaleX *= ((BarHeight * 1.1f) / TextSizeY);
+    Canvas.FontScaleY = Canvas.FontScaleX;
 	Canvas.TextSize(RequirementProgressString[Index], TextSizeX, TextSizeY);
     TempX -= TextSizeX;
     TempY -= (TextSizeY * 0.05f);

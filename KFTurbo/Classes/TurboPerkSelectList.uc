@@ -77,6 +77,7 @@ function InitList(KFSteamStatsAndAchievements StatsAndAchievements)
 	}
 
 	HoverRatioList.Length = ItemCount;
+	SelectRatioList.Length = ItemCount;
 	LastUpdateTime = KFPC.Level.TimeSeconds;
 
 	if (bNotify)
@@ -92,6 +93,11 @@ function InitList(KFSteamStatsAndAchievements StatsAndAchievements)
 
 function bool PreDraw(Canvas Canvas)
 {
+	if (CPRL == None)
+	{
+		CPRL = TurboPlayerController(Canvas.Viewport.Actor).GetClientPerkRepLink();
+	}
+
 	if (IsInBounds())
 	{
 		HoverIndex = CalculateIndex();
@@ -131,16 +137,25 @@ function TickHover()
 	{
 		if (HoverIndex == ItemIndex)
 		{
-			HoverRatioList[ItemIndex] = Lerp(DeltaTime * 32.f, HoverRatioList[ItemIndex], 1.f);
+			HoverRatioList[ItemIndex] = Lerp(DeltaTime * 20.f, HoverRatioList[ItemIndex], 1.f);
 		}
 		else if (HoverRatioList[ItemIndex] != 0.f)
 		{
-			HoverRatioList[ItemIndex] = Lerp(DeltaTime * 16.f, HoverRatioList[ItemIndex], 0.f);
+			HoverRatioList[ItemIndex] = Lerp(DeltaTime * 8.f, HoverRatioList[ItemIndex], 0.f);
 
 			if (Abs(HoverRatioList[ItemIndex]) < 0.001f)
 			{
 				HoverRatioList[ItemIndex] = 0.f;
 			}
+		}
+
+		if (Index == ItemIndex)
+		{
+			SelectRatioList[ItemIndex] = Lerp(DeltaTime * 32.f, SelectRatioList[ItemIndex], 1.f);
+		}
+		else if (SelectRatioList[ItemIndex] != 0.f)
+		{
+			SelectRatioList[ItemIndex] = Lerp(DeltaTime * 16.f, SelectRatioList[ItemIndex], 0.f);
 		}
 	}
 }
@@ -148,16 +163,10 @@ function TickHover()
 function DrawPerk(Canvas Canvas, int CurIndex, float X, float Y, float Width, float Height, bool bSelected, bool bPending)
 {
 	local class<TurboVeterancyTypes> PerkClass;
-	local float SelectionRatio;
 
 	if (CPRL == None)
 	{
-		CPRL = TurboPlayerController(Canvas.Viewport.Actor).GetClientPerkRepLink();
-
-		if (CPRL == None)
-		{
-			return;
-		}
+		return;
 	}
 
 	PerkClass = class<TurboVeterancyTypes>(CPRL.CachePerks[CurIndex].PerkClass);
@@ -168,19 +177,9 @@ function DrawPerk(Canvas Canvas, int CurIndex, float X, float Y, float Width, fl
 	}
 
 	Y = Y + ItemSpacing / 2.0;
-	
 	Canvas.Style = 1;
 
-	if (bSelected)
-	{
-		SelectionRatio = 1.f;
-	}
-	else
-	{
-		SelectionRatio = 0.f;
-	}
-
-	class'TurboHUDPerkEntryDrawer'.static.Draw(Canvas, TurboHUD, X, Y + 7.0, Width, Height, PerkClass, CPRL.CachePerks[CurIndex].CurrentLevel - 1, PerkClass.Static.GetTotalProgress(CPRL, CPRL.CachePerks[CurIndex].CurrentLevel), SelectionRatio, HoverRatioList[CurIndex], false);
+	class'TurboHUDPerkEntryDrawer'.static.Draw(Canvas, TurboHUD, X, Y + 7.0, Width, Height, PerkClass, CPRL.CachePerks[CurIndex].CurrentLevel - 1, PerkClass.Static.GetTotalProgress(CPRL, CPRL.CachePerks[CurIndex].CurrentLevel), SelectRatioList[CurIndex], HoverRatioList[CurIndex], false);
 	class'TurboHUDKillingFloor'.static.ResetCanvas(Canvas);
 }
 

@@ -95,7 +95,7 @@ function DrawPerk(Canvas Canvas)
 	Width -= 6.f;
 	Height -= 34.f;
 	
-	class'TurboHUDPerkEntryDrawer'.static.Draw(Canvas, TurboHUD, X, Y, Width, Height, SelectedVeterancy, KFPRI.ClientVeteranSkillLevel, SelectedVeterancy.static.GetTotalProgress(CPRL, KFPRI.ClientVeteranSkillLevel + 1), 0.f, 0.f, true);
+	class'TurboHUDPerkEntryDrawer'.static.Draw(Canvas, TurboHUD, X, Y, Width, Height, SelectedVeterancy, KFPRI.ClientVeteranSkillLevel, SelectedVeterancy.static.GetTotalProgress(CPRL, KFPRI.ClientVeteranSkillLevel + 1), 1.f, 0.f, true);
 }
 
 defaultproperties

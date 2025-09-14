@@ -90,15 +90,26 @@ static final function Draw(Canvas Canvas, TurboHUDKillingFloor TurboHUD, float X
 	// Draw Item Background
 	PerkIconOffset = Height;
 	IconSize = PerkIconOffset - (default.ItemBorderRatio * 0.5f * Height);
-	if (SelectionRatio > 0.f)
+
+	if (SelectionRatio >= 1.f)
 	{
+		Canvas.SetDrawColor(255, 255, 255);
 		Canvas.SetPos(TempX + PerkIconOffset, Y + 7.0);
 		Canvas.DrawTileStretched(default.SelectedNameplateBackground, Width - PerkIconOffset, Height - 14);
 		Canvas.SetPos(TempX, TempY);
 		Canvas.DrawTileStretched(default.SelectedPerkBackground, PerkIconOffset, PerkIconOffset);
 	}
+	else if (HighlightRatio >= 1.f)
+	{
+		Canvas.SetDrawColor(255, 255, 255);
+		Canvas.SetPos(TempX + PerkIconOffset, Y + 7.0);
+		Canvas.DrawTileStretched(default.HighlightedNameplateBackground, Width - PerkIconOffset, Height - 14);
+		Canvas.SetPos(TempX, TempY);
+		Canvas.DrawTileStretched(default.HighlightedPerkBackground, PerkIconOffset, PerkIconOffset);
+	}
 	else
 	{
+		Canvas.SetDrawColor(255, 255, 255);
 		Canvas.SetPos(TempX + PerkIconOffset, Y + 7.0);
 		Canvas.DrawTileStretched(default.NameplateBackground, Width - PerkIconOffset, Height - 14);
 		Canvas.SetPos(TempX, TempY);
@@ -107,15 +118,23 @@ static final function Draw(Canvas Canvas, TurboHUDKillingFloor TurboHUD, float X
 		if (HighlightRatio > 0.f)
 		{
 			Canvas.DrawColor = class'TurboHUDOverlay'.static.MakeColor(255, 255, 255, byte(255.f * HighlightRatio));
-
 			Canvas.SetPos(TempX + PerkIconOffset, Y + 7.0);
 			Canvas.DrawTileStretched(default.HighlightedNameplateBackground, Width - PerkIconOffset, Height - 14);
 			Canvas.SetPos(TempX, TempY);
 			Canvas.DrawTileStretched(default.HighlightedPerkBackground, PerkIconOffset, PerkIconOffset);
+		}
 
-			Canvas.SetDrawColor(255, 255, 255);
+		if (SelectionRatio > 0.f)
+		{
+			Canvas.DrawColor = class'TurboHUDOverlay'.static.MakeColor(255, 255, 255, byte(255.f * SelectionRatio));
+			Canvas.SetPos(TempX + PerkIconOffset, Y + 7.0);
+			Canvas.DrawTileStretched(default.SelectedNameplateBackground, Width - PerkIconOffset, Height - 14);
+			Canvas.SetPos(TempX, TempY);
+			Canvas.DrawTileStretched(default.SelectedPerkBackground, PerkIconOffset, PerkIconOffset);
 		}
 	}
+
+	Canvas.SetDrawColor(255, 255, 255);
 
 	// Offset and Calculate Icon's Size
 	TempX += default.ItemBorderRatio * Height * 0.25f;
@@ -192,8 +211,6 @@ static final function Draw(Canvas Canvas, TurboHUDKillingFloor TurboHUD, float X
     Canvas.DrawColor = TextColor;
     Canvas.SetPos(TempNameX, TempNameY);
     Canvas.DrawText(PerkLevelString);
-
-	return;
 
 	//Draws a percent on the bar. Might be worth trying to get this to look good sometime.
 	SetupProgressFont(Canvas, TurboHUD, ProgressBarWidth * FClamp(Progress, 0.f, 1.f), default.ProgressBarHeight * Height * 0.667f);
