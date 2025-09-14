@@ -75,6 +75,11 @@ static final function TurboCardOverlay FindCardOverlay(PlayerController PlayerCo
 	local TurboHUDKillingFloor TurboHUD;
 	TurboHUD = TurboHUDKillingFloor(PlayerController.myHUD);
 
+	if (TurboHUD == None)
+	{
+		return None;
+	}
+
 	for (Index = 0; Index < TurboHUD.PreDrawOverlays.Length; Index++)
 	{
 		if (TurboCardOverlay(TurboHUD.PreDrawOverlays[Index]) != None)

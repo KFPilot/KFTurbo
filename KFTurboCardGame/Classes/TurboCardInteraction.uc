@@ -61,18 +61,31 @@ static final function bool SendVoteKeyPressEvent(PlayerController PlayerControll
 	return CGPRI.ProcessVoteKeyPressEvent(Key);
 }
 
+simulated function bool SendOverlayKeyEvent(EInputKey Key, EInputAction Action)
+{
+	local TurboCardOverlay Overlay;
+	Overlay = class'TurboCardOverlay'.static.FindCardOverlay(ViewportOwner.Actor);
+
+	if (Overlay == None)
+	{
+		return false;
+	}
+
+	return Overlay.ReceivedKeyEvent(Key, Action);
+}
+
 simulated function bool KeyEvent( out EInputKey Key, out EInputAction Action, FLOAT Delta )
 {
 	if (Action == IST_Press)
 	{
 		if (Key == IK_MouseWheelUp || Key == IK_MouseWheelDown)
 		{
-			return class'TurboCardOverlay'.static.FindCardOverlay(ViewportOwner.Actor).ReceivedKeyEvent(Key, Action);
+			return SendOverlayKeyEvent(Key, Action);
 		}
 
 		if (Key == IK_Shift)
 		{
-			class'TurboCardOverlay'.static.FindCardOverlay(ViewportOwner.Actor).ReceivedKeyEvent(Key, Action);
+			SendOverlayKeyEvent(Key, Action);
 			bShiftIsPressed = true;
 		}
 		else if (bShiftIsPressed)
@@ -84,7 +97,7 @@ simulated function bool KeyEvent( out EInputKey Key, out EInputAction Action, FL
 	{
 		if (Key == IK_Shift)
 		{
-			class'TurboCardOverlay'.static.FindCardOverlay(ViewportOwner.Actor).ReceivedKeyEvent(Key, Action);
+			SendOverlayKeyEvent(Key, Action);
 			bShiftIsPressed = false;
 		}
 	}
