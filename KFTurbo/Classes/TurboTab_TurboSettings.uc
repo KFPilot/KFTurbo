@@ -10,7 +10,6 @@ var automated moCheckbox F3ToVoteYesCheckBox;
 var automated moCheckbox PipebombGroupCheckBox;
 var automated moCheckbox UseBaseGameChatFontBox;
 var automated moComboBox FontLocaleComboBox;
-
 var automated moButton NeonWeaponConfigureButton;
 
 var string LocaleOptionList[3]; //3 for now (ENG/JPN/CYR). KOR will be added eventually but need to figure out the character set.
@@ -203,7 +202,7 @@ defaultproperties
     LocaleOptionList(1)="JPN"
     LocaleOptionList(2)="CYR"
 
-    Begin Object Class=GUISectionBackground Name=BGLeftSection
+    Begin Object Class=TurboGUISectionBackground Name=BGLeftSection
         bFillClient=True
         Caption="Turbo Settings"
         WinTop=0.0125
@@ -214,7 +213,7 @@ defaultproperties
     End Object
     LeftSection=GUISectionBackground'BGLeftSection'
 
-    Begin Object Class=GUISectionBackground Name=BGMiddleSection
+    Begin Object Class=TurboGUISectionBackground Name=BGMiddleSection
         bFillClient=True
         bVisible=true
         Caption="Turbo Settings"
@@ -226,7 +225,7 @@ defaultproperties
     End Object
     MiddleSection=GUISectionBackground'BGMiddleSection'
 
-    Begin Object Class=GUISectionBackground Name=BGRightSection
+    Begin Object Class=TurboGUISectionBackground Name=BGRightSection
         bFillClient=True
         bNoCaption=true
         bVisible=false
@@ -239,53 +238,52 @@ defaultproperties
     End Object
     RightSection=GUISectionBackground'BGRightSection'
 
-    //Column 1 options (TabOrder 1 - 9)
-    Begin Object Class=moCheckBox Name=MerchantReplacement
+    Begin Object Class=TurboOptionCheckBox Name=MerchantReplacement
         Caption="Use Merchant"
         OnCreateComponent=MerchantReplacement.InternalOnCreateComponent
         Hint="Replaces default Trader with Merchant."
         TabOrder=1
         OnChange=TurboTab_TurboSettings.OnMerchantReplacementChanged
     End Object
-    MerchantReplacementCheckBox=moCheckBox'MerchantReplacement'
+    MerchantReplacementCheckBox=moCheckbox'MerchantReplacement'
 
-    Begin Object Class=moCheckBox Name=ShiftTradeMenu
+    Begin Object Class=TurboOptionCheckBox Name=ShiftTradeMenu
         Caption="Press Shift To Trade"
         OnCreateComponent=ShiftTradeMenu.InternalOnCreateComponent
         Hint="Open trader menu in KFTurbo+ and Test Mode by pressing Shift key."
         TabOrder=2
         OnChange=TurboTab_TurboSettings.OnShiftToTradeChanged
     End Object
-    ShiftToTradeCheckBox=moCheckBox'ShiftTradeMenu'
+    ShiftToTradeCheckBox=moCheckbox'ShiftTradeMenu'
 
-    Begin Object Class=moCheckBox Name=F3ToVoteYes
+    Begin Object Class=TurboOptionCheckBox Name=F3ToVoteYes
         Caption="Press F3 To Vote Yes"
         OnCreateComponent=F3ToVoteYes.InternalOnCreateComponent
         Hint="Pressing F3 will vote yes."
         TabOrder=3
         OnChange=TurboTab_TurboSettings.OnF3ToVoteYesChanged
     End Object
-    F3ToVoteYesCheckBox=moCheckBox'F3ToVoteYes'
+    F3ToVoteYesCheckBox=moCheckbox'F3ToVoteYes'
 
-    Begin Object Class=moCheckBox Name=PipebombGroupChange
+    Begin Object Class=TurboOptionCheckBox Name=PipebombGroupChange
         Caption="Move Pipebomb Special Group"
         OnCreateComponent=PipebombGroupChange.InternalOnCreateComponent
         Hint="Moves the Pipebomb to inventory group 5."
         TabOrder=4
         OnChange=TurboTab_TurboSettings.OnPipebombGroupChange
     End Object
-    PipebombGroupCheckBox=moCheckBox'PipebombGroupChange'
+    PipebombGroupCheckBox=moCheckbox'PipebombGroupChange'
 
-    Begin Object Class=moCheckBox Name=UseBaseGameChatFont
-        Caption="Use Base Game Font For Chat"
+    Begin Object Class=TurboOptionCheckBox Name=UseBaseGameChatFont
+        Caption="Use Base Font For Chat"
         OnCreateComponent=UseBaseGameChatFont.InternalOnCreateComponent
         Hint="Chat text will use the base game's font to help with readability in non-english locales."
         TabOrder=5
         OnChange=TurboTab_TurboSettings.OnUseBaseGameChatFontChange
     End Object
-    UseBaseGameChatFontBox=moCheckBox'UseBaseGameChatFont'
+    UseBaseGameChatFontBox=moCheckbox'UseBaseGameChatFont'
 
-    Begin Object Class=moComboBox Name=FontLocale
+    Begin Object Class=TurboOptionComboBox Name=FontLocale
         Caption="Font Locale"
         OnCreateComponent=FontLocale.InternalOnCreateComponent
         Hint="Selects which locale font pack to use for UI."
@@ -294,8 +292,7 @@ defaultproperties
     End Object
     FontLocaleComboBox=moComboBox'FontLocale'
 
-    //Column 2 options (TabOrder 11 - 19)
-    Begin Object Class=moButton Name=NeonWeaponSkinsButton
+    Begin Object Class=TurboOptionButton Name=NeonWeaponSkinsButton
         Caption="Neon Weapons"
         ButtonCaption="Configure"
         TabOrder=11

@@ -12,6 +12,9 @@ function InitComponent(GUIController MyController, GUIComponent MyOwner)
     local eFontScale FS;
 	local SRMenuAddition M;
 
+	MyController.RegisterStyle(class'TurboGUIStyleSectionLabel');
+	MyController.RegisterStyle(class'TurboGUIStyleLabel');
+
 	// Setup panel classes.
 	Panels[0].ClassName = string(class'TurboTab_ServerNews');
 	Panels[1].ClassName = string(class'TurboTab_MidGamePerks');
@@ -63,8 +66,8 @@ function InitComponent(GUIController MyController, GUIComponent MyOwner)
             GUIButton(Controls[i]).AutoSizePadding.VertPerc = 0.5;
         }
     }
-    s = class'KFTab_MidGamePerks'.default.PlayerStyleName;
-    PlayerStyle = MyController.GetStyle(s, fs);
+    //s = class'KFTab_MidGamePerks'.default.PlayerStyleName;
+    //PlayerStyle = MyController.GetStyle(s, fs);
 	InitGRI();
 }
 
