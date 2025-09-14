@@ -30,6 +30,9 @@ function PostBeginPlay()
 	local int Index, Difficulty;
 	Super.PostBeginPlay();
 
+	AddToPackageMap("KFMapVoteV2");
+	AddToPackageMap("KFTurboMapVote");
+
 	if (bMapVote)
 	{
 		CurrentDifficultyConfig = 0;
