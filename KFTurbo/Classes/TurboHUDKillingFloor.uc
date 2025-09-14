@@ -859,6 +859,10 @@ function AddTextMessage(string Message, class<LocalMessage> MessageClass, Player
 	{
 		TurboTextMessages[Index].CachedPlayerName = TurboTextMessages[Index].PRI.PlayerName;
 	}
+	else
+	{
+		TurboTextMessages[Index].CachedPlayerName = "";
+	}
 }
 
 //Added drop shadow.

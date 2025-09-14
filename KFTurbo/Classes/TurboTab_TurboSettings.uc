@@ -204,6 +204,7 @@ defaultproperties
 
     Begin Object Class=TurboGUISectionBackground Name=BGLeftSection
         bFillClient=True
+        bNoCaption=True
         Caption="Turbo Settings"
         WinTop=0.0125
         WinLeft=0.02
@@ -215,7 +216,8 @@ defaultproperties
 
     Begin Object Class=TurboGUISectionBackground Name=BGMiddleSection
         bFillClient=True
-        bVisible=true
+        bNoCaption=True
+        bVisible=True
         Caption="Turbo Settings"
         WinTop=0.0125
         WinLeft=0.34
@@ -227,8 +229,8 @@ defaultproperties
 
     Begin Object Class=TurboGUISectionBackground Name=BGRightSection
         bFillClient=True
-        bNoCaption=true
-        bVisible=false
+        bNoCaption=True
+        bVisible=False
         Caption="Custom Game Settings"
         WinTop=0.0125
         WinLeft=0.66
