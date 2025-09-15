@@ -72,7 +72,7 @@ function SpawnTurboPlusActors()
 {
     if (class'KFTurboPlusArmorRegen'.static.ShouldPerformArmorRegen())
     {
-        ArmorRegenActor = Spawn(class'KFTurboPlusArmorRegen'.static.GetArmorRegenActorClass(), self);
+        ArmorRegenActor = KFTurboPlusArmorRegen(class'KFTurboPlusArmorRegen'.static.GetArmorRegenActorClass().static.CreateHandler(Self));
     }
 }
 

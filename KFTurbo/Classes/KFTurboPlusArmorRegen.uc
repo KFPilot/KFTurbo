@@ -101,7 +101,12 @@ function Timer()
         }
 
         PawnRegenList[Index].NextArmorRegen += ArmorRegenDelay;
-        Pawn.ShieldStrength = FMin(Pawn.ShieldStrength, ArmorRegenMaximum);
+        Pawn.ShieldStrength = FMin(Pawn.ShieldStrength + ArmorRegenAmount, FMax(Pawn.ShieldStrength, ArmorRegenMaximum));
+
+        if (Pawn.ShieldStrength >= ArmorRegenMaximum)
+        {
+            PawnRegenList.Remove(Index, 1);
+        }
     }
 
     if (PawnRegenList.Length == 0)
