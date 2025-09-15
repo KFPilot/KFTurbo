@@ -383,13 +383,24 @@ simulated function TickMovementBuffer(float DeltaTime)
     
     AttachToActor(NextStep.AttachParent);
 
-    GetAxes(NextStep.Rotation, X, Y, Z);
-    CurrentQuat = QuatFromRotator(NextStep.Rotation);
-    TemporaryQuat = QuatFromAxisAngle(Z, -90.f);
-    CurrentQuat = QuatProduct(CurrentQuat, TemporaryQuat);
-    SetRotation(RLerp(CurrentRotation, QuatToRotator(CurrentQuat), DeltaTime * InterpolationRate * 0.25f));
-    CurrentRotation = Rotation;
+    if (IsLocalPlayerSpectator())
+    {
+        GetAxes(NextStep.Rotation, X, Y, Z);
+        CurrentQuat = QuatFromRotator(OwningController.Rotation);
+        TemporaryQuat = QuatFromAxisAngle(Z, -90.f);
+        CurrentQuat = QuatProduct(CurrentQuat, TemporaryQuat);
+        SetRotation(RLerp(CurrentRotation, QuatToRotator(CurrentQuat), DeltaTime * InterpolationRate * 0.25f));
+    }
+    else
+    {
+        GetAxes(NextStep.Rotation, X, Y, Z);
+        CurrentQuat = QuatFromRotator(NextStep.Rotation);
+        TemporaryQuat = QuatFromAxisAngle(Z, -90.f);
+        CurrentQuat = QuatProduct(CurrentQuat, TemporaryQuat);
+        SetRotation(RLerp(CurrentRotation, QuatToRotator(CurrentQuat), DeltaTime * InterpolationRate * 0.25f));
+    }
 
+    CurrentRotation = Rotation;
     if (NextStep.AttachParent != None)
     {
         SetRelativeLocation(NextStep.RelativeLocation);
