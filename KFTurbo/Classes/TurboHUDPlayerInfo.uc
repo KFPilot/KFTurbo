@@ -429,7 +429,15 @@ final simulated function DrawPlayerInfo(Canvas C, PlayerInfoData PlayerInfo, flo
 
 	OffsetX = TurboHUD.BarLength * 0.5f;
 
-	C.Font = TurboHUD.GetConsoleFont(C);
+	if (TurboHUD.bUseBaseGameFontForChat)
+	{
+		C.Font = TurboHUD.GetDefaultConsoleFont(C);
+	}
+	else
+	{
+		C.Font = TurboHUD.GetChatFont(C);
+	}
+
 	class'SRScoreBoard'.Static.TextSizeCountry(C, PlayerInfo.TPRI, XL, YL);
 	TempX = ScreenLocX - (XL * 0.5);
 	TempY = ScreenLocY - (YL * 1.f);
