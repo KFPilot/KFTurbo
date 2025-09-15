@@ -660,10 +660,7 @@ simulated final function DrawKillFeedEntry(Canvas C, out float DrawY, out KillFe
 		C.DrawTileStretched(LeftEdgeContainer, (EntrySizeX + 2.f + 24.f), EntrySizeY);
 	}
 
-	if (bIsElite)
-	{
-		C.DrawColor = MakeColor(255, 255, 255, byte(FadeOutRatio * 255.f));
-	}
+	C.DrawColor = MakeColor(255, 255, 255, byte(FadeOutRatio * 255.f));
 
 	DrawX = 8.f - DrawOffsetX;
 	C.SetPos(DrawX + KillTextX, DrawY + (EntrySizeY * 0.5f) - (BaseTextSizeY * 0.45f));
