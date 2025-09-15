@@ -689,12 +689,13 @@ simulated final function DrawKillFeedEntry(Canvas C, out float DrawY, out KillFe
 	//Draw player name if this isn't our entry.
 	if (!Entry.bIsLocalPlayer)
 	{
+		C.DrawColor = MakeColor(255, 255, 255, byte(FadeOutRatio * 255.f));
 		C.Font = TurboHUD.LoadItalicFont(3 + FontSizeOffset);
-		C.FontScaleX = BaseTextScale * 1.5f;
-		C.FontScaleY = BaseTextScale * 1.5f;
+		C.FontScaleX = BaseTextScale * 1.25f;
+		C.FontScaleY = BaseTextScale * 1.25f;
 
 		C.TextSize(Entry.ResolvedName, TextSizeX, TextSizeY);
-		C.SetPos(DrawX + (KillTextX * 0.5f), DrawY - (TextSizeY * 0.4f));
+		C.SetPos(DrawX + (KillTextX * 0.5f), DrawY - (TextSizeY * 0.5f));
 		C.DrawTextClipped(Entry.ResolvedName);
 	}
 
