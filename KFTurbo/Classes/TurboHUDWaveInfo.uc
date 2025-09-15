@@ -662,14 +662,8 @@ simulated final function DrawKillFeedEntry(Canvas C, out float DrawY, out KillFe
 
 	if (bIsElite)
 	{
-		C.DrawColor = LerpColor(Entry.TriggerRatio, MakeColor(255, 255, 255, 255), MakeColor(255, 0, 0, 255));
+		C.DrawColor = MakeColor(255, 255, 255, byte(FadeOutRatio * 255.f));
 	}
-	else
-	{
-		C.DrawColor = MakeColor(255, 255, 255, 255);
-	}
-
-	C.DrawColor.A = byte(FadeOutRatio * 255.f);
 
 	DrawX = 8.f - DrawOffsetX;
 	C.SetPos(DrawX + KillTextX, DrawY + (EntrySizeY * 0.5f) - (BaseTextSizeY * 0.45f));
@@ -677,7 +671,12 @@ simulated final function DrawKillFeedEntry(Canvas C, out float DrawY, out KillFe
 
 	if (bIsElite)
 	{
-		C.DrawColor = MakeColor(255, 255, 255, 255);
+		C.DrawColor = LerpColor(Entry.TriggerRatio, MakeColor(255, 255, 255, 255), MakeColor(255, 0, 0, 255));
+		C.DrawColor.A = byte(FadeOutRatio * 255.f);
+	}
+	else
+	{
+		C.DrawColor = MakeColor(255, 255, 255, byte(FadeOutRatio * 255.f));
 	}
 
 	C.FontScaleX *= GetBonusScale(Entry);
@@ -691,11 +690,11 @@ simulated final function DrawKillFeedEntry(Canvas C, out float DrawY, out KillFe
 	if (!Entry.bIsLocalPlayer)
 	{
 		C.Font = TurboHUD.LoadItalicFont(3 + FontSizeOffset);
-		C.FontScaleX = BaseTextScale;
-		C.FontScaleY = BaseTextScale;
+		C.FontScaleX = BaseTextScale * 1.5f;
+		C.FontScaleY = BaseTextScale * 1.5f;
 
 		C.TextSize(Entry.ResolvedName, TextSizeX, TextSizeY);
-		C.SetPos(DrawX + (KillTextX * 0.5f), DrawY - (TextSizeY * 0.65f));
+		C.SetPos(DrawX + (KillTextX * 0.5f), DrawY - (TextSizeY * 0.4f));
 		C.DrawTextClipped(Entry.ResolvedName);
 	}
 
