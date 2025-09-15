@@ -934,15 +934,16 @@ simulated function DrawTypingPrompt(Canvas C, String Text, optional int Pos)
     local float XPos, YPos;
     local float XL, YL;
 	local string PromptText;
-
+	
 	if (bUseBaseGameFontForChat)
 	{
 		C.Font = GetDefaultConsoleFont(C);
 	}
 	else
 	{
-		C.Font = GetConsoleFont(C);
+		C.Font = GetChatFont(C);
 	}
+
     C.Style = ERenderStyle.STY_Alpha;
 
     C.TextSize("A", XL, YL);
