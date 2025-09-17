@@ -8,11 +8,8 @@ var automated GUIButton b_PlayerChat;
 function InitComponent(GUIController MyController, GUIComponent MyOwner)
 {
     local int i;
-    local string s;
+	local string SizingCaption;
 	local SRMenuAddition M;
-
-	MyController.RegisterStyle(class'TurboGUIStyleSectionLabel');
-	MyController.RegisterStyle(class'TurboGUIStyleLabel');
 
 	// Setup panel classes.
 	Panels[0].ClassName = string(class'TurboTab_ServerNews');
@@ -30,6 +27,7 @@ function InitComponent(GUIController MyController, GUIComponent MyOwner)
 	Panels[2].Hint = Class'KFInvasionLoginMenu'.Default.Panels[2].Hint;
 	Panels[3].Hint = Class'TurboInvasionLoginMenu'.Default.Panels[3].Hint;
 	Panels[4].Hint = Class'TurboInvasionLoginMenu'.Default.Panels[4].Hint;
+
 	b_Spec.Caption=class'KFTab_MidGamePerks'.default.b_Spec.Caption;
 	b_MatchSetup.Caption=class'KFTab_MidGamePerks'.default.b_MatchSetup.Caption;
 	b_KickVote.Caption=class'KFTab_MidGamePerks'.default.b_KickVote.Caption;
@@ -39,6 +37,18 @@ function InitComponent(GUIController MyController, GUIComponent MyOwner)
 	b_Favs.Hint=class'KFTab_MidGamePerks'.default.b_Favs.Hint;
 	b_Settings.Caption=class'KFTab_MidGamePerks'.default.b_Settings.Caption;
 	b_Browser.Caption=class'KFTab_MidGamePerks'.default.b_Browser.Caption;
+
+	b_Settings.StyleName = class'TurboGUIStyleButton'.default.KeyName;
+	b_Browser.StyleName = class'TurboGUIStyleButton'.default.KeyName;
+	b_Quit.StyleName = class'TurboGUIStyleButton'.default.KeyName;
+	b_Favs.StyleName = class'TurboGUIStyleButton'.default.KeyName;
+	b_Leave.StyleName = class'TurboGUIStyleButton'.default.KeyName;
+	b_MapVote.StyleName = class'TurboGUIStyleButton'.default.KeyName;
+	b_KickVote.StyleName = class'TurboGUIStyleButton'.default.KeyName;
+	b_MatchSetup.StyleName = class'TurboGUIStyleButton'.default.KeyName;
+	b_Spec.StyleName = class'TurboGUIStyleButton'.default.KeyName;
+	b_Profile.StyleName = class'TurboGUIStyleButton'.default.KeyName;
+	b_PlayerChat.StyleName = class'TurboGUIStyleButton'.default.KeyName;
 
  	Super(UT2K4PlayerLoginMenu).InitComponent(MyController, MyOwner);
 
@@ -53,16 +63,17 @@ function InitComponent(GUIController MyController, GUIComponent MyOwner)
 			}
 	}
 
-   	s = GetSizingCaption();
+   	SizingCaption = GetSizingCaption();
 
 	for ( i = 0; i < Controls.Length; i++ )
     {
-    	if ( GUIButton(Controls[i]) != None )
+    	if (GUIButton(Controls[i]) != None)
         {
             GUIButton(Controls[i]).bAutoSize = true;
-            GUIButton(Controls[i]).SizingCaption = s;
-            GUIButton(Controls[i]).AutoSizePadding.HorzPerc = 0.04;
-            GUIButton(Controls[i]).AutoSizePadding.VertPerc = 0.5;
+            GUIButton(Controls[i]).bAutoSize = true;
+            GUIButton(Controls[i]).SizingCaption = SizingCaption;
+            GUIButton(Controls[i]).AutoSizePadding.HorzPerc = 0.05;
+            GUIButton(Controls[i]).AutoSizePadding.VertPerc = 0.1;
         }
     }
     //s = class'KFTab_MidGamePerks'.default.PlayerStyleName;
@@ -96,6 +107,11 @@ function InitGRI()
 
     SetupGroups();
 	//InitLists();
+}
+
+function AddPanels()
+{
+	Super.AddPanels();
 }
 
 function bool ButtonClicked(GUIComponent Sender)
@@ -232,11 +248,113 @@ simulated function bool OpenPlayerChat(GUIComponent Sender)
 	return true;
 }
 
+function SetButtonPositions(Canvas C)
+{
+    local int i, j, ButtonsPerRow, ButtonsLeftInRow, NumButtons;
+    local float Width, Height, Center, X, Y, YL, ButtonSpacing;
+
+    Width = b_Settings.ActualWidth();
+    Height = b_Settings.ActualHeight();
+    Center = ActualLeft() + (ActualWidth() / 2.0);
+
+    ButtonSpacing = Width * 0.05;
+    YL = Height * 1.2;
+    Y = b_Settings.ActualTop();
+
+    ButtonsPerRow = ActualWidth() / (Width + ButtonSpacing);
+    ButtonsLeftInRow = ButtonsPerRow;
+
+    for (i = 0; i < Components.Length; i++)
+	{
+		if (Components[i].bVisible && GUIButton(Components[i]) != None)
+	    {
+			NumButtons++;
+	    }
+    }
+
+    if (NumButtons < ButtonsPerRow)
+    {
+    	X = Center - (((Width * float(NumButtons)) + (ButtonSpacing * float(NumButtons - 1))) * 0.5);
+    }
+    else if ( ButtonsPerRow > 1 )
+    {
+        X = Center - (((Width * float(ButtonsPerRow)) + (ButtonSpacing * float(ButtonsPerRow - 1))) * 0.5);
+    }
+    else
+    {
+        X = Center - Width / 2.0;
+    }
+
+    for (i = 0; i < Components.Length; i++)
+	{
+		if (!Components[i].bVisible || GUIButton(Components[i]) == None)
+        {
+            continue;
+        }
+
+        Components[i].SetPosition(X, Y, Width, Height, true);
+
+        if (--ButtonsLeftInRow > 0)
+        {
+            X += Width + ButtonSpacing;
+        }
+        else
+        {
+            Y += YL;
+
+            for (j = i + 1; j < Components.Length && ButtonsLeftInRow < ButtonsPerRow; j++)
+            {
+                if (Components[i].bVisible && GUIButton(Components[i]) != None)
+                {
+                    ButtonsLeftInRow++;
+                }
+            }
+
+            if (ButtonsLeftInRow > 1)
+            {
+                X = Center - (((Width * float(ButtonsLeftInRow)) + (ButtonSpacing * float(ButtonsLeftInRow - 1))) * 0.5);
+            }
+            else
+            {
+                X = Center - Width / 2.0;
+            }
+        }
+    }
+}
+
 defaultproperties
 {
 	Panels(0)=(Caption="Info",Hint="Information about KFTurbo.")
     Panels(3)=(ClassName="KFTurbo.TurboTab_EmoteList",Caption="Emotes",Hint="List of emotes.")
     Panels(4)=(ClassName="KFTurbo.TurboTab_TurboSettings",Caption="Settings",Hint="KFTurbo settings.")
+
+	Begin Object Class=TurboGUITabControl Name=LoginMenuTC
+		WinWidth=1.0
+		WinHeight=0.055
+		WinLeft=0.0
+		WinTop=0.01
+        TabHeight=0.035000
+        bAcceptsInput=true
+        bDockPanels=true
+        bScaleToParent=true
+        bFillSpace=True
+        BackgroundStyleName="TabBackground"
+    End Object
+    c_Main=TurboGUITabControl'LoginMenuTC'
+
+
+	Begin Object Class=GUIButton Name=SettingsButton
+		WinTop=0.885
+		WinLeft=0.194420
+		WinWidth=0.147268
+		WinHeight=0.035000
+		TabOrder=0
+		bBoundToParent=True
+		bScaleToParent=True
+		OnClick=SRInvasionLoginMenu.ButtonClicked
+		OnKeyEvent=SettingsButton.InternalOnKeyEvent
+	End Object
+	b_Settings=GUIButton'SettingsButton'
 
 	Begin Object Class=GUIButton Name=PlayerChatButton
 		Caption="Show Chat"
@@ -251,4 +369,13 @@ defaultproperties
 		OnKeyEvent=PlayerChatButton.InternalOnKeyEvent
 	End Object
 	b_PlayerChat=GUIButton'PlayerChatButton'
+
+	DefaultWidth=0.8
+	DefaultHeight=0.9
+	DefaultLeft=0.1
+	DefaultTop=0.05
+	WinWidth=0.8
+	WinHeight=0.9
+	WinLeft=0.1
+	WinTop=0.05
 }

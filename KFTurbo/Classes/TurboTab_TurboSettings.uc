@@ -61,7 +61,6 @@ function InitComponent(GUIController MyController, GUIComponent MyOwner)
     
     if (PlayerController.HasExtraOptions())
     {
-        GetCustomOptionContainer().bNoCaption = false;
         GetCustomOptionContainer().SetVisibility(true);
 
         PlayerController.GenerateExtraOptions(Self, NeonWeaponConfigureButton.TabOrder + 1);
@@ -268,7 +267,7 @@ defaultproperties
     F3ToVoteYesCheckBox=moCheckbox'F3ToVoteYes'
 
     Begin Object Class=TurboOptionCheckBox Name=PipebombGroupChange
-        Caption="Move Pipebomb Special Group"
+        Caption="Move Pipebomb To Special Group"
         OnCreateComponent=PipebombGroupChange.InternalOnCreateComponent
         Hint="Moves the Pipebomb to inventory group 5."
         TabOrder=4

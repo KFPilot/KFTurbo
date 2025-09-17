@@ -6,5 +6,7 @@ class TurboOptionCheckBox extends moCheckBox;
 defaultproperties
 {
     LabelStyleName="TurboLabel"
+    //bHeightFromComponent=true
+    StandardHeight=0.04
     bNeverFocus=true
 }

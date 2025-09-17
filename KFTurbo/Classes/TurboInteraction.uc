@@ -9,6 +9,7 @@ class TurboInteraction extends Engine.Interaction
 var globalconfig TurboPlayerMarkReplicationInfo.EMarkColor MarkColor;
 
 var bool bHasInitializedInteraction;
+var bool bHasInitializedStyles;
 var bool bHasInitializedPerkTierPreference;
 var globalconfig array<TurboRepLink.VeterancyTierPreference> PerkTierPreferenceList;
 
@@ -56,6 +57,11 @@ simulated function OnInteractionCreated()
 	{
 		ExtendedConsole(ViewportOwner.Console).ChatMenuClass = string(class'KFTurbo.TurboInGameChat');
 	}
+
+	if (ViewportOwner != None)
+	{
+		RegisterStyles(GUIController(ViewportOwner.GUIController));
+	}
 }
 
 simulated function InitializeTurboInteraction()
@@ -71,6 +77,22 @@ simulated function InitializeTurboInteraction()
 	InitializePipebombUsesSpecialGroup();
 	UpdateUseBaseGameFontForChat();
 	UpdateFontLocale();
+
+	RegisterStyles(GUIController(ViewportOwner.GUIController));
+}
+
+simulated function RegisterStyles(GUIController GUIController)
+{
+	if (bHasInitializedStyles || GUIController == None)
+	{
+		return;
+	}
+
+	bHasInitializedStyles = true;
+
+	GUIController.RegisterStyle(class'TurboGUIStyleSectionLabel');
+	GUIController.RegisterStyle(class'TurboGUIStyleLabel');
+	GUIController.RegisterStyle(class'TurboGUIStyleButton');
 }
 
 simulated function NotifyLevelChange()

@@ -6,6 +6,15 @@ class TurboTab_ServerNews extends ServerPerks.SRTab_ServerNews;
 var array<string> NewsText;
 var bool bHasInitialized;
 
+function InitComponent(GUIController MyController, GUIComponent MyOwner)
+{
+    Super.InitComponent(MyController, MyOwner);
+    
+    b_Prev.SetVisibility(false);
+    b_Next.SetVisibility(false);
+    b_Reload.SetVisibility(false);
+}
+
 //Skip loading from a webpage for now.
 function Timer()
 {

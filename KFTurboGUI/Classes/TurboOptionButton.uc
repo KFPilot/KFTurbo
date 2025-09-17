@@ -6,5 +6,6 @@ class TurboOptionButton extends moButton;
 defaultproperties
 {
     LabelStyleName="TurboLabel"
+    ButtonStyleName="TurboButton"
     bNeverFocus=true
 }
