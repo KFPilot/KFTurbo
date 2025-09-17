@@ -171,6 +171,7 @@ var CardDeltaStack PlayerDualWeaponZedTimeExtensionDelta;
 var CardModifierStack PlayerNonMedicHealPotencyModifier;
 var CardModifierStack PlayerMedicHealPotencyModifier;
 var CardModifierStack PlayerHealRechargeModifier;
+var CardModifierStack PlayerReciprocalHealingModifier;
 
 //MOVEMENT
 var CardModifierStack PlayerMovementSpeedModifier;
@@ -1083,6 +1084,11 @@ function PlayerHealRechargeModifierChanged(CardModifierStack ModifiedStack, floa
     CardGameModifier.ForceNetUpdate();
 }
 
+function PlayerReciprocalHealingModifierChanged(CardModifierStack ModifiedStack, float Modifier)
+{
+    HealCardEventHandler.ReciprocalHealtMultiplier = Modifier;
+}
+
 //MOVEMENT
 function PlayerMovementSpeedModifierChanged(CardModifierStack ModifiedStack, float Modifier)
 {
@@ -1882,6 +1888,12 @@ defaultproperties
         OnModifierChanged=PlayerHealRechargeModifierChanged
     End Object
     PlayerHealRechargeModifier=CardModifierStack'PlayerHealRechargeModifierStack'
+
+    Begin Object Name=PlayerReciprocalHealingModifierStack Class=CardModifierStack
+        ModifierStackID="PlayerReciprocalHealing"
+        OnModifierChanged=PlayerReciprocalHealingModifierChanged
+    End Object
+    PlayerReciprocalHealingModifier=CardModifierStack'PlayerReciprocalHealingModifierStack'
 
 //MOVEMENT
     Begin Object Name=PlayerMovementSpeedModifierStack Class=CardModifierStack

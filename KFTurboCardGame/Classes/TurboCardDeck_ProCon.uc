@@ -615,6 +615,24 @@ function ActivateSomething(TurboCardGameplayManager GameplayManager, TurboCard C
     }
 }
 
+function ActivateGlassCannon(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
+{
+    Card.UpdateModifier(GameplayManager.PlayerDamageModifier, 1.10f, bActivate);
+    Card.UpdateModifier(GameplayManager.PlayerMaxHealthModifier, 0.9f, bActivate);
+}
+
+function ActivateBigBoned(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
+{
+    Card.UpdateModifier(GameplayManager.PlayerMaxHealthModifier, 1.10f, bActivate);
+    Card.UpdateModifier(GameplayManager.PlayerMovementSpeedModifier, 0.9f, bActivate);
+}
+
+function ActivateHoarder(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
+{
+    Card.UpdateModifier(GameplayManager.PlayerCarryCapacityDelta, 2, bActivate);
+    Card.UpdateModifier(GameplayManager.PlayerMovementSpeedModifier, 0.95f, bActivate);
+}
+
 defaultproperties
 {
     Begin Object Name=TradeIn Class=TurboCard_ProConStrange
@@ -1037,7 +1055,7 @@ defaultproperties
         CardDescriptionList(2)="reduces jump"
         CardDescriptionList(3)="height by 50%."
         OnActivateCard=ActivateShortHop
-        CardID="PROCON_OVERSIZEPIPE"
+        CardID="PROCON_SHORTHOP"
     End Object
     DeckCardObjectList(32)=TurboCard'ShortHop'
     
@@ -1141,4 +1159,38 @@ defaultproperties
         OnActivateCard=ActivateSomething
     End Object
     DeckCardObjectList(41)=TurboCard'Something'
+
+    Begin Object Name=GlassCannon Class=TurboCard_ProCon
+        CardName(0)="Glass Cannon"
+        CardDescriptionList(0)="Increases player"
+        CardDescriptionList(1)="damage by 10% but"
+        CardDescriptionList(1)="reduces player"
+        CardDescriptionList(2)="health by 10%."
+        CardID="PROCON_GLASSCAN"
+        OnActivateCard=ActivateGlassCannon
+    End Object
+    DeckCardObjectList(42)=TurboCard'GlassCannon'
+
+    Begin Object Name=BigBoned Class=TurboCard_ProCon
+        CardName(0)="Big Boned"
+        CardDescriptionList(0)="Increases player"
+        CardDescriptionList(1)="health by 10% but"
+        CardDescriptionList(1)="reduces player"
+        CardDescriptionList(2)="speed by 10%."
+        CardID="PROCON_BIGBONE"
+        OnActivateCard=ActivateBigBoned
+    End Object
+    DeckCardObjectList(43)=TurboCard'BigBoned'
+
+    Begin Object Name=Hoarder Class=TurboCard_ProCon
+        CardName(0)="Hoarder"
+        CardDescriptionList(0)="Increases max"
+        CardDescriptionList(1)="carry capacity"
+        CardDescriptionList(2)="by 2. Decreases"
+        CardDescriptionList(3)="player movement"
+        CardDescriptionList(4)="speed by 5%."
+        CardID="PROCON_HOARDER"
+        OnActivateCard=ActivateHoarder
+    End Object
+    DeckCardObjectList(44)=TurboCard'Hoarder'
 }

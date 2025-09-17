@@ -5,7 +5,7 @@ class TurboPlayerCardCustomInfo extends TurboPlayerCustomInfo;
 
 var TurboServerTimeActor ServerTimeActor;
 
-var bool bHasCheatedDeath;
+var int CheatDeathWave;
 var float CheatDeathTime;
 
 var int NegateDamageCount;
@@ -99,7 +99,7 @@ simulated function Tick(float DeltaTime)
 //Doesn't use ServerTimeActor because this is only used on server.
 final function bool IsInCheatDeathGracePeriod()
 {
-	return bHasCheatedDeath && CheatDeathTime > 0.f && Level.TimeSeconds < CheatDeathTime;
+	return CheatDeathTime > 0.f && Level.TimeSeconds < CheatDeathTime;
 }
 
 final function bool IsInPerpetualCriticalHitTime()
@@ -190,7 +190,7 @@ simulated function ClientCriticalHit(Vector Location, int CriticalHitCount)
 
 defaultproperties
 {
-	bHasCheatedDeath=false
+	CheatDeathWave=-1
 	CheatDeathTime=-1.f
 
 	NegateDamageCount=0

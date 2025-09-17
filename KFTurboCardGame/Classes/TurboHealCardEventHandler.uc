@@ -4,6 +4,7 @@
 class TurboHealCardEventHandler extends TurboHealEventHandler;
 
 var bool bHealingBoost;
+var float ReciprocalHealtMultiplier;
 
 static function TurboPlayerCardCustomInfo FindCardCustomInfo(TurboPlayerReplicationInfo TPRI)
 {
@@ -43,6 +44,11 @@ final function RewardHealedHealth(Pawn Instigator, Pawn Target, int HealingAmoun
     {
         return;
     }
+
+    if (ReciprocalHealtMultiplier > 0.f)
+    {
+        ReciprocateHeal(Instigator, HealingAmount);
+    }
     
     CardCustomInfo = FindCardCustomInfo(TurboPlayerReplicationInfo(Target.PlayerReplicationInfo));
 
@@ -54,7 +60,20 @@ final function RewardHealedHealth(Pawn Instigator, Pawn Target, int HealingAmoun
     CardCustomInfo.PlayerHealed();
 }
 
+final function ReciprocateHeal(Pawn Instigator, int HealingAmount)
+{
+    HealingAmount = Round(float(HealingAmount) * ReciprocalHealtMultiplier);
+
+    if (HealingAmount == 0 || Instigator == None)
+    {
+        return;
+    }
+
+    Instigator.GiveHealth(HealingAmount, Instigator.HealthMax);
+}
+
 defaultproperties
 {
     bHealingBoost=false
+    ReciprocalHealtMultiplier=0.f
 }

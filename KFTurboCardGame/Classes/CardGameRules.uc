@@ -276,18 +276,17 @@ final function bool AttemptCheatDeath(TurboPlayerCardCustomInfo PlayerCardInfo, 
         return false;
     }
 
-    if (PlayerCardInfo == None || PlayerCardInfo.bHasCheatedDeath)
+    if (PlayerCardInfo == None || (PlayerCardInfo.CheatDeathWave > 0 && PlayerCardInfo.CheatDeathWave < (Level.Game.GetCurrentWaveNum() + 2)))
     {
         return false;
     }
 
-    PlayerCardInfo.bHasCheatedDeath = true;
-    PlayerCardInfo.CheatDeathTime = Level.TimeSeconds + 2.f;
+    PlayerCardInfo.CheatDeathWave = Level.Game.GetCurrentWaveNum();
+    PlayerCardInfo.CheatDeathTime = Level.TimeSeconds + 3.f;
 
-    KilledPawn.Health = Max(KilledPawn.HealthMax, Max(KilledPawn.Health, 1));
+    KilledPawn.Health = KilledPawn.HealthMax;
     Level.BroadcastLocalizedMessage(class'CheatDeathLocalMessage', 0, PlayerCardInfo.PlayerTPRI);
     Spawn(class'CheatDeathEffect', KilledPawn,, KilledPawn.Location + (vect(0, 0, 0.8f) * KilledPawn.CollisionHeight));
-    
     return true;
 }
 
@@ -909,13 +908,13 @@ function GrantShieldOnKill(KFMonster KilledMonster, PlayerController Killer)
     switch (class'PawnHelper'.static.GetMonsterTier(KilledMonster.Class))
     {
         case Trash:
-            ShieldAmount = 0.25f;
+            ShieldAmount = 0.5f;
             break;
         case Special:
-            ShieldAmount = 1.f;
+            ShieldAmount = 2.f;
             break;
         case Elite:
-            ShieldAmount = 5.f;
+            ShieldAmount = 10.f;
             break;
         case Boss:
             ShieldAmount = 50.f;

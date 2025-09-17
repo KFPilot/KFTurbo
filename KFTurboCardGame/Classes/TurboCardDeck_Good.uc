@@ -380,7 +380,7 @@ function ActivateAdvancedWelding(TurboCardGameplayManager GameplayManager, Turbo
     Card.UpdateModifier(GameplayManager.WeldStrengthModifier, 1.5f, bActivate);
 }
 
-function ActivateLargerQuanityOfLowQuality(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
+function ActivateLargerQuantityOfLowQuality(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
     Card.UpdateDelta(GameplayManager.GoodCardSelectionCountDelta, 1, bActivate);
 }
@@ -424,6 +424,11 @@ function ActivateGooseCooked(TurboCardGameplayManager GameplayManager, TurboCard
 {
     Card.UpdateModifier(GameplayManager.PlayerBurnDamageModifier, 0.5f, bActivate);
     Card.UpdateFlag(GameplayManager.PlayerBurnGivesMovementSpeed, bActivate);
+}
+
+function ActivateSpreadTheLove(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
+{
+    Card.UpdateFlag(GameplayManager.PlayerReciprocalHealingModifier, bActivate);
 }
 
 defaultproperties
@@ -578,7 +583,7 @@ defaultproperties
         CardDescriptionList(0)="Decreases weapon"
         CardDescriptionList(1)="spread and"
         CardDescriptionList(2)="recoil by 10%."
-        CardID="GOOD_STUFFEDMAG"
+        CardID="GOOD_IMPFOCUS"
         OnActivateCard=ActivateSpreadAndRecoilDecrease
     End Object
     DeckCardObjectList(14)=TurboCard'SpreadAndRecoilDecrease'
@@ -637,7 +642,7 @@ defaultproperties
         CardDescriptionList(0)="Decreases damage"
         CardDescriptionList(1)="taken by ranged"
         CardDescriptionList(2)="zed attacks by 10%."
-        CardID="GOOD_DAUNTLESS"
+        CardID="GOOD_RANGRES"
         OnActivateCard=ActivateRangedResistance
     End Object
     DeckCardObjectList(20)=TurboCard'RangedResistance'
@@ -759,7 +764,7 @@ defaultproperties
         CardDescriptionList(1)="card selection"
         CardDescriptionList(2)="by 1."
         CardID="GOOD_LARGEQUANLOWQUAL"
-        OnActivateCard=ActivateLargerQuanityOfLowQuality
+        OnActivateCard=ActivateLargerQuantityOfLowQuality
     End Object
     DeckCardObjectList(32)=TurboCard'LargerQuanityOfLowQuality'
 
@@ -807,7 +812,7 @@ defaultproperties
         CardDescriptionList(0)="All weapon bullet"
         CardDescriptionList(1)="penetration is"
         CardDescriptionList(2)="increased by 50%."
-        CardID="GOOD_QUICKSWITCH"
+        CardID="GOOD_DENSHOT"
         OnActivateCard=ActivateDenseShot
     End Object
     DeckCardObjectList(37)=TurboCard'DenseShot'
@@ -825,7 +830,7 @@ defaultproperties
         CardName(0)="Longer Breather"
         CardDescriptionList(0)="Increases trader"
         CardDescriptionList(1)="time by 25%."
-        CardID="GOOD_EXTRAPOCKET"
+        CardID="GOOD_LONGBRE"
         OnActivateCard=ActivateLongerBreather
     End Object
     DeckCardObjectList(39)=TurboCard'LongerBreather'
@@ -842,4 +847,16 @@ defaultproperties
         OnActivateCard=ActivateGooseCooked
     End Object
     DeckCardObjectList(40)=TurboCard'GooseCooked'
+
+    Begin Object Name=SpreadTheLove Class=TurboCard_Good
+        CardName(0)="Spread The Love"
+        CardDescriptionList(0)="Healing another"
+        CardDescriptionList(1)="player provides"
+        CardDescriptionList(2)="20% of healing"
+        CardDescriptionList(3)="back to the"
+        CardDescriptionList(4)="healer."
+        CardID="GOOD_SPREADLOVE"
+        OnActivateCard=ActivateSpreadTheLove
+    End Object
+    DeckCardObjectList(41)=TurboCard'SpreadTheLove'
 }
