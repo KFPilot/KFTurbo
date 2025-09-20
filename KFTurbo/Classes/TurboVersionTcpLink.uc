@@ -23,7 +23,7 @@ function PostBeginPlay()
     Resolve(TurboDomain);
 }
 
-event Resolved(IpAddr ResolvedAddress)
+function Resolved(IpAddr ResolvedAddress)
 {
     TurboAddress = ResolvedAddress;
     TurboAddress.Port = 80;
@@ -35,7 +35,7 @@ event Resolved(IpAddr ResolvedAddress)
     }
 }
 
-event ResolveFailed()
+function ResolveFailed()
 {
     log("Failed to resolve version domain.", 'KFTurboVersion');
 
@@ -49,10 +49,10 @@ event ResolveFailed()
 function Opened()
 {
     log("Connection to"@TurboDomain@"opened. Requesting version information.", 'KFTurboVersion');
-	SendText("GET "$TurboReleaseURL$" HTTP/1.1"$CRLF$"Host: "$TurboDomain$CRLF$CRLF$CRLF);
+	SendText("GET "$TurboReleaseURL$" HTTP/1.1"$CRLF$"Host: "$TurboDomain$CRLF$"Connection: close"$CRLF$CRLF);
 }
 
-event ReceivedText( string Text )
+function ReceivedText( string Text )
 {
     local int Index;
     local array<string> DataList;
@@ -93,6 +93,11 @@ function CheckVersionNumber(string Version)
     {
         log("KFTurbo version check complete! (Local:"@class'KFTurboMut'.static.GetTurboVersionID()$") (Latest:"@Version$")", 'KFTurboVersion');
     }
+}
+
+function Closed()
+{
+    LifeSpan = 1.f;
 }
 
 defaultproperties
