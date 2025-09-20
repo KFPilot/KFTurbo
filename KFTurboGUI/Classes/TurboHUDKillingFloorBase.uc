@@ -12,6 +12,9 @@ var class<KFTurboFontHelper> FontHelperClassCY;
 var string FontHelperClassJPString;
 var class<KFTurboFontHelper> FontHelperClassJP;
 
+//Used by GUIFont to check if helper changed.
+var int FontLocaleUpdateCounter;
+
 static function font GetConsoleFont(Canvas C)
 {
 	local int FontSize;
@@ -175,8 +178,13 @@ simulated function SetFontLocale(string LocaleString)
 	{
 		FontHelperClass = class'KFTurboFonts.KFTurboFontHelperEN';
 	}
+	
+	default.FontHelperClass = FontHelperClass; 
+	class'TurboHUDKillingFloorBase'.default.FontHelperClass = FontHelperClass; //Styles will request this via TurboHUDKillingFloorBase CDO.
 
-	default.FontHelperClass = FontHelperClass; //Styles will request this via CDO.
+	FontLocaleUpdateCounter++;
+	default.FontLocaleUpdateCounter = FontLocaleUpdateCounter;
+	class'TurboHUDKillingFloorBase'.default.FontLocaleUpdateCounter = FontLocaleUpdateCounter; //Let TurboGUIFonts they need to reset.
 }
 
 simulated function CleanupFontPackage()
@@ -193,10 +201,12 @@ simulated function CleanupFontPackage()
 
 	FontHelperClass = None;
 	default.FontHelperClass = None;
+	class'TurboHUDKillingFloorBase'.default.FontHelperClass = None;
 }
 
 defaultproperties
 {
+	FontCacheCounter=0
 	FontHelperClass=class'KFTurboFonts.KFTurboFontHelperEN'
 	FontHelperClassCYString = "KFTurboFontsCY.KFTurboFontHelperCY"
 	FontHelperClassJPString = "KFTurboFontsJP.KFTurboFontHelperJP"

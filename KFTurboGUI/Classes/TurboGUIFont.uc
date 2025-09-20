@@ -3,10 +3,19 @@
 //For more information see https://github.com/KFPilot/KFTurbo.
 class TurboGUIFont extends GUIFont;
 
+//Used to check if we need to reset our style's font cache.
+var int FontLocaleUpdateCounter;
+
 var int FontSizeList[5];
 
 simulated function Font GetFont(int XRes)
 {
+    if (FontLocaleUpdateCounter != class'TurboHUDKillingFloorBase'.default.FontLocaleUpdateCounter)
+    {
+        FontLocaleUpdateCounter = class'TurboHUDKillingFloorBase'.default.FontLocaleUpdateCounter;
+        Cleanup();
+    }
+
     if (XRes < 1000)
     {
         return LoadFont(FontSizeList[0]);
@@ -45,6 +54,12 @@ function Font LoadFont(int i)
     }
 
     return FontArrayFonts[i];
+}
+
+function Cleanup()
+{
+    FontArrayFonts.Length = 0;
+    default.FontArrayFonts.Length = 0;
 }
 
 defaultproperties
