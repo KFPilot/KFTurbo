@@ -206,7 +206,7 @@ simulated function CleanupFontPackage()
 
 defaultproperties
 {
-	FontCacheCounter=0
+	FontLocaleUpdateCounter=0
 	FontHelperClass=class'KFTurboFonts.KFTurboFontHelperEN'
 	FontHelperClassCYString = "KFTurboFontsCY.KFTurboFontHelperCY"
 	FontHelperClassJPString = "KFTurboFontsJP.KFTurboFontHelperJP"
