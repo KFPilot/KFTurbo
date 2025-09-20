@@ -612,22 +612,24 @@ function CheatDeathFlagChanged(CardFlag Flag, bool bIsEnabled)
 {
     local int Index;
     local TurboPlayerCardCustomInfo PlayerCardInfo;
+    local array<TurboPlayerController> PlayerList;
+    PlayerList = class'TurboGameplayHelper'.static.GetPlayerControllerList(Level, true);
 
     CardGameRules.bCheatDeathEnabled = bIsEnabled;
 
     //Reset player data for cheating death (in case the card was enabled, effect triggered, disabled, and then enabled again).
     if (bIsEnabled)
     {
-        for (Index = Level.GRI.PRIArray.Length - 1; Index >= 0; Index--)
+        for (Index = PlayerList.Length - 1; Index >= 0; Index--)
         {
-            PlayerCardInfo = TurboPlayerCardCustomInfo(class'TurboPlayerCardCustomInfo'.static.FindCustomInfo(TurboPlayerReplicationInfo(Level.GRI.PRIArray[Index])));
+            PlayerCardInfo = TurboPlayerCardCustomInfo(class'TurboPlayerCardCustomInfo'.static.FindCustomInfo(TurboPlayerReplicationInfo(PlayerList[Index].PlayerReplicationInfo)));
 
             if (PlayerCardInfo == None)
             {
                 continue;
             }
 
-            PlayerCardInfo.bHasCheatedDeath = false;
+            PlayerCardInfo.CheatDeathWave = -1;
             PlayerCardInfo.CheatDeathTime = -1.f;
         }
     }
@@ -1086,7 +1088,7 @@ function PlayerHealRechargeModifierChanged(CardModifierStack ModifiedStack, floa
 
 function PlayerReciprocalHealingModifierChanged(CardModifierStack ModifiedStack, float Modifier)
 {
-    HealCardEventHandler.ReciprocalHealtMultiplier = Modifier;
+    HealCardEventHandler.ReciprocalHealtMultiplier = FMax(0.f, Modifier - 1.f);
 }
 
 //MOVEMENT
