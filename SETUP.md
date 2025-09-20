@@ -1,17 +1,17 @@
 # Setup
 ### Initial Setup
-For starters, make sure [Server Perks](https://forums.tripwireinteractive.com/index.php?threads/mut-per-server-stats.36898/) and [Server Achievements](https://github.com/scaryghost/ServerAchievements) are installed on the server. Once both are installed, download the latest `KFTurbo.zip` from the [releases page](https://github.com/KFPilot/KFTurbo/releases) and drag and drop all files into the server's `System` folder. Releases come with a `ServerPerks.ini` and `ServerAchievements.ini` which provide the intended default setup for KFTurbo.
+For starters, make sure [Server Perks](https://forums.tripwireinteractive.com/index.php?threads/mut-per-server-stats.36898/) and is installed on the server. Once both are installed, download the latest `KFTurbo.zip` from the [releases page](https://github.com/KFPilot/KFTurbo/releases) and drag and drop all files into the server's `System` folder. Releases come with a `ServerPerks.ini` and `ServerAchievements.ini` which provide the intended default setup for KFTurbo.
 
 ### Launch Parameters
 The following are required to be set in a server's launch command for KFTurbo to function properly at startup;
 
 `?game=KFTurbo.KFTurboGameType`
 
-`?Mutator=ServerPerksMut.ServerPerksMut,ServerAchievements.SAMutator,KFTurbo.KFTurboMut,KFTurboServer.KFTurboServerMut`
+`?Mutator=ServerPerksMut.ServerPerksMut,KFTurbo.KFTurboMut,KFTurboServer.KFTurboServerMut`
 
 The result should look something like;
 
-`ucc server KF-Departed.rom?game=KFTurbo.KFTurboGameType?Mutator=ServerPerksMut.ServerPerksMut,ServerAchievements.SAMutator,KFTurbo.KFTurboMut,KFTurboServer.KFTurboServerMut`
+`ucc server KF-Departed.rom?game=KFTurbo.KFTurboGameType?Mutator=ServerPerksMut.ServerPerksMut,KFTurbo.KFTurboMut,KFTurboServer.KFTurboServerMut`
 
 To play on KFTurbo Plus difficulty, the GameType launch parameter must be set to `?game=KFTurbo.KFTurboGameTypePlus`.
 
