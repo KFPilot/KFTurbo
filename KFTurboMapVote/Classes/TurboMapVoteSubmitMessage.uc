@@ -18,7 +18,7 @@ static function string GetString(optional int Switch, optional PlayerReplication
     }
     
     Decode(Switch, MapIndex, GameIndex, Difficulty);
-    return FormatString(Repl(Repl(class'xVotingHandler'.default.lmsgMapVotedFor, "%mapname%", TurboVRI.MapList[MapIndex].MapName $ " ("$TurboVRI.GameConfig[GameIndex].GameName$ " - "$ResolveDifficultyName(Difficulty)$")"), "%playername%", RelatedPRI_1.PlayerName));
+    return FormatString(Repl(Repl(class'xVotingHandler'.default.lmsgMapVotedFor, "%mapname%", "%k" $ TurboVRI.MapList[MapIndex].MapName $ "%d (%k"$TurboVRI.GameConfig[GameIndex].GameName$ "%d - %k" $ ResolveDifficultyName(Difficulty) $ "%d)"), "%playername%", "%k" $ RelatedPRI_1.PlayerName $ "%d"));
 }
 
 defaultproperties
