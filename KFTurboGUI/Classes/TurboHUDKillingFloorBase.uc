@@ -4,6 +4,8 @@
 //For more information see https://github.com/KFPilot/KFTurbo.
 class TurboHUDKillingFloorBase extends SRHUDKillingFloor;
 
+#exec obj load file="..\Textures\TurboGUI.utx" package=KFTurboGUI
+
 var class<KFTurboFontHelper> FontHelperClass;
 var string FontHelperClassCYString;
 var class<KFTurboFontHelper> FontHelperClassCY;

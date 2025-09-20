@@ -122,8 +122,8 @@ function float GetEmoteEntryHeight(Canvas C)
 
 defaultproperties
 {
-	IconBackground=Texture'KFTurbo.Perk.PerkBoxUnselected_D'
-	EntryBackplate=Texture'KFTurbo.Perk.PerkBackplateUnselected_D'
+	IconBackground=Texture'KFTurboGUI.Perk.PerkBoxUnselected_D'
+	EntryBackplate=Texture'KFTurboGUI.Perk.PerkBackplateUnselected_D'
 	FontScale=FNS_Medium
 
 	OnPreDraw=PreDraw

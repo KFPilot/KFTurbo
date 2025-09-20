@@ -244,13 +244,13 @@ defaultproperties
 
     ProgressBarHeight=0.225f
 
-	PerkBackground=Texture'KFTurbo.Perk.PerkBoxUnselected_D'
-	SelectedPerkBackground=Texture'KFTurbo.Perk.PerkBoxSelected_D'
-	HighlightedPerkBackground=Texture'KFTurbo.Perk.PerkBoxHighlighted_D'
+	PerkBackground=Texture'KFTurboGUI.Perk.PerkBoxUnselected_D'
+	SelectedPerkBackground=Texture'KFTurboGUI.Perk.PerkBoxSelected_D'
+	HighlightedPerkBackground=Texture'KFTurboGUI.Perk.PerkBoxHighlighted_D'
 
-	NameplateBackground=Texture'KFTurbo.Perk.PerkBackplateUnselected_D'
-	SelectedNameplateBackground=Texture'KFTurbo.Perk.PerkBackplateSelected_D'
-	HighlightedNameplateBackground=Texture'KFTurbo.Perk.PerkBackplateHighlighted_D'
+	NameplateBackground=Texture'KFTurboGUI.Perk.PerkBackplateUnselected_D'
+	SelectedNameplateBackground=Texture'KFTurboGUI.Perk.PerkBackplateSelected_D'
+	HighlightedNameplateBackground=Texture'KFTurboGUI.Perk.PerkBackplateHighlighted_D'
 
 	ProgressBarBackground=Texture'KF_InterfaceArt_tex.Menu.Innerborder'
 	ProgressBarFill=Texture'KFTurbo.HUD.ContainerSquare_D'
