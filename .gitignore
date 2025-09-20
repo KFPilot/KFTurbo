@@ -41,6 +41,7 @@
 #Texture packages.
 !Textures
 /Textures/**
+!Textures/TurboGUI.utx
 !Textures/KFTurboHUD.utx
 !Textures/KFTurboVet.utx
 !Textures/TurboCardGame.utx
