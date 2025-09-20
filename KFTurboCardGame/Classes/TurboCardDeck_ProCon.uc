@@ -629,7 +629,7 @@ function ActivateBigBoned(TurboCardGameplayManager GameplayManager, TurboCard Ca
 
 function ActivateHoarder(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
-    Card.UpdateModifier(GameplayManager.PlayerCarryCapacityDelta, 2, bActivate);
+    Card.UpdateDelta(GameplayManager.PlayerCarryCapacityDelta, 2, bActivate);
     Card.UpdateModifier(GameplayManager.PlayerMovementSpeedModifier, 0.95f, bActivate);
 }
 
@@ -1164,8 +1164,8 @@ defaultproperties
         CardName(0)="Glass Cannon"
         CardDescriptionList(0)="Increases player"
         CardDescriptionList(1)="damage by 10% but"
-        CardDescriptionList(1)="reduces player"
-        CardDescriptionList(2)="health by 10%."
+        CardDescriptionList(2)="reduces player"
+        CardDescriptionList(3)="health by 10%."
         CardID="PROCON_GLASSCAN"
         OnActivateCard=ActivateGlassCannon
     End Object
@@ -1175,8 +1175,8 @@ defaultproperties
         CardName(0)="Big Boned"
         CardDescriptionList(0)="Increases player"
         CardDescriptionList(1)="health by 10% but"
-        CardDescriptionList(1)="reduces player"
-        CardDescriptionList(2)="speed by 10%."
+        CardDescriptionList(2)="reduces player"
+        CardDescriptionList(3)="speed by 10%."
         CardID="PROCON_BIGBONE"
         OnActivateCard=ActivateBigBoned
     End Object

@@ -428,7 +428,7 @@ function ActivateGooseCooked(TurboCardGameplayManager GameplayManager, TurboCard
 
 function ActivateSpreadTheLove(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
-    Card.UpdateFlag(GameplayManager.PlayerReciprocalHealingModifier, bActivate);
+    Card.UpdateModifier(GameplayManager.PlayerReciprocalHealingModifier, 1.2f, bActivate);
 }
 
 defaultproperties
