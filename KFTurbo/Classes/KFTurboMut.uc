@@ -51,6 +51,7 @@ simulated function PostBeginPlay()
 	AddToPackageMap("KFTurboFontsJP");
 	AddToPackageMap("KFTurboFontsCY");
 	
+	//Make sure GUI is also added to server packages.
 	AddToPackageMap("KFTurboGUI");
 
 	if(Role != ROLE_Authority)
@@ -283,22 +284,48 @@ static final function string GetTurboVersionID()
 	return default.TurboVersion;
 }
 
+static final function int GetLatestAheadAmount(string Current, string Latest)
+{
+	if (Current == "")
+	{
+		Current = "0";
+	}
+	
+	if (Latest == "")
+	{
+		Latest = "0";
+	}
+
+	//Negative means the version we're using is newer than the one on the version server.
+	return Asc(Latest) - Asc(Current);
+}
+
 final function bool CheckIfNewerVersion(string LatestVersion)
 {
 	local array<string> CurrentVersionList, LatestVersionList;
-	Split(default.TurboVersion, ".", CurrentVersionList);
-	Split(LatestVersion, ".", LatestVersionList);
+	local int VersionNumber;
+	Split(Caps(default.TurboVersion), ".", CurrentVersionList);
+	Split(Caps(LatestVersion), ".", LatestVersionList);
 
-	if (int(CurrentVersionList[0]) < int(LatestVersionList[0]))
+	CurrentVersionList.Length = Max(Max(CurrentVersionList.Length, LatestVersionList.Length), 3);
+	LatestVersionList.Length = CurrentVersionList.Length;
+
+	VersionNumber = GetLatestAheadAmount(CurrentVersionList[0], LatestVersionList[0]);
+	if (VersionNumber != 0)
 	{
-		bHasVersionUpdate = true;
-		return true;
+		return VersionNumber > 0;
 	}
 
-	if (int(CurrentVersionList[1]) < int(LatestVersionList[1]))
+	VersionNumber = GetLatestAheadAmount(CurrentVersionList[1], LatestVersionList[1]);
+	if (VersionNumber != 0)
 	{
-		bHasVersionUpdate = true;
-		return true;
+		return VersionNumber > 0;
+	}
+
+	VersionNumber = GetLatestAheadAmount(CurrentVersionList[2], LatestVersionList[2]);
+	if (VersionNumber != 0)
+	{
+		return VersionNumber > 3; //Allow for tertiary version to be at most 3 versions behind.
 	}
 
 	return false;
@@ -411,7 +438,7 @@ defaultproperties
 	bDebugClientPerkRepLink=false
 
 	bCheckLatestTurboVersion=true
-	TurboVersion="6.6.5"
+	TurboVersion="6.6.6"
 	bHasVersionUpdate=false
 
 	bRequireAdminForDifficultyCommands=true
