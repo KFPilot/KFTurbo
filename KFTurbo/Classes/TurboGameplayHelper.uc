@@ -18,7 +18,7 @@ static final function array<TurboPlayerController> GetPlayerControllerList(Level
 
     for ( Controller = Level.ControllerList; Controller != None; Controller = Controller.NextController )
     {
-        if (Controller.bDeleteMe || !Controller.bIsPlayer)
+        if (!Controller.bIsPlayer)
         {
             continue;
         }
@@ -59,7 +59,7 @@ static final function int GetPlayerControllerCount(LevelInfo Level, optional boo
 
     for ( Controller = Level.ControllerList; Controller != None; Controller = Controller.NextController )
     {
-        if (Controller.bDeleteMe || !Controller.bIsPlayer)
+        if (!Controller.bIsPlayer)
         {
             continue;
         }
@@ -87,7 +87,7 @@ static final function array<TurboHumanPawn> GetPlayerPawnList(LevelInfo Level)
 
     for ( Controller = Level.ControllerList; Controller != None; Controller = Controller.NextController )
     {
-        if (Controller.bDeleteMe || !Controller.bIsPlayer)
+        if (!Controller.bIsPlayer)
         {
             continue;
         }
@@ -129,7 +129,7 @@ static final function array<Monster> GetMonsterPawnList(LevelInfo Level, optiona
 
     for ( Controller = Level.ControllerList; Controller != None; Controller = Controller.NextController )
     {
-        if (Controller.bDeleteMe || Controller.bIsPlayer)
+        if (Controller.bIsPlayer)
         {
             continue;
         }
@@ -145,7 +145,7 @@ static final function array<Monster> GetMonsterPawnList(LevelInfo Level, optiona
         {
             if (MonsterPawnList.Length <= FoundPawns)
             {
-                MonsterPawnList.Length = FoundPawns + 8; //Allocate in steps of 4.
+                MonsterPawnList.Length = FoundPawns + 4; //Allocate in steps of 4.
             }
 
             MonsterPawnList[FoundPawns] = MonsterPawn;
