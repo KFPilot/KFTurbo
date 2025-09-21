@@ -28,6 +28,7 @@ ArgumentParser.add_argument("-o","--onlyholdout", action="store_true", help="Onl
 ArgumentParser.add_argument("-r","--onlyrandomizer", action="store_true", help="Only rebuild Turbo Randomizer.")
 ArgumentParser.add_argument("-c","--onlycardgame", action="store_true", help="Only rebuild Turbo Card Game.")
 ArgumentParser.add_argument("-m","--onlymapvote", action="store_true", help="Only rebuild Turbo Map Vote.")
+ArgumentParser.add_argument("-a","--achievements", action="store_true", help="Adds KFTurboServerAchievements to build list.")
 ArgumentParser.add_argument("-v", "--verboseUCC", action="store_true", help="Will log all of UCC make.")
 ArgumentParser.add_argument("-s", "--stagefiles", action="store_true", help="Copies KFTurbo packages to staging directories.")
 ArgumentParser.add_argument("--extrastage", help="Copies KFTurbo packages to a specified directory (such as a local test server). --stagefiles flag must be set.")
@@ -40,15 +41,15 @@ Arguments = ArgumentParser.parse_args()
 BuildType = EBuildType.ALL
 
 #Files KFTurbo compiles.
-TurboFiles = ["KFTurboMapVote.u", "KFTurboEmbeddable.u", "KFTurboServerAchievements.u", #Turbo-agnostic packages.
+TurboFiles = ["KFTurboMapVote.u", "KFTurboEmbeddable.u", #Turbo-agnostic packages.
             "KFTurboGUI.u", "KFTurboFonts.u", "KFTurboFontsJP.u", "KFTurboFontsCY.u", #Asset packages.
             "KFTurbo.u", "KFTurboServer.u", #Turbo Core packages.
             "KFTurboHoldout.u", "KFTurboRandomizer.u", "KFTurboCardGame.u", "KFTurboTestMut.u"] #Special gamemode packages.
 
 #Files needed for Turbo deployments.
-TurboStagingFiles = [ "KFTurbo.ucl", "KFTurboServer.ucl", "KFTurboServerAchievements.ucl",
+TurboStagingFiles = [ "KFTurbo.ucl", "KFTurboServer.ucl",
             "KFTurboHoldout.ucl", "KFTurboRandomizer.ucl", "KFTurboCardGame.ucl", "KFTurboTestMut.ucl",
-            "ServerPerks.ini", "ServerAchievements.ini" ]
+            "ServerPerks.ini" ]
 
 def UpdateBuildType():
     global BuildType
@@ -75,6 +76,10 @@ def UpdateBuildType():
         BuildType = EBuildType.MAPVOTE
         TurboFiles = [ "KFTurboMapVote.u" ]
         TurboStagingFiles = [ ]
+
+    if Arguments.achievements:
+        TurboFiles.append(["KFTurboServerAchievements.u"])
+        TurboFiles.append(["KFTurboServerAchievements.ucl"])
     
 UpdateBuildType()
 
