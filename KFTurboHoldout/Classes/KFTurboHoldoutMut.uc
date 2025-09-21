@@ -108,7 +108,7 @@ simulated function String GetHumanReadableName()
 defaultproperties
 {
     bAddToServerPackages=True
-	GroupName="KF-Holdout"
+	GroupName="KF-KFTurboMode"
 	FriendlyName="Killing Floor Turbo Holdout"
 	Description="Mutator for the KFTurbo Holdout Game Type."
 }

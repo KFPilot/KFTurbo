@@ -17,5 +17,5 @@ simulated function String GetHumanReadableName()
 
 defaultproperties
 {
-	GroupName="KF-CardGame" //Used by TurboGameplayAchievementPack to determine if a card game is being played.
+	GroupName="KF-KFTurboMode"
 }

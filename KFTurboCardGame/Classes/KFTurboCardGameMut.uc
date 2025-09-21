@@ -371,7 +371,7 @@ simulated function String GetHumanReadableName()
 defaultproperties
 {
 	bAddToServerPackages=True
-	GroupName="KF-CardGame" //Used by TurboGameplayAchievementPack to determine if a card game is being played.
+	GroupName="KF-KFTurboMode"
 	FriendlyName="Killing Floor Turbo Card Game"
 	Description="Killing Floor Turbo's card game mutator. Before each wave, users are asked to vote between a selection of gameplay modifiers (cards)."
 }
