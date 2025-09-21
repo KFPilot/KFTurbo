@@ -35,7 +35,7 @@ defaultproperties
      TransientSoundVolume=3.000000
      TransientSoundRadius=750.000000
      FireAnimRate=0.80000
-     FireRate=0.750000
+     FireRate=0.600000
      AmmoClass=Class'KFTurbo.W_NailGun_Ammo'
      ProjectileClass=Class'KFTurbo.W_NailGun_Proj'
      Spread=0.005000
