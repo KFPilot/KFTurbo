@@ -266,15 +266,46 @@ simulated function PlayDying(class<DamageType> DamageType, vector HitLoc)
     Super.PlayDying(DamageType, HitLoc);
 }
 
+simulated function CleanUpScreamEffect()
+{
+    local int Index;
+    local SirenScream ScreamEffect;
+    for (Index = 0; Index < Attached.Length; Index++)
+    {
+        ScreamEffect = SirenScream(Attached[Index]);
+
+        if (ScreamEffect != None)
+        {
+            ScreamEffect.Kill();
+        }
+    }
+}
+
 state ZombieDying
 {
 ignores AnimEnd, Trigger, Bump, HitWall, HeadVolumeChange, PhysicsVolumeChange, Falling, BreathTimer, Died, RangedAttack, SpawnTwoShots, PerformAftershock;
 
     simulated function BeginState()
     {
+        CleanUpScreamEffect();
         class'PawnHelper'.static.MonsterDied(Self, AfflictionData);
+
         Super.BeginState();
     }
+
+    simulated function Timer()
+    {
+        CleanUpScreamEffect();
+
+        Super.Timer();
+    }
+}
+
+simulated function Destroyed()
+{
+    CleanUpScreamEffect();
+
+    Super.Destroyed();
 }
 
 simulated event SetHeadScale(float NewScale)
