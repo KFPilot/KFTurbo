@@ -43,7 +43,7 @@ BuildType = EBuildType.ALL
 #Files KFTurbo compiles.
 TurboFiles = ["KFTurboMapVote.u", "KFTurboEmbeddable.u", #Turbo-agnostic packages.
             "KFTurboGUI.u", "KFTurboFonts.u", "KFTurboFontsJP.u", "KFTurboFontsCY.u", #Asset packages.
-            "KFTurbo.u", "KFTurboServer.u", #Turbo Core packages.
+            "KFTurbo.u", "KFTurboServer.u", "KFTurboCommon.u", #Turbo Core packages.
             "KFTurboHoldout.u", "KFTurboRandomizer.u", "KFTurboCardGame.u", "KFTurboTestMut.u"] #Special gamemode packages.
 
 #Files needed for Turbo deployments.
@@ -58,7 +58,7 @@ def UpdateBuildType():
 
     if Arguments.onlyturbo:
         BuildType = EBuildType.TURBO
-        TurboFiles = [ "KFTurbo.u", "KFTurboServer.u" ]
+        TurboFiles = [ "KFTurbo.u", "KFTurboServer.u", "KFTurboCommon.u" ]
         TurboStagingFiles = [ "KFTurbo.ucl", "KFTurboServer.ucl" ]
     elif Arguments.onlyholdout:
         BuildType = EBuildType.HOLDOUT
