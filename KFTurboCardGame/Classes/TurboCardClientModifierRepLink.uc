@@ -20,17 +20,7 @@ struct PhysicsVolumeEntry
 };
 var array<PhysicsVolumeEntry> PhysicsVolumeList;
 
-struct ZoneInfoEntry
-{
-    var ZoneInfo Zone;
-    var bool bIsSkyZone;
-    var bool bOriginalDistanceFog;
-    var bool bOriginalClearToFogColor;
-    var color OriginalFogColor;
-    var float OriginalFogStart;
-    var float OriginalFogEnd;
-};
-var array<ZoneInfoEntry> ZoneInfoList;
+var FogManager FogManagerActor;
 
 //Where we will store bone scales.
 enum EBoneScaleSlots
@@ -56,8 +46,13 @@ simulated function PostBeginPlay()
 
     Disable('Tick');
 
+    if (FogManagerActor == None)
+    {
+        FogManagerActor = class'FogManager'.static.GetOrCreateFogManager(Self); 
+    }
+    
     CollectAllPhysicsVolumes();
-    CollectAllZoneInfos();
+    UpdateBlackout();
 }
 
 simulated function PostNetBeginPlay()
@@ -90,31 +85,6 @@ simulated function CollectAllPhysicsVolumes()
         PhysicsVolumeList[PhysicsVolumeList.Length - 1].OriginalGroundFriction = Volume.GroundFriction;
         Volume.GroundFriction *= GroundFrictionModifier;
 	}
-}
-
-simulated function CollectAllZoneInfos()
-{
-	local ZoneInfo ZoneInfo;
-    local int Index;
-    LastGroundFrictionModifier = GroundFrictionModifier;
-
-	foreach AllActors(class'ZoneInfo', ZoneInfo)
-	{
-        Index = ZoneInfoList.Length;
-		ZoneInfoList.Length = Index + 1;
-        ZoneInfoList[Index].Zone = ZoneInfo;
-        ZoneInfoList[Index].bIsSkyZone = SkyZoneInfo(ZoneInfo) != None;
-        ZoneInfoList[Index].bOriginalDistanceFog = ZoneInfo.bDistanceFog;
-        ZoneInfoList[Index].bOriginalClearToFogColor = ZoneInfo.bClearToFogColor;
-        ZoneInfoList[Index].OriginalFogColor = ZoneInfo.DistanceFogColor;
-        ZoneInfoList[Index].OriginalFogStart = ZoneInfo.DistanceFogStart;
-        ZoneInfoList[Index].OriginalFogEnd = ZoneInfo.DistanceFogEnd;
-	}
-
-    if (bBlackout)
-    {
-        UpdateBlackout();
-    }
 }
 
 simulated function UpdatePhysicsVolumes()
@@ -244,7 +214,15 @@ simulated function UpdateBlackout()
     }
 
     bLastKnownBlackout = bBlackout;
-    Enable('Tick');
+    
+    if (bBlackout)
+    {
+        FogManagerActor.SetFog(class'HUD'.default.BlackColor, 800.f, -16.f, 1.f);
+    }
+    else
+    {
+        FogManagerActor.ClearFog();
+    }
 }
 
 static final function Color InterpColor(Color X, Color Y, float Alpha)
@@ -254,80 +232,6 @@ static final function Color InterpColor(Color X, Color Y, float Alpha)
     X.B = Round(Lerp(Alpha, X.B, Y.B));
     X.A = Round(Lerp(Alpha, X.A, Y.A));
     return X;
-}
-
-simulated function Tick(float DeltaTime)
-{
-    local bool bUpdated;
-    local int Index;
-
-    bUpdated = false;
-
-    if (bBlackout)
-    {
-        for (Index = ZoneInfoList.Length - 1; Index >= 0; Index--)
-        {
-            ZoneInfoList[Index].Zone.bDistanceFog = true;
-            ZoneInfoList[Index].Zone.bClearToFogColor = true;
-            if (ZoneInfoList[Index].bIsSkyZone)
-            {
-                bUpdated = FadeZone(ZoneInfoList[Index], DeltaTime * 10.f, -128.f, 4.f) || bUpdated;
-            }
-            else
-            {
-                bUpdated = FadeZone(ZoneInfoList[Index], DeltaTime, -128.f, 820.f) || bUpdated;
-            }
-        }
-    }
-    else
-    {
-        for (Index = ZoneInfoList.Length - 1; Index >= 0; Index--)
-        {
-            if (FadeZone(ZoneInfoList[Index], DeltaTime, ZoneInfoList[Index].OriginalFogStart, ZoneInfoList[Index].OriginalFogEnd))
-            {
-                bUpdated = true;
-            }
-            else
-            {
-                ZoneInfoList[Index].Zone.bDistanceFog = ZoneInfoList[Index].bOriginalDistanceFog;
-                ZoneInfoList[Index].Zone.bClearToFogColor = ZoneInfoList[Index].bOriginalClearToFogColor;
-            }
-        }
-    }
-
-    if (!bUpdated)
-    {
-        Disable('Tick');
-    }
-}
-
-static final function float GetFadeRatio(ZoneInfoEntry Entry, float BlackoutDistance)
-{
-    return (Entry.Zone.DistanceFogStart - Entry.OriginalFogStart) / (BlackoutDistance - Entry.OriginalFogStart);
-}
-
-simulated final function bool FadeZone(ZoneInfoEntry Entry, float DeltaTime, float TargetStart, float TargetEnd)
-{
-    if (Entry.Zone.DistanceFogEnd != TargetEnd || Entry.Zone.DistanceFogStart != TargetStart)
-    {   
-        Entry.Zone.DistanceFogStart = Lerp(5.f * DeltaTime, Entry.Zone.DistanceFogStart, TargetStart);
-        Entry.Zone.DistanceFogEnd = Lerp(5.f * DeltaTime, Entry.Zone.DistanceFogEnd, TargetEnd);
-
-        if (Abs(Entry.Zone.DistanceFogStart - TargetStart) < 1.f)
-        {
-            Entry.Zone.DistanceFogStart = TargetStart;
-        }
-        
-        if (Abs(Entry.Zone.DistanceFogEnd - TargetEnd) < 1.f)
-        {
-            Entry.Zone.DistanceFogEnd = TargetEnd;
-        }
-
-        Entry.Zone.DistanceFogColor = InterpColor(Entry.OriginalFogColor, class'HUD'.default.BlackColor, GetFadeRatio(Entry, -128.f));
-        return true;
-    }
-
-    return false;
 }
 
 defaultproperties
