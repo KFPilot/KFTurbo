@@ -762,7 +762,7 @@ exec function GetWeapon(class<Weapon> NewWeaponClass )
 
 final function bool HasPermissionForCommand(bool bIsAdminOnlyCommand)
 {
-	if (!bIsAdminOnlyCommand && !class'KFTurboMut'.default.bRequireAdminForDifficultyCommands)
+	if (!bIsAdminOnlyCommand || !class'KFTurboMut'.default.bRequireAdminForDifficultyCommands)
 	{
 		return true;
 	}

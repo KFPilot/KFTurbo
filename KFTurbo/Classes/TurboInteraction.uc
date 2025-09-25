@@ -29,7 +29,15 @@ var globalconfig bool bPipebombUsesSpecialGroup;
 
 var globalconfig bool bUseBaseGameFontForChat;
 
+var globalconfig bool bHasPerformedInitialFontLocalCheck;
 var globalconfig string FontLocale;
+
+const CyrillicLowerBound = 0x0400;
+const CyrillicUpperBound = 0x052F;
+
+//3000–303F,3040-309F,30A0-30FF,31F0-31FF
+const JapaneseALowerBound = 3000;
+const JapaneseAUpperBound = 0x052F;
 
 simulated function bool KeyEvent( out EInputKey Key, out EInputAction Action, FLOAT Delta )
 {
@@ -507,6 +515,44 @@ static final function string GetFontLocale(TurboPlayerController PlayerControlle
 	return "ENG";
 }
 
+simulated function bool IsCyrillic(string String)
+{
+    local int Index, Code;
+
+    for (Index = Len(String); Index >= 0; Index--)
+    {
+        Code = Asc(Mid(String, Index, 1));
+
+        if (Code >= 0x0400 && Code <= 0x052F)
+		{
+            return true;
+		}
+    }
+
+    return false;
+}
+
+simulated function IsJapanese(string String)
+{
+	
+}
+
+simulated function InitializeFontLocale()
+{
+	if (!bHasPerformedInitialFontLocalCheck)
+	{
+		if (IsCyrillic(class'HUDKillingFloor'.default.TraderString))
+		{
+			FontLocale="CYR";
+		}
+		
+		bHasPerformedInitialFontLocalCheck = true;
+		SaveConfig();
+	}
+
+	UpdateFontLocale();
+}
+
 simulated function UpdateFontLocale()
 {
 	if (ViewportOwner.Actor != None && TurboHUDKillingFloor(ViewportOwner.Actor.myHUD) != None)
@@ -538,5 +584,6 @@ defaultproperties
 
 	bPipebombUsesSpecialGroup=false
 
+	bHasPerformedInitialFontLocalCheck=true
 	FontLocale="ENG"
 }
