@@ -32,12 +32,20 @@ var globalconfig bool bUseBaseGameFontForChat;
 var globalconfig bool bHasPerformedInitialFontLocalCheck;
 var globalconfig string FontLocale;
 
+enum EDetectedLocale
+{
+	Latin,
+	Japanese,
+	Cyrillic
+};
+
+const JapaneseALowerBound = 0x3000;
+const JapaneseAUpperBound = 0x30FF;
+const JapaneseBLowerBound = 0x31F0;
+const JapaneseBUpperBound = 0x31FF;
+
 const CyrillicLowerBound = 0x0400;
 const CyrillicUpperBound = 0x052F;
-
-//3000–303F,3040-309F,30A0-30FF,31F0-31FF
-const JapaneseALowerBound = 3000;
-const JapaneseAUpperBound = 0x052F;
 
 simulated function bool KeyEvent( out EInputKey Key, out EInputAction Action, FLOAT Delta )
 {
@@ -84,7 +92,7 @@ simulated function InitializeTurboInteraction()
 	UpdateMerchant();
 	InitializePipebombUsesSpecialGroup();
 	UpdateUseBaseGameFontForChat();
-	UpdateFontLocale();
+	InitializeFontLocale();
 
 	RegisterStyles(GUIController(ViewportOwner.GUIController));
 }
@@ -515,7 +523,7 @@ static final function string GetFontLocale(TurboPlayerController PlayerControlle
 	return "ENG";
 }
 
-simulated function bool IsCyrillic(string String)
+simulated function EDetectedLocale ResolveLocale(string String)
 {
     local int Index, Code;
 
@@ -523,27 +531,35 @@ simulated function bool IsCyrillic(string String)
     {
         Code = Asc(Mid(String, Index, 1));
 
-        if (Code >= 0x0400 && Code <= 0x052F)
+        if ((Code >= JapaneseALowerBound && Code <= JapaneseAUpperBound)
+			|| (Code >= JapaneseBLowerBound && Code <= JapaneseBUpperBound))
 		{
-            return true;
+            return Japanese;
+		}
+		else if (Code >= CyrillicLowerBound && Code <= CyrillicUpperBound)
+		{
+            return Cyrillic;
 		}
     }
 
-    return false;
-}
-
-simulated function IsJapanese(string String)
-{
-	
+    return Latin;
 }
 
 simulated function InitializeFontLocale()
 {
 	if (!bHasPerformedInitialFontLocalCheck)
 	{
-		if (IsCyrillic(class'HUDKillingFloor'.default.TraderString))
+		switch (ResolveLocale(class'HUDKillingFloor'.default.TraderString))
 		{
-			FontLocale="CYR";
+			case Latin:
+				FontLocale = "ENG";
+				break;
+			case Japanese:
+				FontLocale = "JPN";
+				break;
+			case Cyrillic:
+				FontLocale = "CYR";
+				break;
 		}
 		
 		bHasPerformedInitialFontLocalCheck = true;
