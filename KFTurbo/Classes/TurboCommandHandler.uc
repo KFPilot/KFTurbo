@@ -52,7 +52,7 @@ function SkipWave(TurboPlayerController CommandInstigator)
 {
 	local KFTurboGameType TurboGameType;
 
-	if (CanExecuteCommand(CommandInstigator, true))
+	if (!CanExecuteCommand(CommandInstigator, true))
 	{
 		return;
 	}
@@ -77,7 +77,7 @@ function RestartWave(TurboPlayerController CommandInstigator)
 {
 	local KFTurboGameType TurboGameType;
 
-	if (CanExecuteCommand(CommandInstigator, true))
+	if (!CanExecuteCommand(CommandInstigator, true))
 	{
 		return;
 	}
@@ -106,7 +106,7 @@ function SetWave(TurboPlayerController CommandInstigator, int NewWaveNum)
 {
 	local KFTurboGameType TurboGameType;
 
-	if (CanExecuteCommand(CommandInstigator, true))
+	if (!CanExecuteCommand(CommandInstigator, true))
 	{
 		return;
 	}
@@ -147,7 +147,7 @@ function PreventGameOver(TurboPlayerController CommandInstigator)
 {
 	local KFTurboGameType TurboGameType;
 	
-	if (CanExecuteCommand(CommandInstigator, true))
+	if (!CanExecuteCommand(CommandInstigator, true))
 	{
 		return;
 	}
@@ -158,7 +158,7 @@ function PreventGameOver(TurboPlayerController CommandInstigator)
 	{
 		return;
 	}
-
+	
 	class'KFTurboGameType'.static.StaticDisableStatsAndAchievements(CommandInstigator);
 
 	KFTurboGameType(CommandInstigator.Level.Game).PreventGameOver();
@@ -170,7 +170,7 @@ function SetTraderTime(TurboPlayerController CommandInstigator, int Time)
 {
 	local KFTurboGameType TurboGameType;
 	
-	if (CanExecuteCommand(CommandInstigator, true))
+	if (!CanExecuteCommand(CommandInstigator, true))
 	{
 		return;
 	}
@@ -198,7 +198,7 @@ function SetMaxPlayers(TurboPlayerController CommandInstigator, int PlayerCount)
 {
 	local KFTurboGameType TurboGameType;
 	
-	if (CanExecuteCommand(CommandInstigator, true))
+	if (!CanExecuteCommand(CommandInstigator, true))
 	{
 		return;
 	}
@@ -223,7 +223,7 @@ function SetFakedPlayer(TurboPlayerController CommandInstigator, int FakedPlayer
 {
 	local KFTurboGameType TurboGameType;
 	
-	if (CanExecuteCommand(CommandInstigator, false))
+	if (!CanExecuteCommand(CommandInstigator, false))
 	{
 		return;
 	}
@@ -238,7 +238,7 @@ function SetPlayerHealth(TurboPlayerController CommandInstigator, int PlayerHeal
 {
 	local KFTurboGameType TurboGameType;
 	
-	if (CanExecuteCommand(CommandInstigator, false))
+	if (!CanExecuteCommand(CommandInstigator, false))
 	{
 		return;
 	}
@@ -253,7 +253,7 @@ function SetSpawnRate(TurboPlayerController CommandInstigator, float SpawnRateMo
 {
 	local KFTurboGameType TurboGameType;
 	
-	if (CanExecuteCommand(CommandInstigator, false))
+	if (!CanExecuteCommand(CommandInstigator, false))
 	{
 		return;
 	}
@@ -267,7 +267,7 @@ function SetMaxMonsters(TurboPlayerController CommandInstigator, float MaxMonste
 {
 	local KFTurboGameType TurboGameType;
 	
-	if (CanExecuteCommand(CommandInstigator, false))
+	if (!CanExecuteCommand(CommandInstigator, false))
 	{
 		return;
 	}
@@ -282,7 +282,7 @@ function SetMonsterWanderEnabled(TurboPlayerController CommandInstigator, bool b
 {
     local KFTurboMut KFTurboMut;
 	
-	if (CanExecuteCommand(CommandInstigator, false))
+	if (!CanExecuteCommand(CommandInstigator, false))
 	{
 		return;
 	}
@@ -295,7 +295,7 @@ function SetMonsterWanderEnabled(TurboPlayerController CommandInstigator, bool b
 
 function SetZedTimeEnabled(TurboPlayerController CommandInstigator, bool bEnabled)
 {	
-	if (CanExecuteCommand(CommandInstigator, false))
+	if (!CanExecuteCommand(CommandInstigator, false))
 	{
 		return;
 	}
@@ -309,7 +309,7 @@ function ShowSettings(TurboPlayerController CommandInstigator)
 	local KFTurboGameType TurboGameType;
     local KFTurboMut KFTurboMut;
 	
-	if (CanExecuteCommand(CommandInstigator, false))
+	if (!CanExecuteCommand(CommandInstigator, false))
 	{
 		return;
 	}
