@@ -79,8 +79,10 @@ static final function Draw(Canvas Canvas, TurboHUDKillingFloor TurboHUD, float X
 	local float IconSize, ProgressBarWidth;
 	local float TempWidth, TempHeight, LevelTextX, CharacterSizeX;
 	local Material M,SM;
-    local Color TextColor;
+    local Color TextColor, AccentColor;
     local string PerkLevelString;
+
+	AccentColor = PerkClass.Static.GetPerkTierColor(PerkClass.Static.GetPerkTier(Level));
     
     TempX = X;
     TempY = Y;
@@ -143,8 +145,8 @@ static final function Draw(Canvas Canvas, TurboHUDKillingFloor TurboHUD, float X
 	TempY += default.ItemBorderRatio * Height * 0.25f;
 
 	// Draw Icon
+	DrawPerkStars(Canvas, TempX, TempY, IconSize, PerkClass.Static.PreDrawPerk(Canvas, Level, M, SM), SM);
 	Canvas.SetPos(TempX, TempY);
-	PerkClass.Static.PreDrawPerk(Canvas, Max(Level, 1) - 1, M, SM);
 	Canvas.DrawTile(M, IconSize, IconSize, 0, 0, M.MaterialUSize(), M.MaterialVSize());
 
 	TempX += IconSize + (default.PerkSpacingRatio * IconSize);
@@ -165,7 +167,7 @@ static final function Draw(Canvas Canvas, TurboHUDKillingFloor TurboHUD, float X
 	Canvas.SetDrawColor(255, 255, 255, 255);
 	Canvas.SetPos(TempX, TempY);
 	Canvas.DrawTileStretched(default.ProgressBarBackground, ProgressBarWidth, default.ProgressBarHeight * Height * 0.667f);
-	Canvas.DrawColor = class'TurboLocalMessage'.default.KeywordColor;
+	Canvas.DrawColor = AccentColor;
 	Canvas.SetPos(TempX, TempY);
 	Canvas.DrawTileStretched(default.ProgressBarFill, ProgressBarWidth * FClamp(Progress, 0.f, 1.f), default.ProgressBarHeight * Height * 0.667f);
 
@@ -187,7 +189,7 @@ static final function Draw(Canvas Canvas, TurboHUDKillingFloor TurboHUD, float X
 	// Select Text Color
 	if (HighlightRatio > 0.f)
 	{
-        TextColor = class'TurboHUDOverlay'.static.LerpColor(HighlightRatio, default.PerkTextColor, class'TurboLocalMessage'.default.KeywordColor);
+        TextColor = class'TurboHUDOverlay'.static.LerpColor(HighlightRatio, default.PerkTextColor, AccentColor);
 	}
 	else 
 	{
@@ -234,6 +236,24 @@ static final function Draw(Canvas Canvas, TurboHUDKillingFloor TurboHUD, float X
 	Canvas.SetPos(int(TempX), int(TempY));
 	Canvas.DrawColor = default.PerkTextColor;
 	Canvas.DrawText(PerkLevelString);
+}
+
+static final function DrawPerkStars(Canvas Canvas, float IconX, float IconY, float IconSize, int StarCount, Material StarMaterial)
+{
+	local float TempX, TempY;
+	local float StarSize;
+	local int Index;
+
+	TempX = IconX + (IconSize * 0.8f);
+	TempY = IconY + (IconSize * 0.75f);
+
+	StarSize = IconSize * (0.1667f);
+
+	for (Index = 0; Index < StarCount; Index++)
+	{
+		Canvas.SetPos(TempX, TempY - (float(Index) * StarSize));
+		Canvas.DrawTile(StarMaterial, StarSize, StarSize, 0, 0, StarMaterial.MaterialUSize(), StarMaterial.MaterialVSize());
+	}
 }
 
 defaultproperties

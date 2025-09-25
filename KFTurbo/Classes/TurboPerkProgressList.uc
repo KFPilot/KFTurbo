@@ -4,12 +4,25 @@
 class TurboPerkProgressList extends SRPerkProgressList;
 
 var TurboHUDKillingFloor TurboHUD;
+var Color AccentColor;
 
 function InitComponent(GUIController MyController, GUIComponent MyOwner)
 {
 	Super.InitComponent(MyController, MyOwner);
 
 	TurboHUD = TurboHUDKillingFloor(PlayerOwner().myHUD);
+}
+
+function PerkChanged(KFSteamStatsAndAchievements KFStatsAndAchievements, int NewPerkIndex)
+{
+	local ClientPerkRepLink ST;
+	local class<TurboVeterancyTypes> TurboVeterancy;
+
+	Super.PerkChanged(KFStatsAndAchievements, NewPerkIndex);
+
+	ST = TurboPlayerController(PlayerOwner()).GetClientPerkRepLink();
+	TurboVeterancy = class<TurboVeterancyTypes>(ST.CachePerks[NewPerkIndex].PerkClass);
+	AccentColor = TurboVeterancy.Static.GetPerkTierColor(TurboVeterancy.Static.GetPerkTier(Max(ST.CachePerks[NewPerkIndex].CurrentLevel, 1) - 1));
 }
 
 function bool PreDraw(canvas Canvas)
@@ -77,7 +90,7 @@ function DrawPerk(Canvas Canvas, int CurIndex, float X, float Y, float Width, fl
 	Canvas.SetDrawColor(255, 255, 255, 255);
 	Canvas.SetPos(TempX, TempY);
 	Canvas.DrawTileStretched(ProgressBarBackground, Width - (Padding * 4.f), BarHeight);
-	Canvas.DrawColor = class'TurboLocalMessage'.default.KeywordColor;
+	Canvas.DrawColor = AccentColor;
 	Canvas.SetPos(TempX + 2.f, TempY + 2.f);
 	Canvas.DrawTileStretched(ProgressBarForeground, ((Width - (Padding * 4.f)) - 4.f) * RequirementProgress[CurIndex], BarHeight - 4.f);
 
