@@ -98,32 +98,32 @@ static final function Draw(Canvas Canvas, TurboHUDKillingFloor TurboHUD, float X
 	if (SelectionRatio >= 1.f)
 	{
 		Canvas.SetDrawColor(255, 255, 255);
-		Canvas.SetPos(TempX + PerkIconOffset, Y + 7.0);
-		Canvas.DrawTileStretched(default.SelectedNameplateBackground, Width - PerkIconOffset, Height - 14);
+		Canvas.SetPos(TempX + PerkIconOffset, Y + 4.f);
+		Canvas.DrawTileStretched(default.SelectedNameplateBackground, Width - PerkIconOffset, Height - 8.f);
 		Canvas.SetPos(TempX, TempY);
 		Canvas.DrawTileStretched(default.SelectedPerkBackground, PerkIconOffset, PerkIconOffset);
 	}
 	else if (HighlightRatio >= 1.f)
 	{
 		Canvas.SetDrawColor(255, 255, 255);
-		Canvas.SetPos(TempX + PerkIconOffset, Y + 7.0);
-		Canvas.DrawTileStretched(default.HighlightedNameplateBackground, Width - PerkIconOffset, Height - 14);
+		Canvas.SetPos(TempX + PerkIconOffset, Y + 4.f);
+		Canvas.DrawTileStretched(default.HighlightedNameplateBackground, Width - PerkIconOffset, Height - 8.f);
 		Canvas.SetPos(TempX, TempY);
 		Canvas.DrawTileStretched(default.HighlightedPerkBackground, PerkIconOffset, PerkIconOffset);
 	}
 	else
 	{
 		Canvas.SetDrawColor(255, 255, 255);
-		Canvas.SetPos(TempX + PerkIconOffset, Y + 7.0);
-		Canvas.DrawTileStretched(default.NameplateBackground, Width - PerkIconOffset, Height - 14);
+		Canvas.SetPos(TempX + PerkIconOffset, Y + 4.f);
+		Canvas.DrawTileStretched(default.NameplateBackground, Width - PerkIconOffset, Height - 8.f);
 		Canvas.SetPos(TempX, TempY);
 		Canvas.DrawTileStretched(default.PerkBackground, PerkIconOffset, PerkIconOffset);
 		
 		if (HighlightRatio > 0.f)
 		{
 			Canvas.DrawColor = class'TurboHUDOverlay'.static.MakeColor(255, 255, 255, byte(255.f * HighlightRatio));
-			Canvas.SetPos(TempX + PerkIconOffset, Y + 7.0);
-			Canvas.DrawTileStretched(default.HighlightedNameplateBackground, Width - PerkIconOffset, Height - 14);
+			Canvas.SetPos(TempX + PerkIconOffset, Y + 4.f);
+			Canvas.DrawTileStretched(default.HighlightedNameplateBackground, Width - PerkIconOffset, Height - 8.f);
 			Canvas.SetPos(TempX, TempY);
 			Canvas.DrawTileStretched(default.HighlightedPerkBackground, PerkIconOffset, PerkIconOffset);
 		}
@@ -131,8 +131,8 @@ static final function Draw(Canvas Canvas, TurboHUDKillingFloor TurboHUD, float X
 		if (SelectionRatio > 0.f)
 		{
 			Canvas.DrawColor = class'TurboHUDOverlay'.static.MakeColor(255, 255, 255, byte(255.f * SelectionRatio));
-			Canvas.SetPos(TempX + PerkIconOffset, Y + 7.0);
-			Canvas.DrawTileStretched(default.SelectedNameplateBackground, Width - PerkIconOffset, Height - 14);
+			Canvas.SetPos(TempX + PerkIconOffset, Y + 4.f);
+			Canvas.DrawTileStretched(default.SelectedNameplateBackground, Width - PerkIconOffset, Height - 8.f);
 			Canvas.SetPos(TempX, TempY);
 			Canvas.DrawTileStretched(default.SelectedPerkBackground, PerkIconOffset, PerkIconOffset);
 		}
@@ -254,123 +254,6 @@ static final function DrawPerkStars(Canvas Canvas, float IconX, float IconY, flo
 		Canvas.SetPos(TempX, TempY - (float(Index) * StarSize));
 		Canvas.DrawTile(StarMaterial, StarSize, StarSize, 0, 0, StarMaterial.MaterialUSize(), StarMaterial.MaterialVSize());
 	}
-}
-
-static final function DrawSimple(Canvas Canvas, TurboHUDKillingFloor TurboHUD, float X, float Y, float Width, float Height, class<TurboVeterancyTypes> PerkClass, byte Level, float HighlightRatio)
-{
-	local float TempX, TempY;
-    local float TempNameX, TempNameY;
-	local float PerkIconOffset;
-	local float IconSize, ProgressBarWidth;
-	local float TempWidth, TempHeight, LevelTextX, CharacterSizeX;
-	local Material M,SM;
-    local Color TextColor, AccentColor;
-    local string PerkLevelString;
-
-	AccentColor = PerkClass.Static.GetPerkTierColor(PerkClass.Static.GetPerkTier(Level));
-    
-    TempX = X;
-    TempY = Y;
-
-	// Initialize the Canvas
-	Canvas.Style = 1;
-	Canvas.SetDrawColor(255, 255, 255, 255);
-
-	// Draw Item Background
-	PerkIconOffset = Height;
-	IconSize = PerkIconOffset - (default.ItemBorderRatio * 0.5f * Height);
-
-	if (HighlightRatio >= 1.f)
-	{
-		Canvas.SetDrawColor(255, 255, 255);
-		Canvas.SetPos(TempX + PerkIconOffset, Y + 7.0);
-		Canvas.DrawTileStretched(default.HighlightedNameplateBackground, Width - PerkIconOffset, Height - 14);
-		Canvas.SetPos(TempX, TempY);
-		Canvas.DrawTileStretched(default.HighlightedPerkBackground, PerkIconOffset, PerkIconOffset);
-	}
-	else
-	{
-		Canvas.SetDrawColor(255, 255, 255);
-		Canvas.SetPos(TempX + PerkIconOffset, Y + 7.0);
-		Canvas.DrawTileStretched(default.NameplateBackground, Width - PerkIconOffset, Height - 14);
-		Canvas.SetPos(TempX, TempY);
-		Canvas.DrawTileStretched(default.PerkBackground, PerkIconOffset, PerkIconOffset);
-		
-		if (HighlightRatio > 0.f)
-		{
-			Canvas.DrawColor = class'TurboHUDOverlay'.static.MakeColor(255, 255, 255, byte(255.f * HighlightRatio));
-			Canvas.SetPos(TempX + PerkIconOffset, Y + 7.0);
-			Canvas.DrawTileStretched(default.HighlightedNameplateBackground, Width - PerkIconOffset, Height - 14);
-			Canvas.SetPos(TempX, TempY);
-			Canvas.DrawTileStretched(default.HighlightedPerkBackground, PerkIconOffset, PerkIconOffset);
-		}
-	}
-
-	Canvas.SetDrawColor(255, 255, 255);
-
-	// Offset and Calculate Icon's Size
-	TempX += default.ItemBorderRatio * Height * 0.25f;
-	TempY += default.ItemBorderRatio * Height * 0.25f;
-
-	// Draw Icon
-	DrawPerkStars(Canvas, TempX, TempY, IconSize, PerkClass.Static.PreDrawPerk(Canvas, Level, M, SM), SM);
-	Canvas.SetPos(TempX, TempY);
-	Canvas.DrawTile(M, IconSize, IconSize, 0, 0, M.MaterialUSize(), M.MaterialVSize());
-
-	TempX += IconSize + (default.PerkSpacingRatio * IconSize);
-	TempY += default.ItemBorderRatio * Height * 0.75f;
-
-    TempNameX = TempX;
-    TempNameY = TempY - default.ItemBorderRatio * Height * 0.1f;
-
-	TempY += default.PerkNameOffsetRatio * IconSize;
-
-	ProgressBarWidth = Width - (TempX - X) - (default.PerkSpacingRatio * IconSize);
-
-
-	TempY = (Y + Height) - (default.ItemBorderRatio * Height * 2.f);
-	TempY -= default.ProgressBarHeight * Height * 0.667f;
-
-	CharacterSizeX = SetupNameFont(Canvas, TurboHUD, Width, Height);
-	
-    PerkLevelString = class'KFPerkSelectList'.default.LvAbbrString @ Level;
-    Canvas.TextSize(PerkLevelString, LevelTextX, TempHeight);
-	Canvas.TextSize(PerkClass.default.VeterancyName, TempWidth, TempHeight);
-
-	// Select Text Color
-	if (HighlightRatio > 0.f)
-	{
-        TextColor = class'TurboHUDOverlay'.static.LerpColor(HighlightRatio, default.PerkTextColor, AccentColor);
-	}
-	else 
-	{
-        TextColor = default.PerkTextColor;
-	}
-
-	// Draw the Perk's Level Name
-    Canvas.SetDrawColor(0, 0, 0, 128);
-	Canvas.SetPos(TempNameX + 2.f + (CharacterSizeX * 0.2f), TempNameY + 2.f);
-	Canvas.ClipX = (TempNameX + ProgressBarWidth - LevelTextX);
-
-	Canvas.TextSize(PerkClass.default.VeterancyName, TempWidth, TempHeight);
-	class'TurboHUDOverlay'.static.DrawTextSpaced(Canvas, PerkClass.default.VeterancyName, CharacterSizeX * 0.1f);
-
-	//Canvas.DrawTextClipped(PerkClass.default.VeterancyName);
-    Canvas.DrawColor = TextColor;
-	Canvas.SetPos(TempNameX + (CharacterSizeX * 0.2f), TempNameY);
-	class'TurboHUDOverlay'.static.DrawTextSpaced(Canvas, PerkClass.default.VeterancyName, CharacterSizeX * 0.1f);
-	//Canvas.DrawTextClipped(PerkClass.default.VeterancyName);
-	Canvas.ClipX = Canvas.SizeX;
-
-	// Draw the Perk's Level
-    TempNameX = (TempNameX + ProgressBarWidth - LevelTextX);
-
-    Canvas.SetDrawColor(0, 0, 0, 128);
-    Canvas.SetPos(TempNameX + 2.f, TempNameY + 2.f);
-    Canvas.DrawText(PerkLevelString);
-    Canvas.DrawColor = TextColor;
-    Canvas.SetPos(TempNameX, TempNameY);
-    Canvas.DrawText(PerkLevelString);
 }
 
 defaultproperties

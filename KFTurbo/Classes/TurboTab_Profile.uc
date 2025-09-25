@@ -2,6 +2,14 @@
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
 class TurboTab_Profile extends SRTab_Profile;
+ 
+function InitComponent(GUIController MyController, GUIComponent MyOwner)
+{
+	b_3DView.StyleName = class'TurboGUIStyleButton'.default.KeyName;
+	b_Pick.StyleName = class'TurboGUIStyleButton'.default.KeyName;
+
+	Super.Initcomponent(MyController, MyOwner);
+}
 
 function OnPerkSelected(GUIComponent Sender)
 {

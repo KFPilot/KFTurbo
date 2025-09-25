@@ -69,11 +69,12 @@ defaultproperties
 	lb_PerkProgress=TurboPerkProgressListBox'PerkProgressList'
 
 	Begin Object Class=GUIButton Name=TurboSaveButton
-		WinTop=0.82
+		WinTop=0.815
 		WinLeft=0.029240
 		WinHeight=0.042757
 		WinWidth=0.437166
 		TabOrder=2
+		AutoSizePadding=(VertPerc=0.1)
 		bBoundToParent=True
 		OnClick=TurboTab_MidGamePerks.OnSaveButtonClicked
 		OnKeyEvent=SaveButton.InternalOnKeyEvent
