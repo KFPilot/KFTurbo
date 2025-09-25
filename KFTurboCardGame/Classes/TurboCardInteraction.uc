@@ -36,8 +36,8 @@ simulated function InitializeInteraction()
 
 simulated function GenerateCardOptions(TurboTab_TurboSettings SettingsTab, int TabOrder)
 {
-	local moCheckBox CheckBox;
-	Checkbox = moCheckBox(SettingsTab.AddComponent(string(class'moCheckBox')));
+	local TurboOptionCheckBox CheckBox;
+	Checkbox = TurboOptionCheckBox(SettingsTab.AddComponent(string(class'TurboOptionCheckBox')));
 	Checkbox.SetCaption(ReduceCardVisibilityCaption);
 	Checkbox.SetHint(ReduceCardVisibilityHint);
 	Checkbox.Checked(bReduceCardVisibility);
