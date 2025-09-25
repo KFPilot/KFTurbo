@@ -3,30 +3,27 @@
 //For more information see https://github.com/KFPilot/KFTurbo.
 class TurboPerkSelectList extends SRPerkSelectList;
 
-var TurboHUDKillingFloor TurboHUD;
-var ClientPerkRepLink CPRL;
 var int HoverIndex;
 
 var float LastUpdateTime;
 var array<float> HoverRatioList;
 var array<float> SelectRatioList;
 
+var array< class<TurboVeterancyTypes> > PerkList;
+var array<int> PerkLevelList;
+
 function InitComponent(GUIController MyController, GUIComponent MyOwner)
 {
 	Super.InitComponent(MyController, MyOwner);
-
-	TurboHUD = TurboHUDKillingFloor(PlayerOwner().myHUD);
-	CPRL = TurboPlayerController(PlayerOwner()).GetClientPerkRepLink();
 }
 
 function InitList(KFSteamStatsAndAchievements StatsAndAchievements)
 {
-	local int i;
+	local int PerkIndex;
 	local TurboPlayerController KFPC;
-	local ClientPerkRepLink ST;
+	local ClientPerkRepLink CPRL;
 	local class<KFVeterancyTypes> CurCL;
 
-	// Grab the Player Controller for later use
 	KFPC = TurboPlayerController(PlayerOwner());
 
 	if (KFPC == None)
@@ -39,40 +36,42 @@ function InitList(KFSteamStatsAndAchievements StatsAndAchievements)
 		CurCL = KFPlayerReplicationInfo(KFPC.PlayerReplicationInfo).ClientVeteranSkill;
 	}
 	
-	// Hold onto our reference
-	ST = KFPC.GetClientPerkRepLink();
+	CPRL = KFPC.GetClientPerkRepLink();
 
-	if (ST == None)
+	if (CPRL == None)
 	{
 		return;
 	}
 
-	// Update the ItemCount and select the first item
-	ItemCount = ST.CachePerks.Length;
+	ItemCount = CPRL.CachePerks.Length;
 	SetIndex(0);
 
 	PerkName.Remove(0, PerkName.Length);
 	PerkLevelString.Remove(0, PerkLevelString.Length);
 	PerkProgress.Remove(0, PerkProgress.Length);
+	PerkList.Remove(0, PerkList.Length);
+	PerkLevelList.Remove(0, PerkLevelList.Length);
 
-	for ( i = 0; i < ItemCount; i++ )
+	for (PerkIndex = 0; PerkIndex < ItemCount; PerkIndex++)
 	{
-		PerkName[PerkName.Length] = ST.CachePerks[i].PerkClass.Static.GetVetInfoText(ST.CachePerks[i].CurrentLevel - 1, 3);
+		PerkList[PerkIndex] = class<TurboVeterancyTypes>(CPRL.CachePerks[PerkIndex].PerkClass);
+		PerkLevelList[PerkIndex] = CPRL.CachePerks[PerkIndex].CurrentLevel;
+		PerkName[PerkIndex] = PerkList[PerkIndex].Static.GetVetInfoText(PerkLevelList[PerkIndex] - 1, 3);
 
-		if (ST.CachePerks[i].CurrentLevel == 0)
+		if (PerkLevelList[PerkIndex] == 0)
 		{
-			PerkLevelString[PerkLevelString.Length] = "N/A";
+			PerkLevelString[PerkIndex] = "N/A";
 		}
 		else
 		{
-			PerkLevelString[PerkLevelString.Length] = LvAbbrString @ (ST.CachePerks[i].CurrentLevel - 1);
+			PerkLevelString[PerkIndex] = LvAbbrString @ (PerkLevelList[PerkIndex] - 1);
 		}
 
-		PerkProgress[PerkProgress.Length] = ST.CachePerks[i].PerkClass.Static.GetTotalProgress(ST,ST.CachePerks[i].CurrentLevel);
+		PerkProgress[PerkIndex] = PerkList[PerkIndex].Static.GetTotalProgress(CPRL, PerkLevelList[PerkIndex]);
 
-		if (ST.CachePerks[i].PerkClass == CurCL)
+		if (PerkList[PerkIndex] == CurCL)
 		{
-			SetIndex(i);
+			SetIndex(Index);
 		}
 	}
 
@@ -93,11 +92,6 @@ function InitList(KFSteamStatsAndAchievements StatsAndAchievements)
 
 function bool PreDraw(Canvas Canvas)
 {
-	if (CPRL == None)
-	{
-		CPRL = TurboPlayerController(Canvas.Viewport.Actor).GetClientPerkRepLink();
-	}
-
 	if (IsInBounds())
 	{
 		HoverIndex = CalculateIndex();
@@ -164,12 +158,12 @@ function DrawPerk(Canvas Canvas, int CurIndex, float X, float Y, float Width, fl
 {
 	local class<TurboVeterancyTypes> PerkClass;
 
-	if (CPRL == None)
+	if (PerkList.Length <= CurIndex)
 	{
 		return;
 	}
 
-	PerkClass = class<TurboVeterancyTypes>(CPRL.CachePerks[CurIndex].PerkClass);
+	PerkClass = PerkList[CurIndex];
 
 	if (PerkClass == None)
 	{
@@ -179,7 +173,7 @@ function DrawPerk(Canvas Canvas, int CurIndex, float X, float Y, float Width, fl
 	Y = Y + ItemSpacing / 2.0;
 	Canvas.Style = 1;
 
-	class'TurboHUDPerkEntryDrawer'.static.Draw(Canvas, TurboHUD, X, Y + 7.0, Width, Height, PerkClass, CPRL.CachePerks[CurIndex].CurrentLevel - 1, PerkClass.Static.GetTotalProgress(CPRL, CPRL.CachePerks[CurIndex].CurrentLevel), SelectRatioList[CurIndex], HoverRatioList[CurIndex], false);
+	class'TurboHUDPerkEntryDrawer'.static.Draw(Canvas, TurboHUDKillingFloor(PlayerOwner().myHUD), X, Y + 7.0, Width, Height, PerkClass, PerkLevelList[CurIndex] - 1, PerkProgress[CurIndex], SelectRatioList[CurIndex], HoverRatioList[CurIndex], false);
 	class'TurboHUDKillingFloor'.static.ResetCanvas(Canvas);
 }
 

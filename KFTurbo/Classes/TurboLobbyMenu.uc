@@ -3,9 +3,6 @@
 //For more information see https://github.com/KFPilot/KFTurbo.
 class TurboLobbyMenu extends SRLobbyMenu;
 
-var TurboHUDKillingFloor TurboHUD;
-var ClientPerkRepLink CPRL;
-
 function bool ShowPerkMenu(GUIComponent Sender)
 {
 	if (PlayerOwner() != None)
@@ -19,9 +16,6 @@ function bool ShowPerkMenu(GUIComponent Sender)
 function InitComponent(GUIController MyController, GUIComponent MyOwner)
 {
 	Super.InitComponent(MyController, MyOwner);
-
-	TurboHUD = TurboHUDKillingFloor(PlayerOwner().myHUD);
-	CPRL = TurboPlayerController(PlayerOwner()).GetClientPerkRepLink();
 }
 
 function HandleClientNotReady()
@@ -49,6 +43,7 @@ function DrawPerk(Canvas Canvas)
 {
 	local float X, Y, Width, Height;
 	local KFPlayerReplicationInfo KFPRI;
+	local ClientPerkRepLink CPRL;
 	local class<TurboVeterancyTypes> SelectedVeterancy;
 
 	DrawPortrait();
@@ -61,13 +56,10 @@ function DrawPerk(Canvas Canvas)
 		return;
 	}
 
+	CPRL = TurboPlayerController(PlayerOwner()).GetClientPerkRepLink();
+
 	if (CPRL == None || !CPRL.bRepCompleted)
 	{
-		if (CPRL == None)
-		{
-			CPRL = TurboPlayerController(PlayerOwner()).GetClientPerkRepLink();
-		}
-
 		HandleClientNotReady();
 		return;
 	}
@@ -95,7 +87,7 @@ function DrawPerk(Canvas Canvas)
 	Width -= 6.f;
 	Height -= 34.f;
 	
-	class'TurboHUDPerkEntryDrawer'.static.Draw(Canvas, TurboHUD, X, Y, Width, Height, SelectedVeterancy, KFPRI.ClientVeteranSkillLevel, SelectedVeterancy.static.GetTotalProgress(CPRL, KFPRI.ClientVeteranSkillLevel + 1), 1.f, 0.f, true);
+	class'TurboHUDPerkEntryDrawer'.static.Draw(Canvas, TurboHUDKillingFloor(PlayerOwner().myHUD), X, Y, Width, Height, SelectedVeterancy, KFPRI.ClientVeteranSkillLevel, SelectedVeterancy.static.GetTotalProgress(CPRL, KFPRI.ClientVeteranSkillLevel + 1), 1.f, 0.f, true);
 	class'TurboHUDKillingFloor'.static.ResetCanvas(Canvas);
 }
 
