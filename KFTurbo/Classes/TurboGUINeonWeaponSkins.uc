@@ -72,7 +72,7 @@ function InitializeTierPreferenceSelectors(GUIController MyController, GUICompon
     {
         VeterancyClassList[Index] = class<TurboVeterancyTypes>(CPRL.CachePerks[Index].PerkClass);
         
-        ComboBox = moComboBox(AddComponent(string(class'moComboBox')));
+        ComboBox = moComboBox(AddComponent(string(class'TurboOptionComboBox')));
         VeterancyTierComboBoxList[Index] = ComboBox;
 
         ComboBox.Caption = VeterancyClassList[Index].default.VeterancyName;
@@ -192,18 +192,20 @@ defaultproperties
     Container=GUISectionBackground'NeonWeaponSkinsContainer'
 
     Begin Object Class=GUILabel Name=NeonWeaponSkinLabel
-        StyleName="TextLabel"
+        StyleName="TurboLabel"
         Caption="Sets the tier limit used by neon weapons for each perk."
         TextAlign=TXTA_Center
     End Object
     Label=GUILabel'NeonWeaponSkinLabel'
 
     Begin Object Class=GUIButton Name=ApplyButton
+        StyleName="TurboButton"
         WinHeight=0.2
         Caption="Apply"
-        TabOrder=4
+        TabOrder=50
         OnClick=TurboGUINeonWeaponSkins.ApplySettings
         OnKeyEvent=ApplyButton.InternalOnKeyEvent
+	    bNeverFocus=true
     End Object
     Apply=GUIButton'ApplyButton'
 }

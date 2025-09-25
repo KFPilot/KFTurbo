@@ -11,5 +11,6 @@ function InitComponent(GUIController MyController, GUIComponent MyOwner)
 defaultproperties
 {
     LabelStyleName="TurboLabel"
+    StandardHeight=0.04
     bNeverFocus=true
 }
