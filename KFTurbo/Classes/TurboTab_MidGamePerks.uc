@@ -3,6 +3,14 @@
 //For more information see https://github.com/KFPilot/KFTurbo.
 class TurboTab_MidGamePerks extends SRTab_MidGamePerks;
 
+function InitComponent(GUIController MyController, GUIComponent MyOwner)
+{
+	b_Save.StyleName = class'TurboGUIStyleButton'.default.KeyName;
+	b_Save.AutoSizePadding.VertPerc += 0.1f;
+
+	Super.InitComponent(MyController, MyOwner);
+}
+
 function bool OnSaveButtonClicked(GUIComponent Sender)
 {
 	local TurboPlayerController TurboPlayerController;
@@ -46,8 +54,8 @@ defaultproperties
 		OnCreateComponent=PerkSelectList.InternalOnCreateComponent
 		WinTop=0.057760
 		WinLeft=0.029240
-		WinWidth=0.437166
 		WinHeight=0.742836
+		WinWidth=0.437166
 	End Object
 	lb_PerkSelect=TurboPerkSelectListBox'KFTurbo.TurboTab_MidGamePerks.PerkSelectList'
 
@@ -55,8 +63,21 @@ defaultproperties
 		OnCreateComponent=PerkProgressList.InternalOnCreateComponent
 		WinTop=0.476850
 		WinLeft=0.499269
-		WinWidth=0.463858
 		WinHeight=0.341256
+		WinWidth=0.463858
 	End Object
 	lb_PerkProgress=TurboPerkProgressListBox'PerkProgressList'
+
+	Begin Object Class=GUIButton Name=TurboSaveButton
+		WinTop=0.82
+		WinLeft=0.029240
+		WinHeight=0.042757
+		WinWidth=0.437166
+		TabOrder=2
+		bBoundToParent=True
+		OnClick=TurboTab_MidGamePerks.OnSaveButtonClicked
+		OnKeyEvent=SaveButton.InternalOnKeyEvent
+    	bNeverFocus=true
+	End Object
+	b_Save=GUIButton'TurboSaveButton'
 }
