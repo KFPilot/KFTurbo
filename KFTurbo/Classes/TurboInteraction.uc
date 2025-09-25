@@ -36,7 +36,8 @@ enum EDetectedLocale
 {
 	Latin,
 	Japanese,
-	Cyrillic
+	Cyrillic,
+	Unknown
 };
 
 const JapaneseALowerBound = 0x3000;
@@ -530,7 +531,6 @@ simulated function EDetectedLocale ResolveLocale(string String)
     for (Index = Len(String); Index >= 0; Index--)
     {
         Code = Asc(Mid(String, Index, 1));
-
         if ((Code >= JapaneseALowerBound && Code <= JapaneseAUpperBound)
 			|| (Code >= JapaneseBLowerBound && Code <= JapaneseBUpperBound))
 		{
@@ -549,6 +549,7 @@ simulated function InitializeFontLocale()
 {
 	if (!bHasPerformedInitialFontLocalCheck)
 	{
+		log("Performing initial locale check so the correct font locale is used. Test string is "$ class'HUDKillingFloor'.default.TraderString $".", 'KFTurbo');
 		switch (ResolveLocale(class'HUDKillingFloor'.default.TraderString))
 		{
 			case Latin:
