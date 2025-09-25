@@ -554,6 +554,7 @@ simulated function InitializeFontLocale()
 		{
 			case Latin:
 				FontLocale = "ENG";
+				CheckForFontOverrides(); //For now any locale that is not JPN or CYR will return Latin... so just check here if someone has a custom font.
 				break;
 			case Japanese:
 				FontLocale = "JPN";
@@ -568,6 +569,39 @@ simulated function InitializeFontLocale()
 	}
 
 	UpdateFontLocale();
+}
+
+simulated function CheckForFontOverrides()
+{
+	if (class'HUDKillingFloor'.default.SmallFontArrayNames[1] ~= "ROFontsTwo.ROArial24DS"
+		&& class'HUDKillingFloor'.default.SmallFontArrayNames[2] ~= "ROFontsTwo.ROArial22DS"
+		&& class'HUDKillingFloor'.default.SmallFontArrayNames[3] ~= "ROFontsTwo.ROArial22DS"
+		&& class'HUDKillingFloor'.default.SmallFontArrayNames[4] ~= "ROFontsTwo.ROArial18DS"
+		&& class'HUDKillingFloor'.default.SmallFontArrayNames[5] ~= "ROFontsTwo.ROArial14DS"
+		&& class'HUDKillingFloor'.default.SmallFontArrayNames[6] ~= "ROFontsTwo.ROArial12DS"
+		&& class'HUDKillingFloor'.default.SmallFontArrayNames[7] ~= "ROFontsTwo.ROArial9DS"
+		&& class'HUDKillingFloor'.default.SmallFontArrayNames[8] ~= "ROFontsTwo.ROArial7DS"
+		&& class'HUDKillingFloor'.default.MenuFontArrayNames[0] ~= "ROFonts.ROBtsrmVr18"
+		&& class'HUDKillingFloor'.default.MenuFontArrayNames[1] ~= "ROFonts.ROBtsrmVr14"
+		&& class'HUDKillingFloor'.default.MenuFontArrayNames[2] ~= "ROFonts.ROBtsrmVr12"
+		&& class'HUDKillingFloor'.default.MenuFontArrayNames[3] ~= "ROFonts.ROBtsrmVr9"
+		&& class'HUDKillingFloor'.default.MenuFontArrayNames[4] ~= "ROFonts.ROBtsrmVr7"
+		&& class'HUDKillingFloor'.default.WaitingFontArrayNames[0] ~= "KFFonts.KFBase02DS36"
+		&& class'HUDKillingFloor'.default.WaitingFontArrayNames[1] ~= "KFFonts.KFBase02DS24"
+		&& class'HUDKillingFloor'.default.FontArrayNames[0] ~= "ROFontsTwo.ROArial24DS"
+		&& class'HUDKillingFloor'.default.FontArrayNames[1] ~= "ROFontsTwo.ROArial24DS"
+		&& class'HUDKillingFloor'.default.FontArrayNames[2] ~= "ROFontsTwo.ROArial22DS"
+		&& class'HUDKillingFloor'.default.FontArrayNames[3] ~= "ROFontsTwo.ROArial18DS"
+		&& class'HUDKillingFloor'.default.FontArrayNames[4] ~= "ROFontsTwo.ROArial18DS"
+		&& class'HUDKillingFloor'.default.FontArrayNames[5] ~= "ROFontsTwo.ROArial14DS"
+		&& class'HUDKillingFloor'.default.FontArrayNames[6] ~= "ROFontsTwo.ROArial12DS"
+		&& class'HUDKillingFloor'.default.FontArrayNames[7] ~= "ROFontsTwo.ROArial9DS"
+		&& class'HUDKillingFloor'.default.FontArrayNames[8] ~= "ROFontsTwo.ROArial7DS")
+	{
+		return;
+	}
+
+	ViewportOwner.Actor.ClientMessage("Custom font override detected! This is not currently supported by KFTurbo.");
 }
 
 simulated function UpdateFontLocale()
