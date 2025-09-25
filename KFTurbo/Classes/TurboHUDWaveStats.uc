@@ -300,11 +300,6 @@ simulated function OnScreenSizeChange(Canvas C, Vector2D CurrentClipSize, Vector
 		FontSizeOffset++;
 	}
 
-	if (CurrentClipSize.Y <= 820)
-	{
-		FontSizeOffset++;
-	}
-
 	if (CurrentClipSize.Y <= 720)
 	{
 		FontSizeOffset++;
@@ -337,17 +332,16 @@ simulated function DrawStats(Canvas C)
 	}
 
 	//Calculate box title size.
-	C.Font = TurboHUD.LoadFont(1 + FontSizeOffset);
+	C.Font = TurboHUD.LoadBoldFont(1 + FontSizeOffset);
 	C.FontScaleX = 1.f;
 	C.FontScaleX = 1.f;
 	C.TextSize("000", TextSizeX, TextSizeY);
 
-	TextScale = (SizeY * StatsHeaderSizeY) / TextSizeY;
+	TextScale = FMin((SizeY * StatsHeaderSizeY) / TextSizeY, 1.f);
 	C.FontScaleX = TextScale;
 	C.FontScaleY = TextScale;
 	C.TextSize("000", TextSizeX, TextSizeY);
-
-
+	
 	//Draw box title.	
 	if (SquareContainer != None)
 	{
@@ -527,7 +521,7 @@ final function DrawTeamBar(Canvas C, float PositionX, float PositionY, float Siz
 		return;
 	}
 	
-	C.Font = TurboHUD.LoadFont(3 + FontSizeOffset);
+	C.Font = TurboHUD.LoadBoldFont(3 + FontSizeOffset);
 	C.FontScaleX = 1.f;
 	C.FontScaleX = 1.f;
 	C.TextSize("000", TextSizeX, TextSizeY);
@@ -560,7 +554,7 @@ final function DrawTeamBar(Canvas C, float PositionX, float PositionY, float Siz
 		{
 			C.DrawColor = TeamBarSeparatorColor;
 			C.SetPos(PositionX + ((SizeX * (RemainingPercent - TeammateBarPercent)) - 2.f) - 2.f, PositionY);
-			C.DrawTileStretched(SquareContainer, 2.f, SizeY);
+			C.DrawTileStretched(SquareContainer, 4.f, SizeY);
 		}
 
 		TeammateString = class'TurboHUDScoreboard'.static.GetCompressedNumber(TeamAmount[Index].Amount) @ TeamAmount[Index].Player.PlayerName;
@@ -692,9 +686,9 @@ defaultproperties
 	StatsFleshpoundDamageString="FLESHPOUND DAMAGE"
 	StatsReloadsString="RELOADS"
 
-	StatsAccuracyMissString="%p% MISS"
-	StatsAccuracyHitString="%p% HIT"
-	StatsAccuracyHeadshotString="%p% HEADSHOT"
+	StatsAccuracyMissString="%p%  MISS"
+	StatsAccuracyHitString="%p%  HIT"
+	StatsAccuracyHeadshotString="%p%  HEADSHOT"
 
 	ProcessingWave=-1
 
@@ -713,7 +707,7 @@ defaultproperties
 
 	StatSubtitleTextColor=(R=255,G=255,B=255,A=255)
 	StatSubtitleTextShadowColor=(R=0,G=0,B=0,A=140)
-	StatTextColor=(R=0,G=0,B=0,A=200)
+	StatTextColor=(R=0,G=0,B=0,A=220)
 
 	KillsBar=(FillColor=(R=120,G=145,B=255,A=255),BarColor=(R=255,G=255,B=255,A=255),bDrawFillMarker=true)
 	DamageBar=(FillColor=(R=255,G=147,B=120,A=255),BarColor=(R=255,G=255,B=255,A=255),bDrawFillMarker=true)
