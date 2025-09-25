@@ -264,7 +264,7 @@ static function int ZedTimeExtensions(KFPlayerReplicationInfo KFPRI)
 
 static final function int GetScaledRequirement(byte CurLevel, int InValue)
 {
-	return CurLevel * CurLevel * InValue;
+	return int(float(CurLevel) ** 1.89f) * float(InValue);
 }
 
 static function class<DamageType> GetMAC10DamageType(KFPlayerReplicationInfo KFPRI)
@@ -402,7 +402,7 @@ static function AddDefaultInventory(KFPlayerReplicationInfo KFPRI, Pawn P)
 
 defaultproperties
 {
-	LevelRankRequirement=5
+	LevelRankRequirement=6
 	HighDifficultyExtraAmmoMultiplier=1.5f
 	HighDifficultyExtraGrenadeAmmoMultiplier=1.f
 	
