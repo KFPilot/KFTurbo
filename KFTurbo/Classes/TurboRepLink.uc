@@ -18,6 +18,7 @@ const VeterancyVariantID = "VET"; //Neon weapon (Veterancy weapons) skins.
 const DarkCamoVariantID = "DARKCAMO"; //Dark camo skins.
 const FoundryVariantID = "FOUNDRY"; //Foundry sticker skins.
 const BioticsVariantID = "BIOTICS"; //Biotics Lab sticker skins.
+const KotDeadVariantID = "KOT"; //KotDead sticker skins.
 
 const RetartVariantID = "RET";
 const ScuddlesVariantID = "SCUD";
@@ -384,6 +385,11 @@ simulated function SetupVariantWeaponEntry(out VariantWeapon Entry)
         Entry.VariantID = BioticsVariantID;
         Entry.ItemStatus = 0;
     }
+    else if (IsGenericKotDeadSkin(Entry.VariantClass))
+    {
+        Entry.VariantID = KotDeadVariantID;
+        Entry.ItemStatus = 0;
+    }
     else
     {
         Entry.VariantID = DefaultID;
@@ -611,6 +617,11 @@ static final function bool IsGenericFoundrySkin(class<Pickup> PickupClass)
 static final function bool IsGenericBioticsSkin(class<Pickup> PickupClass)
 {
 	return InStr(Caps(PickupClass), "_BIOTICS_") != -1;
+}
+
+static final function bool IsGenericKotDeadSkin(class<Pickup> PickupClass)
+{
+	return InStr(Caps(PickupClass), "_KOT_") != -1;
 }
 
 function ServerSetVeterancyTierPreference(class<TurboVeterancyTypes> PerkClass, int TierPreference)

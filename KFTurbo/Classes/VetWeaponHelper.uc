@@ -49,8 +49,6 @@ static final function UpdateWeaponAttachmentTier(KFWeaponAttachment Attachment, 
         return;
     }
 
-    WeaponTier = Clamp(WeaponTier, 0, LoadedSkinList.Length);
-
     if (WeaponTier == PreviousWeaponTier)
     {
         return;
@@ -65,6 +63,13 @@ static final function UpdateWeaponAttachmentTier(KFWeaponAttachment Attachment, 
         {
             return;
         }
+    }
+
+    WeaponTier = Clamp(WeaponTier, 0, LoadedSkinList.Length);
+
+    if (WeaponTier == PreviousWeaponTier)
+    {
+        return;
     }
 
     Attachment.Skins[0] = LoadedSkinList[WeaponTier];

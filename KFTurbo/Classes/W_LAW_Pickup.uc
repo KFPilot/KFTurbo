@@ -21,5 +21,6 @@ defaultproperties
      Cost=2500
      VariantClasses(0)=Class'KFTurbo.W_LAW_Pickup'
      VariantClasses(1)=Class'KFTurbo.W_V_LAW_Turbo_Pickup'
+     VariantClasses(2)=Class'KFTurbo.W_V_LAW_Kot_Pickup'
      InventoryType=Class'KFTurbo.W_LAW_Weap'
 }

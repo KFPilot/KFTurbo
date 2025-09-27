@@ -5,5 +5,5 @@ class W_V_M7A3_Foundry_Attachment extends M7A3MAttachment;
 
 defaultproperties
 {
-     
+    Skins(0)=Combiner'KFTurbo.Foundry.M7A3_Foundry_3rd_CMB'
 }

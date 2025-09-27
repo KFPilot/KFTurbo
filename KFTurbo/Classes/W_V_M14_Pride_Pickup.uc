@@ -8,5 +8,5 @@ defaultproperties
      ItemName="Pride M14EBR"
 
      InventoryType=Class'KFTurbo.W_V_M14_Pride_Weap'
-     Skins(0)=Combiner'KFTurbo.Pride.M14_3rd_Pride_CMB'
+     //Skins(0)=Combiner'KFTurbo.Pride.M14_3rd_Pride_CMB'
 }

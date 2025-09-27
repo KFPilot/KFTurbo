@@ -8,5 +8,5 @@ defaultproperties
      ItemName="Pro M14EBR"
 
      InventoryType=Class'KFTurbo.W_V_M14_SMP_Weap'
-     Skins(0)=Combiner'KFTurbo.ShowMePro.M14_3rd_ShowMePro_CMB'
+     //Skins(0)=Combiner'KFTurbo.ShowMePro.M14_3rd_ShowMePro_CMB'
 }

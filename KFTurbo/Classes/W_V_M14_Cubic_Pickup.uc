@@ -8,5 +8,5 @@ defaultproperties
      ItemName="Cubic M14EBR"
 
      InventoryType=Class'KFTurbo.W_V_M14_Cubic_Weap'
-     Skins(0)=Combiner'KFTurbo.Cubic.M14_3rd_Cubic_CMB'
+     //Skins(0)=Combiner'KFTurbo.Cubic.M14_3rd_Cubic_CMB'
 }

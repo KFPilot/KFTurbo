@@ -17,5 +17,9 @@ function Destroyed()
 
 defaultproperties
 {
-     InventoryType=Class'KFTurbo.W_Crossbow_Weap'
+	InventoryType=Class'KFTurbo.W_Crossbow_Weap'
+
+	VariantClasses(0)=Class'KFTurbo.W_Crossbow_Pickup'
+	VariantClasses(1)=Class'KFTurbo.W_V_Crossbow_Foundry_Pickup'
+	VariantClasses(2)=Class'KFTurbo.W_V_Crossbow_DarkCamo_Pickup'
 }
