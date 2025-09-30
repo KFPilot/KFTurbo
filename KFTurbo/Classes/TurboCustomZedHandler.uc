@@ -51,7 +51,7 @@ function WaveStarted(KFTurboGameType GameType, int StartedWave)
 {
     local int Index;
     
-    bAllowRandomness = !KFTurboGameTypePlus(Level.Game).IsHighDifficulty();
+    bAllowRandomness = !GameType.IsHighDifficulty();
     bRandomizeProgressAtWaveStart = bAllowRandomness;
 
     if (bRandomizeProgressAtWaveStart)
