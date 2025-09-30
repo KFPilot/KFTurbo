@@ -195,21 +195,23 @@ def CheckIfAllFilesArePresent():
     if len(MissingFiles) != 0:
         raise MissingPackagesError("Missing files: " + " ".join(MissingFiles))
 
-def CopyTurboFilesToTarget(Destination):
+def CopyTurboFilesToTarget(Destination, bIsToServer):
     PrintStep(f"Copying files to {Destination}...")
     for FileName in TurboFiles:
         FilePath = SystemPath.joinpath(FileName)
         shutil.copy2(FilePath, Destination)
     for StagingFileName in TurboStagingFiles:
+        if bIsToServer and StagingFileName.endswith(".ini"):
+            continue
         FilePath = SystemPath.joinpath(StagingFileName)
         shutil.copy2(FilePath, Destination)
 
 def CopyTurboFilesToDeployments():
     try:
-        CopyTurboFilesToTarget(GitHubStagingPath)
-        CopyTurboFilesToTarget(ServerStagingPath)
+        CopyTurboFilesToTarget(GitHubStagingPath, False)
+        CopyTurboFilesToTarget(ServerStagingPath, True)
         if ExtraStagingPath != None:
-            CopyTurboFilesToTarget(ExtraStagingPath)
+            CopyTurboFilesToTarget(ExtraStagingPath, False)
         PrintSuccess(f"Successfully copied files.")
     except Exception as Error:
         PrintError(f"{Error}")
