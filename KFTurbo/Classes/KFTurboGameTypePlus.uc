@@ -252,7 +252,7 @@ function SetupWave()
     MaxMonsters = TurboMonsterCollection.GetWaveMaxMonsters(WaveNum, GameDifficulty, NumPlayers);
     MaxMonsters = float(MaxMonsters) * GameMaxMonstersModifier * MapMaxMonstersModifier * AdminMaxMonstersModifier;
 
-    TotalMaxMonsters = CalculateTotalMaxMonster();
+    TotalMaxMonsters = CalculateTotalMaxMonsters();
     KFGameReplicationInfo(Level.Game.GameReplicationInfo).MaxMonsters = TotalMaxMonsters;
     KFGameReplicationInfo(Level.Game.GameReplicationInfo).MaxMonstersOn = true;
 
@@ -278,7 +278,7 @@ function SetupWave()
 	class'TurboWaveEventHandler'.static.BroadcastWaveStarted(Self, WaveNum);
 }
 
-function int CalculateTotalMaxMonster()
+function int CalculateTotalMaxMonsters()
 {
     return float(TurboMonsterCollection.GetWaveTotalMonsters(WaveNum, GameDifficulty, GetMaxMonsterPlayerCount())) * GameTotalMonstersModifier;
 }

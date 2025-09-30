@@ -1,7 +1,7 @@
 //Killing Floor Turbo KFTurboGameType
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class KFTurboGameType extends KFGameType;
+class KFTurboGameType extends CoreKFGameType;
 
 var protected bool bIsHighDifficulty;
 var protected bool bStatsAndAchievementsEnabled;
@@ -13,15 +13,6 @@ var protected bool bPreventGameOver;
 //Allows a gametype modification to total waves without impacting spawns (eg the game wants to work like a Long game, but with a different number of waves).
 var protected int FinalWaveOverride;
 var protected bool bHasAttemptedToApplyFinalWaveOverride;
- 
-//Whatever spawn rate is set as, make sure it gets multiplied by these.
-var float GameWaveSpawnRateModifier, MapWaveSpawnRateModifier, AdminSpawnRateModifier;
-//Whatever max monsters is set as, make sure it gets multiplied by these.
-var float GameMaxMonstersModifier, MapMaxMonstersModifier, AdminMaxMonstersModifier;
-//Whatever total monsters is set as, make sure it gets multiplied by this.
-var float GameTotalMonstersModifier;
-//Whatever trader time is set as, make sure it gets multiplied by this.
-var float GameTraderTimeModifier;
 
 //Set to true when the boss has been spawned. Used to prevent duplicate broadcasts of OnBossSpawned event.
 var bool bHasSpawnedBoss;
@@ -35,14 +26,10 @@ var array< TurboHealEventHandler > HealEventHandlerList;
 var array< TurboWaveEventHandler > WaveEventHandlerList;
 var array< TurboWaveSpawnEventHandler > WaveSpawnEventHandlerList;
 
-var MapConfigurationObject MapConfigurationObject; //MapConfigurationObject associated with the current map.
-
-var protected int FakedPlayerCount; //Faked player count. Used to make wave size larger.
-const MAX_FAKED_PLAYERS = 12; //Used to keep faked player count equal to or less than 12.
-var protected int ForcedPlayerHealthCount; //Forced player health count. Used to scale up monster health.
-const MAX_FORCED_PLAYER_HEALTH = 6; //Used to keep monster health at 6 players or fewer.
-
-var protected bool bZedTimeEnabled; //Allows for zed time to be disabled.
+//Used to keep faked player count equal to or less than 12.
+const MAX_FAKED_PLAYERS = 12;
+//Used to keep monster health at 6 players or fewer.
+const MAX_FORCED_PLAYER_HEALTH = 6;
 
 var bool bHasVisibleSpectatorMutator;
 
@@ -55,7 +42,6 @@ function InitGame(string Options, out string Error)
     Super.InitGame(Options, Error);
 
     bNoLateJoiners = false;
-    InitializeMapConfigurationObject();
 }
 
 function AddMutator(string InMutatorClass, optional bool bUserAdded)
@@ -87,102 +73,6 @@ function ProcessServerTravel(string URL, bool bItems)
     Super.ProcessServerTravel(URL, bItems);
 }
 
-function InitializeMapConfigurationObject()
-{
-    local string MapName;
-    local int Index;
-    MapName = Locs(GetCurrentMapName(Level));
-
-    MapConfigurationObject = new(None, MapName) class'MapConfigurationObject';
-
-    if (MapConfigurationObject != None && MapConfigurationObject.MapNameRedirect != "")
-    {
-        MapConfigurationObject = new(None, Locs(MapConfigurationObject.MapNameRedirect)) class'MapConfigurationObject';
-    }
-
-    if (MapConfigurationObject == None || MapConfigurationObject.bDisabled)
-    {
-        return;
-    }
-
-    log("Loaded MapConfigurationObject for level"@MapName$". Applying modifiers now.", 'KFTurbo');
-
-    log("| Spawn Rate Modifier:"@MapWaveSpawnRateModifier@"| Max Monsters Modifier:"@MapMaxMonstersModifier, 'KFTurbo');
-
-    MapWaveSpawnRateModifier = MapConfigurationObject.WaveSpawnRateMultiplier;
-    MapMaxMonstersModifier = MapConfigurationObject.WaveMaxMonstersMultiplier;
-
-    log("| Zombie Volume Respawn Modifier:"@MapConfigurationObject.ZombieVolumeCanRespawnTimeMultiplier@"| Zombie Volume Min Player Distance Modifier:"@MapConfigurationObject.ZombieVolumeMinDistanceToPlayerMultiplier, 'KFTurbo');
-
-    for (Index = ZedSpawnList.Length - 1; Index >= 0; Index--)
-    {
-        ZedSpawnList[Index].CanRespawnTime *= MapConfigurationObject.ZombieVolumeCanRespawnTimeMultiplier;
-        ZedSpawnList[Index].MinDistanceToPlayer *= MapConfigurationObject.ZombieVolumeMinDistanceToPlayerMultiplier;
-    }
-}
-
-final function int GetAlivePlayerCount()
-{
-    local Controller C;
-    local int PlayerCount;
-    PlayerCount = 0;
-	for (C = Level.ControllerList; C != None; C = C.NextController)
-    {
-        if (C.bIsPlayer && C.Pawn!=None && C.Pawn.Health > 0)
-        {
-            PlayerCount++;
-        }
-    }
-
-    return PlayerCount;
-}
-
-//Player count to use when calculating MaxMonsters. Handles faked players.
-final function int GetMaxMonsterPlayerCount()
-{
-    return Min(NumPlayers + FakedPlayerCount, MAX_FAKED_PLAYERS);
-}
-
-//Player count to use when calculating monster health. Handles forced player monster health. KFTurbo caps this to 6.
-final function int GetMonsterHealthPlayerCount()
-{
-    return Min(Max(GetAlivePlayerCount(), ForcedPlayerHealthCount), MAX_FORCED_PLAYER_HEALTH);
-}
-
-function int SetFakedPlayerCount(int NewFakedPlayerCount)
-{
-    FakedPlayerCount = Min(Max(NewFakedPlayerCount, 0), MAX_FAKED_PLAYERS - 1);
-    return FakedPlayerCount;
-}
-
-final function int GetFakedPlayerCount()
-{
-    return FakedPlayerCount;
-}
-
-function int SetForcedPlayerHealthCount(int NewForcedPlayerHealthCount)
-{
-    NewForcedPlayerHealthCount = Clamp(NewForcedPlayerHealthCount, 0, MAX_FORCED_PLAYER_HEALTH);
-    ForcedPlayerHealthCount = NewForcedPlayerHealthCount;
-    return ForcedPlayerHealthCount;
-}
-
-final function int GetForcedPlayerHealthCount()
-{
-    return ForcedPlayerHealthCount;
-}
-
-final function bool SetZedTimeEnabled(bool bNewZedTimeEnabled)
-{
-    bZedTimeEnabled = bNewZedTimeEnabled;
-    return bZedTimeEnabled;
-}
-
-function bool IsZedTimeEnabled()
-{
-    return bZedTimeEnabled;
-}
-
 function float SetAdminSpawnRateModifier(float NewAdminSpawnRateModifier)
 {
     NewAdminSpawnRateModifier = FClamp(NewAdminSpawnRateModifier, 1.f, 100.f);
@@ -201,30 +91,22 @@ function float SetAdminMaxMonstersModifier(float NewAdminMaxMonstersModifier)
 event PlayerController Login(string Portal, string Options, out string Error)
 {
     local PlayerController PlayerController;
-    local bool bJoinedAsSpectatorOnly;
 
     PlayerController = Super.Login(Portal, Options, Error);
-
-    if (Level.bLevelChange)
-    {
-        return PlayerController;
-    }
 
     if (PlayerController == None)
     {
         return None;
     }
 
-    bJoinedAsSpectatorOnly = PlayerController.PlayerReplicationInfo.bOnlySpectator;
-
-    if (!bJoinedAsSpectatorOnly)
+    if (Level.bLevelChange)
     {
-        PlayerController.PlayerReplicationInfo.Score = GetPlayerStartingCash();
+        return PlayerController;
     }
 
-    if (bJoinedAsSpectatorOnly && bWaveInProgress)
+    if (!PlayerController.PlayerReplicationInfo.bOnlySpectator)
     {
-        TurboPlayerController(PlayerController).bWasSpectatingWave = true;
+        PlayerController.PlayerReplicationInfo.Score = GetPlayerStartingCash();
     }
 
     return PlayerController;
@@ -277,6 +159,19 @@ function DistributeCash(TurboPlayerController ExitingPlayer)
 		PlayerList[Index].PlayerReplicationInfo.Score += Score;
 		PlayerList[Index].PlayerReplicationInfo.NetUpdateTime = Level.TimeSeconds - ((1.f / PlayerList[Index].PlayerReplicationInfo.NetUpdateFrequency) + 1.f);
 	}
+}
+
+function int SetFakedPlayerCount(int NewFakedPlayerCount)
+{
+    FakedPlayerCount = Min(Max(NewFakedPlayerCount, 0), MAX_FAKED_PLAYERS - 1);
+    return FakedPlayerCount;
+}
+
+function int SetForcedPlayerHealthCount(int NewForcedPlayerHealthCount)
+{
+    NewForcedPlayerHealthCount = Clamp(NewForcedPlayerHealthCount, 0, MAX_FORCED_PLAYER_HEALTH);
+    ForcedPlayerHealthCount = NewForcedPlayerHealthCount;
+    return ForcedPlayerHealthCount;
 }
 
 function int GetPlayerStartingCash()
@@ -621,70 +516,8 @@ function SetupWave()
 {
 	Super.SetupWave();
 
-    MaxMonsters = float(MaxMonsters) * GameMaxMonstersModifier * MapMaxMonstersModifier * AdminMaxMonstersModifier;
-
-    TotalMaxMonsters = CalculateTotalMaxMonster();
-    KFGameReplicationInfo(Level.Game.GameReplicationInfo).MaxMonsters = TotalMaxMonsters;
-	
-    DoWaveStartForPlayers();
-
     class'KFTurboMut'.static.FindMutator(Self).OnWaveStart();
 	class'TurboWaveEventHandler'.static.BroadcastWaveStarted(Self, WaveNum);
-}
-
-function int CalculateTotalMaxMonster()
-{
-    local int NewTotalMaxMonsters;
-    local float Modifier;
-    NewTotalMaxMonsters = Waves[WaveNum].WaveMaxMonsters;
-    Modifier = 1.f;
-
-    if (GameDifficulty >= 7.0)
-    {
-        Modifier *= 1.7f;
-    }
-    else if (GameDifficulty >= 5.0)
-    {
-        Modifier *= 1.5f;
-    }
-    else if (GameDifficulty >= 4.0)
-    {
-        Modifier *= 1.3f;
-    }
-    else if (GameDifficulty >= 2.0)
-    {
-        Modifier *= 1.f;
-    }
-    else
-    {
-        Modifier *= 0.7f;
-    }
-
-    switch (GetMaxMonsterPlayerCount())
-    {
-        case 1:
-            Modifier *= 1.f;
-            break;
-        case 2:
-            Modifier *= 2.f;
-            break;
-        case 3:
-            Modifier *= 2.75f;
-            break;
-        case 4:
-            Modifier *= 3.5f;
-            break;
-        case 5:
-            Modifier *= 4.f;
-            break;
-        case 6:
-            Modifier *= 4.5f;
-            break;
-        default:
-            Modifier *= float(GetMaxMonsterPlayerCount()) * 0.8f;
-    }
-
-    return float(NewTotalMaxMonsters) * Modifier * GameTotalMonstersModifier;
 }
 
 //Function needs to be declared outside of state scope if it wants to be called outside of the state's scope...
@@ -789,11 +622,6 @@ state MatchInProgress
             }
         }
     }
-
-	function float CalcNextSquadSpawnTime()
-	{
-		return Super.CalcNextSquadSpawnTime() / (GameWaveSpawnRateModifier * MapWaveSpawnRateModifier * AdminSpawnRateModifier);
-	}
 	
 	function StartWaveBoss()
 	{
@@ -833,13 +661,6 @@ state MatchInProgress
 	{
 		Super.DoWaveEnd();
 
-        if (GameTraderTimeModifier != 1.f)
-        {
-            WaveCountDown = float(WaveCountDown) * GameTraderTimeModifier;
-            KFGameReplicationInfo(GameReplicationInfo).TimeToNextWave = WaveCountDown;
-        }
-
-        InvasionGameReplicationInfo(GameReplicationInfo).WaveNumber = WaveNum;
         class'KFTurboMut'.static.FindMutator(Self).OnWaveEnd();
 		class'TurboWaveEventHandler'.static.BroadcastWaveEnded(Self, WaveNum - 1);
 	}
@@ -887,27 +708,6 @@ function bool CheckEndGame(PlayerReplicationInfo Winner, string Reason)
     return bResult;
 }
 
-function DoWaveStartForPlayers()
-{
-    local int Index;
-    local TurboPlayerReplicationInfo TPRI;
-
-	for (Index = Level.GRI.PRIArray.Length - 1; Index >= 0; Index--)
-	{
-		TPRI = TurboPlayerReplicationInfo(Level.GRI.PRIArray[Index]);
-
-        if (TPRI == None)
-        {
-            continue;
-        }
-        
-        if (TurboPlayerController(TPRI.Owner) != None)
-        {
-            TurboPlayerController(TPRI.Owner).bWasSpectatingWave = TPRI.bOnlySpectator;
-        }
-    }
-}
-
 function NotifyTurboMutatorGameStart()
 {
     local KFTurboMut TurboMut;
@@ -934,16 +734,6 @@ defaultproperties
     FinalWaveOverride=-1
     bHasAttemptedToApplyFinalWaveOverride=false
 
-	GameWaveSpawnRateModifier=1.f
-    MapWaveSpawnRateModifier=1.f
-    AdminSpawnRateModifier=1.f
-
-    GameMaxMonstersModifier=1.f
-    MapMaxMonstersModifier=1.f
-    AdminMaxMonstersModifier=1.f
-
-    GameTotalMonstersModifier=1.f
-    GameTraderTimeModifier=1.f
     bHasSpawnedBoss=false
 
     FakedPlayerCount=0

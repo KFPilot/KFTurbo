@@ -1,7 +1,7 @@
 //Killing Floor Turbo TurboPlayerController
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class TurboPlayerController extends KFPCServ;
+class TurboPlayerController extends CorePlayerController;
 
 var private ClientPerkRepLink ClientPerkRepLink;	
 var private TurboRepLink TurboRepLink;
@@ -29,8 +29,6 @@ var bool bPipebombUsesSpecialGroup;
 var array< class<PerkLockTurboLocalMessage> > PerkChangeLockList;
 
 var protected array<TurboOptionObject> ExternalOptionList;
-
-var bool bWasSpectatingWave;
 
 replication
 {
@@ -1044,39 +1042,6 @@ function BecomeSpectator()
         {
            TGRI.RevokePlayerVote(TurboPlayerReplicationInfo(PlayerReplicationInfo));
         }
-
-		if (KFTurboGameType(Level.Game).bWaveInProgress)
-		{
-			bWasSpectatingWave = true;
-		}
-	}
-}
-
-function BecomeActivePlayer()
-{
-	if (PlayerReplicationInfo == None || !PlayerReplicationInfo.bOnlySpectator)
-	{
-		Super.BecomeActivePlayer();
-		return;
-	}
-
-	Super.BecomeActivePlayer();
-
-	if (Level.Game.bDelayedStart && bWasSpectatingWave && !PlayerReplicationInfo.bOnlySpectator && Pawn == None)
-	{
-		bWasSpectatingWave = false;
-		PlayerReplicationInfo.bOutOfLives = false;
-		PlayerReplicationInfo.NumLives = 0;
-		
-		if (!KFTurboGameType(Level.Game).bWaveInProgress)
-		{
-			SetViewTarget(Self);
-			ClientSetBehindView(false);
-			bBehindView = False;
-			ClientSetViewTarget(Pawn); //TWI calls this for some reason but pawn would be None at this point...
-
-			ServerReStartPlayer();	
-		}
 	}
 }
 
