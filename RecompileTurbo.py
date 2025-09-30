@@ -41,7 +41,7 @@ Arguments = ArgumentParser.parse_args()
 BuildType = EBuildType.ALL
 
 #Files KFTurbo compiles.
-TurboFiles = ["KFTurboMapVote.u", "KFTurboEmbeddable.u", #Turbo-agnostic packages.
+TurboFiles = ["CommonCore.u", "KFTurboMapVote.u", "KFTurboEmbeddable.u", #Turbo-agnostic packages.
             "KFTurboGUI.u", "KFTurboFonts.u", "KFTurboFontsJP.u", "KFTurboFontsCY.u", #Asset packages.
             "KFTurbo.u", "KFTurboServer.u", "KFTurboCommon.u", #Turbo Core packages.
             "KFTurboHoldout.u", "KFTurboRandomizer.u", "KFTurboCardGame.u", "KFTurboTestMut.u"] #Special gamemode packages.
@@ -58,7 +58,7 @@ def UpdateBuildType():
 
     if Arguments.onlyturbo:
         BuildType = EBuildType.TURBO
-        TurboFiles = [ "KFTurbo.u", "KFTurboServer.u", "KFTurboCommon.u" ]
+        TurboFiles = [ "CommonCore.u", "KFTurbo.u", "KFTurboServer.u", "KFTurboCommon.u" ]
         TurboStagingFiles = [ "KFTurbo.ucl", "KFTurboServer.ucl" ]
     elif Arguments.onlyholdout:
         BuildType = EBuildType.HOLDOUT
@@ -104,7 +104,7 @@ if Arguments.extrastage != None:
 
 StepStrings = ["font "]
 WarningStrings = ["warning", "unused local"]
-ErrorStrings = ["error", "unresolved", "failed", "failure", "unknown property", "bad cast", "redundant data"]
+ErrorStrings = ["error", "unresolved", "failed", "failure", "unknown property", "bad cast", "redundant data", "critical:"]
 
 def PrintTask(String):
     print("\033[48;5;7m  \033[0m " + String)
