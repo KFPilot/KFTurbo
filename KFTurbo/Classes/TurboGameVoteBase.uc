@@ -6,7 +6,7 @@ class TurboGameVoteBase extends ReplicationInfo
     abstract;
 
 var TurboGameReplicationInfo OwnerGRI;
-var TurboServerTimeActor ServerTimeActor;
+var ServerTimeActor ServerTimeActor;
 
 var string VoteID; //Used to specify an ID for a given vote instance.
 var protected float VoteDuration; //Duration of this vote. Once this time is reached, the vote will expire.

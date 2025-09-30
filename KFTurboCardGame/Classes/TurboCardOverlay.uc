@@ -5,7 +5,7 @@ class TurboCardOverlay extends TurboHUDOverlay;
 
 var TurboCardReplicationInfo TCRI;
 var TurboPlayerCardCustomInfo PlayerCardCustomInfo;
-var TurboServerTimeActor ServerTimeActor;
+var ServerTimeActor ServerTimeActor;
 struct SelectableCardEntry
 {
 	var TurboCardActor CardActor;
@@ -189,7 +189,7 @@ simulated function Timer()
 {
 	if (ServerTimeActor == None)
 	{
-		ServerTimeActor = class'TurboServerTimeActor'.static.FindTurboServerTimeActor(Self);
+		ServerTimeActor = class'ServerTimeActor'.static.FindServerTimeActor(Self);
 	}
 
 	if (PlayerCardCustomInfo == None)

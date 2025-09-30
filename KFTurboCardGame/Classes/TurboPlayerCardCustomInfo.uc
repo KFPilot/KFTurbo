@@ -3,7 +3,7 @@
 //For more information see https://github.com/KFPilot/KFTurbo.
 class TurboPlayerCardCustomInfo extends TurboPlayerCustomInfo;
 
-var TurboServerTimeActor ServerTimeActor;
+var ServerTimeActor ServerTimeActor;
 
 var int CheatDeathWave;
 var float CheatDeathTime;

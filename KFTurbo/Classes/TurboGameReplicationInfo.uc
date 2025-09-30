@@ -2,11 +2,8 @@
 //KFTurbo's GRI. Hooks up CustomTurboModifier, CustomTurboClientModifier, and voting systems.
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class TurboGameReplicationInfo extends KFGameReplicationInfo
+class TurboGameReplicationInfo extends CoreGameReplicationInfo
     dependson(TurboGameVoteBase);
-
-var class<TurboServerTimeActor> ServerTimeActorClass;
-var TurboServerTimeActor ServerTimeActor;
 
 var TurboGameModifierReplicationLink CustomTurboModifier;
 var TurboClientModifierReplicationLink CustomTurboClientModifier;
@@ -20,21 +17,6 @@ replication
 {
     reliable if(Role == ROLE_Authority)
         CustomTurboModifier, CustomTurboClientModifier;
-}
-
-simulated function PostBeginPlay()
-{
-    if (Role == ROLE_Authority && ServerTimeActor == None)
-    {
-        if (ServerTimeActorClass == None)
-        {
-            ServerTimeActorClass = class'TurboServerTimeActor';
-        }
-
-        ServerTimeActor = Spawn(ServerTimeActorClass, Self);
-    }
-
-    Super.PostBeginPlay();
 }
 
 function PlayerVote(TurboPlayerReplicationInfo Voter, string VoteString)

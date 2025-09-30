@@ -1,7 +1,7 @@
 //Killing Floor Turbo TurboPlayerReplicationInfo
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class TurboPlayerReplicationInfo extends KFPlayerReplicationInfo;
+class TurboPlayerReplicationInfo extends CorePlayerReplicationInfo;
 
 enum EConnectionState
 {

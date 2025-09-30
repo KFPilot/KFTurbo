@@ -3,7 +3,7 @@
 //For more information see https://github.com/KFPilot/KFTurbo.
 class PlayerBorrowedTimeActor extends Engine.ReplicationInfo;
 
-var TurboServerTimeActor ServerTimeActor;
+var ServerTimeActor ServerTimeActor;
 
 var int BorrowedTimeStart, BorrowedTimeEnd;
 var bool bHasExecutedBorrowedTime;
