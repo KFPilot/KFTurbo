@@ -98,6 +98,8 @@ auto state Initialize
         {
             FadeRate = default.FadeRate;
         }
+        
+        FadeRate = FMax(FadeRate, 0.1f);
 
         bHasPendingFogChange = true;
         PendingTargetFogColor = InFogColor;
@@ -180,6 +182,8 @@ simulated function SetFog(Color InFogColor, float InFogStart, float InFogEnd, op
         FadeRate = default.FadeRate;
     }
 
+    FadeRate = FMax(FadeRate, 0.1f);
+
     bHasPendingFogChange = true;
     PendingTargetFogColor = InFogColor;
     PendingTargetFogDistanceStart = InFogStart;
@@ -202,7 +206,7 @@ simulated function SetFog(Color InFogColor, float InFogStart, float InFogEnd, op
     }
 }
 
-simulated function ClearFog(optional float InFadeRate)
+simulated function ClearFog(float InFadeRate)
 {
     bHasPendingFogChange = false;
     if (FogState == Original)
@@ -218,6 +222,8 @@ simulated function ClearFog(optional float InFadeRate)
     {
         FadeRate = default.FadeRate;
     }
+
+    FadeRate = FMax(FadeRate, 0.1f);
 
     FogState = FadingToOriginal;
     NotifyUpdatePending();
@@ -264,7 +270,7 @@ simulated function FadeFogToTarget(float DeltaTime)
 {
     local int Index;
 
-    FadeRatio = Lerp(DeltaTime * FadeRate, 0.f, 1.f);
+    FadeRatio = Lerp(DeltaTime * FadeRate, FadeRatio, 1.f);
     if (FadeRatio > 0.999f)
     {
         FadeRatio = 1.f;
@@ -282,7 +288,7 @@ simulated function FadeFogToTarget(float DeltaTime)
     {
         SkyZoneInfoList[Index].Zone.bDistanceFog = true;
         SkyZoneInfoList[Index].Zone.bClearToFogColor = true;
-        FadeZone(ZoneInfoList[Index], FadeRatio, -128.f, 4.f);
+        FadeZone(SkyZoneInfoList[Index], FMin(FadeRatio * 2.f, 1.f), -128.f, 4.f);
     }
     
     for (Index = PhysicsVolumeList.Length - 1; Index >= 0; Index--)
@@ -293,7 +299,7 @@ simulated function FadeFogToTarget(float DeltaTime)
 
     if (FadeRatio >= 1.f)
     {
-        FogState = Original;
+        FogState = Target;
     }
 }
 
@@ -301,7 +307,7 @@ simulated function FadeFogToOriginal(float DeltaTime)
 {
     local int Index;
 
-    FadeRatio = Lerp(DeltaTime * FadeRate, 1.f, 0.f);
+    FadeRatio = Lerp(DeltaTime * FadeRate, FadeRatio, 0.f);
     if (FadeRatio < 0.001f)
     {
         FadeRatio = 0.f;
@@ -319,7 +325,7 @@ simulated function FadeFogToOriginal(float DeltaTime)
     {
         SkyZoneInfoList[Index].Zone.bDistanceFog = true;
         SkyZoneInfoList[Index].Zone.bClearToFogColor = true;
-        FadeZone(SkyZoneInfoList[Index], FadeRatio, -128.f, 4.f);
+        FadeZone(SkyZoneInfoList[Index], FMin(FadeRatio * 2.f, 1.f), -128.f, 4.f);
     }
     
     for (Index = PhysicsVolumeList.Length - 1; Index >= 0; Index--)
@@ -355,8 +361,8 @@ simulated function FadeFogToOriginal(float DeltaTime)
 
 final simulated function FadeZone(ZoneInfoEntry Entry, float Ratio, float TargetStart, float TargetEnd)
 {
-    Entry.Zone.DistanceFogStart = Lerp(Ratio, Entry.Zone.DistanceFogStart, TargetStart);
-    Entry.Zone.DistanceFogEnd = Lerp(Ratio, Entry.Zone.DistanceFogEnd, TargetEnd);
+    Entry.Zone.DistanceFogStart = Lerp(Ratio, Entry.OriginalFogStart, TargetStart);
+    Entry.Zone.DistanceFogEnd = Lerp(Ratio, Entry.OriginalFogEnd, TargetEnd);
     Entry.Zone.DistanceFogColor = InterpFogColor(Ratio, Entry.OriginalFogColor, TargetFogColor);
 }
 
@@ -370,17 +376,17 @@ final simulated function FadeVolume(PhysicsVolumeEntry Entry, float Ratio, float
 static final function Color InterpFogColor(float Alpha, Color X, Color Y)
 {
     Alpha = FClamp(Alpha, 0.f, 1.f);
-    X.R = Round(Lerp(Alpha, X.R, Y.R));
-    X.G = Round(Lerp(Alpha, X.G, Y.G));
-    X.B = Round(Lerp(Alpha, X.B, Y.B));
-    X.A = Round(Lerp(Alpha, X.A, Y.A));
+    X.R = Lerp(Alpha, X.R, Y.R);
+    X.G = Lerp(Alpha, X.G, Y.G);
+    X.B = Lerp(Alpha, X.B, Y.B);
+    X.A = Lerp(Alpha, X.A, Y.A);
     return X;
 }
 
 defaultproperties
 {
     RemoteRole=ROLE_None
-    FadeRate=2.f
+    FadeRate=4.f
 
     FogState=Original
 }

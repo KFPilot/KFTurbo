@@ -48,7 +48,7 @@ simulated function PostBeginPlay()
 
     if (FogManagerActor == None)
     {
-        FogManagerActor = class'FogManager'.static.GetOrCreateFogManager(Self); 
+        FogManagerActor = class'FogManager'.static.GetOrCreateFogManager(Self);
     }
     
     CollectAllPhysicsVolumes();
@@ -217,11 +217,11 @@ simulated function UpdateBlackout()
     
     if (bBlackout)
     {
-        FogManagerActor.SetFog(class'HUD'.default.BlackColor, 800.f, -16.f, 1.f);
+        FogManagerActor.SetFog(class'HUD'.default.BlackColor, -16.f, 800.f, 1.f);
     }
     else
     {
-        FogManagerActor.ClearFog();
+        FogManagerActor.ClearFog(2.f);
     }
 }
 
