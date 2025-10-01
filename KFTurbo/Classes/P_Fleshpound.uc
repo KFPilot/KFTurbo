@@ -103,6 +103,10 @@ function TakeDamage( int Damage, Pawn InstigatedBy, Vector Hitlocation, Vector M
 		{
 			Damage *= 0.6125f; //22% damage increase at point blank due to some odd reduction being applied.
 		}
+		else if (bIsHeadshot && class<DamTypeNailGun>(DamageType) != None)
+		{
+			Damage *= 0.54f; //8% damage increase to help nailgun be competitive with hunting shotgun.
+		}
 		else
 		{
 			Damage *= 0.5f;
