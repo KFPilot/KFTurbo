@@ -64,7 +64,7 @@ function TakeDamage(int Damage, Pawn InstigatedBy, Vector HitLocation, Vector Mo
 	//M99 is very weak compared to Crossbow. Buff the damage.
 	if (WeaponDamageType != None && (class<DamTypeM99SniperRifle>(damageType) != None || class<DamTypeM99HeadShot>(damageType) != None))
     {
-    	Damage = int(float(Damage) * 1.66f);
+    	Damage = int(float(Damage) * 1.5f);
     }
 
 	if (Role == ROLE_Authority)
