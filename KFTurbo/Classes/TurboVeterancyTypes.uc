@@ -1,7 +1,7 @@
 //Killing Floor Turbo TurboVeterancyTypes
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class TurboVeterancyTypes extends SRVeterancyTypes
+class TurboVeterancyTypes extends CoreVeterancyTypes
 	abstract;
 
 const MAX_PERK_TIER = 7;
@@ -22,42 +22,6 @@ var() Material OnHUDIconMaxTier;
 static final function bool IsHighDifficulty( Actor Actor )
 {
 	return class'KFTurboGameType'.static.StaticIsHighDifficulty(Actor);
-}
-
-static final function bool IsPerkWeapon( class<KFWeapon> Weapon )
-{
-	local class<KFWeaponPickup> WeaponPickupClass;
-
-	if (Weapon == None || default.PerkIndex == 255)
-	{
-		return false;
-	}
-
-	WeaponPickupClass = class<KFWeaponPickup>(Weapon.default.PickupClass);
-
-	if (WeaponPickupClass != None)
-	{
-		if (WeaponPickupClass.default.CorrespondingPerkIndex == default.PerkIndex)
-		{
-			return true;
-		}
-		else if (default.PerkIndex == class'V_Commando'.default.PerkIndex && (class<W_M4203_Weap>(Weapon) != None || class<W_ThompsonSMG_Weap>(Weapon) != None))
-		{
-			return true;
-		}
-	}
-
-	return false;
-}
-
-static final function bool IsPerkDamageType( class<KFWeaponDamageType> WeaponDamageType )
-{
-	if (WeaponDamageType == None || default.PerkIndex == 255 || class<KFWeapon>(WeaponDamageType.default.WeaponClass) == None)
-	{
-		return false;
-	}
-
-	return IsPerkWeapon(class<KFWeapon>(WeaponDamageType.default.WeaponClass));
 }
 
 static function bool IsPerkAmmunition(class<Ammunition> AmmoType)
