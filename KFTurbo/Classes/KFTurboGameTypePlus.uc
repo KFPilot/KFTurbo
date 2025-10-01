@@ -445,6 +445,7 @@ function AddBossBuddySquad()
 defaultproperties
 {
     bIsHighDifficulty = true
+    bZedTimeEnabled = false
 
 	Begin Object Name=TurboPlusMonsterCollectionWaveImpl0 Class=TurboPlusMonsterCollectionWaveImpl
 	End Object
