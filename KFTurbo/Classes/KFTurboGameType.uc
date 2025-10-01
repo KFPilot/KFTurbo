@@ -715,16 +715,6 @@ function NotifyTurboMutatorGameStart()
     TurboMut.OnGameStart();
 }
 
-function DramaticEvent(float BaseZedTimePossibility, optional float DesiredZedTimeDuration)
-{
-    if (!IsZedTimeEnabled())
-    {
-        return;
-    }
-
-    Super.DramaticEvent(BaseZedTimePossibility, DesiredZedTimeDuration);
-}
-
 defaultproperties
 {
     bIsHighDifficulty=false
