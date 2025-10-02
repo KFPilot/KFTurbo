@@ -4,8 +4,7 @@
 //For more information see https://github.com/KFPilot/KFTurbo.
 class PawnHelper extends Object;
 
-
-static final simulated function InitializePawnHelper(KFMonster Monster, out AfflictionData Data)
+static final simulated function InitializePawnHelper(KFMonster Monster)
 {
 	if (Monster.Level.NetMode != NM_DedicatedServer && TurboGameReplicationInfo(Monster.Level.GRI) != None)
 	{
@@ -43,32 +42,6 @@ static final function bool UpdateStunProperties(KFMonster KFM, float LastStunCou
 	}
 
 	return bUnstunTimeReady;
-}
-
-static final function BlockPlayHit(out AfflictionData AD)
-{
-	if (AD.Burn != None)
-	{
-		AD.Burn.bBlockPlayHit = true;
-	}
-}
-
-static final function UnblockPlayHit(out AfflictionData AD)
-{
-	if (AD.Burn != None)
-	{
-		AD.Burn.bBlockPlayHit = false;
-	}
-}
-
-static final function bool ShouldPlayHit(KFMonster KFM, AfflictionData AD)
-{
-	if (AD.Burn != None && AD.Burn.bBlockPlayHit)
-	{
-		return false;
-	}
-
-	return true;
 }
 
 defaultproperties
