@@ -16,7 +16,6 @@ enum EReplacementIndex
 
 struct MonsterReplacement
 {
-    var PawnHelper.EMonster TargetType;
     var class<KFMonster> ReplacementClass;
     var float ReplacementRate;
     var float ReplacementProgress;
@@ -106,20 +105,19 @@ final function bool IncrementMonsterProgress(int Index)
 
 function bool AttemptReplaceMonster(out class<KFMonster> Monster)
 {
-    local PawnHelper.EMonster MonsterType;
+    local class<CoreMonster> CoreMonster;
+    CoreMonster = class<CoreMonster>(CoreMonster);
 
-    MonsterType = class'PawnHelper'.static.GetMonsterType(Monster);
-
-    switch(MonsterType)
+    switch(CoreMonster.default.MonsterArchetypeClass)
     {
-        case Crawler:
+        case class'MonsterCrawlerBase':
             if (IncrementMonsterProgress(int(EReplacementIndex.Jumper)))
             {
                 Monster = ReplacementList[int(EReplacementIndex.Jumper)].ReplacementClass;
                 return true;
             }
             break;
-        case Gorefast:
+        case class'MonsterGorefastBase':
             if (IncrementMonsterProgress(int(EReplacementIndex.Assassin)))
             {
                 Monster = ReplacementList[int(EReplacementIndex.Assassin)].ReplacementClass;
@@ -131,21 +129,21 @@ function bool AttemptReplaceMonster(out class<KFMonster> Monster)
                 return true;
             }
             break;
-        case Bloat:
+        case class'MonsterBloatBase':
             if (IncrementMonsterProgress(int(EReplacementIndex.Fathead)))
             {
                 Monster = ReplacementList[int(EReplacementIndex.Fathead)].ReplacementClass;
                 return true;
             }
             break;
-        case Siren:
+        case class'MonsterSirenBase':
             if (IncrementMonsterProgress(int(EReplacementIndex.Caroler)))
             {
                 Monster = ReplacementList[int(EReplacementIndex.Caroler)].ReplacementClass;
                 return true;
             }
             break;
-        case Husk:
+        case class'MonsterHuskBase':
             if (IncrementMonsterProgress(int(EReplacementIndex.Shotgun)))
             {
                 Monster = ReplacementList[int(EReplacementIndex.Shotgun)].ReplacementClass;
@@ -161,12 +159,12 @@ defaultproperties
 {
     bDebugReplacement=false
 
-    ReplacementList(0)=(TargetType=Gorefast,ReplacementClass=class'P_Gorefast_Assassin',ReplacementRate=0.075f)
-    ReplacementList(1)=(TargetType=Crawler,ReplacementClass=class'P_Crawler_Jumper',ReplacementRate=0.075f)
-    ReplacementList(2)=(TargetType=Bloat,ReplacementClass=class'P_Bloat_Fathead',ReplacementRate=0.075f)
-    ReplacementList(3)=(TargetType=Siren,ReplacementClass=class'P_Siren_Caroler',ReplacementRate=0.075f)
-    ReplacementList(4)=(TargetType=Gorefast,ReplacementClass=class'P_Gorefast_Classy',ReplacementRate=0.025f)
-    ReplacementList(5)=(TargetType=Husk,ReplacementClass=class'P_Husk_Shotgun',ReplacementRate=0.075f)
+    ReplacementList(0)=(ReplacementClass=class'P_Gorefast_Assassin',ReplacementRate=0.075f)
+    ReplacementList(1)=(ReplacementClass=class'P_Crawler_Jumper',ReplacementRate=0.075f)
+    ReplacementList(2)=(ReplacementClass=class'P_Bloat_Fathead',ReplacementRate=0.075f)
+    ReplacementList(3)=(ReplacementClass=class'P_Siren_Caroler',ReplacementRate=0.075f)
+    ReplacementList(4)=(ReplacementClass=class'P_Gorefast_Classy',ReplacementRate=0.025f)
+    ReplacementList(5)=(ReplacementClass=class'P_Husk_Shotgun',ReplacementRate=0.075f)
 
     bRandomizeProgressAtWaveStart=true
     ReplacementRateMultiplier=1.f
