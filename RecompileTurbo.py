@@ -41,7 +41,8 @@ Arguments = ArgumentParser.parse_args()
 BuildType = EBuildType.ALL
 
 #Files KFTurbo compiles.
-TurboFiles = ["CommonCore.u", "KFTurboMapVote.u", "KFTurboEmbeddable.u", #Turbo-agnostic packages.
+TurboFiles = ["CommonCore.u", "CommonCoreGame.u", #Common Core packages.
+            "KFTurboMapVote.u", "KFTurboEmbeddable.u", #Turbo-agnostic packages.
             "KFTurboGUI.u", "KFTurboFonts.u", "KFTurboFontsJP.u", "KFTurboFontsCY.u", #Asset packages.
             "KFTurbo.u", "KFTurboServer.u", "KFTurboCommon.u", #Turbo Core packages.
             "KFTurboHoldout.u", "KFTurboRandomizer.u", "KFTurboCardGame.u", "KFTurboTestMut.u"] #Special gamemode packages.
@@ -104,7 +105,7 @@ if Arguments.extrastage != None:
 
 StepStrings = ["font "]
 WarningStrings = ["warning", "unused local"]
-ErrorStrings = ["error", "unresolved", "failed", "failure", "unknown property", "bad cast", "redundant data", "critical:"]
+ErrorStrings = ["error", "unresolved", "failed", "failure", "unknown property", "bad cast", "redundant data", "critical", "not found"]
 
 def PrintTask(String):
     print("\033[48;5;7m  \033[0m " + String)
@@ -148,6 +149,10 @@ def ProcessUCCMake(Process):
 
         Line = Line.rstrip()
 
+        if VerboseUCC:
+            PrintStep(Line)
+            continue
+        
         if Line.startswith("Compile"):
             HasReachedEnd = True
 
@@ -176,11 +181,8 @@ def RunUCCMake():
     UCCMakePath = LocalPath.joinpath(SystemPath, "UCC.exe")
     PrintTask("Running UCC make command...")
     try:
-        if not VerboseUCC:
-            UCCMakeProcess = subprocess.Popen([UCCMakePath, "make"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, bufsize=1)
-            ProcessUCCMake(UCCMakeProcess)
-        else:
-            UCCMakeResult = subprocess.run([UCCMakePath, "make"], text=True, check=True)
+        UCCMakeProcess = subprocess.Popen([UCCMakePath, "make"], stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, bufsize=1)
+        ProcessUCCMake(UCCMakeProcess)
     except subprocess.CalledProcessError as Error:
         print(f"Failed to run UCC make. Received return code {Error.returncode}.")
     os.remove(SystemPath.joinpath("steam_appid.txt"))
