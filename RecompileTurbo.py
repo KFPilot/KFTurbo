@@ -105,7 +105,7 @@ if Arguments.extrastage != None:
 
 StepStrings = ["font "]
 WarningStrings = ["warning", "unused local"]
-ErrorStrings = ["error", "unresolved", "failed", "failure", "unknown property", "bad cast", "redundant data", "critical", "not found"]
+ErrorStrings = ["error", "unresolved", "failed", "failure", "unknown property", "bad cast", "redundant data", "critical:", "not found"]
 
 def PrintTask(String):
     print("\033[48;5;7m  \033[0m " + String)
