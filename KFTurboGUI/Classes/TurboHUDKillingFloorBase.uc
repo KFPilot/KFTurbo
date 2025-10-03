@@ -2,7 +2,7 @@
 //Parent class for KFTurbo's HUD class. Allows for KFTurboGUI to work with Turbo's locale fonts.
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class TurboHUDKillingFloorBase extends SRHUDKillingFloor;
+class TurboHUDKillingFloorBase extends CoreHUDKillingFloor;
 
 #exec obj load file="..\Textures\TurboGUI.utx" package=KFTurboGUI
 

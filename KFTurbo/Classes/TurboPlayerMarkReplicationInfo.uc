@@ -483,14 +483,14 @@ simulated function String GeneratePickupDisplayString(Pickup PickupActor, class<
     return "";
 }
 
-simulated function String GenerateMonsterDisplayString(KFMonster Monster, class<KFMonster> MonsterClass)
+simulated function String GenerateMonsterDisplayString(CoreMonster Monster, class<CoreMonster> MonsterClass)
 {
     if (Monster != None)
     {
-        return MonsterStringLeft$Caps(Monster.MenuName)$MonsterStringRight;
+        return MonsterStringLeft$Caps(Monster.GetMenuName())$MonsterStringRight;
     }
     
-    return MonsterStringLeft$Caps(MonsterClass.default.MenuName)$MonsterStringRight;
+    return MonsterStringLeft$Caps(MonsterClass.default.GetMenuName())$MonsterStringRight;
 }
 
 simulated function float GetWorldZOffset()

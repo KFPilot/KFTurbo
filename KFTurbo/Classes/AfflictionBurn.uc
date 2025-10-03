@@ -1,7 +1,7 @@
 //Killing Floor Turbo AfflictionBurn
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class AfflictionBurn extends AfflictionBase;
+class AfflictionBurn extends CoreMonsterAfflictionBurn;
 
 var bool bHasCompleted;
 var float BurnRatio;
@@ -31,7 +31,6 @@ var array<AfflictionBurnPriorityData> FirePriorityList;
 //Damage modifier
 var float BurnMonsterDamageModifier;
 
-var bool bBlockPlayHit;
 var class<DamageType> LastBurnDamageType;
 
 simulated function PreTick(KFMonster Monster, float DeltaTime)
@@ -63,12 +62,12 @@ simulated function PreTick(KFMonster Monster, float DeltaTime)
 	}
 }
 
-simulated function TakeDamage(KFMonster Monster, int Damage, Pawn InstigatedBy, Vector HitLocation, Vector Momentum, class<DamageType> DamageType, int HitIndex)
+function ProcessBurnDamage(CoreMonster Monster, out float Damage, Pawn InstigatedBy, Vector HitLocation, Vector Momentum, class<CoreWeaponDamageType> WeaponDamageType, bool bIsHeadshot, optional int HitIndex)
 {
-	UpdateBurnData(DamageType);
+	UpdateBurnData(WeaponDamageType);
 }
 
-final simulated function UpdateBurnData(class<DamageType> DamageType)
+function UpdateBurnData(class<CoreWeaponDamageType> WeaponDamageType)
 {
 	local int Index;
 
@@ -85,7 +84,7 @@ final simulated function UpdateBurnData(class<DamageType> DamageType)
 			break;
 		}
 		
-		if (FirePriorityList[Index].DamageType != DamageType)
+		if (FirePriorityList[Index].DamageType != WeaponDamageType)
 		{
 			continue;
 		}
@@ -94,6 +93,30 @@ final simulated function UpdateBurnData(class<DamageType> DamageType)
 		//Half the burn ratio if we assigned a new burn type.
 		BurnRatio = BurnRatio * 0.5f;
 		break;
+	}
+}
+
+function TakeFireDamage(CoreMonster Monster, int Damage, Pawn FireDamageInstigator)
+{
+	local Vector DummyHitLoc, DummyMomentum;
+	Monster.bSkipPlayDirectionalHit = true;
+	Monster.TakeDamage(Damage, FireDamageInstigator, DummyHitLoc, DummyMomentum, Monster.FireDamageClass);
+	Monster.bSkipPlayDirectionalHit = false;
+
+	if (Monster.BurnDown > 0)
+	{
+		Monster.BurnDown--;
+	}
+
+	if (Monster.BurnDown < Monster.CrispUpThreshhold)
+	{
+		Monster.ZombieCrispUp();
+	}
+
+	if (Monster.BurnDown == 0)
+	{
+		Monster.bBurnified = false;
+		SetMovementSpeedModifier(Monster, 1.f);
 	}
 }
 

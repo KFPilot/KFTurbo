@@ -1174,7 +1174,7 @@ simulated function DrawBossHealthBar(Canvas C)
 	C.SetPos(TempX, TempY);
 	C.Font = TurboHUD.LoadFont(3 + FontSizeOffset);
 	C.TextSize("P", TextSizeX, TextSizeY);
-	C.DrawText(BossData.BossClass.default.MenuName);
+	C.DrawText(class'TurboHUDKillingFloor'.static.GetMenuName(BossData.BossClass.default.MenuName));
 
 	TempX += SizeX;
 	TempY -= SizeY * 0.33f;
