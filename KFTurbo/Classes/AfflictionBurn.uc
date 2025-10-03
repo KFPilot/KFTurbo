@@ -33,8 +33,10 @@ var float BurnMonsterDamageModifier;
 
 var class<DamageType> LastBurnDamageType;
 
-simulated function PreTick(KFMonster Monster, float DeltaTime)
+simulated function Tick(CoreMonster Monster, float DeltaTime)
 {
+	Super.Tick(Monster, DeltaTime);
+
     if(Monster == None || !Monster.bBurnified)
     {
 		return;
@@ -54,12 +56,18 @@ simulated function PreTick(KFMonster Monster, float DeltaTime)
 
 	if (!bHasCompleted)
 	{
-		CachedMovementSpeedModifier = Lerp(BurnRatio, Parameters.BurnPrimaryModifier, Parameters.BurnSecondaryModifier, true);
+		SetMovementSpeedModifier(Monster, Lerp(BurnRatio, Parameters.BurnPrimaryModifier, Parameters.BurnSecondaryModifier, true));
 	}
 	else
 	{
-		CachedMovementSpeedModifier = 1.f;
+		SetMovementSpeedModifier(Monster, 1.f);
+		bShouldTick = !IsDoneTicking(Monster);
 	}
+}
+
+simulated function bool IsDoneTicking(CoreMonster Monster)
+{
+	return Super.IsDoneTicking(Monster) && (BurnRatio >= 1.f || BurnRatio <= 0.f);
 }
 
 function ProcessBurnDamage(CoreMonster Monster, out float Damage, Pawn InstigatedBy, Vector HitLocation, Vector Momentum, class<CoreWeaponDamageType> WeaponDamageType, bool bIsHeadshot, optional int HitIndex)
@@ -76,6 +84,7 @@ function UpdateBurnData(class<CoreWeaponDamageType> WeaponDamageType)
 		return;
 	}
 
+	bShouldTick = true;
 	for (Index = 0; Index < FirePriorityList.Length; Index++)
 	{
 		//FirePriorityList is in most to least priority order. If the priority of an element is <= the current priority, we can assume there will not be any more entries with a higher priority.
@@ -117,6 +126,14 @@ function TakeFireDamage(CoreMonster Monster, int Damage, Pawn FireDamageInstigat
 	{
 		Monster.bBurnified = false;
 		SetMovementSpeedModifier(Monster, 1.f);
+	}
+}
+
+simulated function MeleeDamageTarget(CoreMonster Monster, out float Damage)
+{
+	if (Monster.BurnDown > 0)
+	{
+		Damage *= BurnMonsterDamageModifier;
 	}
 }
 

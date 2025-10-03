@@ -232,7 +232,7 @@ function NotifyPlayerCarryWeightChanged()
 }
 
 //Client-side modification.
-simulated function ModifyMonster(KFMonster Monster) { if (CustomTurboClientModifier != None) { CustomTurboClientModifier.ModifyMonster(Monster); } }
+simulated function ModifyMonster(CoreMonster Monster) { if (CustomTurboClientModifier != None) { CustomTurboClientModifier.ModifyMonster(Monster); } }
 simulated function OnWeaponChange(KFWeapon CurrentWeapon, KFWeapon PendingWeapon) { if (CustomTurboClientModifier != None) { CustomTurboClientModifier.OnWeaponChange(CurrentWeapon, PendingWeapon); } }
 
 //Make NetUpdateTime want to update now.

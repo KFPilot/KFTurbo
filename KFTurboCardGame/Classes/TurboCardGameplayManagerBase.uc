@@ -25,14 +25,12 @@ struct DeEvolutionMonsterReplacement
     var class<KFMonster> TargetParentClass;
     var class<KFMonster> ReplacementClass;
 };
-
 var array<DeEvolutionMonsterReplacement> WeakReplacementList; //List of KFMonster parent classes, their replacement, and individual chance to be applied.
 
 struct UpgradeMonsterReplacement
 {
     var array <class<KFMonster> > ReplacementClassList;
 };
-
 var array<UpgradeMonsterReplacement> UpgradeReplacementList;
 
 function PostBeginPlay()
@@ -203,17 +201,27 @@ function OnNextSpawnSquadGenerated(out array < class<KFMonster> > NextSpawnSquad
 
 }
 
-final function AttemptUpgradeMonster(out class<KFMonster> Monster)
+final static function class<CoreMonsterClassification> GetMonsterClassification(class<CoreMonster> MonsterClass)
 {
-    local PawnHelper.EMonsterTier MonsterTier;
-    MonsterTier = class'PawnHelper'.static.GetMonsterTier(Monster);
-
-    if (MonsterTier == Elite)
+    if (MonsterClass == None)
     {
-        return;
+        return class'MonsterClassificationTrash';
     }
 
-    Monster = UpgradeReplacementList[int(MonsterTier)].ReplacementClassList[Rand(UpgradeReplacementList[int(MonsterTier)].ReplacementClassList.Length)];
+    return MonsterClass.default.MonsterClassification;
+}
+
+final function AttemptUpgradeMonster(out class<KFMonster> Monster)
+{
+    switch (GetMonsterClassification(class<CoreMonster>(Monster)))
+    {
+        case class'MonsterClassificationTrash':
+            Monster = UpgradeReplacementList[0].ReplacementClassList[Rand(UpgradeReplacementList[0].ReplacementClassList.Length)];
+            break;
+        case class'MonsterClassificationSpecial':
+            Monster = UpgradeReplacementList[1].ReplacementClassList[Rand(UpgradeReplacementList[1].ReplacementClassList.Length)];
+            break;
+    }
 }
 
 final function AttemptReplaceWeakMonster(out class<KFMonster> Monster)

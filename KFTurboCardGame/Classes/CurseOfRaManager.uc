@@ -288,21 +288,18 @@ function ForceDropCash()
 function KillRandomMonster()
 {
     local array<Monster> MonsterPawnList;
-    local Monster SelectedMonster;
-    local PawnHelper.EMonsterTier MonsterTier;
+    local CoreMonster SelectedMonster;
 
     MonsterPawnList = class'TurboGameplayHelper'.static.GetMonsterPawnList(Level);
 
-    SelectedMonster = MonsterPawnList[Rand(MonsterPawnList.Length)];
+    SelectedMonster = CoreMonster(MonsterPawnList[Rand(MonsterPawnList.Length)]);
 
     if (SelectedMonster == None)
     {
         return;
     }
-
-    MonsterTier = class'PawnHelper'.static.GetMonsterTier(SelectedMonster.Class);
     
-    if (MonsterTier != Trash || MonsterTier != Special)
+    if (SelectedMonster.MonsterClassification != class'MonsterClassificationTrash' && SelectedMonster.MonsterClassification != class'MonsterClassificationSpecial')
     {
         return;
     }

@@ -113,7 +113,8 @@ struct KillFeedEntry
 {
 	var TurboPlayerReplicationInfo TPRI;
 	var string ResolvedName;
-	var class<Monster> KilledMonster;
+	var class<CoreMonster> KilledMonster;
+	var bool bIsElite;
 	var class<TurboKillsMessage> KillsMessageClass;
 	var int Count;
 	var float LifeTime; //Time left for this entry.
@@ -322,7 +323,7 @@ simulated function DrawGameData(Canvas C)
 
 simulated function DrawWaveData(Canvas C) {}
 
-simulated function ReceivedKillMessage(class<KillsMessage> KillsMessageClass, class<Monster> MonsterClass, PlayerReplicationInfo Killer)
+simulated function ReceivedKillMessage(class<KillsMessage> KillsMessageClass, class<CoreMonster> MonsterClass, PlayerReplicationInfo Killer)
 {
 	local int Index;
 	local int InsertIndex;
@@ -542,9 +543,14 @@ simulated function DrawActiveWave(Canvas C)
 	DrawTextMeticulous(C, TestText, TextSizeX);
 }
 
-static final function float GetLifeTimeForMonster(class<Monster> Monster, int Count)
+static final function bool IsEliteMonster(class<CoreMonster> Monster)
 {
-	if(class'PawnHelper'.static.IsEliteMonster(Monster))
+	return Monster.default.MonsterClassification == class'MonsterClassificationElite' || Monster.default.MonsterClassification == class'MonsterClassificationBoss';
+}
+
+static final function float GetLifeTimeForMonster(class<CoreMonster> Monster, int Count)
+{
+	if(IsEliteMonster(Monster))
 	{
 		return default.EliteMonsterKillLifeTime + (default.EliteMonsterKillCountExtension * float(Count));
 	}
@@ -554,7 +560,7 @@ static final function float GetLifeTimeForMonster(class<Monster> Monster, int Co
 
 static final function float GetBonusScale(out KillFeedEntry Entry)
 {
-	if (class'PawnHelper'.static.IsEliteMonster(Entry.KilledMonster))
+	if(IsEliteMonster(Entry.KilledMonster))
 	{
 		return Lerp(Entry.TriggerRatio, 1.f, 1.5f) * Lerp(FMin((Entry.Count - 1) / 10.f, 1.f), 1.f, 1.5f);
 	}
@@ -562,12 +568,13 @@ static final function float GetBonusScale(out KillFeedEntry Entry)
 	return Lerp(Entry.TriggerRatio, 1.f, 1.5f) * Lerp(FMin((Entry.Count - 1) / 20.f, 1.f), 1.f, 1.25f);
 }
 
-static final function InitializeKillFeedEntry(out KillFeedEntry Entry, TurboPlayerReplicationInfo Killer, class<Monster> MonsterClass, class<TurboKillsMessage> KillsMessageClass, bool bIsLocalPlayer)
+static final function InitializeKillFeedEntry(out KillFeedEntry Entry, TurboPlayerReplicationInfo Killer, class<CoreMonster> MonsterClass, class<TurboKillsMessage> KillsMessageClass, bool bIsLocalPlayer)
 {
 	Entry.TPRI = Killer;
 	Entry.ResolvedName = Eval(Len(Entry.TPRI.PlayerName) > 15, Left(Entry.TPRI.PlayerName, 15), Entry.TPRI.PlayerName);
 
 	Entry.KilledMonster = MonsterClass;
+	Entry.bIsElite = IsEliteMonster(Entry.KilledMonster);
 
 	Entry.KillsMessageClass = KillsMessageClass;
 
@@ -589,7 +596,6 @@ static final function IncrementKillFeedEntry(out KillFeedEntry Entry)
 simulated final function DrawKillFeedEntry(Canvas C, out float DrawY, out KillFeedEntry Entry)
 {
 	local string KillCountString, KillTextString;
-	local bool bIsElite;
 	local float TextSizeX, TextSizeY;
 	local float EntrySizeY, EntrySizeX, KillTextX, DrawX, DrawOffsetX;
 	local float BaseTextSizeY, BaseTextScale;
@@ -608,9 +614,7 @@ simulated final function DrawKillFeedEntry(Canvas C, out float DrawY, out KillFe
 		return;
 	}
 
-	bIsElite = class'PawnHelper'.static.IsEliteMonster(Entry.KilledMonster);
-
-	if (bIsElite)
+	if (Entry.bIsElite)
 	{
 		KillTextString = Caps(KillTextString);
 		C.Font = TurboHUD.LoadBoldItalicFont(0 + FontSizeOffset);
@@ -624,7 +628,7 @@ simulated final function DrawKillFeedEntry(Canvas C, out float DrawY, out KillFe
 	C.FontScaleY = 1.f;
 	C.TextSize(KillCountString, TextSizeX, TextSizeY);
 
-	if (bIsElite)
+	if (Entry.bIsElite)
 	{
 		C.FontScaleY = (C.ClipY * 0.045) / TextSizeY;
 		C.FontScaleX = C.FontScaleY;
@@ -666,7 +670,7 @@ simulated final function DrawKillFeedEntry(Canvas C, out float DrawY, out KillFe
 	C.SetPos(DrawX + KillTextX, DrawY + (EntrySizeY * 0.5f) - (BaseTextSizeY * 0.45f));
 	C.DrawTextClipped(KillTextString);
 
-	if (bIsElite)
+	if (Entry.bIsElite)
 	{
 		C.DrawColor = LerpColor(Entry.TriggerRatio, MakeColor(255, 255, 255, 255), MakeColor(255, 0, 0, 255));
 		C.DrawColor.A = byte(FadeOutRatio * 255.f);
@@ -1174,7 +1178,7 @@ simulated function DrawBossHealthBar(Canvas C)
 	C.SetPos(TempX, TempY);
 	C.Font = TurboHUD.LoadFont(3 + FontSizeOffset);
 	C.TextSize("P", TextSizeX, TextSizeY);
-	C.DrawText(class'TurboHUDKillingFloor'.static.GetMenuName(BossData.BossClass.default.MenuName));
+	C.DrawText(class'TurboHUDKillingFloor'.static.GetMenuName(BossData.BossClass));
 
 	TempX += SizeX;
 	TempY -= SizeY * 0.33f;

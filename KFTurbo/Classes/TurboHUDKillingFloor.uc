@@ -1277,7 +1277,7 @@ simulated function LocalizedMessage( class<LocalMessage> Message, optional int S
 			return;
 		}
 
-		WaveInfoHUD.ReceivedKillMessage(class<KillsMessage>(Message), class<Monster>(OptionalObject), RelatedPRI_1);
+		WaveInfoHUD.ReceivedKillMessage(class<KillsMessage>(Message), class<CoreMonster>(OptionalObject), RelatedPRI_1);
 		return;
 	}
 

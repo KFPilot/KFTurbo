@@ -415,9 +415,9 @@ simulated function String GenerateDisplayString()
         return GeneratePickupDisplayString(Pickup(MarkedActor), class<Pickup>(MarkActorClass));
     }
 
-    if (KFMonster(MarkedActor) != None || class<KFMonster>(MarkActorClass) != None)
+    if (CoreMonster(MarkedActor) != None || class<CoreMonster>(MarkActorClass) != None)
     {
-        return GenerateMonsterDisplayString(KFMonster(MarkedActor), class<KFMonster>(MarkActorClass));
+        return GenerateMonsterDisplayString(CoreMonster(MarkedActor), class<CoreMonster>(MarkActorClass));
     }
 
     if (KFHumanPawn(MarkedActor) != None || class<KFHumanPawn>(MarkActorClass) != None)
@@ -490,7 +490,7 @@ simulated function String GenerateMonsterDisplayString(CoreMonster Monster, clas
         return MonsterStringLeft$Caps(Monster.GetMenuName())$MonsterStringRight;
     }
     
-    return MonsterStringLeft$Caps(MonsterClass.default.GetMenuName())$MonsterStringRight;
+    return MonsterStringLeft$Caps(MonsterClass.static.GetMenuName())$MonsterStringRight;
 }
 
 simulated function float GetWorldZOffset()

@@ -3,8 +3,6 @@
 //For more information see https://github.com/KFPilot/KFTurbo.
 class P_Siren extends MonsterSiren DependsOn(PawnHelper);
 
-var PawnHelper.AfflictionData AfflictionData;
-
 var bool bUnstunTimeReady;
 var float UnstunTime;
 
@@ -14,48 +12,11 @@ var float ScreamAftershockTime;
 simulated function PostBeginPlay()
 {
     Super.PostBeginPlay();
-
-    class'PawnHelper'.static.InitializePawnHelper(self, AfflictionData);
-}
-
-function TakeDamage(int Damage, Pawn InstigatedBy, Vector HitLocation, Vector Momentum, class<DamageType> DamageType, optional int HitIndex)
-{
-    if (Role == ROLE_Authority)
-    {
-        class'PawnHelper'.static.TakeDamage(Self, Damage, InstigatedBy, HitLocation, Momentum, DamageType, HitIndex, AfflictionData);
-    }
-
-    Super.TakeDamage(Damage, InstigatedBy, HitLocation, Momentum, DamageType, HitIndex);
-
-    if (Role == ROLE_Authority)
-    {
-        class'PawnHelper'.static.PostTakeDamage(Self, Damage, InstigatedBy, HitLocation, Momentum, DamageType, HitIndex, AfflictionData);
-    }
-}
-
-function TakeFireDamage(int Damage, pawn DamageInstigator)
-{
-    class'PawnHelper'.static.TakeFireDamage(Self, Damage, DamageInstigator, AfflictionData);
-}
-
-function bool MeleeDamageTarget(int HitDamage, vector PushDirection)
-{
-    return class'PawnHelper'.static.MeleeDamageTarget(Self, HitDamage, PushDirection, AfflictionData);
 }
 
 simulated function Tick(float DeltaTime)
 {
-    class'PawnHelper'.static.PreTickAfflictionData(Self, DeltaTime, self, AfflictionData);
-
     Super.Tick(DeltaTime);
-
-    class'PawnHelper'.static.TickAfflictionData(Self, DeltaTime, self, AfflictionData);
-
-    if(bSTUNNED && bUnstunTimeReady && UnstunTime < Level.TimeSeconds)
-    {
-        bSTUNNED = false;
-        bUnstunTimeReady = false;
-    }
 
     if (ScreamAftershockTime > 0.f && ScreamAftershockTime < Level.TimeSeconds)
     {
@@ -80,75 +41,6 @@ simulated function AnimEnd(int Channel)
     
     //If the anim that ended was Siren_Scream, make sure we set this to false.
     bShotAnim = false;
-}
-
-function float NumPlayersHealthModifer()
-{
-    return class'PawnHelper'.static.GetBodyHealthModifier(self, Level);
-}
-
-function float NumPlayersHeadHealthModifer()
-{
-    return class'PawnHelper'.static.GetHeadHealthModifier(self, Level);
-}
-
-simulated function float GetOriginalGroundSpeed()
-{
-    return class'PawnHelper'.static.GetOriginalGroundSpeed(self, AfflictionData);
-}
-
-function PlayDirectionalHit(Vector HitLoc)
-{
-    local int LastStunCount;
-
-    LastStunCount = StunsRemaining;
-
-    if(class'PawnHelper'.static.ShouldPlayHit(self, AfflictionData))
-        Super.PlayDirectionalHit(HitLoc);
-
-	bUnstunTimeReady = class'PawnHelper'.static.UpdateStunProperties(self, LastStunCount, UnstunTime, bUnstunTimeReady);
-}
-
-simulated function SetBurningBehavior()
-{
-    class'PawnHelper'.static.SetBurningBehavior(self, AfflictionData);
-}
-
-simulated function UnSetBurningBehavior()
-{
-    class'PawnHelper'.static.UnSetBurningBehavior(self, AfflictionData);
-}
-
-simulated function SetZappedBehavior()
-{
-    class'PawnHelper'.static.SetZappedBehavior(self, AfflictionData);
-}
-
-simulated function UnSetZappedBehavior()
-{
-    class'PawnHelper'.static.UnSetZappedBehavior(self, AfflictionData);
-}
-
-simulated function ZombieCrispUp()
-{
-    class'PawnHelper'.static.ZombieCrispUp(self);
-}
-
-simulated function Timer()
-{
-    if (BurnDown > 0)
-    {
-        TakeFireDamage(LastBurnDamage + rand(2) + 3 , LastDamagedBy);
-        SetTimer(1.0,false);
-    }
-    else
-    {
-        UnSetBurningBehavior();
-
-        RemoveFlamingEffects();
-        StopBurnFX();
-        SetTimer(0, false);
-    }
 }
 
 function RangedAttack(Actor A)
@@ -249,7 +141,7 @@ function PerformAftershock()
 	}
 }
 
-simulated function HurtRadius( float DamageAmount, float DamageRadius, class<DamageType> DamageType, float Momentum, vector HitLocation )
+simulated function HurtRadius(float DamageAmount, float DamageRadius, class<DamageType> DamageType, float Momentum, vector HitLocation)
 {
     //HurtRadius uses instigator??? Update this so Sirens correctly disintegrate projectiles.
     local Pawn PreviousInstigator;
@@ -257,13 +149,6 @@ simulated function HurtRadius( float DamageAmount, float DamageRadius, class<Dam
     Instigator = Self;
     Super.HurtRadius(DamageAmount, DamageRadius, DamageType, Momentum, HitLocation);
     Instigator = PreviousInstigator;
-}
-
-simulated function PlayDying(class<DamageType> DamageType, vector HitLoc)
-{
-    class'PawnHelper'.static.MonsterDied(Self, AfflictionData);
-
-    Super.PlayDying(DamageType, HitLoc);
 }
 
 simulated function CleanUpScreamEffect()
@@ -288,7 +173,6 @@ ignores AnimEnd, Trigger, Bump, HitWall, HeadVolumeChange, PhysicsVolumeChange, 
     simulated function BeginState()
     {
         CleanUpScreamEffect();
-        class'PawnHelper'.static.MonsterDied(Self, AfflictionData);
 
         Super.BeginState();
     }
@@ -308,13 +192,6 @@ simulated function Destroyed()
     Super.Destroyed();
 }
 
-simulated event SetHeadScale(float NewScale)
-{
-	HeadScale = NewScale;
-    class'PawnHelper'.static.AdjustHeadScale(Self, NewScale);
-	SetBoneScale(4, NewScale, 'head');
-}
-
 defaultproperties
 {
     ScreamDamageType=Class'P_SirenScream_DT'
@@ -322,16 +199,17 @@ defaultproperties
     Begin Object Class=AfflictionBurn Name=BurnAffliction
         BurnDurationModifier=1.f
     End Object
+    MonsterAfflictionList(0)=CoreMonsterAffliction'BurnAffliction'
 
     Begin Object Class=AfflictionZap Name=ZapAffliction
         ZapDischargeRate=0.5f
     End Object
+    MonsterAfflictionList(1)=CoreMonsterAffliction'ZapAffliction'
 
     Begin Object Class=AfflictionHarpoon Name=HarpoonAffliction
-        HarpoonSpeedModifier=0.5f
+        HarpoonStunnedSpeedModifier=0.5f
     End Object
-
-    AfflictionData=(Burn=AfflictionBurn'BurnAffliction',Zap=AfflictionZap'ZapAffliction',Harpoon=AfflictionHarpoon'HarpoonAffliction')
+    MonsterAfflictionList(2)=CoreMonsterAffliction'HarpoonAffliction'
 
     ScreamAftershockDelay=0.15f
     ScreamAftershockTime=-1.f

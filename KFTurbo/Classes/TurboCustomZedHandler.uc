@@ -16,7 +16,7 @@ enum EReplacementIndex
 
 struct MonsterReplacement
 {
-    var class<KFMonster> ReplacementClass;
+    var class<CoreMonster> ReplacementClass;
     var float ReplacementRate;
     var float ReplacementProgress;
 };
@@ -103,50 +103,50 @@ final function bool IncrementMonsterProgress(int Index)
     return true;
 }
 
-function bool AttemptReplaceMonster(out class<KFMonster> Monster)
+function bool AttemptReplaceMonster(out class<KFMonster> MonsterClass)
 {
-    local class<CoreMonster> CoreMonster;
-    CoreMonster = class<CoreMonster>(CoreMonster);
+    local class<CoreMonster> CoreMonsterClass;
+    CoreMonsterClass = class<CoreMonster>(MonsterClass);
 
-    switch(CoreMonster.default.MonsterArchetypeClass)
+    switch(CoreMonsterClass.default.MonsterArchetypeClass)
     {
         case class'MonsterCrawlerBase':
             if (IncrementMonsterProgress(int(EReplacementIndex.Jumper)))
             {
-                Monster = ReplacementList[int(EReplacementIndex.Jumper)].ReplacementClass;
+                MonsterClass = ReplacementList[int(EReplacementIndex.Jumper)].ReplacementClass;
                 return true;
             }
             break;
         case class'MonsterGorefastBase':
             if (IncrementMonsterProgress(int(EReplacementIndex.Assassin)))
             {
-                Monster = ReplacementList[int(EReplacementIndex.Assassin)].ReplacementClass;
+                MonsterClass = ReplacementList[int(EReplacementIndex.Assassin)].ReplacementClass;
                 return true;
             }
             else if(IncrementMonsterProgress(int(EReplacementIndex.Classy)))
             {
-                Monster = ReplacementList[int(EReplacementIndex.Classy)].ReplacementClass;
+                MonsterClass = ReplacementList[int(EReplacementIndex.Classy)].ReplacementClass;
                 return true;
             }
             break;
         case class'MonsterBloatBase':
             if (IncrementMonsterProgress(int(EReplacementIndex.Fathead)))
             {
-                Monster = ReplacementList[int(EReplacementIndex.Fathead)].ReplacementClass;
+                MonsterClass = ReplacementList[int(EReplacementIndex.Fathead)].ReplacementClass;
                 return true;
             }
             break;
         case class'MonsterSirenBase':
             if (IncrementMonsterProgress(int(EReplacementIndex.Caroler)))
             {
-                Monster = ReplacementList[int(EReplacementIndex.Caroler)].ReplacementClass;
+                MonsterClass = ReplacementList[int(EReplacementIndex.Caroler)].ReplacementClass;
                 return true;
             }
             break;
         case class'MonsterHuskBase':
             if (IncrementMonsterProgress(int(EReplacementIndex.Shotgun)))
             {
-                Monster = ReplacementList[int(EReplacementIndex.Shotgun)].ReplacementClass;
+                MonsterClass = ReplacementList[int(EReplacementIndex.Shotgun)].ReplacementClass;
                 return true;
             }
             break;

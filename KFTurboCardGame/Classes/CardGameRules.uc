@@ -134,6 +134,27 @@ static final function TurboPlayerCardCustomInfo FindCustomInfo(TurboPlayerReplic
     return TurboPlayerCardCustomInfo(class'TurboPlayerCardCustomInfo'.static.FindCustomInfo(TPRI));
 }
 
+final static function class<CoreMonsterClassification> GetMonsterClassification(class<CoreMonster> MonsterClass)
+{
+    if (MonsterClass != None)
+    {
+        return MonsterClass.default.MonsterClassification;
+    }
+
+    return class'MonsterClassificationSpecial';
+}
+
+final static function class<CoreMonster> GetMonsterArchetype(class<CoreMonster> MonsterClass)
+{
+    if (MonsterClass != None)
+    {
+        return MonsterClass.default.MonsterArchetypeClass;
+    }
+
+    return None;
+}
+
+
 function Tick(float DeltaTime)
 {
 	local int Index;
@@ -543,14 +564,14 @@ function ApplyPerkDamageModifiers(out float DamageMultiplier, KFHumanPawn Instig
 function MonsterNetDamage(out float DamageMultiplier, KFMonster Injured, Pawn InstigatedBy, TurboPlayerCardCustomInfo InsitgatorCardInfo, Vector HitLocation, out Vector Momentum, class<KFWeaponDamageType> WeaponDamageType)
 {
     local bool bWasHeadshot;
-    local PawnHelper.EMonsterTier MonsterTier;
-    MonsterTier = class'PawnHelper'.static.GetMonsterTier(Injured.Class);
+    local class<CoreMonsterClassification> MonsterClassification;
+    MonsterClassification = GetMonsterClassification(class<CoreMonster>(Injured.Class));
 
-    if (MonsterTier == Boss)
+    if (MonsterClassification == class'MonsterClassificationBoss')
     {
         DamageMultiplier *= BossDamageMultiplier;
     }
-    else if (MonsterTier == Trash)
+    else if (MonsterClassification == class'MonsterClassificationTrash')
     {
         DamageMultiplier *= TrashDamageMultiplier;
     }
@@ -574,7 +595,7 @@ function MonsterNetDamage(out float DamageMultiplier, KFMonster Injured, Pawn In
 
         if (bWasHeadshot)
         {
-            if(MonsterTier == Trash)
+            if(MonsterClassification == class'MonsterClassificationTrash')
             {
                 DamageMultiplier *= TrashHeadshotDamageMultiplier;
             }
@@ -735,7 +756,7 @@ function Killed(Controller Killer, Controller Killed, Pawn KilledPawn, class<Dam
 
     if (bKillsGiveShield && KFMonster(KilledPawn) != None && PlayerController(Killer) != None)
     {
-        GrantShieldOnKill(KFMonster(KilledPawn), PlayerController(Killer));
+        GrantShieldOnKill(CoreMonster(KilledPawn), PlayerController(Killer));
     }
     
     Super.Killed(Killer, Killed, KilledPawn, DamageType);
@@ -894,7 +915,7 @@ final function PerformMassDetonation(MassDetonationEntry Detonation)
     }
 }
 
-function GrantShieldOnKill(KFMonster KilledMonster, PlayerController Killer)
+function GrantShieldOnKill(CoreMonster KilledMonster, PlayerController Killer)
 {
     local float ShieldAmount;
 
@@ -905,38 +926,38 @@ function GrantShieldOnKill(KFMonster KilledMonster, PlayerController Killer)
 
     ShieldAmount = 0.5f;
 
-    switch (class'PawnHelper'.static.GetMonsterTier(KilledMonster.Class))
+    switch (KilledMonster.MonsterClassification)
     {
-        case Trash:
+        case class'MonsterClassificationTrash':
             ShieldAmount = 0.5f;
             break;
-        case Special:
+        case class'MonsterClassificationSpecial':
             ShieldAmount = 2.f;
             break;
-        case Elite:
+        case class'MonsterClassificationElite':
             ShieldAmount = 10.f;
             break;
-        case Boss:
+        case class'MonsterClassificationBoss':
             ShieldAmount = 50.f;
             break;
     }
 
-    switch (class'PawnHelper'.static.GetMonsterType(KilledMonster.Class))
+    switch (KilledMonster.MonsterArchetypeClass)
     {
         //Trash
-        case Clot:
+        case class'MonsterClotBase':
             ShieldAmount *= 2.f;
             break;
-        case Gorefast:
+        case class'MonsterGorefastBase':
             ShieldAmount *= 3.f;
             break;
         //Special
-        case Siren:
-        case Husk:
+        case class'MonsterSirenBase':
+        case class'MonsterHuskBase':
             ShieldAmount *= 1.5f;
             break;
         //Elite
-        case Fleshpound:
+        case class'MonsterFleshpoundBase':
             ShieldAmount *= 1.5f;
             break;
     }
@@ -1004,27 +1025,27 @@ function ModifyActor(Actor Other)
         if (KFMonster(Other) != None)
         {
             MonsterPawnList[MonsterPawnList.Length] = KFMonster(Other);
-            switch (class'PawnHelper'.static.GetMonsterType(MonsterPawnList[MonsterPawnList.Length - 1].Class))
+            switch (GetMonsterArchetype(class<CoreMonster>(MonsterPawnList[MonsterPawnList.Length - 1].Class)))
             {
-                case Clot:
+                case class'MonsterClotBase':
                     ClotPawnList[ClotPawnList.Length] = P_Clot(Other);
                     return;
-                case Bloat:
+                case class'MonsterBloatBase':
                     if (Other.Class != class'P_Bloat_Fathead')
                     {
                         BloatPawnList[BloatPawnList.Length] = P_Bloat(Other);
                     }
                     return;
-                case Husk:
+                case class'MonsterHuskBase':
                     HuskPawnList[HuskPawnList.Length] = P_Husk(Other);
                     return;
-                case Siren:
+                case class'MonsterSirenBase':
                     SirenPawnList[SirenPawnList.Length] = P_Siren(Other);
                     return;
-                case Scrake:
+                case class'MonsterScrakeBase':
                     ScrakePawnList[ScrakePawnList.Length] = P_Scrake(Other);
                     return;
-                case Fleshpound:
+                case class'MonsterFleshpoundBase':
                     FleshpoundPawnList[FleshpoundPawnList.Length] = P_Fleshpound(Other);
                     return;
             }
@@ -1183,7 +1204,7 @@ final function bool AttemptNegateDamage(TurboPlayerCardCustomInfo PlayerCardInfo
 
 final function ForceFlipOver(KFMonster Monster)
 {
-    if (class'PawnHelper'.static.GetMonsterTier(Monster.Class) == Boss)
+    if (GetMonsterClassification(class<CoreMonster>(Monster.Class)) == class'MonsterClassificationBoss')
     {
         return;
     }

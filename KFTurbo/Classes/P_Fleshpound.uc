@@ -5,11 +5,6 @@ class P_Fleshpound extends MonsterFleshpound
     abstract
     DependsOn(PawnHelper);
 
-var PawnHelper.AfflictionData AfflictionData;
-
-var(KFTurbo) bool bUnstunTimeReady;
-var(KFTurbo) float UnstunTime;
-
 var AI_Fleshpound ProAI;
 
 simulated function PostNetBeginPlay()
@@ -27,10 +22,9 @@ simulated function PostBeginPlay()
 	Super.PostBeginPlay();
 
 	ProAI = AI_Fleshpound(Controller);
-
-    class'PawnHelper'.static.InitializePawnHelper(self, AfflictionData);
 }
 
+//TODO: PROPERLY USE COREMONSTER'S FUNCTIONING OUT OF THESE MODIFICATIONS.
 function TakeDamage( int Damage, Pawn InstigatedBy, Vector Hitlocation, Vector Momentum, class<DamageType> DamageType, optional int HitIndex)
 {
 	local int OldHealth;
@@ -39,20 +33,10 @@ function TakeDamage( int Damage, Pawn InstigatedBy, Vector Hitlocation, Vector M
 	local float HeadShotCheckScale;
     local class<KFWeaponDamageType> WeaponDamageType;
 
-	if (Role == ROLE_Authority)
-	{
-		class'PawnHelper'.static.TakeDamage(Self, Damage, InstigatedBy, HitLocation, Momentum, DamageType, HitIndex, AfflictionData);
-	}
-
     if (DamageType == class 'DamTypeVomit')
 	{
-		Damage = 0; // nulled
-        Super(KFMonster).TakeDamage(Damage, InstigatedBy, HitLocation, Momentum, DamageType, HitIndex);
-
-        if (Role == ROLE_Authority)
-        {
-            class'PawnHelper'.static.PostTakeDamage(Self, Damage, InstigatedBy, HitLocation, Momentum, DamageType, HitIndex, AfflictionData);
-        }
+		Damage = 0;
+        Super(CoreMonster).TakeDamage(Damage, InstigatedBy, HitLocation, Momentum, DamageType, HitIndex);
         return;
 	}
 
@@ -145,11 +129,6 @@ function TakeDamage( int Damage, Pawn InstigatedBy, Vector Hitlocation, Vector M
     {
         StartCharging();
     }
-
-    if (Role == ROLE_Authority)
-    {
-        class'PawnHelper'.static.PostTakeDamage(Self, Damage, InstigatedBy, HitLocation, Momentum, DamageType, HitIndex, AfflictionData);
-    }
 }
 
 function bool IsInDamageBoostRadius(Actor Other)
@@ -160,120 +139,29 @@ function bool IsInDamageBoostRadius(Actor Other)
     return Distance < 8.f;
 }
 
-function TakeFireDamage(int Damage, pawn DamageInstigator)
-{
-    class'PawnHelper'.static.TakeFireDamage(Self, Damage, DamageInstigator, AfflictionData);
-}
-
-function bool MeleeDamageTarget(int HitDamage, vector PushDirection)
-{
-    return class'PawnHelper'.static.MeleeDamageTarget(Self, HitDamage, PushDirection, AfflictionData);
-}
-
-simulated function Tick(float DeltaTime)
-{
-    class'PawnHelper'.static.PreTickAfflictionData(Self, DeltaTime, self, AfflictionData);
-
-    Super.Tick(DeltaTime);
-
-    class'PawnHelper'.static.TickAfflictionData(Self, DeltaTime, self, AfflictionData);
-
-    if(bSTUNNED && bUnstunTimeReady && UnstunTime < Level.TimeSeconds)
-    {
-        bSTUNNED = false;
-        bUnstunTimeReady = false;
-    }
-}
-
-function float NumPlayersHealthModifer()
-{
-    return class'PawnHelper'.static.GetBodyHealthModifier(self, Level);
-}
-
-function float NumPlayersHeadHealthModifer()
-{
-    return class'PawnHelper'.static.GetHeadHealthModifier(self, Level);
-}
-
 simulated function float GetOriginalGroundSpeed()
 {
-    local float BaseSpeed;
-
-    BaseSpeed = class'PawnHelper'.static.GetOriginalGroundSpeed(self, AfflictionData);
-
     if (bFrustrated || bChargingPlayer)
     {
-        return BaseSpeed * 2.3f;
+        return Super.GetOriginalGroundSpeed() * 2.3f;
     }
 
-    return BaseSpeed;
-}
-
-function PlayDirectionalHit(Vector HitLoc)
-{
-    local int LastStunCount;
-
-    LastStunCount = StunsRemaining;
-
-    if(class'PawnHelper'.static.ShouldPlayHit(self, AfflictionData))
-        Super.PlayDirectionalHit(HitLoc);
-
-	bUnstunTimeReady = class'PawnHelper'.static.UpdateStunProperties(self, LastStunCount, UnstunTime, bUnstunTimeReady);
+    return Super.GetOriginalGroundSpeed();
 }
 
 simulated function SetBurningBehavior()
 {
-    if( bFrustrated || bChargingPlayer )
+    if (bFrustrated || bChargingPlayer)
     {
         return;
     }
 
-    if(ProAI != None && ProAI.bForcedRage)
+    if (ProAI != None && ProAI.bForcedRage)
     {
         return;
     }
 
-    class'PawnHelper'.static.SetBurningBehavior(self, AfflictionData);
-}
-
-simulated function UnSetBurningBehavior()
-{
-    class'PawnHelper'.static.UnSetBurningBehavior(self, AfflictionData);
-}
-
-simulated function ZombieCrispUp()
-{
-    class'PawnHelper'.static.ZombieCrispUp(self);
-}
-
-simulated function Timer()
-{
-    if (BurnDown > 0)
-    {
-        TakeFireDamage(LastBurnDamage + rand(2) + 3 , LastDamagedBy);
-        SetTimer(1.0,false);
-    }
-    else
-    {
-        UnSetBurningBehavior();
-
-        RemoveFlamingEffects();
-        StopBurnFX();
-        SetTimer(0, false);
-    }
-}
-
-simulated function SetZappedBehavior()
-{
-    if(ProAI != None && ProAI.bForcedRage)
-        return;
-
-    class'PawnHelper'.static.SetZappedBehavior(self, AfflictionData);
-}
-
-simulated function UnSetZappedBehavior()
-{
-    class'PawnHelper'.static.UnSetZappedBehavior(self, AfflictionData);
+    Super.SetBurningBehavior();
 }
 
 function StartCharging()
@@ -335,38 +223,15 @@ Ignores StartCharging;
 		local bool RetVal,bWasEnemy;
 
 		bWasEnemy = (Controller.Target==Controller.Enemy);
-		RetVal = Super(ZombieFleshpoundBase).MeleeDamageTarget(hitdamage*1.75, pushdir*3);
+		RetVal = Super(MonsterFleshpoundBase).MeleeDamageTarget(hitdamage*1.75, pushdir*3);
 
 		if(RetVal && bWasEnemy && ProAI != None && !ProAI.bForcedRage)
+        {
 			GoToState('');
+        }
             
 		return RetVal;
 	}
-}
-
-simulated function PlayDying(class<DamageType> DamageType, vector HitLoc)
-{
-    class'PawnHelper'.static.MonsterDied(Self, AfflictionData);
-
-    Super.PlayDying(DamageType, HitLoc);
-}
-
-state ZombieDying
-{
-ignores AnimEnd, Trigger, Bump, HitWall, HeadVolumeChange, PhysicsVolumeChange, Falling, BreathTimer, Died, RangedAttack, SpawnTwoShots;
-
-    simulated function BeginState()
-    {
-        class'PawnHelper'.static.MonsterDied(Self, AfflictionData);
-        Super.BeginState();
-    }
-}
-
-simulated event SetHeadScale(float NewScale)
-{
-	HeadScale = NewScale;
-    class'PawnHelper'.static.AdjustHeadScale(Self, NewScale);
-	SetBoneScale(4, NewScale, 'head');
 }
 
 defaultproperties
@@ -374,16 +239,17 @@ defaultproperties
     Begin Object Class=AfflictionBurn Name=BurnAffliction
         BurnDurationModifier=1.f
     End Object
+    MonsterAfflictionList(0)=CoreMonsterAffliction'BurnAffliction'
 
     Begin Object Class=AfflictionZap Name=ZapAffliction
         ZapDischargeRate=0.5f
     End Object
+    MonsterAfflictionList(1)=CoreMonsterAffliction'ZapAffliction'
 
     Begin Object Class=AfflictionHarpoon Name=HarpoonAffliction
-        HarpoonSpeedModifier=0.25f
+        HarpoonStunnedSpeedModifier=0.25f
     End Object
-
-    AfflictionData=(Burn=AfflictionBurn'BurnAffliction',Zap=AfflictionZap'ZapAffliction',Harpoon=AfflictionHarpoon'HarpoonAffliction')
+    MonsterAfflictionList(2)=CoreMonsterAffliction'HarpoonAffliction'
 
     EventClasses(0)="P_Fleshpound_DEF"
     ControllerClass=Class'KFTurbo.AI_Fleshpound'

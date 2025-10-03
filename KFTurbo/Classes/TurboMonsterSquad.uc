@@ -4,9 +4,28 @@
 class TurboMonsterSquad extends Object
      editinlinenew;
 
+enum EMonsterShortHand
+{
+     Clot,
+     Crawler,
+     Gorefast,
+     Stalker,
+     Scrake,
+     Fleshpound,
+     Bloat,
+     Siren,
+     Husk,
+     Boss,
+     JumperCrawler,
+     ClassyGorefast,
+     FatheadBloat,
+     CarolerSiren,
+     ShotgunHusk
+};
+
 struct SquadEntry
 {
-     var PawnHelper.EMonster Monster;
+     var EMonsterShortHand Monster;
      var int Count;
 };
 
