@@ -41,7 +41,7 @@ Arguments = ArgumentParser.parse_args()
 BuildType = EBuildType.ALL
 
 #Files KFTurbo compiles.
-TurboFiles = ["CommonCore.u", "CommonCoreGame.u", #Common Core packages.
+TurboFiles = ["CommonCore.u", "CommonCoreGame.u", "CommonCoreGameTest.u", #Common Core packages.
             "KFTurboMapVote.u", "KFTurboEmbeddable.u", #Turbo-agnostic packages.
             "KFTurboGUI.u", "KFTurboFonts.u", "KFTurboFontsJP.u", "KFTurboFontsCY.u", #Asset packages.
             "KFTurbo.u", "KFTurboServer.u", "KFTurboCommon.u", #Turbo Core packages.
@@ -59,7 +59,7 @@ def UpdateBuildType():
 
     if Arguments.onlyturbo:
         BuildType = EBuildType.TURBO
-        TurboFiles = [ "CommonCore.u", "KFTurbo.u", "KFTurboServer.u", "KFTurboCommon.u" ]
+        TurboFiles = [ "CommonCore.u", "CommonCoreGame.u", "CommonCoreGameTest.u", "KFTurbo.u", "KFTurboServer.u", "KFTurboCommon.u" ]
         TurboStagingFiles = [ "KFTurbo.ucl", "KFTurboServer.ucl" ]
     elif Arguments.onlyholdout:
         BuildType = EBuildType.HOLDOUT
