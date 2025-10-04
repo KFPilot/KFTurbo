@@ -46,9 +46,9 @@ static function bool IsPerkAmmunition(class<Ammunition> AmmoType)
 {
 	switch (AmmoType)
 	{
-		case class'SingleAmmo':
-		case class'DualiesAmmo':
-		case class'WinchesterAmmo':
+		case class'WeaponSingleAmmo':
+		case class'WeaponDualiesAmmo':
+		case class'WeaponWinchesterAmmo':
 		case class'W_Magnum44_Ammo':
 		case class'W_Deagle_Ammo':
 		case class'W_M32_Ammo':
@@ -80,19 +80,19 @@ static function float GetHeadShotDamMulti(KFPlayerReplicationInfo KFPRI, KFPawn 
 
 	switch (DamageType)
 	{
-	case class'DamTypeCrossbow' :
-	case class'DamTypeCrossbowHeadShot' :
-	case class'DamTypeWinchester' :
-	case class'DamTypeDeagle' :
-	case class'DamTypeDualDeagle' :
-	case class'DamTypeM14EBR' :
-	case class'DamTypeMagnum44Pistol' :
-	case class'DamTypeDual44Magnum' :
-	case class'DamTypeMK23Pistol' :
-	case class'DamTypeDualMK23Pistol' :
-	case class'DamTypeM99SniperRifle' :
-	case class'DamTypeM99HeadShot' :
-	case class'DamTypeSPSniper' :
+	case class'DamageTypeCrossbow' :
+	case class'DamageTypeCrossbowHeadShot' :
+	case class'DamageTypeWinchester' :
+	case class'DamageTypeDeagle' :
+	case class'DamageTypeDualDeagle' :
+	case class'DamageTypeM14EBR' :
+	case class'DamageTypeMagnum44Pistol' :
+	case class'DamageTypeDual44Magnum' :
+	case class'DamageTypeMK23Pistol' :
+	case class'DamageTypeDualMK23Pistol' :
+	case class'DamageTypeM99SniperRifle' :
+	case class'DamageTypeM99HeadShot' :
+	case class'DamageTypeSPSniper' :
 	case class'W_SPSniper_DT' :
 		Multiplier = LerpStat(KFPRI, 1.05f, 1.6f);
 		break;
@@ -103,7 +103,7 @@ static function float GetHeadShotDamMulti(KFPlayerReplicationInfo KFPRI, KFPawn 
 	case class'W_Dual44_DT' :
 		return LerpStat(KFPRI, 1.05f, 1.45f);
 		break;
-	case class'DamTypeDualies' :
+	case class'DamageTypeDualies' :
 		return LerpStat(KFPRI, 1.05f, 1.4f);
 	}
 
@@ -114,11 +114,11 @@ static function float ModifyRecoilSpread(KFPlayerReplicationInfo KFPRI, WeaponFi
 {
 	Recoil = Super.ModifyRecoilSpread(KFPRI, Other, Recoil);
 
-	if (Crossbow(Other.Weapon) != none || Winchester(Other.Weapon) != none
-		|| Single(Other.Weapon) != none || Dualies(Other.Weapon) != none
-		|| Deagle(Other.Weapon) != none || DualDeagle(Other.Weapon) != none
-		|| M14EBRBattleRifle(Other.Weapon) != none || M99SniperRifle(Other.Weapon) != none
-		|| SPSniperRifle(Other.Weapon) != none)
+	if (WeaponCrossbow(Other.Weapon) != none || WeaponWinchester(Other.Weapon) != none
+		|| WeaponSingle(Other.Weapon) != none || WeaponDualies(Other.Weapon) != none
+		|| WeaponDeagle(Other.Weapon) != none || WeaponDualDeagle(Other.Weapon) != none
+		|| WeaponM14EBRBattleRifle(Other.Weapon) != none || WeaponM99SniperRifle(Other.Weapon) != none
+		|| WeaponSPSniperRifle(Other.Weapon) != none)
 	{
 		Recoil *= 0.25;
 	}
@@ -131,11 +131,11 @@ static function float GetFireSpeedMod(KFPlayerReplicationInfo KFPRI, Weapon Othe
 	local float Multiplier;
 	Multiplier = 1.f;
 
-	if (Crossbow(Other) != None || M99SniperRifle(Other) != None)
+	if (WeaponCrossbow(Other) != None || WeaponM99SniperRifle(Other) != None)
 	{
 		Multiplier *= LerpStat(KFPRI, 1.f, 1.15f);
 	}
-	else if (Winchester(Other) != None || SPSniperRifle(Other) != None)
+	else if (WeaponWinchester(Other) != None || WeaponSPSniperRifle(Other) != None)
 	{
 		Multiplier *= LerpStat(KFPRI, 1.f, 1.6f);
 	}
@@ -150,17 +150,17 @@ static function float GetReloadSpeedModifier(KFPlayerReplicationInfo KFPRI, KFWe
 	local float Multiplier;
 	Multiplier = 1.f;
 
-	if (Crossbow(Other) != None || M99SniperRifle(Other) != None)
+	if (WeaponCrossbow(Other) != None || WeaponM99SniperRifle(Other) != None)
 	{
 		Multiplier *= LerpStat(KFPRI, 1.f, 1.15f);
 	}
-	else if (Winchester(Other) != None
-		|| Single(Other) != None || Dualies(Other) != None
-		|| Deagle(Other) != None || DualDeagle(Other) != None
-		|| MK23Pistol(Other) != None || DualMK23Pistol(Other) != None
-		|| M14EBRBattleRifle(Other) != None
-		|| SPSniperRifle(Other) != None || Magnum44Pistol(Other) != None 
-		|| Dual44Magnum(Other) != None)
+	else if (WeaponWinchester(Other) != None
+		|| WeaponSingle(Other) != None || WeaponDualies(Other) != None
+		|| WeaponDeagle(Other) != None || WeaponDualDeagle(Other) != None
+		|| WeaponMK23Pistol(Other) != None || WeaponDualMK23Pistol(Other) != None
+		|| WeaponM14EBRBattleRifle(Other) != None
+		|| WeaponSPSniperRifle(Other) != None || WeaponMagnum44Pistol(Other) != None 
+		|| WeaponDual44Magnum(Other) != None) 
 	{
 		Multiplier *= LerpStat(KFPRI, 1.f, 1.6f);
 	}

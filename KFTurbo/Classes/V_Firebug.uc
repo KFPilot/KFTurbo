@@ -63,7 +63,7 @@ static function ApplyAdjustedFireRate(KFPlayerReplicationInfo KFPRI, Weapon Othe
 {
 	Super.ApplyAdjustedFireRate(KFPRI, Other, Multiplier);
 
-	if (TurboGameReplicationInfo(KFPRI.Level.GRI) != None && IsPerkWeapon(class<KFWeapon>(Other.Class)))
+	if (TurboGameReplicationInfo(KFPRI.Level.GRI) != None && IsPerkWeapon(class<CoreWeapon>(Other.Class)))
 	{
 		Multiplier *= TurboGameReplicationInfo(KFPRI.Level.GRI).GetFirebugFireRateMultiplier(KFPRI, Other);
 	}

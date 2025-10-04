@@ -1,7 +1,7 @@
 //Killing Floor Turbo W_Dual44_DT
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class W_Dual44_DT extends DamTypeDual44Magnum
+class W_Dual44_DT extends DamageTypeDual44Magnum
 	abstract;
 
 defaultproperties

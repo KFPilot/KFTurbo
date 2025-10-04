@@ -147,7 +147,7 @@ static function ApplyAdjustedMagCapacityModifier(KFPlayerReplicationInfo KFPRI, 
 		return;
 	}
 
-	if (IsPerkWeapon(Other.Class) && TurboGameReplicationInfo(KFPRI.Level.GRI) != None)
+	if (IsPerkWeapon(class<CoreWeapon>(Other.Class)) && TurboGameReplicationInfo(KFPRI.Level.GRI) != None)
 	{
 		Multiplier *= TurboGameReplicationInfo(KFPRI.Level.GRI).GetMedicMagazineAmmoMultiplier(KFPRI, Other);
 	}

@@ -1,7 +1,7 @@
 //Killing Floor Turbo W_LAR_Fire
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class W_LAR_Fire extends WinchesterFire;
+class W_LAR_Fire extends WeaponWinchesterFire;
 
 function DoFireEffect()
 {

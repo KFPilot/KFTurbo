@@ -105,7 +105,7 @@ static function ApplyAdjustedMagCapacityModifier(KFPlayerReplicationInfo KFPRI, 
 		return;
 	}
 
-	if (IsPerkWeapon(Other.Class))
+	if (IsPerkWeapon(class<CoreWeapon>(Other.Class)))
 	{
 		if (TurboGameReplicationInfo(KFPRI.Level.GRI) != None)
 		{
@@ -251,7 +251,7 @@ static function float ModifyRecoilSpread(KFPlayerReplicationInfo KFPRI, WeaponFi
 
 static function ApplyAdjustedReloadRate(KFPlayerReplicationInfo KFPRI, Weapon Other, out float Multiplier)
 {
-	if (class'V_Commando'.static.IsPerkWeapon(class<KFWeapon>(Other.Class)))
+	if (class'V_Commando'.static.IsPerkWeapon(class<CoreWeapon>(Other.Class)))
 	{
 		if (TurboGameReplicationInfo(KFPRI.Level.GRI) != None)
 		{

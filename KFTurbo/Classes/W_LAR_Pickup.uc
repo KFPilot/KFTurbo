@@ -1,7 +1,7 @@
 //Killing Floor Turbo W_LAR_Pickup
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class W_LAR_Pickup extends WinchesterPickup;
+class W_LAR_Pickup extends WeaponWinchesterPickup;
 
 function Destroyed()
 {
