@@ -74,11 +74,11 @@ static function float GetMagCapacityMod(KFPlayerReplicationInfo KFPRI, KFWeapon 
 	local float Multiplier;
 	Multiplier = 1.f;
 
-	if (Flamethrower(Other) != None)
+	if (WeaponFlamethrower(Other) != None)
 	{
 		Multiplier *= LerpStat(KFPRI, 1.f, 1.2f);
 	}
-	else if (MAC10MP(Other) != None || ThompsonSMG(Other) != None)
+	else if (WeaponMAC10MP(Other) != None || WeaponThompsonSMG(Other) != None)
 	{
 		Multiplier *= LerpStat(KFPRI, 1.f, 1.6f);
 	}
@@ -117,9 +117,9 @@ static function float AddExtraAmmoFor(KFPlayerReplicationInfo KFPRI, Class<Ammun
 	return Multiplier;
 }
 
-static function int AddDamage(KFPlayerReplicationInfo KFPRI, KFMonster Injured, KFPawn DamageTaker, int InDamage, class<DamageType> DmgType)
+static function int AddDamage(KFPlayerReplicationInfo KFPRI, KFMonster Injured, KFPawn DamageTaker, int InDamage, class<DamageType> DamageType)
 {
-	switch (DmgType)
+	switch (DamageType)
 	{
 	case class'W_MAC10_DT' :
 	case class'W_Trenchgun_DT' :
@@ -127,7 +127,7 @@ static function int AddDamage(KFPlayerReplicationInfo KFPRI, KFMonster Injured, 
 		return float(InDamage) * LerpStat(KFPRI, 1.f, 1.15);
 	}
 
-	if (class<DamTypeBurned>(DmgType) != none || class<DamTypeFlamethrower>(DmgType) != none || class<DamTypeHuskGunProjectileImpact>(DmgType) != none || class<W_FlareRevolver_Impact_DT>(DmgType) != none)
+	if (class<CoreWeaponDamageTypeBurned>(DamageType) != none || class<DamageTypeFlamethrower>(DamageType) != none || class<DamageTypeHuskGunProjectileImpact>(DamageType) != none || class<W_FlareRevolver_Impact_DT>(DamageType) != none)
 	{
 		return float(InDamage) * LerpStat(KFPRI, 1.05f, 1.6f);
 	}
@@ -142,7 +142,7 @@ static function int ExtraRange(KFPlayerReplicationInfo KFPRI)
 
 static function int ReduceDamage(KFPlayerReplicationInfo KFPRI, KFPawn Injured, Pawn Instigator, int InDamage, class<DamageType> DmgType)
 {
-	if (class<DamTypeBurned>(DmgType) != none || class<DamTypeFlamethrower>(DmgType) != none || class<DamTypeHuskGunProjectileImpact>(DmgType) != none || class<W_FlareRevolver_Impact_DT>(DmgType) != none)
+	if (class<CoreWeaponDamageTypeBurned>(DmgType) != none || class<DamageTypeFlamethrower>(DmgType) != none || class<DamageTypeHuskGunProjectileImpact>(DmgType) != none || class<W_FlareRevolver_Impact_DT>(DmgType) != none)
 	{
 		return float(InDamage) * LerpStat(KFPRI, 0.5f, 0.f);
 	}
@@ -160,7 +160,7 @@ static function float GetReloadSpeedModifier(KFPlayerReplicationInfo KFPRI, KFWe
 	local float Multiplier;
 	Multiplier = 1.f;
 
-	if (Flamethrower(Other) != none || MAC10MP(Other) != none || Trenchgun(Other) != none || FlareRevolver(Other) != none || DualFlareRevolver(Other) != none|| ThompsonSMG(Other) != none)
+	if (WeaponFlamethrower(Other) != none || WeaponMAC10MP(Other) != none || WeaponTrenchgun(Other) != none || WeaponFlareRevolver(Other) != none || WeaponDualFlareRevolver(Other) != none|| WeaponThompsonSMG(Other) != none)
 	{
 		Multiplier *= LerpStat(KFPRI, 1.f, 1.6f);
 	}

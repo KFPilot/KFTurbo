@@ -1,7 +1,7 @@
 //Killing Floor Turbo W_LAW_Proj
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class W_LAW_Proj extends LAWProj;
+class W_LAW_Proj extends WeaponLAWProjectile;
 
 function TakeDamage( int Damage, Pawn InstigatedBy, Vector Hitlocation, Vector Momentum, class<DamageType> damageType, optional int HitIndex)
 {

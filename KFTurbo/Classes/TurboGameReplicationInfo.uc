@@ -168,7 +168,7 @@ function OnWeaponFire(WeaponFire WeaponFire)
     }
 }
 
-function OnShotgunFire(KFShotgunFire ShotgunFire)
+function OnShotgunFire(CoreShotgunFire ShotgunFire)
 {
     if (CustomTurboModifier != None)
     {
@@ -176,7 +176,7 @@ function OnShotgunFire(KFShotgunFire ShotgunFire)
     }
 }
 
-function OnMeleeFire(KFMeleeFire MeleeFire)
+function OnMeleeFire(CoreMeleeWeaponFire MeleeFire)
 {
     if (CustomTurboModifier != None)
     {

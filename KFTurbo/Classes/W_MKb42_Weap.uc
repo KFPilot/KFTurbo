@@ -1,7 +1,7 @@
 //Killing Floor Turbo W_MKb42_Weap
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class W_MKb42_Weap extends MKb42AssaultRifle;
+class W_MKb42_Weap extends WeaponMKb42AssaultRifle;
 
 function AddReloadedAmmo()
 {

@@ -1,7 +1,7 @@
 //Killing Floor Turbo W_M7A3M_DT
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class W_M7A3M_DT extends DamTypeM7A3M
+class W_M7A3M_DT extends DamageTypeM7A3M
 	abstract;
 
 defaultproperties

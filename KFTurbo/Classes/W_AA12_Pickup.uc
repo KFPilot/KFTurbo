@@ -1,7 +1,7 @@
 //Killing Floor Turbo W_AA12_Pickup
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class W_AA12_Pickup extends AA12Pickup;
+class W_AA12_Pickup extends WeaponAA12Pickup;
 
 function Destroyed()
 {

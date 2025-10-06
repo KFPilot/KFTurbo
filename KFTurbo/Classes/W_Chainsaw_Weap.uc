@@ -1,7 +1,7 @@
 //Killing Floor Turbo W_Chainsaw_Weap
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class W_Chainsaw_Weap extends Chainsaw;
+class W_Chainsaw_Weap extends WeaponChainsaw;
 
 defaultproperties
 {

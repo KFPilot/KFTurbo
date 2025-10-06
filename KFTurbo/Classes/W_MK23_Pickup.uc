@@ -1,7 +1,7 @@
 //Killing Floor Turbo W_MK23_Pickup
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class W_MK23_Pickup extends MK23Pickup;
+class W_MK23_Pickup extends WeaponMK23Pickup;
 
 function inventory SpawnCopy( pawn Other )
 {

@@ -1,7 +1,7 @@
 //Killing Floor Turbo W_NailGun_Weap
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class W_NailGun_Weap extends NailGun;
+class W_NailGun_Weap extends WeaponNailGun;
 
 var         LaserDot                    Spot;                       // The first person laser site dot
 var()       float                       SpotProjectorPullback;      // Amount to pull back the laser dot projector from the hit location

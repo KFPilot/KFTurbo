@@ -24,114 +24,82 @@ simulated function PostBeginPlay()
 	ProAI = AI_Fleshpound(Controller);
 }
 
-//TODO: PROPERLY USE COREMONSTER'S FUNCTIONING OUT OF THESE MODIFICATIONS.
-function TakeDamage( int Damage, Pawn InstigatedBy, Vector Hitlocation, Vector Momentum, class<DamageType> DamageType, optional int HitIndex)
+function ProcessMonsterDamageModifiers(out float Damage, Pawn InstigatedBy, Vector HitLocation, Vector Momentum, class<DamageType> DamageType, bool bIsHeadshot, optional int HitIndex)
 {
-	local int OldHealth;
-	local Vector X,Y,Z;
-	local bool bIsHeadShot;
-	local float HeadShotCheckScale;
-    local class<KFWeaponDamageType> WeaponDamageType;
+	local class<CoreWeaponDamageType> WeaponDamageType;
+	WeaponDamageType = class<CoreWeaponDamageType>(DamageType);
 
-    if (DamageType == class 'DamTypeVomit')
+	if (WeaponDamageType != None)
 	{
-		Damage = 0;
-        Super(CoreMonster).TakeDamage(Damage, InstigatedBy, HitLocation, Momentum, DamageType, HitIndex);
-        return;
+		if (!WeaponDamageType.default.bIsExplosive)
+		{
+            if (bIsHeadShot && class'V_Commando'.static.IsPerkDamageType(WeaponDamageType))
+            {
+                Damage *= 1.f; //Commando damage no longer receives penalty on headshot.
+            }
+			if (bIsHeadshot && (WeaponDamageType.default.HeadShotDamageMult >= 1.5 || (class<DamageTypeCrossbuzzsaw>(DamageType) != None)))
+			{
+				Damage *= 0.75f;
+			}
+            else if (class<DamageTypeM99SniperRifle>(DamageType) != None)
+            {
+                Damage *= 0.525;
+            }
+			else if (Level.Game.GameDifficulty >= 5.0 && bIsHeadshot && class<DamageTypeCrossbow>(DamageType) != None)
+			{
+				Damage *= 0.35f;
+			}
+            else if (class<DamageTypeCrossbuzzsaw>(DamageType) != None)
+            {
+                Damage *= 0.62f;
+            }
+            else if (bIsHeadshot && class<DamageTypeDBShotgun>(DamageType) != None && InstigatedBy != None && IsInHuntingShotgunDamageBoostRadius(InstigatedBy))
+            {
+                Damage *= 0.6125f; //22% damage increase at point blank due to some odd reduction being applied.
+            }
+            else if (bIsHeadshot && class<DamageTypeNailGun>(DamageType) != None)
+            {
+                Damage *= 0.54f; //8% damage increase to help nailgun be competitive with hunting shotgun.
+            }
+            else
+            {
+                Damage *= 0.5f;
+            }
+		}
+		else if (ClassIsChildOf(WeaponDamageType, class'DamageTypeLAW'))
+		{
+			Damage *= 1.25f; //Yes TWI code does not have a modifier for the LAW...
+		}
+		else if (ClassIsChildOf(WeaponDamageType, class'DamageTypeSeekerSixRocket'))
+		{
+			Damage *= 1.65f;
+		}
+		else if (ClassIsChildOf(WeaponDamageType, class'DamageTypeFrag') || ClassIsChildOf(WeaponDamageType, class'DamageTypePipeBomb') || ClassIsChildOf(WeaponDamageType, class'DamageTypeMedicNade'))
+		{
+        	Damage *= 2.f;
+		}
+		//This is to help handle a more "general" case for explosive damage types. The above captures all explosive damage with specific multipliers.
+		//The below modifier has been changed to a "catch all" for explosive damage types.
+		else /*if (ClassIsChildOf(WeaponDamageType, class'DamageTypeM79Grenade') || ClassIsChildOf(WeaponDamageType, class'DamageTypeM203Grenade') 
+			|| ClassIsChildOf(WeaponDamageType, class'DamageTypeSealSquealExplosion') || ClassIsChildOf(WeaponDamageType, class'DamageTypeSeekerSixRocket'))*/
+		{
+        	Damage *= 1.25f;
+		}
 	}
-
-    WeaponDamageType = class<KFWeaponDamageType>(DamageType);
-
-	GetAxes(Rotation, X,Y,Z);
-
-	if( LastDamagedTime<Level.TimeSeconds )
-    {
-		TwoSecondDamageTotal = 0;
-    }
-	
-    LastDamagedTime = Level.TimeSeconds + 2.f;
-	OldHealth = Health;
-
-    if (WeaponDamageType == None || !WeaponDamageType.default.bIsExplosive)
-    {
-        HeadShotCheckScale = 1.0;
-        if( class<DamTypeMelee>(damageType) != none )
-        {
-            HeadShotCheckScale *= 1.25;
-        }
-
-        bIsHeadShot = IsHeadShot(Hitlocation, normal(Momentum), HeadShotCheckScale);
-        // Commando weapons don't get the damage reduction
-		if (bIsHeadShot && class'V_Commando'.static.IsPerkDamageType(WeaponDamageType))
-        {
-            // Do nothing
-        }
-		// Don't reduce the damage so much if its a high headshot damage weapon
-        else if( (bIsHeadShot && WeaponDamageType.default.HeadShotDamageMult >= 1.5) || (class<DamTypeCrossbuzzsaw>(DamageType) != None))
+	else if (ClassIsChildOf(WeaponDamageType, class'DamTypeVomit'))
+	{
+		if (ClassIsChildOf(WeaponDamageType, class'DamTypeBlowerThrower'))
 		{
-			Damage *= 0.75;
-		}
-		else if (class<DamTypeM99SniperRifle>(DamageType) != None)
-		{
-			Damage *= 0.525;
-		}
-		else if (Level.Game.GameDifficulty >= 5.0 && bIsHeadshot && class<DamTypeCrossbow>(DamageType) != None)
-		{
-			Damage *= 0.35; // was 0.3 in Balance Round 1, then 0.4 in Round 2, then 0.3 in Round 3/4, and 0.35 in Round 5
-		}
-        else if (class<DamTypeCrossbuzzsaw>(DamageType) != None)
-        {
-            Damage *= 0.62f;
-        }
-		else if (bIsHeadshot && class<DamTypeDBShotgun>(DamageType) != None && IsInDamageBoostRadius(InstigatedBy))
-		{
-			Damage *= 0.6125f; //22% damage increase at point blank due to some odd reduction being applied.
-		}
-		else if (bIsHeadshot && class<DamTypeNailGun>(DamageType) != None)
-		{
-			Damage *= 0.54f; //8% damage increase to help nailgun be competitive with hunting shotgun.
+       		Damage *= 0.25f;
 		}
 		else
 		{
-			Damage *= 0.5f;
+			Damage = 0.f;
 		}
-    }
-    else if (WeaponDamageType != None && WeaponDamageType.default.bIsExplosive)
-    {
-        switch(DamageType)
-        {
-            case class'DamTypeFrag':
-            case class'DamTypePipeBomb':
-            case class'DamTypeMedicNade':
-                Damage *= 2.0f;
-                break;
-            case class'DamTypeSeekerSixRocket':
-                Damage *= 1.65f;
-                break;
-            default:
-                Damage *= 1.25f;
-                break;
-        }
-    }
-
-	// Shut off his "Device" when dead
-	if (Damage >= Health)
-    {
-		PostNetReceive();
-    }
-
-	Super(KFMonster).TakeDamage(Damage, instigatedBy, hitLocation, momentum, damageType,HitIndex) ;
-
-	TwoSecondDamageTotal += OldHealth - Health; // Corrected issue where only the Base Health is counted toward the FP's Rage in Balance Round 6(second attempt)
-
-	if (!bDecapitated && TwoSecondDamageTotal > RageDamageThreshold && !bChargingPlayer && !bZapped
-        && (!(bCrispified && bBurnified) || bFrustrated))
-    {
-        StartCharging();
-    }
+	}
 }
 
-function bool IsInDamageBoostRadius(Actor Other)
+function bool IsInHuntingShotgunDamageBoostRadius(Actor Other)
 {
     local float Distance;
     Distance = VSize(Location - Other.Location);
@@ -239,17 +207,17 @@ defaultproperties
     Begin Object Class=AfflictionBurn Name=BurnAffliction
         BurnDurationModifier=1.f
     End Object
-    MonsterAfflictionList(0)=CoreMonsterAffliction'BurnAffliction'
+    MonsterBurnAffliction=CoreMonsterAffliction'BurnAffliction'
 
     Begin Object Class=AfflictionZap Name=ZapAffliction
         ZapDischargeRate=0.5f
     End Object
-    MonsterAfflictionList(1)=CoreMonsterAffliction'ZapAffliction'
+    MonsterZapAffliction=CoreMonsterAffliction'ZapAffliction'
 
     Begin Object Class=AfflictionHarpoon Name=HarpoonAffliction
         HarpoonStunnedSpeedModifier=0.25f
     End Object
-    MonsterAfflictionList(2)=CoreMonsterAffliction'HarpoonAffliction'
+    MonsterHarpoonAffliction=CoreMonsterAffliction'HarpoonAffliction'
 
     EventClasses(0)="P_Fleshpound_DEF"
     ControllerClass=Class'KFTurbo.AI_Fleshpound'

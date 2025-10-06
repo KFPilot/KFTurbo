@@ -1,7 +1,7 @@
 //Killing Floor Turbo W_Benelli_Weap
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class W_Benelli_Weap extends BenelliShotgun;
+class W_Benelli_Weap extends WeaponBenelliShotgun;
 
 var float CachedMagAmmoRemaining;
 

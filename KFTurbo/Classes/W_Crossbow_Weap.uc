@@ -1,7 +1,7 @@
 //Killing Floor Turbo W_Crossbow_Weap
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class W_Crossbow_Weap extends Crossbow;
+class W_Crossbow_Weap extends WeaponCrossbow;
 
 simulated event StopFire(int Mode)
 {

@@ -1,7 +1,7 @@
 //Killing Floor Turbo W_Deagle_Pickup
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class W_Deagle_Pickup extends DeaglePickup;
+class W_Deagle_Pickup extends WeaponDeaglePickup;
 
 function Inventory SpawnCopy(pawn Other)
 {

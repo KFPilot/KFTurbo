@@ -1,7 +1,7 @@
 //Killing Floor Turbo W_9MM_Fire
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class W_9MM_Fire extends SingleFire;
+class W_9MM_Fire extends WeaponSingleFire;
 
 function DoFireEffect()
 {

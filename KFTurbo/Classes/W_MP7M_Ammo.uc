@@ -1,7 +1,7 @@
 //Killing Floor Turbo W_MP7M_Ammo
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class W_MP7M_Ammo extends MP7MAmmo;
+class W_MP7M_Ammo extends WeaponMP7MAmmo;
 
 defaultproperties
 {

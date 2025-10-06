@@ -1,7 +1,7 @@
 //Killing Floor Turbo W_Deagle_Fire
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class W_Deagle_Fire extends DeagleFire;
+class W_Deagle_Fire extends WeaponDeagleFire;
 
 function DoFireEffect()
 {

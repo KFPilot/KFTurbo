@@ -1,7 +1,7 @@
 //Killing Floor Turbo W_M4203_Attachment
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class W_M4203_Attachment extends M4203Attachment;
+class W_M4203_Attachment extends WeaponM4203Attachment;
 
 defaultproperties
 {

@@ -1,7 +1,7 @@
 //Killing Floor Turbo W_ThompsonDrum_Fire
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class W_ThompsonDrum_Fire extends ThompsonDrumFire;
+class W_ThompsonDrum_Fire extends WeaponThompsonDrumFire;
 
 function DoFireEffect()
 {

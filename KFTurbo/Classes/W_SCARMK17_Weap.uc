@@ -1,7 +1,7 @@
 //Killing Floor Turbo W_SCARMK17_Weap
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class W_SCARMK17_Weap extends SCARMK17AssaultRifle;
+class W_SCARMK17_Weap extends WeaponSCARMK17AssaultRifle;
 
 function AddReloadedAmmo()
 {

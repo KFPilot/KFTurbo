@@ -1,7 +1,7 @@
 //Killing Floor Turbo W_Axe_Pickup
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class W_Axe_Pickup extends AxePickup;
+class W_Axe_Pickup extends WeaponAxePickup;
 
 function Destroyed()
 {

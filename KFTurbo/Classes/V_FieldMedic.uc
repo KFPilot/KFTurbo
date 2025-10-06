@@ -56,7 +56,7 @@ static function bool IsPerkAmmunition(class<Ammunition> AmmoType)
 		case class'W_MP5M_Ammo':
 		case class'W_KrissM_Ammo':
 		case class'W_M7A3M_Ammo':
-		case class'BlowerThrowerAmmo':
+		case class'WeaponBlowerThrowerAmmo':
 			return true;
 	}
 

@@ -1002,8 +1002,8 @@ simulated function ClientWeaponSpawned(class<Weapon> WeaponClass, Inventory Inv)
 		}
 	}
 
-	PreloadFireModeAssets(KFWeaponClass.default.FireModeClass[0]);
-	PreloadFireModeAssets(KFWeaponClass.default.FireModeClass[1]);
+	PreloadCoreFireModeAssets(KFWeaponClass.default.FireModeClass[0]);
+	PreloadCoreFireModeAssets(KFWeaponClass.default.FireModeClass[1]);
 }
 
 simulated function rotator RecoilHandler(rotator NewRotation, float DeltaTime)

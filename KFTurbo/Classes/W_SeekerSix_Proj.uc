@@ -1,7 +1,7 @@
 //Killing Floor Turbo W_SeekerSix_Proj
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class W_SeekerSix_Proj extends SeekerSixRocketProjectile
+class W_SeekerSix_Proj extends WeaponSeekerSixRocketProjectile
     dependson(TurboPlayerEventHandler);
 
 var Actor LastTouchedOverride;

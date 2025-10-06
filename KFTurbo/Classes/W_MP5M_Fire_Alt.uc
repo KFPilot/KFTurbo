@@ -1,7 +1,7 @@
 //Killing Floor Turbo W_MP5M_Fire_Alt
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class W_MP5M_Fire_Alt extends MP5MAltFire;
+class W_MP5M_Fire_Alt extends WeaponMP5MAltFire;
 
 function DoFireEffect()
 {

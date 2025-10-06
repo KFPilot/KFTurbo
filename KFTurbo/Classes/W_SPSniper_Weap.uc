@@ -1,7 +1,7 @@
 //Killing Floor Turbo W_SPSniper_Weap
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class W_SPSniper_Weap extends SPSniperRifle;
+class W_SPSniper_Weap extends WeaponSPSniperRifle;
 
 function AddReloadedAmmo()
 {

@@ -1,7 +1,7 @@
 //Killing Floor Turbo W_SCARMK17_Fire
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class W_SCARMK17_Fire extends SCARMK17Fire;
+class W_SCARMK17_Fire extends WeaponSCARMK17Fire;
 
 function DoFireEffect()
 {

@@ -15,7 +15,7 @@ simulated function PostBeginPlay()
 
 function RangedAttack(Actor Target)
 {
-	Super(ZombieGoreFastBase).RangedAttack(Target);
+	Super(MonsterGoreFastBase).RangedAttack(Target);
 
 	if(!bShotAnim && !bDecapitated && Target != None && VSize(Target.Location-Location) <= 1800)
       {

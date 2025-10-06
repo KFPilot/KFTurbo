@@ -2,7 +2,7 @@
 //Base class for shotguns in KFTurbo. Removes usage of redudant headshot multiplier (that barely worked).
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class W_BaseShotgunBullet extends KFMod.ShotgunBullet;
+class W_BaseShotgunBullet extends CoreShotgunProjectile;
 
 var int FireModeHitRegisterCount; //HitRegisterCount associated with this projectile.
 
@@ -25,13 +25,13 @@ final function Controller GetWeaponController()
 }
 
 //We assume index 0.
-final function BaseProjectileFire GetWeaponFire()
+final function CoreWeaponProjectileFire GetWeaponFire()
 {
     local Weapon OwnerWeapon;
     OwnerWeapon = Weapon(Owner);
     if (OwnerWeapon != None)
     {
-        return BaseProjectileFire(OwnerWeapon.GetFireMode(0));
+        return CoreWeaponProjectileFire(OwnerWeapon.GetFireMode(0));
     }
 
     return None;

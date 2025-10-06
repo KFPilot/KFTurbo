@@ -1,7 +1,7 @@
 //Killing Floor Turbo W_Syringe_Fire_Alt
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class W_Syringe_Fire_Alt extends KFMod.SyringeAltFire;
+class W_Syringe_Fire_Alt extends WeaponSyringeAltFire;
 
 Function Timer()
 {

@@ -1,7 +1,8 @@
 //Killing Floor Turbo W_Trenchgun_Proj
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class W_Trenchgun_Proj extends TrenchgunBullet;
+class W_Trenchgun_Proj extends WeaponTrenchgunBullet
+     dependson(W_BaseShotgunBullet);
 
 var int FireModeHitRegisterCount; //HitRegisterCount associated with this projectile.
 
@@ -18,13 +19,13 @@ final function Controller GetWeaponController()
 }
 
 //We assume index 0.
-final function BaseProjectileFire GetWeaponFire()
+final function CoreWeaponProjectileFire GetWeaponFire()
 {
     local Weapon OwnerWeapon;
     OwnerWeapon = Weapon(Owner);
     if (OwnerWeapon != None)
     {
-        return BaseProjectileFire(OwnerWeapon.GetFireMode(0));
+        return CoreWeaponProjectileFire(OwnerWeapon.GetFireMode(0));
     }
 
     return None;

@@ -526,7 +526,7 @@ simulated function float GetMonsterZOffset(KFMonster Monster, class<KFMonster> M
 {
     local float ExtraOffset;
 
-    if (ZombieBoss(MarkedActor) != None || class<ZombieBoss>(MarkActorClass) != None)
+    if (MonsterBoss(MarkedActor) != None || class<MonsterBoss>(MarkActorClass) != None)
     {
         ExtraOffset = 16.f;
     }
@@ -571,15 +571,15 @@ function TryVoiceLine()
 
 function TryMonsterVoiceLine(KFMonster MarkedMonster)
 {
-    if (ZombieFleshPound(MarkedActor) != None)
+    if (MonsterFleshPound(MarkedActor) != None)
     {
         PlayerController(Owner).Speech('AUTO', 12, "");
     }
-    else if (ZombieScrake(MarkedActor) != None)
+    else if (MonsterScrake(MarkedActor) != None)
     {
         PlayerController(Owner).Speech('AUTO', 14, "");
     }
-    else if (ZombieSiren(MarkedActor) != None)
+    else if (MonsterSiren(MarkedActor) != None)
     {
         PlayerController(Owner).Speech('AUTO', 15, "");
     }

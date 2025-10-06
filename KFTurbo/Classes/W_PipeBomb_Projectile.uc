@@ -1,7 +1,7 @@
 //Killing Floor Turbo W_PipeBomb_Projectile
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class W_PipeBomb_Projectile extends PipeBombProjectile;
+class W_PipeBomb_Projectile extends WeaponPipeBombProjectile;
 
 var Sound DeflectSound;
 var string DeflectSoundRef;

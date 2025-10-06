@@ -354,12 +354,12 @@ static final function bool AlreadyHitPawn(out Actor HitActor, out array<Pawn> Hi
 	return false;
 }
 
-static final function float GetMedicGunChargeBar(KFMedicGun Weapon)
+static final function float GetMedicGunChargeBar(CoreMedicGun Weapon)
 {
 	return FClamp(float(Weapon.HealAmmoCharge) / float(Weapon.default.HealAmmoCharge), 0, 1);
 }
 
-static final function TickMedicGunRecharge(KFMedicGun Weapon, float DeltaTime, out float HealAmmoAmount)
+static final function TickMedicGunRecharge(CoreMedicGun Weapon, float DeltaTime, out float HealAmmoAmount)
 {
 	local float RegenAmount;
 
@@ -383,7 +383,7 @@ static final function TickMedicGunRecharge(KFMedicGun Weapon, float DeltaTime, o
 	HealAmmoAmount += (RegenAmount * DeltaTime) / Weapon.AmmoRegenRate;
 }
 
-static final function bool ConsumeMedicGunAmmo(KFMedicGun Weapon, int Mode, float Amount, out float HealAmmoAmount, out byte Status)
+static final function bool ConsumeMedicGunAmmo(CoreMedicGun Weapon, int Mode, float Amount, out float HealAmmoAmount, out byte Status)
 {
 	if (Mode == 1)
 	{
@@ -715,7 +715,7 @@ static final function bool SingleWeaponSpawnCopy(KFWeaponPickup SingleWeaponPick
 	return false;
 }
 
-static final function OnShotgunPenetratingProjectileHit(ShotgunBullet Projectile, Actor HitActor, float PreviousDamage)
+static final function OnShotgunPenetratingProjectileHit(CoreShotgunProjectile Projectile, Actor HitActor, float PreviousDamage)
 {
 	if (Projectile == None || Projectile.Role != ROLE_Authority)
 	{
@@ -754,7 +754,7 @@ static final function OnWeaponFire(WeaponFire FireMode)
 	}   
 }
 
-static final function OnShotgunFire(KFShotgunFire FireMode, int FireEffectCount, out array<W_BaseShotgunBullet.HitRegisterEntry> HitRegistryList)
+static final function OnShotgunFire(CoreShotgunFire FireMode, int FireEffectCount, out array<W_BaseShotgunBullet.HitRegisterEntry> HitRegistryList)
 {
 	HitRegistryList.Length = HitRegistryList.Length + 1;
 	HitRegistryList[HitRegistryList.Length - 1].HitRegisterCount = FireEffectCount;
@@ -769,7 +769,7 @@ static final function OnShotgunFire(KFShotgunFire FireMode, int FireEffectCount,
 }
 
 // Melee weapons are considered a separate "fire" from guns and do not call OnWeaponFire.
-static final function OnMeleeFire(KFMeleeFire FireMode)
+static final function OnMeleeFire(CoreMeleeWeaponFire FireMode)
 {
 	if (FireMode != None && FireMode.Level != None)
 	{
@@ -803,7 +803,7 @@ static final function OnWeaponReload(KFWeapon Weapon)
 	}
 }
 
-static final function Projectile SpawnProjectile(BaseProjectileFire ProjectileFire, Vector Start, Rotator Dir)
+static final function Projectile SpawnProjectile(CoreWeaponProjectileFire ProjectileFire, Vector Start, Rotator Dir)
 {
     local Projectile Projectile;
 
@@ -827,7 +827,7 @@ static final function Projectile SpawnProjectile(BaseProjectileFire ProjectileFi
     return Projectile;
 }
 
-static final function Projectile ForceSpawnProjectile(BaseProjectileFire ProjectileFire, Vector Start, Rotator Dir)
+static final function Projectile ForceSpawnProjectile(CoreWeaponProjectileFire ProjectileFire, Vector Start, Rotator Dir)
 {
     local Vector HitLocation, HitNormal;
     local Actor Other;
@@ -863,7 +863,7 @@ static final function GrenadeTakeDamage(Nade Projectile, int Damage, Pawn Instig
     }
 }
 
-static final function M79GrenadeTakeDamage(M79GrenadeProjectile Projectile, int Damage, Pawn InstigatedBy, Vector Hitlocation, Vector Momentum, class<DamageType> DamageType, optional int HitIndex)
+static final function M79GrenadeTakeDamage(WeaponM79GrenadeProjectile Projectile, int Damage, Pawn InstigatedBy, Vector Hitlocation, Vector Momentum, class<DamageType> DamageType, optional int HitIndex)
 {
 	if (Monster(InstigatedBy) != none || InstigatedBy == Projectile.Instigator)
 	{
@@ -878,7 +878,7 @@ static final function M79GrenadeTakeDamage(M79GrenadeProjectile Projectile, int 
     }
 }
 
-static final function LawProjTakeDamage(LawProj Projectile, int Damage, Pawn InstigatedBy, Vector Hitlocation, Vector Momentum, class<DamageType> DamageType, optional int HitIndex)
+static final function LawProjTakeDamage(CoreLAWProjectile Projectile, int Damage, Pawn InstigatedBy, Vector Hitlocation, Vector Momentum, class<DamageType> DamageType, optional int HitIndex)
 {
 	if (Monster(InstigatedBy) != none || InstigatedBy == Projectile.Instigator)
 	{
@@ -889,7 +889,7 @@ static final function LawProjTakeDamage(LawProj Projectile, int Damage, Pawn Ins
     }
 }
 
-static final function SealSquealProjTakeDamage(SealSquealProjectile Projectile, int Damage, Pawn InstigatedBy, Vector Hitlocation, Vector Momentum, class<DamageType> DamageType, optional int HitIndex)
+static final function SealSquealProjTakeDamage(WeaponSealSquealProjectile Projectile, int Damage, Pawn InstigatedBy, Vector Hitlocation, Vector Momentum, class<DamageType> DamageType, optional int HitIndex)
 {
 	if (Monster(InstigatedBy) != none || InstigatedBy == Projectile.Instigator)
 	{
@@ -904,7 +904,7 @@ static final function SealSquealProjTakeDamage(SealSquealProjectile Projectile, 
     }
 }
 
-static final function SeekerSixProjTakeDamage(SeekerSixRocketProjectile Projectile, int Damage, Pawn InstigatedBy, Vector Hitlocation, Vector Momentum, class<DamageType> DamageType, optional int HitIndex)
+static final function SeekerSixProjTakeDamage(WeaponSeekerSixRocketProjectile Projectile, int Damage, Pawn InstigatedBy, Vector Hitlocation, Vector Momentum, class<DamageType> DamageType, optional int HitIndex)
 {
 	if(class<SirenScreamDamage>(DamageType) != None)
 	{
@@ -912,7 +912,7 @@ static final function SeekerSixProjTakeDamage(SeekerSixRocketProjectile Projecti
 	}
 }
 
-static final function HuskGunProjTakeDamage(HuskGunProjectile Projectile, int Damage, Pawn InstigatedBy, Vector Hitlocation, Vector Momentum, class<DamageType> DamageType, optional int HitIndex)
+static final function HuskGunProjTakeDamage(WeaponHuskGunProjectile Projectile, int Damage, Pawn InstigatedBy, Vector Hitlocation, Vector Momentum, class<DamageType> DamageType, optional int HitIndex)
 {
 	if(!Projectile.bDud)
 	{
@@ -920,7 +920,7 @@ static final function HuskGunProjTakeDamage(HuskGunProjectile Projectile, int Da
 	}
 }
 
-static final function FlareRevolverProjTakeDamage(FlareRevolverProjectile Projectile, int Damage, Pawn InstigatedBy, Vector Hitlocation, Vector Momentum, class<DamageType> DamageType, optional int HitIndex)
+static final function FlareRevolverProjTakeDamage(WeaponFlareRevolverProjectile Projectile, int Damage, Pawn InstigatedBy, Vector Hitlocation, Vector Momentum, class<DamageType> DamageType, optional int HitIndex)
 {
 	if(class<SirenScreamDamage>(DamageType) != None)
 	{
@@ -935,7 +935,7 @@ static final function FlareRevolverProjTakeDamage(FlareRevolverProjectile Projec
 	}
 }
 
-static final function SPGrenadeProjTakeDamage(SPGrenadeProjectile Projectile, int Damage, Pawn InstigatedBy, Vector Hitlocation, Vector Momentum, class<DamageType> DamageType, optional int HitIndex)
+static final function SPGrenadeProjTakeDamage(WeaponSPGrenadeProjectile Projectile, int Damage, Pawn InstigatedBy, Vector Hitlocation, Vector Momentum, class<DamageType> DamageType, optional int HitIndex)
 {
 	if(class<SirenScreamDamage>(DamageType) != None)
 	{

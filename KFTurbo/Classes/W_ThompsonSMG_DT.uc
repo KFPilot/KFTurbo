@@ -1,13 +1,12 @@
 //Killing Floor Turbo W_ThompsonSMG_DT
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class W_ThompsonSMG_DT extends DamTypeMAC10MPInc
+class W_ThompsonSMG_DT extends DamageTypeMAC10MPInc
 	abstract;
-
 
 static function AwardKill(KFSteamStatsAndAchievements KFStatsAndAchievements, KFPlayerController Killer, KFMonster Killed )
 {
-	if( Killed.IsA('ZombieStalker') )
+	if( Killed.IsA('MonsterStalker') )
      {
           KFStatsAndAchievements.AddStalkerKill();
      }

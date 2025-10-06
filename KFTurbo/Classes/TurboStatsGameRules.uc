@@ -138,7 +138,7 @@ final function OnPlayerFireHit(TurboPlayerController Player, WeaponFire FireMode
     WavePlayerStatCollector.IncrementShotsHit(bHeadShot);
 }
 
-final function OnPlayerMeleeFire(TurboPlayerController Player, KFMeleeFire FireMode)
+final function OnPlayerMeleeFire(TurboPlayerController Player, CoreMeleeWeaponFire FireMode)
 {
     local TurboWavePlayerStatCollector WavePlayerStatCollector;
     WavePlayerStatCollector = GetPlayerWaveStats(Player);

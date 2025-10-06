@@ -1,7 +1,7 @@
 //Killing Floor Turbo W_SealSqueal_Proj
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class W_SealSqueal_Proj extends SealSquealProjectile;
+class W_SealSqueal_Proj extends WeaponSealSquealProjectile;
 
 function TakeDamage( int Damage, Pawn InstigatedBy, Vector Hitlocation, Vector Momentum, class<DamageType> damageType, optional int HitIndex)
 {

@@ -95,11 +95,11 @@ function IncrementKills(class<KFMonster> MonsterClass)
 
 	Kills++;
 
-	if (class<ZombieFleshPound>(MonsterClass) != None)
+	if (class<MonsterFleshPound>(MonsterClass) != None)
 	{
 		KillsFleshpound++;
 	}
-	else if (class<ZombieScrake>(MonsterClass) != None)
+	else if (class<MonsterScrake>(MonsterClass) != None)
 	{
 		KillsScrake++;
 	}
@@ -114,11 +114,11 @@ function IncrementDamageDone(int Damage, class<KFMonster> MonsterClass)
 
 	DamageDone += Damage;
 
-	if (class<ZombieFleshPound>(MonsterClass) != None)
+	if (class<MonsterFleshPound>(MonsterClass) != None)
 	{
 		DamageDoneFleshpound += Damage;
 	}
-	else if (class<ZombieScrake>(MonsterClass) != None)
+	else if (class<MonsterScrake>(MonsterClass) != None)
 	{
 		DamageDoneScrake += Damage;
 	}

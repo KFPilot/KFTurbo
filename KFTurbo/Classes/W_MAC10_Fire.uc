@@ -1,7 +1,7 @@
 //Killing Floor Turbo W_MAC10_Fire
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class W_MAC10_Fire extends KFFire;
+class W_MAC10_Fire extends CoreFire;
 
 function DoFireEffect()
 {

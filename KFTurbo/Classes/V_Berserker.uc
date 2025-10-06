@@ -127,7 +127,7 @@ static function int ReduceDamage(KFPlayerReplicationInfo KFPRI, KFPawn Injured, 
 
 	InDamage = float(InDamage) * LerpStat(KFPRI, 1.f, 0.85f);
 
-	if (ZombieBoss(Instigator) != None)
+	if (MonsterBoss(Instigator) != None)
 	{
 		InDamage = Min(InDamage, 95); //Boss will never one-shot a player
 	}
@@ -152,7 +152,7 @@ static function bool CanMeleeStun()
 
 static function bool CanBeGrabbed(KFPlayerReplicationInfo KFPRI, KFMonster Other)
 {
-	return !Other.IsA('ZombieClot');
+	return !Other.IsA('MonsterClot');
 }
 
 static function int ZedTimeExtensions(KFPlayerReplicationInfo KFPRI)

@@ -1,7 +1,7 @@
 //Killing Floor Turbo W_SeekerSix_Weap
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class W_SeekerSix_Weap extends SeekerSixRocketLauncher;
+class W_SeekerSix_Weap extends WeaponSeekerSixRocketLauncher;
 
 function AddReloadedAmmo()
 {

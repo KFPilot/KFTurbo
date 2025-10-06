@@ -7,15 +7,15 @@ class P_Husk extends MonsterHusk DependsOn(PawnHelper);
 
 defaultproperties
 {
-    MonsterAfflictionList(0)=None //Clear burn affliction.
+    MonsterBurnAffliction=None //Clear burn affliction.
 
     Begin Object Class=AfflictionZap Name=ZapAffliction
         ZapDischargeRate=0.5f
     End Object
-    MonsterAfflictionList(1)=CoreMonsterAffliction'ZapAffliction'
+    MonsterZapAffliction=CoreMonsterAffliction'ZapAffliction'
 
     Begin Object Class=AfflictionHarpoon Name=HarpoonAffliction
         HarpoonStunnedSpeedModifier=0.2f //Slower for now to make the buggy movement look a little funnier.
     End Object
-    MonsterAfflictionList(2)=CoreMonsterAffliction'HarpoonAffliction'
+    MonsterHarpoonAffliction=CoreMonsterAffliction'HarpoonAffliction'
 }

@@ -1,7 +1,7 @@
 //Killing Floor Turbo W_M99_Proj
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class W_M99_Proj extends M99Bullet;
+class W_M99_Proj extends WeaponM99Bullet;
 
 var bool bRefreshedLifeSpan;
 var byte bHasRegisteredHit;

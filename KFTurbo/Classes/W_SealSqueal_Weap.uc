@@ -1,7 +1,7 @@
 //Killing Floor Turbo W_SealSqueal_Weap
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class W_SealSqueal_Weap extends SealSquealHarpoonBomber;
+class W_SealSqueal_Weap extends WeaponSealSquealHarpoonBomber;
 
 function AddReloadedAmmo()
 {

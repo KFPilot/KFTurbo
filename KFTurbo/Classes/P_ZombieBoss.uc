@@ -90,7 +90,7 @@ function TakeDamage(int Damage, Pawn InstigatedBy, Vector HitLocation, Vector Mo
 function Died(Controller Killer, class<DamageType> DamageType, vector HitLocation)
 {
 	local array<Monster> MonsterPawnList;
-	MonsterPawnList = class'TurboGameplayHelper'.static.GetMonsterPawnList(Level, class'ZombieBoss');
+	MonsterPawnList = class'TurboGameplayHelper'.static.GetMonsterPawnList(Level, class'MonsterBoss');
 
 	//If we were the last one alive, do the cinematic.
 	if (MonsterPawnList.Length == 0 || (MonsterPawnList.Length == 1 && MonsterPawnList[0] == Self))
@@ -309,18 +309,18 @@ defaultproperties
     Begin Object Class=AfflictionBurn Name=BurnAffliction
 		FirePriorityList=()
     End Object
-    MonsterAfflictionList(0)=CoreMonsterAffliction'BurnAffliction'
+    MonsterBurnAffliction=CoreMonsterAffliction'BurnAffliction'
 
     Begin Object Class=AfflictionZap Name=ZapAffliction
         ZapDischargeDelay=2.f
         ZapDischargeRate=0.25f
     End Object
-    MonsterAfflictionList(1)=CoreMonsterAffliction'ZapAffliction'
+    MonsterZapAffliction=CoreMonsterAffliction'ZapAffliction'
 
     Begin Object Class=AfflictionHarpoon Name=HarpoonAffliction
 	HarpoonStunnedSpeedModifier=1.f
     End Object
-    MonsterAfflictionList(2)=CoreMonsterAffliction'HarpoonAffliction'
+    MonsterHarpoonAffliction=CoreMonsterAffliction'HarpoonAffliction'
 
 	CloakedSkinList(0) = Shader'KF_Specimens_Trip_T.patriarch_invisible_gun'
 	CloakedSkinList(1) = Shader'KF_Specimens_Trip_T.patriarch_invisible'

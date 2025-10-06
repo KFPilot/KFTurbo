@@ -9,7 +9,7 @@ var bool bForcedRage;
 
 function Tick(float dt)
 {
-	local ZombieFleshPound ZFP;
+	local MonsterFleshPound ZFP;
 
 	Super.Tick(dt);
 
@@ -20,7 +20,7 @@ function Tick(float dt)
 
 	if (bForcedRage)
 	{
-	    ZFP = ZombieFleshPound(Pawn);
+	    ZFP = MonsterFleshPound(Pawn);
 
 	    if(ZFP != None && !ZFP.bFrustrated)
 	    {

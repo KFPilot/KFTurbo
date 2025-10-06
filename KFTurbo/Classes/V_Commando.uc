@@ -214,12 +214,12 @@ static function int AddDamage(KFPlayerReplicationInfo KFPRI, KFMonster Injured, 
 {
 	switch (DmgType)
 	{
-	case class'DamTypeBullpup' :
-	case class'DamTypeAK47AssaultRifle' :
-	case class'DamTypeSCARMK17AssaultRifle' :
-	case class'DamTypeAK47AssaultRifle' :
-	case class'DamTypeM4AssaultRifle' :
-	case class'DamTypeMKb42AssaultRifle' :
+	case class'DamageTypeBullpup' :
+	case class'DamageTypeAK47AssaultRifle' :
+	case class'DamageTypeSCARMK17AssaultRifle' :
+	case class'DamageTypeAK47AssaultRifle' :
+	case class'DamageTypeM4AssaultRifle' :
+	case class'DamageTypeMKb42AssaultRifle' :
 
 	case class'W_M4203_DT_Bullet' :
 	case class'W_FNFAL_DT' :

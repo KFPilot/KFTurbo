@@ -10,15 +10,15 @@ defaultproperties
     Begin Object Class=AfflictionBurn Name=BurnAffliction
         BurnDurationModifier=1.f
     End Object
-    MonsterAfflictionList(0)=AfflictionBurn'BurnAffliction'
+    MonsterBurnAffliction=AfflictionBurn'BurnAffliction'
 
     Begin Object Class=AfflictionZap Name=ZapAffliction
         ZapDischargeRate=0.5f
     End Object
-    MonsterAfflictionList(1)=AfflictionZap'ZapAffliction'
+    MonsterZapAffliction=AfflictionZap'ZapAffliction'
 
     Begin Object Class=AfflictionHarpoon Name=HarpoonAffliction
         HarpoonStunnedSpeedModifier=0.5f
     End Object
-    MonsterAfflictionList(2)=AfflictionHarpoon'HarpoonAffliction'
+    MonsterHarpoonAffliction=AfflictionHarpoon'HarpoonAffliction'
 }

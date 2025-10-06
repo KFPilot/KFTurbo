@@ -1,7 +1,7 @@
 //Killing Floor Turbo W_Trenchgun_Fire
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class W_Trenchgun_Fire extends TrenchgunFire;
+class W_Trenchgun_Fire extends WeaponTrenchgunFire;
 
 var int FireEffectCount;
 var array<W_BaseShotgunBullet.HitRegisterEntry> HitRegistryList;

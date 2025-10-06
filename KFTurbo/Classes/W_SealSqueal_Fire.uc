@@ -1,7 +1,7 @@
 //Killing Floor Turbo W_SealSqueal_Fire
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class W_SealSqueal_Fire extends SealSquealFire;
+class W_SealSqueal_Fire extends WeaponSealSquealFire;
 
 function DoFireEffect()
 {

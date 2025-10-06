@@ -1,7 +1,7 @@
 //Killing Floor Turbo W_NailGun_Proj
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class W_NailGun_Proj extends NailGunProjectile;
+class W_NailGun_Proj extends WeaponNailGunProjectile;
 
 var array<Pawn> HitPawnList;
 
@@ -20,7 +20,7 @@ simulated function ProcessTouch(Actor Other, vector HitLocation)
      local KFPawn HitPawn;
      local bool bWasDecapitated;
      
-     local KFMonster Monster;
+     local CoreMonster Monster;
 	local TurboPlayerEventHandler.MonsterHitData HitData;
 
 	if (Other == None || Other == Instigator || Other.Base == Instigator || !Other.bBlockHitPointTraces)
@@ -61,7 +61,7 @@ simulated function ProcessTouch(Actor Other, vector HitLocation)
                return;
           }
 
-          Monster = KFMonster(Other);
+          Monster = CoreMonster(Other);
 
           if (Monster != None)
           {

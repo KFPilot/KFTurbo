@@ -1,7 +1,7 @@
 //Killing Floor Turbo W_M14_Pickup
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class W_M14_Pickup extends M14EBRPickup;
+class W_M14_Pickup extends WeaponM14EBRPickup;
 
 function Destroyed()
 {

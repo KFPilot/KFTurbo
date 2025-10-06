@@ -1,7 +1,7 @@
 //Killing Floor Turbo W_FlareRevolver_Proj
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class W_FlareRevolver_Proj extends FlareRevolverProjectile;
+class W_FlareRevolver_Proj extends WeaponFlareRevolverProjectile;
 
 function TakeDamage( int Damage, Pawn InstigatedBy, Vector Hitlocation, Vector Momentum, class<DamageType> damageType, optional int HitIndex)
 {

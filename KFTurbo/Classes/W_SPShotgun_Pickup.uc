@@ -1,19 +1,7 @@
 //Killing Floor Turbo W_SPShotgun_Pickup
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class W_SPShotgun_Pickup extends SPShotgunPickup;
-
-function Destroyed()
-{
-	if (Inventory != None)
-	{
-		Super.Destroyed();
-	}
-	else
-	{
-		Super(WeaponPickup).Destroyed();
-	}
-}
+class W_SPShotgun_Pickup extends WeaponSPShotgunPickup;
 
 defaultproperties
 {

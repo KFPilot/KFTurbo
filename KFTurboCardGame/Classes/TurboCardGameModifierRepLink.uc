@@ -351,7 +351,7 @@ function GetBodyArmorDamageModifier(KFPlayerReplicationInfo KFPRI, out float Mul
     Multiplier *= BodyArmorDamageModifier;
 }
 
-function OnShotgunFire(KFShotgunFire ShotgunFire)
+function OnShotgunFire(CoreShotgunFire ShotgunFire)
 {
     Super.OnShotgunFire(ShotgunFire);
 

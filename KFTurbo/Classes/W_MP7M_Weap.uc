@@ -1,7 +1,7 @@
 //Killing Floor Turbo W_MP7M_Weap
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class W_MP7M_Weap extends MP7MMedicGun;
+class W_MP7M_Weap extends WeaponMP7MMedicGun;
 
 var float HealAmmoAmount;
 

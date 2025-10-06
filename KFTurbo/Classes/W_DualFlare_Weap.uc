@@ -1,7 +1,7 @@
 //Killing Floor Turbo W_DualFlare_Weap
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class W_DualFlare_Weap extends DualFlareRevolver;
+class W_DualFlare_Weap extends WeaponDualFlareRevolver;
 
 function AddReloadedAmmo()
 {

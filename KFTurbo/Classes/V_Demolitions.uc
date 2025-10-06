@@ -87,18 +87,14 @@ static function float AddExtraAmmoFor(KFPlayerReplicationInfo KFPRI, Class<Ammun
 	return Multiplier;
 }
 
-static function int AddDamage(KFPlayerReplicationInfo KFPRI, KFMonster Injured, KFPawn DamageTaker, int InDamage, class<DamageType> DmgType)
+static function int AddDamage(KFPlayerReplicationInfo KFPRI, KFMonster Injured, KFPawn DamageTaker, int InDamage, class<DamageType> DamageType)
 {
-	if (class<DamTypeM203Grenade>(DmgType) != none)
+	if (class<DamageTypeM203Grenade>(DamageType) != none)
 	{
 		return float(InDamage) * LerpStat(KFPRI, 1.f, 1.9f);
 	}
 
-	if (class<DamTypeFrag>(DmgType) != none || class<DamTypePipeBomb>(DmgType) != none ||
-		class<DamTypeM79Grenade>(DmgType) != none || class<DamTypeM32Grenade>(DmgType) != none
-		|| class<DamTypeM203Grenade>(DmgType) != none || class<DamTypeRocketImpact>(DmgType) != none
-		|| class<DamTypeSPGrenade>(DmgType) != none || class<DamTypeSealSquealExplosion>(DmgType) != none
-		|| class<DamTypeSeekerSixRocket>(DmgType) != none)
+	if (class<KFWeaponDamageType>(DamageType) != None && class<KFWeaponDamageType>(DamageType).default.bIsExplosive)
 	{
 		return float(InDamage) * LerpStat(KFPRI, 1.05f, 1.6f);
 	}

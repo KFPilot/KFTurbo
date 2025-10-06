@@ -1,7 +1,7 @@
 //Killing Floor Turbo W_FlameThrower_Fire
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class W_Flamethrower_Fire extends FlameBurstFire;
+class W_Flamethrower_Fire extends WeaponFlamethrowerBurstFire;
 
 var int FireEffectCount;
 var int ProjectileCounter;

@@ -1,7 +1,7 @@
 //Killing Floor Turbo W_FlameThrower_Weap
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class W_FlameThrower_Weap extends FlameThrower;
+class W_FlameThrower_Weap extends WeaponFlameThrower;
 
 function AddReloadedAmmo()
 {

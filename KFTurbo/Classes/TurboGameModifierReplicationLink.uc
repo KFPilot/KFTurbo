@@ -50,8 +50,8 @@ function float GetHealPotencyMultiplier(KFPlayerReplicationInfo KFPRI) { if (Nex
 function float GetWeldSpeedModifier(KFPlayerReplicationInfo KFPRI) { if (NextGameModifierLink != None) { return NextGameModifierLink.GetWeldSpeedModifier(KFPRI); } return 1.f; }
 function GetBodyArmorDamageModifier(KFPlayerReplicationInfo KFPRI, out float Multiplier) { if (NextGameModifierLink != None) { NextGameModifierLink.GetBodyArmorDamageModifier(KFPRI, Multiplier); } }
 function OnWeaponFire(WeaponFire WeaponFire) { if (NextGameModifierLink != None) { NextGameModifierLink.OnWeaponFire(WeaponFire); } }
-function OnShotgunFire(KFShotgunFire ShotgunFire) { if (NextGameModifierLink != None) { NextGameModifierLink.OnShotgunFire(ShotgunFire); } }
-function OnMeleeFire(KFMeleeFire MeleeFire) { if (NextGameModifierLink != None) { NextGameModifierLink.OnMeleeFire(MeleeFire); } }
+function OnShotgunFire(CoreShotgunFire ShotgunFire) { if (NextGameModifierLink != None) { NextGameModifierLink.OnShotgunFire(ShotgunFire); } }
+function OnMeleeFire(CoreMeleeWeaponFire MeleeFire) { if (NextGameModifierLink != None) { NextGameModifierLink.OnMeleeFire(MeleeFire); } }
 function OnMedicDartFire(WeaponFire MeleeFire) { if (NextGameModifierLink != None) { NextGameModifierLink.OnMedicDartFire(MeleeFire); } }
 
 //Make NetUpdateTime want to update now.

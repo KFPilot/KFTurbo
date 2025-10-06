@@ -1,7 +1,7 @@
 //Killing Floor Turbo W_Shotgun_Fire
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class W_Shotgun_Fire extends ShotgunFire;
+class W_Shotgun_Fire extends WeaponShotgunFire;
 
 var int FireEffectCount;
 var array<W_BaseShotgunBullet.HitRegisterEntry> HitRegistryList;

@@ -1,7 +1,7 @@
 //Killing Floor Turbo W_M79_Weap
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class W_M79_Weap extends M79GrenadeLauncher;
+class W_M79_Weap extends WeaponM79GrenadeLauncher;
 
 simulated event StopFire(int Mode)
 {

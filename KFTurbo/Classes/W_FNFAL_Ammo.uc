@@ -1,7 +1,7 @@
 //Killing Floor Turbo W_FNFAL_Ammo
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class W_FNFAL_Ammo extends KFAmmunition;
+class W_FNFAL_Ammo extends CoreAmmunition;
 
 defaultproperties
 {

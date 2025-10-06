@@ -3,7 +3,7 @@
 //For more information see https://github.com/KFPilot/KFTurbo.
 class MeleeHelper extends Object;
 
-static final function bool PerformMeleeSwing(KFWeapon Weapon, KFMeleeFire MeleeFire, optional bool bSkipHitBroadcast)
+static final function bool PerformMeleeSwing(KFWeapon Weapon, CoreMeleeWeaponFire MeleeFire, optional bool bSkipHitBroadcast)
 {
 	local Actor HitActor;
 	local vector StartTrace, EndTrace, HitLocation, HitNormal;

@@ -1,7 +1,7 @@
 //Killing Floor Turbo W_DualMK23_Fire
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class W_DualMK23_Fire extends DualMK23Fire;
+class W_DualMK23_Fire extends WeaponDualMK23Fire;
 
 function DoFireEffect()
 {

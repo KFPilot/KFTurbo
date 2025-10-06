@@ -1,7 +1,7 @@
 //Killing Floor Turbo W_MP5M_AmmoPickup
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class W_MP5M_AmmoPickup extends MP5MAmmoPickup;
+class W_MP5M_AmmoPickup extends WeaponMP5MAmmoPickup;
 
 defaultproperties
 {

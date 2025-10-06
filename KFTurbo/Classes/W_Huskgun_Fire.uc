@@ -1,7 +1,7 @@
 //Killing Floor Turbo W_Huskgun_Fire
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class W_Huskgun_Fire extends HuskGunFire;
+class W_Huskgun_Fire extends WeaponHuskGunFire;
 
 var float MaxDamageMultiplier;
 
@@ -36,9 +36,9 @@ simulated function float GetScaledMaxChargeTime()
 function Timer()
 {
     local float ChargeScale;
-	local HuskGunAttachment WA;
+	local WeaponHuskGunAttachment WA;
 
-	WA = HuskGunAttachment(Weapon.ThirdPersonActor);
+	WA = WeaponHuskGunAttachment(Weapon.ThirdPersonActor);
 
     if (HoldTime > 0.0 && !bNowWaiting)
     {
@@ -104,13 +104,13 @@ function PostSpawnProjectile(Projectile P)
 {
     local float ChargePercentage;
 
-    Super(KFShotgunFire).PostSpawnProjectile(P);
+    Super(CoreShotgunFire).PostSpawnProjectile(P);
 
     ChargePercentage = FClamp(HoldTime / GetScaledMaxChargeTime(), 0.f, 1.f);
 
-    HuskGunProjectile(p).ImpactDamage *= Lerp(ChargePercentage, 1.f, MaxDamageMultiplier);
-    HuskGunProjectile(p).Damage *= (1.0 + ChargePercentage);  // Up to double damage.
-    HuskGunProjectile(p).DamageRadius *= (1.0 + (ChargePercentage * 2.0));  // Up to 3x the damage radius.
+    WeaponHuskGunProjectile(P).ImpactDamage *= Lerp(ChargePercentage, 1.f, MaxDamageMultiplier);
+    WeaponHuskGunProjectile(P).Damage *= (1.0 + ChargePercentage);  // Up to double damage.
+    WeaponHuskGunProjectile(P).DamageRadius *= (1.0 + (ChargePercentage * 2.0));  // Up to 3x the damage radius.
 
 }
 

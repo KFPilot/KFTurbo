@@ -1,7 +1,7 @@
 //Killing Floor Turbo W_BoomStick_Weap
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class W_BoomStick_Weap extends BoomStick;
+class W_BoomStick_Weap extends WeaponBoomStick;
 
 simulated function SetPendingReload()
 {

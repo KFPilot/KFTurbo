@@ -1,7 +1,7 @@
 //Killing Floor Turbo W_HuskGun_Proj_Medium
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class W_HuskGun_Proj_Medium extends KFMod.HuskGunProjectile
+class W_HuskGun_Proj_Medium extends WeaponHuskGunProjectile
     dependson(TurboPlayerEventHandler);
 
 function TakeDamage( int Damage, Pawn InstigatedBy, vector Hitlocation, vector Momentum, class<DamageType> damageType, optional int HitIndex)

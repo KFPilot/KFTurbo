@@ -72,6 +72,7 @@ simulated function bool IsDoneTicking(CoreMonster Monster)
 
 function ProcessBurnDamage(CoreMonster Monster, out float Damage, Pawn InstigatedBy, Vector HitLocation, Vector Momentum, class<CoreWeaponDamageType> WeaponDamageType, bool bIsHeadshot, optional int HitIndex)
 {
+	Super.ProcessBurnDamage(Monster, Damage, InstigatedBy, HitLocation, Momentum, WeaponDamageType, bIsHeadshot, HitIndex);
 	UpdateBurnData(WeaponDamageType);
 }
 
@@ -136,6 +137,11 @@ simulated function MeleeDamageTarget(CoreMonster Monster, out float Damage)
 		Damage *= BurnMonsterDamageModifier;
 	}
 }
+
+
+simulated function SetBurningBehavior(CoreMonster Monster) {}
+
+simulated function UnSetBurningBehavior(CoreMonster Monster) {}
 
 defaultproperties
 {

@@ -1,7 +1,7 @@
 //Killing Floor Turbo W_M4203_Proj
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class W_M4203_Proj extends M203GrenadeProjectile;
+class W_M4203_Proj extends WeaponM203GrenadeProjectile;
 
 function TakeDamage(int Damage, Pawn InstigatedBy, Vector Hitlocation, Vector Momentum, class<DamageType> DamageType, optional int HitIndex)
 {

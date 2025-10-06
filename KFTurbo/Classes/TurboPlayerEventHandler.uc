@@ -12,7 +12,7 @@ struct MonsterHitData
 };
 
 delegate OnPlayerFire(TurboPlayerController Player, WeaponFire FireMode);
-delegate OnPlayerMeleeFire(TurboPlayerController Player, KFMeleeFire FireMode);
+delegate OnPlayerMeleeFire(TurboPlayerController Player, CoreMeleeWeaponFire FireMode);
 
 delegate OnPlayerFireHit(TurboPlayerController Player, WeaponFire FireMode, KFMonster HitMonster, class<KFMonster> MonsterClass, bool bHeadshot, int Damage);
 
@@ -176,7 +176,7 @@ static final function BroadcastPlayerFireHit(Controller Player, WeaponFire FireM
     }
 }
 
-static final function BroadcastPlayerMeleeFire(Controller Player, KFMeleeFire FireMode)
+static final function BroadcastPlayerMeleeFire(Controller Player, CoreMeleeWeaponFire FireMode)
 {
     local TurboPlayerController TurboPlayerController;
     local KFTurboGameType GameType;

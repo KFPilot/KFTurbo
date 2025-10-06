@@ -1,7 +1,7 @@
 //Killing Floor Turbo W_MKb42_Fire
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class W_MKb42_Fire extends MKb42Fire;
+class W_MKb42_Fire extends WeaponMKb42Fire;
 
 function DoFireEffect()
 {

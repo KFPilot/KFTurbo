@@ -1,7 +1,7 @@
 //Killing Floor Turbo W_Chainsaw_Fire_Alt
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class W_Chainsaw_Fire_Alt extends KFMod.ChainsawAltFire;
+class W_Chainsaw_Fire_Alt extends WeaponChainsawAltFire;
 
 var() int TotalHitCount;
 var int CurrentHitCount;

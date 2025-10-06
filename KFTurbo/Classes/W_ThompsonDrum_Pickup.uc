@@ -1,7 +1,7 @@
 //Killing Floor Turbo W_ThompsonDrum_Pickup
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class W_ThompsonDrum_Pickup extends ThompsonDrumPickup;
+class W_ThompsonDrum_Pickup extends WeaponThompsonDrumPickup;
 
 function Destroyed()
 {

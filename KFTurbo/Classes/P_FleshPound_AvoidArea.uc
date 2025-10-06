@@ -10,7 +10,7 @@ function bool RelevantTo(Pawn P)
 		return false;
 	}
 
-	if (ZombieFleshpoundBase(P) != None)
+	if (MonsterFleshpoundBase(P) != None)
 	{
 		return false;
 	}

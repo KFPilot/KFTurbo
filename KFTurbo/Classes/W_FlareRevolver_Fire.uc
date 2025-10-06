@@ -1,7 +1,7 @@
 //Killing Floor Turbo W_FlareRevolver_Fire
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class W_FlareRevolver_Fire extends FlareRevolverFire;
+class W_FlareRevolver_Fire extends WeaponFlareRevolverFire;
 
 function DoFireEffect()
 {

@@ -41,7 +41,7 @@ Arguments = ArgumentParser.parse_args()
 BuildType = EBuildType.ALL
 
 #Files KFTurbo compiles.
-TurboFiles = ["CommonCore.u", "CommonCoreGame.u", "CommonCoreGameTest.u", #Common Core packages.
+TurboFiles = ["CommonCore.u", "CommonCoreGame.u", "CommonCoreGame.u", #Common Core packages.
             "KFTurboMapVote.u", "KFTurboEmbeddable.u", #Turbo-agnostic packages.
             "KFTurboGUI.u", "KFTurboFonts.u", "KFTurboFontsJP.u", "KFTurboFontsCY.u", #Asset packages.
             "KFTurbo.u", "KFTurboServer.u", "KFTurboCommon.u", #Turbo Core packages.
@@ -59,7 +59,7 @@ def UpdateBuildType():
 
     if Arguments.onlyturbo:
         BuildType = EBuildType.TURBO
-        TurboFiles = [ "CommonCore.u", "CommonCoreGame.u", "CommonCoreGameTest.u", "KFTurbo.u", "KFTurboServer.u", "KFTurboCommon.u" ]
+        TurboFiles = [ "CommonCore.u", "CommonCoreGame.u", "CommonCoreGame.u", "KFTurbo.u", "KFTurboServer.u", "KFTurboCommon.u" ]
         TurboStagingFiles = [ "KFTurbo.ucl", "KFTurboServer.ucl" ]
     elif Arguments.onlyholdout:
         BuildType = EBuildType.HOLDOUT
@@ -106,6 +106,7 @@ if Arguments.extrastage != None:
 StepStrings = ["font "]
 WarningStrings = ["warning", "unused local"]
 ErrorStrings = ["error", "unresolved", "failed", "failure", "unknown property", "bad cast", "redundant data", "critical:", "not found", "name mismatch"]
+StringsThatNeedPreviousLine = ["unresolved"]
 
 def PrintTask(String):
     print("\033[48;5;7m  \033[0m " + String)
@@ -150,7 +151,13 @@ def ProcessUCCMake(Process):
         Line = Line.rstrip()
 
         if VerboseUCC:
-            PrintStep(Line)
+            if (Line.startswith("-----------------------")):
+                PrintTask(Line)
+            elif (any (FlagString in Line.lower() for FlagString in ErrorStrings)):
+                PrintError(Line)
+                FoundAnyErrors = True
+            else:
+                PrintStep(Line)
             continue
         
         if Line.startswith("Compile"):
@@ -164,7 +171,11 @@ def ProcessUCCMake(Process):
             ModuleName = PreviousLine.replace("-", "").split(' ')[0]
             PrintStep(f"Compiling {ModuleName}...")
         elif any (FlagString in Line.lower() for FlagString in ErrorStrings):
-            PrintError("  " + Line)
+            if (any (FlagString in Line.lower()) for FlagString in StringsThatNeedPreviousLine):
+                PrintError("  " + PreviousLine)
+                PrintError("     " + Line)
+            else:
+                PrintError("  " + Line)
             FoundAnyErrors = True
         elif any (FlagString in Line.lower() for FlagString in WarningStrings):
             PrintWarning("  " + Line)

@@ -1,7 +1,7 @@
 //Killing Floor Turbo W_M4203_Pickup
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class W_M4203_Pickup extends M4203Pickup;
+class W_M4203_Pickup extends WeaponM4203Pickup;
 
 var W_M4203_Weap.ELoadState SecondaryLoadState;
 

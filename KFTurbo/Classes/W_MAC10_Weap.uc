@@ -1,7 +1,7 @@
 //Killing Floor Turbo W_MAC10_Weap
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class W_MAC10_Weap extends MAC10MP;
+class W_MAC10_Weap extends WeaponMAC10MP;
 
 function AddReloadedAmmo()
 {
