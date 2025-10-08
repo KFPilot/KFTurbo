@@ -131,7 +131,7 @@ function DistributeCash(TurboPlayerController ExitingPlayer)
 {
 	local int Index;
 	local float Score;
-	local array<TurboPlayerController> PlayerList;
+	local array<CorePlayerController> PlayerList;
 
 	PlayerList = class'TurboGameplayHelper'.static.GetPlayerControllerList(Level);
     

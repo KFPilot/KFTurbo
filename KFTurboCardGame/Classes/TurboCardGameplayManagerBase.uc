@@ -346,8 +346,8 @@ function MultiplyPlayerCash(float Multiplier)
 
 function MarkPlayerForDeath()
 {
-    local TurboHumanPawn HumanPawn;
-    local array<TurboHumanPawn> HumanPawnList;
+    local CoreHumanPawn HumanPawn;
+    local array<CoreHumanPawn> HumanPawnList;
 
     HumanPawnList = class'TurboGameplayHelper'.static.GetPlayerPawnList(Level);
 

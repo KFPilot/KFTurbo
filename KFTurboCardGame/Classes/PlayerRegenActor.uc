@@ -6,13 +6,12 @@ class PlayerRegenActor extends Engine.Info;
 var float RegenInterval;
 var int RegenAmount;
 
-struct BleedEntry
+struct HealEntry
 {
     var KFHumanPawn Pawn;
-    var float NextBleedTime;
-    var int BleedCount;
+    var float NextHealTime;
 };
-var array<BleedEntry> BleedList;
+var array<HealEntry> HealList;
 
 function PostBeginPlay()
 {
@@ -33,7 +32,7 @@ function SetRegenAmount(int NewRegenAmount)
 
 function Timer()
 {
-    local array<TurboHumanPawn> PawnList;
+    local array<CoreHumanPawn> PawnList;
     local int Index;
 
     PawnList = class'TurboGameplayHelper'.static.GetPlayerPawnList(Level);

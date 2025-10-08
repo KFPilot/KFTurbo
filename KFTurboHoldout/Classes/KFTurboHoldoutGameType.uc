@@ -168,7 +168,7 @@ State MatchInProgress
 
 function PerformPendingVeterancyChanges()
 {
-    local array<TurboPlayerController> PlayerList;
+    local array<CorePlayerController> PlayerList;
     local int Index;
     local TurboPlayerReplicationInfo TPRI;
     PlayerList = class'TurboGameplayHelper'.static.GetPlayerControllerList(Level);
@@ -194,9 +194,9 @@ function PerformPendingVeterancyChanges()
 
 function RespawnPlayers()
 {
-    local array<TurboPlayerController> PlayerList;
+    local array<CorePlayerController> PlayerList;
     local int Index;
-    local TurboPlayerController PlayerController;
+    local CorePlayerController PlayerController;
     local TurboPlayerReplicationInfo TPRI;
 
     PlayerList = class'TurboGameplayHelper'.static.GetPlayerControllerList(Level);

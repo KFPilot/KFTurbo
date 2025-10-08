@@ -8,12 +8,12 @@ class TurboStatsGameRules extends TurboGameRules
 
 //Used during spin up state.
 var bool bGeneratingStatCollectors;
-var array<TurboHumanPawn> PawnList;
+var array<CoreHumanPawn> PawnList;
 var int PawnListIndex;
 
 //Used during spin down state.
 var bool bReplicatingStatCollectors;
-var array<TurboPlayerController> ControllerList;
+var array<CorePlayerController> ControllerList;
 var int ControllerListIndex;
 
 var KFTurboGameType TurboGameType;
@@ -365,7 +365,7 @@ Begin:
     SendEndGameStats();
 }
 
-function CreateStatCollector(TurboHumanPawn Pawn)
+function CreateStatCollector(CoreHumanPawn Pawn)
 {
     if (Pawn == None || Pawn.Health <= 0 || Pawn.PlayerReplicationInfo == None || Pawn.PlayerReplicationInfo.bOnlySpectator || Pawn.PlayerReplicationInfo.bBot)
     {
@@ -375,7 +375,7 @@ function CreateStatCollector(TurboHumanPawn Pawn)
     Spawn(WaveStatCollectorClass, Pawn.PlayerReplicationInfo);
 }
 
-function ReplicateStatCollector(TurboPlayerController Controller)
+function ReplicateStatCollector(CorePlayerController Controller)
 {
     local TurboPlayerStatCollectorBase StatsCollector;
     StatsCollector = class'TurboWavePlayerStatCollector'.static.FindStats(TurboPlayerReplicationInfo(Controller.PlayerReplicationInfo));

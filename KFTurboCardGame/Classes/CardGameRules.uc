@@ -1140,7 +1140,7 @@ function DestorySyringe(Pawn Other)
 
 function UpdateCanThrowWeapons()
 {
-    local array<TurboHumanPawn> PawnList;
+    local array<CoreHumanPawn> PawnList;
     local Inventory Inv;
     local KFWeapon Weapon;
     local int Index;

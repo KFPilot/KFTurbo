@@ -212,8 +212,8 @@ static final function string GeneratePlayerJSON(GameInfo GameInfo)
 {
     local string Data;
     local int Index;
-    local array<TurboPlayerController> PlayerList;
-    local TurboPlayerController Player;
+    local array<CorePlayerController> PlayerList;
+    local CorePlayerController Player;
 	PlayerList = class'TurboGameplayHelper'.static.GetPlayerControllerList(GameInfo.Level, true);
 
     for (Index = 0; Index < PlayerList.Length; Index++)

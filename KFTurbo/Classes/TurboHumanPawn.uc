@@ -1,7 +1,7 @@
 //Killing Floor Turbo TurboHumanPawn
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class TurboHumanPawn extends SRHumanPawn;
+class TurboHumanPawn extends CoreHumanPawn;
 
 
 var bool bDebugServerBuyWeapon;

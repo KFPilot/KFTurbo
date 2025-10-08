@@ -182,7 +182,7 @@ State MatchInProgress
 
 function FillPlayerAmmo()
 {
-	local array<TurboHumanPawn> PlayerList;
+	local array<CoreHumanPawn> PlayerList;
 	local int Index;
 
 	PlayerList = class'TurboGameplayHelper'.static.GetPlayerPawnList(Level);
@@ -192,7 +192,7 @@ function FillPlayerAmmo()
     }
 }
 
-final function FillUpAmmo(TurboHumanPawn HumanPawn)
+final function FillUpAmmo(CoreHumanPawn HumanPawn)
 {
 	local Inventory Inv;
 	local KFWeapon Weapon;

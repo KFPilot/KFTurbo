@@ -212,8 +212,8 @@ function RandomlyRageFleshpound()
 
 function RandomlySetOffNearbyPipebomb()
 {
-    local array<TurboHumanPawn> HumanPawnList;
-    local TurboHumanPawn HumanPawn;
+    local array<CoreHumanPawn> HumanPawnList;
+    local CoreHumanPawn HumanPawn;
     local PipeBombProjectile Pipebomb;
     HumanPawnList = class'TurboGameplayHelper'.static.GetPlayerPawnList(Level);
 
@@ -244,8 +244,8 @@ function RandomlySetOffNearbyPipebomb()
 
 function ForceAReload()
 {
-    local TurboHumanPawn HumanPawn;
-    local array<TurboHumanPawn> HumanPawnList;
+    local CoreHumanPawn HumanPawn;
+    local array<CoreHumanPawn> HumanPawnList;
     
     HumanPawnList = class'TurboGameplayHelper'.static.GetPlayerPawnList(Level);
 
@@ -266,8 +266,8 @@ function ForceAReload()
 
 function ForceDropCash()
 {
-    local TurboHumanPawn HumanPawn;
-    local array<TurboHumanPawn> HumanPawnList;
+    local CoreHumanPawn HumanPawn;
+    local array<CoreHumanPawn> HumanPawnList;
     HumanPawnList = class'TurboGameplayHelper'.static.GetPlayerPawnList(Level);
 
     if (HumanPawnList.Length == 0)

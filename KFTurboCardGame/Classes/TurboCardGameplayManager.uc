@@ -466,7 +466,7 @@ function MarkedForDeathFlagChanged(CardFlag Flag, bool bIsEnabled)
 
 function LockPerkSelectionFlagChanged(CardFlag Flag, bool bIsEnabled)
 {
-    local array<TurboPlayerController> PlayerList;
+    local array<CorePlayerController> PlayerList;
     local int Index;
     PlayerList = class'TurboGameplayHelper'.static.GetPlayerControllerList(Level);
     
@@ -474,7 +474,7 @@ function LockPerkSelectionFlagChanged(CardFlag Flag, bool bIsEnabled)
     {
         if (!bIsEnabled)
         {
-            PlayerList[Index].RemovePerkChangeLock(class'LockedInTurboLocalMessage');
+            TurboPlayerController(PlayerList[Index]).RemovePerkChangeLock(class'LockedInTurboLocalMessage');
             continue;
         }
 
@@ -483,7 +483,7 @@ function LockPerkSelectionFlagChanged(CardFlag Flag, bool bIsEnabled)
             continue;
         }
 
-        PlayerList[Index].AddPerkChangeLock(class'LockedInTurboLocalMessage');
+        TurboPlayerController(PlayerList[Index]).AddPerkChangeLock(class'LockedInTurboLocalMessage');
     }
 }
 
@@ -612,7 +612,7 @@ function CheatDeathFlagChanged(CardFlag Flag, bool bIsEnabled)
 {
     local int Index;
     local TurboPlayerCardCustomInfo PlayerCardInfo;
-    local array<TurboPlayerController> PlayerList;
+    local array<CorePlayerController> PlayerList;
     PlayerList = class'TurboGameplayHelper'.static.GetPlayerControllerList(Level, true);
 
     CardGameRules.bCheatDeathEnabled = bIsEnabled;
@@ -643,7 +643,7 @@ function RussianRouletteFlagChanged(CardFlag Flag, bool bIsEnabled)
 //INVENTORY
 function NoSyringeFlagChanged(CardFlag Flag, bool bIsEnabled)
 {
-    local array<TurboHumanPawn> HumanPawnList;
+    local array<CoreHumanPawn> HumanPawnList;
     local int Index;
 
     CardGameRules.bDisableSyringe = bIsEnabled;
@@ -1115,8 +1115,8 @@ function PlayerMovementFrictionModifierChanged(CardModifierStack ModifiedStack, 
 
 function PlayerJumpModifierChanged(CardModifierStack ModifiedStack, float Modifier)
 {
-    local array<TurboHumanPawn> HumanPawnList;
-    local TurboHumanPawn TurboHumanPawn;
+    local array<CoreHumanPawn> HumanPawnList;
+    local CoreHumanPawn CoreHumanPawn;
     local int Index;
 
     CardGameRules.PlayerJumpZMultiplier = Modifier;
@@ -1124,16 +1124,16 @@ function PlayerJumpModifierChanged(CardModifierStack ModifiedStack, float Modifi
     HumanPawnList = class'TurboGameplayHelper'.static.GetPlayerPawnList(Level);
     for (Index = HumanPawnList.Length - 1; Index >= 0; Index--)
     {
-        TurboHumanPawn = HumanPawnList[Index];
-        TurboHumanPawn.JumpZMultiplier = Modifier;
-        TurboHumanPawn.MaxFallSpeed = FMax(TurboHumanPawn.default.MaxFallSpeed * TurboHumanPawn.GetJumpZModifier(), TurboHumanPawn.default.MaxFallSpeed);
-        TurboHumanPawn.JumpZ = TurboHumanPawn.default.JumpZ * TurboHumanPawn.GetJumpZModifier();
+        CoreHumanPawn = HumanPawnList[Index];
+        TurboHumanPawn(CoreHumanPawn).JumpZMultiplier = Modifier;
+        CoreHumanPawn.MaxFallSpeed = FMax(CoreHumanPawn.default.MaxFallSpeed * CoreHumanPawn.GetJumpZModifier(), CoreHumanPawn.default.MaxFallSpeed);
+        CoreHumanPawn.JumpZ = CoreHumanPawn.default.JumpZ * CoreHumanPawn.GetJumpZModifier();
     }
 }
 
 function PlayerAirControlModifierChanged(CardModifierStack ModifiedStack, float Modifier)
 {
-    local array<TurboHumanPawn> HumanPawnList;
+    local array<CoreHumanPawn> HumanPawnList;
     local int Index;
 
     CardGameRules.PlayerAirControlMultiplier = Modifier;

@@ -26,7 +26,7 @@ simulated function PostBeginPlay()
 function Timer()
 {
 	local int Index;
-	local array<TurboPlayerController> PlayerList;
+	local array<CorePlayerController> PlayerList;
 	local WeaponPickup Pickup;
 
 	if (WeaponPickupList.Length == 0)
