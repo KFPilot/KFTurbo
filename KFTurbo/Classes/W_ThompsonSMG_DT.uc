@@ -25,9 +25,12 @@ defaultproperties
      WeaponClass=Class'KFTurbo.W_ThompsonSMG_Weap'
      DeathString="%k killed %o (Thompson SMG)."
      HeadShotDamageMult=1.100000
+     BurnStrength=2.f
      
      bRagdollBullet=True
      KDamageImpulse=5500.000000
      KDeathVel=175.000000
      KDeathUpKick=15.000000
+     
+     OriginalDamageType=class'KFMod.DamTypeThompson'
 }

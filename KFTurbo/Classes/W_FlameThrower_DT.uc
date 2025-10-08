@@ -6,4 +6,5 @@ class W_FlameThrower_DT extends DamageTypeBurned;
 defaultproperties
 {
 	WeaponClass=class'W_FlameThrower_Weap';
+	BurnStrength=5.f
 }

@@ -119,6 +119,8 @@ static function float AddExtraAmmoFor(KFPlayerReplicationInfo KFPRI, Class<Ammun
 
 static function int AddDamage(KFPlayerReplicationInfo KFPRI, KFMonster Injured, KFPawn DamageTaker, int InDamage, class<DamageType> DamageType)
 {
+	local class<CoreWeaponDamageType> WeaponDamageType;
+
 	switch (DamageType)
 	{
 	case class'W_MAC10_DT' :

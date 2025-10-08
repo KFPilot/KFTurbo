@@ -6,6 +6,7 @@ class W_FlareRevolver_Impact_DT extends DamageTypeFlareProjectileImpact
 
 defaultproperties
 {
-     HeadShotDamageMult=1.500000
-     WeaponClass=Class'KFTurbo.W_FlareRevolver_Weap'
+    HeadShotDamageMult=1.500000
+    WeaponClass=Class'KFTurbo.W_FlareRevolver_Weap'
+    BurnStrength=4.f
 }

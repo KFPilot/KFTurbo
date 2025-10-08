@@ -6,4 +6,5 @@ class W_Trenchgun_DT extends DamageTypeTrenchgun;
 defaultproperties
 {
     HeadShotDamageMult=1.300000
+    BurnStrength=8.f
 }
