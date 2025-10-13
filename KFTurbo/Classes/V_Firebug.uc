@@ -120,6 +120,7 @@ static function float AddExtraAmmoFor(KFPlayerReplicationInfo KFPRI, Class<Ammun
 static function int AddDamage(KFPlayerReplicationInfo KFPRI, KFMonster Injured, KFPawn DamageTaker, int InDamage, class<DamageType> DamageType)
 {
 	local class<CoreWeaponDamageType> WeaponDamageType;
+	WeaponDamageType = class<CoreWeaponDamageType>(DamageType);
 
 	switch (DamageType)
 	{
@@ -129,7 +130,7 @@ static function int AddDamage(KFPlayerReplicationInfo KFPRI, KFMonster Injured, 
 		return float(InDamage) * LerpStat(KFPRI, 1.f, 1.15);
 	}
 
-	if (class<CoreWeaponDamageTypeBurned>(DamageType) != none || class<DamageTypeFlamethrower>(DamageType) != none || class<DamageTypeHuskGunProjectileImpact>(DamageType) != none || class<W_FlareRevolver_Impact_DT>(DamageType) != none)
+	if (WeaponDamageType != None && (WeaponDamageType.default.bDealBurningDamage || WeaponDamageType.default.bIsFlameDamage || class<DamageTypeHuskGunProjectileImpact>(DamageType) != None || class<W_FlareRevolver_Impact_DT>(DamageType) != None))
 	{
 		return float(InDamage) * LerpStat(KFPRI, 1.05f, 1.6f);
 	}
