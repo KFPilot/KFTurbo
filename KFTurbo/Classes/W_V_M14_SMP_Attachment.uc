@@ -1,7 +1,7 @@
 //Killing Floor Turbo W_V_M14_SMP_Attachment
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class W_V_M14_SMP_Attachment extends M14EBRAttachment;
+class W_V_M14_SMP_Attachment extends WeaponM14EBRAttachment;
 
 defaultproperties
 {

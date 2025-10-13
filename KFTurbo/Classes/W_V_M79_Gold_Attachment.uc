@@ -1,7 +1,7 @@
 //Killing Floor Turbo W_V_M79_Gold_Attachment
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class W_V_M79_Gold_Attachment extends M79Attachment;
+class W_V_M79_Gold_Attachment extends WeaponM79Attachment;
 
 defaultproperties
 {

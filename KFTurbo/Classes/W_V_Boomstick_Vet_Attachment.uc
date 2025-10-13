@@ -1,7 +1,7 @@
 //Killing Floor Turbo W_V_Boomstick_Vet_Attachment
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class W_V_Boomstick_Vet_Attachment extends BoomStickAttachment;
+class W_V_Boomstick_Vet_Attachment extends WeaponBoomStickAttachment;
 
 var byte WeaponTier, PreviousTier;
 var array<string> LoadedStateMaterialRefList;

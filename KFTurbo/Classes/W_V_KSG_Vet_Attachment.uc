@@ -1,7 +1,7 @@
 //Killing Floor Turbo W_V_KSG_Vet_Attachment
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class W_V_KSG_Vet_Attachment extends KSGAttachment;
+class W_V_KSG_Vet_Attachment extends WeaponKSGAttachment;
 
 var byte WeaponTier, PreviousTier;
 var array<string> LoadedStateMaterialRefList;

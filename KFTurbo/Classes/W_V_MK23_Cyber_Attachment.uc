@@ -1,7 +1,7 @@
 //Killing Floor Turbo W_V_MK23_Cyber_Attachment
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class W_V_MK23_Cyber_Attachment extends MK23Attachment;
+class W_V_MK23_Cyber_Attachment extends WeaponMK23Attachment;
 
 var byte WeaponState, PreviousWeaponState;
 var array<Material> LoadedStateMaterialList;

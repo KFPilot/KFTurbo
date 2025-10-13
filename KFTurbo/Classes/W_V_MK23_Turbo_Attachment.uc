@@ -1,7 +1,7 @@
 //Killing Floor Turbo W_V_MK23_Turbo_Attachment
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class W_V_MK23_Turbo_Attachment extends MK23Attachment;
+class W_V_MK23_Turbo_Attachment extends WeaponMK23Attachment;
 
 function vector GetCorrectedHitNormal()
 {
