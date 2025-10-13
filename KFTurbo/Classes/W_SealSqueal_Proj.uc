@@ -147,14 +147,9 @@ simulated function StickToPawn(Pawn HitPawn, Vector HitLocation, Vector HitDirec
 
 	KFM = KFMonster(HitPawn);
 
-	if(KFM != none && Role == ROLE_Authority)
+	if (KFM != none && Role == ROLE_Authority)
 	{
-		if( KFM.bHarpoonToBodyStuns || KFM.bHarpoonToHeadStuns && bAttachedToHead )
-		{
-			KFM.bHarpoonStunned = true;
-		}
-
-		KFM.NumHarpoonsAttached++;
+        OnAttachedToMonster(CoreMonster(HitPawn));
 		
 		class'TurboGameplayEventHandler'.static.BroadcastPawnHarpooned(Instigator, KFM, KFM.NumHarpoonsAttached);
 	}
