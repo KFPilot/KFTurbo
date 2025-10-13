@@ -19,17 +19,22 @@ function bool CanPounce()
         return false;
     }
 
+	if (!DoesAfflictionAllowAttack(Controller.Target, false))
+	{
+		return false;
+	}
+
     return true;
 }
 
 function bool DoPounce()
 {
-    if ( !CanPounce() )
+    if (!CanPounce())
     {
         return false;
     }
 
-    if ( !IsPouncePathClear() )
+    if (!IsPouncePathClear())
     {
         return false;
     }
@@ -44,8 +49,7 @@ function bool IsPouncePathClear()
     local Actor Target, HitActor;
     Target = Controller.Target;
 
-    HitActor = Trace(HitLocation, HitNormal, Target.Location,Location,true,vect(3,3,3));
-
+    HitActor = Trace(HitLocation, HitNormal, Target.Location, Location, true, vect(3,3,3));
     return HitActor == Target || HitActor.Base == Target || HitActor == None;
 }
 
@@ -77,7 +81,7 @@ State ZombieDying
 ignores DoPounce;
 }
 
-State RegularMoving
+state RegularMoving
 {
 
 }
@@ -97,9 +101,9 @@ ignores HitWall, RangedAttack, PlayDirectionalHit;
 
     function SetBurningBehavior()
     {
-        if (bHarpoonStunned)
+        if (IsHarpoonStunned())
         {
-            GotoState('RegularMoving');
+            GotoState('');
         }
 
         Global.SetBurningBehavior();
@@ -129,7 +133,7 @@ ignores HitWall, RangedAttack, PlayDirectionalHit;
 
         if (!CanPounce() || TimeSpentInWindup > (PounceWindupDuration * 1.1f))
         {
-            GotoState('RegularMoving');
+            GotoState('');
         }
 
         Global.Tick(DeltaTime);
@@ -142,7 +146,7 @@ ignores HitWall, RangedAttack, PlayDirectionalHit;
 
     function PerformPounce()
     {
-        GotoState('RegularMoving');
+        GotoState('');
         
         if ( !CanPounce() )
         {
