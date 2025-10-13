@@ -31,6 +31,39 @@ function bool MeleeDamageTarget(int HitDamage, vector PushDirection)
     Super.MeleeDamageTarget(HitDamage, PushDirection);
 }
 
+function Bump(actor Other)
+{
+    local KFHumanPawn HitPawn;
+    local float Damage;
+    if (!bPouncing)
+    {
+        return;
+    }
+
+    HitPawn = KFHumanPawn(Other);
+
+    if (HitPawn == None || HitPawn.Health <= 0)
+    {
+        return;
+    }
+
+    if (Physics == PHYS_Falling)
+    {
+        MidAirAttackCounter--;
+    }
+    
+    Damage = (MeleeDamage - (MeleeDamage * 0.05f)) + (MeleeDamage * (FRand() * 0.1f));
+	ApplyMeleeDamageTargetAfflictionModifiers(Damage);
+    HitPawn.TakeDamage(Damage, Self, Location, Velocity, class'KFmod.ZombieMeleeDamage');
+    
+    if (HitPawn.Health <= 0)
+    {
+        HitPawn.SpawnGibs(HitPawn.Rotation, 1);
+    }
+
+    bPouncing = false;
+}
+
 event Landed(vector HitNormal)
 {
     MidAirAttackCounter = default.MidAirAttackCounter;
