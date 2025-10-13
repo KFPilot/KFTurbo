@@ -90,21 +90,6 @@ function TakeDamage(int Damage, Pawn InstigatedBy, Vector HitLocation, Vector Mo
     }
 }
 
-simulated function PostNetReceive()
-{
-    if (!bHarpoonStunned)
-    {
-        if (bCharging)
-        {
-            MovementAnims[0]='ChargeF';
-        }
-        else
-        {
-            MovementAnims[0]=default.MovementAnims[0];
-        }
-    }
-}
-
 /*
 function PlayTakeHit(vector HitLocation, int Damage, class<DamageType> DamageType)
 {
@@ -253,25 +238,36 @@ state RunningState
 
     simulated function float GetOriginalGroundSpeed()
     {
+		if (IsHarpoonStunned())
+		{
+			return Global.GetOriginalGroundSpeed() * 2.25f;
+		}
+
+        if (IsUsingPanicAnimations() || IsZapped())
+        {
+            return Global.GetOriginalGroundSpeed();
+        }
+
         return Global.GetOriginalGroundSpeed() * 3.5f;
     }
 
 	function BeginState()
 	{
-		if(bZapped)
+		if(IsZapped())
         {
             GoToState('');
+            return;
         }
-        else
-        {
-    		SetGroundSpeed(GetOriginalGroundSpeed());
-    		bCharging = true;
-    		if( Level.NetMode!=NM_DedicatedServer )
-    			PostNetReceive();
 
-    		NetUpdateTime = Level.TimeSeconds - 1;
-		}
-	}
+        SetGroundSpeed(GetOriginalGroundSpeed());
+        bCharging = true;
+        if (Level.NetMode != NM_DedicatedServer)
+        {
+            PostNetReceive();
+        }
+
+        NetUpdateTime = Level.TimeSeconds - 1;
+    }
 }
 
 defaultproperties
