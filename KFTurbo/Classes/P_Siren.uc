@@ -198,6 +198,7 @@ defaultproperties
 
     Begin Object Class=AfflictionBurn Name=BurnAffliction
         BurnDurationModifier=1.f
+        BurnSkinIndexList=(1)
     End Object
     MonsterBurnAffliction=CoreMonsterAffliction'BurnAffliction'
 

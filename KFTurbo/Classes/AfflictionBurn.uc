@@ -81,6 +81,7 @@ function UpdateBurnData(class<CoreWeaponDamageType> WeaponDamageType)
 	local int Index;
 	local float NewBurnStrength;
 	local float EntryBurnStrength;
+	
 	NewBurnStrength = WeaponDamageType.default.BurnStrength;
 
 	if (HighestBurnStrength >= NewBurnStrength)
@@ -93,9 +94,15 @@ function UpdateBurnData(class<CoreWeaponDamageType> WeaponDamageType)
 	bShouldTick = true;
 	for (Index = 0; Index < FirePriorityList.Length; Index++)
 	{
-		if (FirePriorityList[Index].DamageType.default.BurnStrength > WeaponDamageType)
+		EntryBurnStrength = FirePriorityList[Index].DamageType.default.BurnStrength;
+		if (EntryBurnStrength > WeaponDamageType.default.BurnStrength)
 		{
 			continue;
+		}
+
+		if (HighestBurnStrength > EntryBurnStrength)
+		{
+			break;
 		}
 
 		Parameters = FirePriorityList[Index].Parameters;
@@ -154,13 +161,13 @@ defaultproperties
 	BurnMonsterDamageModifier=0.8f;
 
 	//Default parameter for burn does nothing.
-	Parameters=(BurnPrimaryModifier=1.f,BurnSecondaryModifier=1.f,BurnDuration=4.f,Priority=-1)
+	Parameters=(BurnPrimaryModifier=1.f,BurnSecondaryModifier=1.f,BurnDuration=4.f)
 
-	FirePriorityList(0)=(DamageType=Class'KFMod.DamTypeHuskGun',Parameters=(BurnPrimaryModifier=0.250000,BurnSecondaryModifier=0.500000,BurnDuration=6.000000))
+	FirePriorityList(0)=(DamageType=Class'KFTurbo.W_HuskGun_DT',Parameters=(BurnPrimaryModifier=0.250000,BurnSecondaryModifier=0.500000,BurnDuration=6.000000))
 	FirePriorityList(1)=(DamageType=Class'KFTurbo.W_Trenchgun_DT',Parameters=(BurnPrimaryModifier=0.300000,BurnSecondaryModifier=0.600000,BurnDuration=5.500000,))
 	FirePriorityList(2)=(DamageType=Class'KFTurbo.W_Flamethrower_DT',Parameters=(BurnPrimaryModifier=0.500000,BurnSecondaryModifier=0.600000,BurnDuration=6.000000))
 	FirePriorityList(3)=(DamageType=Class'KFTurbo.W_FlareRevolver_Impact_DT',Parameters=(BurnPrimaryModifier=0.800000,BurnSecondaryModifier=0.900000,BurnDuration=4.500000))
 	FirePriorityList(4)=(DamageType=Class'KFTurbo.W_ThompsonSMG_DT',Parameters=(BurnPrimaryModifier=0.850000,BurnSecondaryModifier=0.950000,BurnDuration=4.250000))
 	FirePriorityList(5)=(DamageType=Class'KFTurbo.W_MAC10_DT',Parameters=(BurnPrimaryModifier=0.850000,BurnSecondaryModifier=0.950000,BurnDuration=4.250000))
-	FirePriorityList(6)=(DamageType=Class'KFMod.DamTypeBurned',Parameters=(BurnPrimaryModifier=0.900000,BurnSecondaryModifier=1.000000,BurnDuration=4.000000))
+	FirePriorityList(6)=(DamageType=Class'CoreWeaponFireDamageType',Parameters=(BurnPrimaryModifier=0.900000,BurnSecondaryModifier=1.000000,BurnDuration=4.000000))
 }

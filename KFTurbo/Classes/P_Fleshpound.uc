@@ -31,24 +31,28 @@ function ProcessMonsterDamageModifiers(out float Damage, Pawn InstigatedBy, Vect
 
 	if (WeaponDamageType != None)
 	{
-		if (!WeaponDamageType.default.bIsExplosive)
+        if (WeaponDamageType.default.bIsExplosive)
+        {
+            ProcessMonsterExplosiveDamageModifiers(Damage, InstigatedBy, HitLocation, Momentum, WeaponDamageType, bIsHeadshot, HitIndex);
+        }
+		else
 		{
             if (bIsHeadShot && class'V_Commando'.static.IsPerkDamageType(WeaponDamageType))
             {
                 Damage *= 1.f; //Commando damage no longer receives penalty on headshot.
             }
-			if (bIsHeadshot && (WeaponDamageType.default.HeadShotDamageMult >= 1.5 || (class<DamageTypeCrossbuzzsaw>(DamageType) != None)))
-			{
-				Damage *= 0.75f;
-			}
+            if (bIsHeadshot && (WeaponDamageType.default.HeadShotDamageMult >= 1.5 || (class<DamageTypeCrossbuzzsaw>(DamageType) != None)))
+            {
+                Damage *= 0.75f;
+            }
             else if (class<DamageTypeM99SniperRifle>(DamageType) != None)
             {
                 Damage *= 0.525;
             }
-			else if (Level.Game.GameDifficulty >= 5.0 && bIsHeadshot && class<DamageTypeCrossbow>(DamageType) != None)
-			{
-				Damage *= 0.35f;
-			}
+            else if (Level.Game.GameDifficulty >= 5.0 && bIsHeadshot && class<DamageTypeCrossbow>(DamageType) != None)
+            {
+                Damage *= 0.35f;
+            }
             else if (class<DamageTypeCrossbuzzsaw>(DamageType) != None)
             {
                 Damage *= 0.62f;
@@ -66,25 +70,6 @@ function ProcessMonsterDamageModifiers(out float Damage, Pawn InstigatedBy, Vect
                 Damage *= 0.5f;
             }
 		}
-		else if (ClassIsChildOf(WeaponDamageType, class'DamageTypeLAW'))
-		{
-			Damage *= 1.25f; //Yes TWI code does not have a modifier for the LAW...
-		}
-		else if (ClassIsChildOf(WeaponDamageType, class'DamageTypeSeekerSixRocket'))
-		{
-			Damage *= 1.65f;
-		}
-		else if (ClassIsChildOf(WeaponDamageType, class'DamageTypeFrag') || ClassIsChildOf(WeaponDamageType, class'DamageTypePipeBomb') || ClassIsChildOf(WeaponDamageType, class'DamageTypeMedicNade'))
-		{
-        	Damage *= 2.f;
-		}
-		//This is to help handle a more "general" case for explosive damage types. The above captures all explosive damage with specific multipliers.
-		//The below modifier has been changed to a "catch all" for explosive damage types.
-		else /*if (ClassIsChildOf(WeaponDamageType, class'DamageTypeM79Grenade') || ClassIsChildOf(WeaponDamageType, class'DamageTypeM203Grenade') 
-			|| ClassIsChildOf(WeaponDamageType, class'DamageTypeSealSquealExplosion') || ClassIsChildOf(WeaponDamageType, class'DamageTypeSeekerSixRocket'))*/
-		{
-        	Damage *= 1.25f;
-		}
 	}
 	else if (ClassIsChildOf(WeaponDamageType, class'DamTypeVomit'))
 	{
@@ -97,6 +82,33 @@ function ProcessMonsterDamageModifiers(out float Damage, Pawn InstigatedBy, Vect
 			Damage = 0.f;
 		}
 	}
+    else
+    {
+        Damage *= 0.5f;
+    }
+}
+
+function ProcessMonsterExplosiveDamageModifiers(out float Damage, Pawn InstigatedBy, Vector HitLocation, Vector Momentum, class<CoreWeaponDamageType> DamageType, bool bIsHeadshot, optional int HitIndex)
+{
+    if (ClassIsChildOf(DamageType, class'DamageTypeLAW'))
+    {
+        Damage *= 1.25f; //Yes TWI code does not have a modifier for the LAW...
+    }
+    else if (ClassIsChildOf(DamageType, class'DamageTypeSeekerSixRocket'))
+    {
+        Damage *= 1.65f;
+    }
+    else if (ClassIsChildOf(DamageType, class'DamageTypeFrag') || ClassIsChildOf(DamageType, class'DamageTypePipeBomb') || ClassIsChildOf(DamageType, class'DamageTypeMedicNade'))
+    {
+        Damage *= 2.f;
+    }
+    //This is to help handle a more "general" case for explosive damage types. The above captures all explosive damage with specific multipliers.
+    //The below modifier has been changed to a "catch all" for explosive damage types.
+    else /*if (ClassIsChildOf(WeaponDamageType, class'DamageTypeM79Grenade') || ClassIsChildOf(WeaponDamageType, class'DamageTypeM203Grenade') 
+        || ClassIsChildOf(WeaponDamageType, class'DamageTypeSealSquealExplosion') || ClassIsChildOf(WeaponDamageType, class'DamageTypeSeekerSixRocket'))*/
+    {
+        Damage *= 1.25f;
+    }
 }
 
 function bool IsInHuntingShotgunDamageBoostRadius(Actor Other)
@@ -204,10 +216,11 @@ Ignores StartCharging;
 
 defaultproperties
 {
-    Begin Object Class=AfflictionBurn Name=BurnAffliction
+    Begin Object Class=AfflictionBurnFleshpound Name=BurnAffliction
         BurnDurationModifier=1.f
+        BurnSkinIndexList=(0)
     End Object
-    MonsterBurnAffliction=CoreMonsterAffliction'BurnAffliction'
+    MonsterBurnAffliction=AfflictionBurn'BurnAffliction'
 
     Begin Object Class=AfflictionZap Name=ZapAffliction
         ZapDischargeRate=0.5f

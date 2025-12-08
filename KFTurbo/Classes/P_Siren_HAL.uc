@@ -18,4 +18,10 @@ defaultproperties
      Mesh=SkeletalMesh'KF_Freaks_Trip_HALLOWEEN.Siren_Halloween'
      Skins(0)=Combiner'KF_Specimens_Trip_HALLOWEEN_T.siren.Siren_RedneckZombie_CMB'
      Skins(1)=FinalBlend'KF_Specimens_Trip_HALLOWEEN_T.siren.Siren_RedneckZombie_Hair_FB'
+     
+     Begin Object Class=AfflictionBurn Name=BurnAffliction
+          BurnDurationModifier=1.f
+          BurnSkinIndexList=(0)
+     End Object
+     MonsterBurnAffliction=CoreMonsterAffliction'BurnAffliction'
 }
