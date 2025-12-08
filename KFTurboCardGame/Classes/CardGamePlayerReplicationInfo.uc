@@ -91,6 +91,12 @@ function ResetVote()
     ForceNetUpdate();
 }
 
+//Make NetUpdateTime want to update now.
+simulated function ForceNetUpdate()
+{
+    NetUpdateTime = Max(Level.TimeSeconds - ((1.f / NetUpdateFrequency) + 1.f), 0.1f);
+}
+
 function ServerDebugActivateCard(string CardID)
 {
     if (OwningReplicationInfo == None || TurboPlayerController(OwningReplicationInfo.Owner) == None || !TurboPlayerController(OwningReplicationInfo.Owner).HasPermissionForCommand(true))
@@ -109,12 +115,6 @@ function ServerDebugDeactivateCard(string CardID)
     }
     
     TurboCardReplicationInfo.DebugDeactivateCard(CardID);
-}
-
-//Make NetUpdateTime want to update now.
-simulated function ForceNetUpdate()
-{
-    NetUpdateTime = Max(Level.TimeSeconds - ((1.f / NetUpdateFrequency) + 1.f), 0.1f);
 }
 
 defaultproperties

@@ -3,7 +3,10 @@
 //For more information see https://github.com/KFPilot/KFTurbo.
 class TurboHealCardEventHandler extends TurboHealEventHandler;
 
-var bool bHealingBoost;
+//If true, notify the player's TurboPlayerCardCustomInfo that they were healed.
+//This is really just an optimization to prevent unneeded lookups.
+var bool bNotifyCardCustomInfo;
+
 var float ReciprocalHealthMultiplier;
 
 static function TurboPlayerCardCustomInfo FindCardCustomInfo(TurboPlayerReplicationInfo TPRI)
@@ -35,11 +38,6 @@ final function RewardHealedHealth(Pawn Instigator, Pawn Target, int HealingAmoun
         return;
     }
 
-    if (!bHealingBoost)
-    {
-        return;
-    }
-
     if (Instigator == None || Instigator == Target)
     {
         return;
@@ -50,6 +48,11 @@ final function RewardHealedHealth(Pawn Instigator, Pawn Target, int HealingAmoun
         ReciprocateHeal(Instigator, HealingAmount);
     }
     
+    if (!bNotifyCardCustomInfo)
+    {
+        return;
+    }
+
     CardCustomInfo = FindCardCustomInfo(TurboPlayerReplicationInfo(Target.PlayerReplicationInfo));
 
     if (CardCustomInfo == None)
@@ -74,6 +77,6 @@ final function ReciprocateHeal(Pawn Instigator, int HealingAmount)
 
 defaultproperties
 {
-    bHealingBoost=false
+    bNotifyCardCustomInfo=false
     ReciprocalHealthMultiplier=0.f
 }

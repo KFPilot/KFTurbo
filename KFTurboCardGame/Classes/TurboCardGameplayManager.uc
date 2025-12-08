@@ -1176,7 +1176,10 @@ function PlayerGrenadeThrowBuffFlagChanged(Cardflag Flag, bool bIsEnabled)
 
 function PlayerHealBoostBuffFlagChanged(CardFlag Flag, bool bIsEnabled)
 {
-    HealCardEventHandler.bHealingBoost = bIsEnabled;
+    if (bIsEnabled)
+    {
+        HealCardEventHandler.bNotifyCardCustomInfo = true;
+    }
 }
 
 function PlayerHeadshotsIncreaseHeadshotDamageFlagChanged(CardFlag Flag, bool bIsEnabled)
