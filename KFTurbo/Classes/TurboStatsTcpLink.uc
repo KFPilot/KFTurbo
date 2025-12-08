@@ -360,7 +360,7 @@ final function string GetPlayerList()
 
 final function string BuildPlayerListJSON()
 {
-    local array<TurboPlayerController> PlayerList;
+    local array<CorePlayerController> PlayerList;
     local array<string> PlayerIDList;
     local int Index;
 
