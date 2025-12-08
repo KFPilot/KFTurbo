@@ -16,6 +16,8 @@ replication
 		OwningReplicationInfo, TurboCardReplicationInfo, VoteIndex;
 	reliable if ( Role < ROLE_Authority )
         SetVoteIndex;
+	reliable if ( Role < ROLE_Authority )
+        ServerDebugActivateCard, ServerDebugDeactivateCard;
 }
 
 static simulated final function CardGamePlayerReplicationInfo GetCardGameLRI(PlayerReplicationInfo PRI)
@@ -87,6 +89,26 @@ function ResetVote()
 {
     VoteIndex = 0;
     ForceNetUpdate();
+}
+
+function ServerDebugActivateCard(string CardID)
+{
+    if (OwningReplicationInfo == None || TurboPlayerController(OwningReplicationInfo.Owner) == None || !TurboPlayerController(OwningReplicationInfo.Owner).HasPermissionForCommand(true))
+    {
+        return;
+    }
+
+    TurboCardReplicationInfo.DebugActivateCard(CardID);
+}
+
+function ServerDebugDeactivateCard(string CardID)
+{
+    if (OwningReplicationInfo == None || TurboPlayerController(OwningReplicationInfo.Owner) == None || !TurboPlayerController(OwningReplicationInfo.Owner).HasPermissionForCommand(true))
+    {
+        return;
+    }
+    
+    TurboCardReplicationInfo.DebugDeactivateCard(CardID);
 }
 
 //Make NetUpdateTime want to update now.

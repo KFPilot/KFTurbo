@@ -80,6 +80,21 @@ function OnDeckDraw(TurboCardReplicationInfo TCRI)
     
 }
 
+function TurboCard FindCardByCardID(string CardID)
+{
+    local int Index;
+
+    for (Index = 0; Index < OriginalDeckCardObjectList.Length; Index++)
+    {
+        if (OriginalDeckCardObjectList[Index].CardID ~= CardID)
+        {
+            return OriginalDeckCardObjectList[Index];
+        }
+    }
+
+    return None;
+}
+
 defaultproperties
 {
     
