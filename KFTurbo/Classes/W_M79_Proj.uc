@@ -76,6 +76,6 @@ simulated function Explode(vector HitLocation, vector HitNormal)
 
 defaultproperties
 {
-    MyDamageType=Class'KFMod.DamTypeM79Grenade'
+    MyDamageType=Class'DamageTypeM79Grenade'
     bGameRelevant=false
 }

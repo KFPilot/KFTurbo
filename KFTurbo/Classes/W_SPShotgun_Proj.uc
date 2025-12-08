@@ -36,5 +36,5 @@ defaultproperties
 	DrawScale=1.500000
 
 	Damage=25.000000
-	MyDamageType=Class'KFMod.DamTypeSPShotgun'
+	MyDamageType=Class'DamageTypeSPShotgun'
 }

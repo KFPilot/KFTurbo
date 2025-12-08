@@ -25,7 +25,7 @@ defaultproperties
      ShellEjectClass=Class'ROEffects.KFShellEjectMP5SMG'
      ShellEjectBoneName="Shell_eject"
      NoAmmoSoundRef="KF_MP7Snd.MP7_DryFire"
-     DamageType=Class'KFMod.DamTypeMP5M'
+     DamageType=Class'DamageTypeMP5M'
      bRandomPitchFireSound=False
      FireSoundRef="KF_MP5Snd.Fire.MP5_Fire_M"
      StereoFireSoundRef="KF_MP5Snd.Fire.MP5_Fire_S"

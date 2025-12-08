@@ -156,5 +156,5 @@ defaultproperties
      ImpactDamage=100
      Damage=25.000000
      DamageRadius=100.000000
-     MyDamageType=Class'KFMod.DamTypeFlareRevolver'
+     MyDamageType=Class'DamageTypeFlareRevolver'
 }

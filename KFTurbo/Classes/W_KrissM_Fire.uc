@@ -36,7 +36,7 @@ defaultproperties
      ShellEjectClass=Class'KFMod.ShellEjectKriss'
      ShellEjectBoneName="Shell_eject"
      NoAmmoSoundRef="KF_MP7Snd.MP7_DryFire"
-     DamageType=Class'KFMod.DamTypeKrissM'
+     DamageType=Class'DamageTypeKrissM'
      Momentum=12500.000000
      FireRate=0.093000
      ShakeRotMag=(X=50.000000,Y=50.000000,Z=350.000000)

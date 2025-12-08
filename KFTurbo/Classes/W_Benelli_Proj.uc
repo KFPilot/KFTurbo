@@ -32,5 +32,5 @@ function NotifyProjectileRegisterHit(TurboPlayerEventHandler.MonsterHitData HitD
 defaultproperties
 {
     PenDamageReduction=0.750000
-    MyDamageType=Class'KFMod.DamTypeBenelli'
+    MyDamageType=Class'DamageTypeBenelli'
 }

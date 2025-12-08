@@ -28,7 +28,7 @@ defaultproperties
      RecoilVelocityScale=0.000000
      ShellEjectClass=Class'ROEffects.KFShellEjectMP5SMG'
      ShellEjectBoneName="Shell_eject"
-     DamageType=Class'KFMod.DamTypeMP7M'
+     DamageType=Class'DamageTypeMP7M'
      DamageMin=20
      DamageMax=40
      Momentum=5500.000000
