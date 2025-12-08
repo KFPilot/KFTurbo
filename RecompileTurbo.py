@@ -105,8 +105,8 @@ if Arguments.extrastage != None:
 
 StepStrings = ["font "]
 WarningStrings = ["warning", "unused local"]
-ErrorStrings = ["error", "unresolved", "failed", "failure", "unknown property", "bad cast", "redundant data", "critical:", "not found", "name mismatch"]
-StringsThatNeedPreviousLine = ["unresolved"]
+ErrorStrings = ["error", "unresolved", "failed", "failure", "unknown property", "unknown member", "bad cast", "redundant data", "critical:", "not found", "name mismatch"]
+StringsThatNeedPreviousLine = ["unresolved", "unknown member"]
 
 def PrintTask(String):
     print("\033[48;5;7m  \033[0m " + String)
