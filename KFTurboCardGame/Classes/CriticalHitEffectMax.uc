@@ -36,7 +36,7 @@ defaultproperties
         StartSizeRange=(X=(Min=48.000000,Max=48.000000),Y=(Min=-24.000000,Max=-24.000000),Z=(Min=0.000000,Max=0.000000))
         ScaleSizeByVelocityMax=0.000000
         DrawStyle=PTDS_AlphaBlend
-        Texture=Texture'KFTurboCardGame.Effects.CriticalHit_Triple_D'
+        Texture=Texture'KFTurboCardGame.Effects.CriticalHit_X_D'
         StartVelocityRange=(X=(Min=-15.000000,Max=15.000000),Y=(Min=-15.000000,Max=15.000000),Z=(Min=75.000000,Max=75.000000))
         VelocityLossRange=(X=(Min=2.000000,Max=2.000000),Y=(Min=2.000000,Max=2.000000),Z=(Min=4.000000,Max=4.000000))
         AutoDestroy=true
