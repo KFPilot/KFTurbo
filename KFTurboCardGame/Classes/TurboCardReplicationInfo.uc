@@ -1044,7 +1044,56 @@ function GetActiveCardCounts(out int GoodCardCount, out int SuperCardCount, out 
             EvilCardCount++;
         }
     }
+}
 
+function DebugActivateCard(string CardID)
+{
+    local TurboCard Card;
+
+    Card = GoodGameDeck.FindCardByCardID(CardID);
+
+    if (Card == None)
+    {
+        Card = SuperGameDeck.FindCardByCardID(CardID);
+
+        if (Card == None)
+        {
+            Card = ProConGameDeck.FindCardByCardID(CardID);
+    
+            if (Card == None)
+            {
+                Card = EvilGameDeck.FindCardByCardID(CardID);
+            }
+        }
+    }
+
+    if (Card == None)
+    {
+        return;
+    }
+
+    SelectCard(Card, false);
+}
+
+function DebugDeactivateCard(string CardID)
+{
+    local int Index;
+
+    for (Index = 0; Index < ArrayCount(AuthActiveCardList); Index++)
+    {
+        if (AuthActiveCardList[Index] == None)
+        {
+            break;
+        }
+
+        if (!(AuthActiveCardList[Index].CardID ~= CardID))
+        {
+            continue;
+        }
+
+        RemoveActiveCard(AuthActiveCardList[Index]);
+        break;
+    }
 }
 
 defaultproperties
