@@ -83,15 +83,14 @@ final function string BuildVotePayload(int WaveNumber, array<string> ActiveCardL
     local KFTurboMut Mutator;
     Mutator = class'KFTurboMut'.static.FindMutator(Level.Game);
 
-    Payload = "{%qtype%q:%qcardgame_vote%q,";
-    Payload $= "%qversion%q:%q"$Mutator.GetTurboVersionID()$"%q,";
-    Payload $= "%qsession%q:%q"$Mutator.GetSessionID()$"%q,";
-    Payload $= "%qwavenum%q:"$WaveNumber$",";
-    Payload $= "%qactivecards%q:["$ConvertToString(ActiveCardList)$"],";
-    Payload $= "%qvoteselection%q:["$ConvertToString(VoteSelectionList)$"],";
-    Payload $= "%qvotedcard%q:%q"$VotedCardList$"%q}";
+    Payload = "{\"type\":\"cardgame_vote\",";
+    Payload $= "\"version\":\""$Mutator.GetTurboVersionID()$"\",";
+    Payload $= "\"session\":\""$Mutator.GetSessionID()$"\",";
+    Payload $= "\"wavenum\":"$WaveNumber$",";
+    Payload $= "\"activecards\":["$ConvertToString(ActiveCardList)$"],";
+    Payload $= "\"voteselection\":["$ConvertToString(VoteSelectionList)$"],";
+    Payload $= "\"votedcard\":\""$VotedCardList$"\"}";
     
-    Payload = Repl(Payload, "%q", Chr(34));
     return Payload;
 }
 
