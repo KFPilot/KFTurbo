@@ -1088,7 +1088,7 @@ function PlayerHealRechargeModifierChanged(CardModifierStack ModifiedStack, floa
 
 function PlayerReciprocalHealingModifierChanged(CardModifierStack ModifiedStack, float Modifier)
 {
-    HealCardEventHandler.ReciprocalHealtMultiplier = FMax(0.f, Modifier - 1.f);
+    HealCardEventHandler.ReciprocalHealthMultiplier = FMax(0.f, Modifier - 1.f);
 }
 
 //MOVEMENT
