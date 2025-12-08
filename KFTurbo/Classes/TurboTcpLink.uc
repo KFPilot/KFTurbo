@@ -20,11 +20,21 @@ static final function string StringArrayToJSON(string Key, array<string> ValueLi
 {
     local string Result;
     local int Index;
-    
-    Result = "\""$Key$"\":[";
-    for (Index = 0; Index < ValueList.Length; Index++)
+
+    if (ValueList.Length == 0)
     {
-        Result $= "\""$ValueList[Index]$"\"";
+        return "\""$Key$"\":[]";
+    }
+
+    if (ValueList.Length == 1)
+    {
+        return "\""$Key$"\":[\""$ValueList[0]$"\"]";
+    }
+    
+    Result = "\""$Key$"\":["$ValueList[0];
+    for (Index = 1; Index < ValueList.Length; Index++)
+    {
+        Result $= ",\""$ValueList[Index]$"\"";
     }
 
     return Result$"]";
@@ -35,11 +45,21 @@ static final function string DataArrayToJSON(string Key, array<string> ValueList
 {
     local string Result;
     local int Index;
+
+    if (ValueList.Length == 0)
+    {
+        return "\""$Key$"\":[]";
+    }
+
+    if (ValueList.Length == 1)
+    {
+        return "\""$Key$"\":["$ValueList[0]$"]";
+    }
     
     Result = "\""$Key$"\":[";
     for (Index = 0; Index < ValueList.Length; Index++)
     {
-        Result $= "\""$ValueList[Index]$"\"";
+        Result $= ","$ValueList[Index];
     }
 
     return Result$"]";

@@ -330,7 +330,49 @@ final function string BuildWaveStartPayload(int WaveNum)
     return "{" $ StringToJSON("type", "wavestart") $ ","
         $ VersionSessionJson $ ","
         $ StringToJSON("wavenum", WaveNum) $ ","
-        $ DataToJSON("playerlist", GetPlayerList()) $ "}";
+        $ BuildPlayerListJSON() $ "}";
+}
+
+
+final function string GetPlayerList()
+{
+    local Controller C;
+    local string PlayerList;
+    PlayerList = "";
+
+    for (C = Level.ControllerList; C != None; C = C.NextController)
+    {
+        if (!C.bIsPlayer || C.PlayerReplicationInfo == None || C.PlayerReplicationInfo.bOnlySpectator || TurboPlayerController(C) == None)
+        {
+            continue;
+        }
+
+        PlayerList $= ",\""$PlayerController(C).GetPlayerIDHash()$"\"";
+    }
+
+    if (PlayerList != "")
+    {
+        PlayerList = Mid(PlayerList, 1);
+    }
+
+    return "["$PlayerList$"]";
+}
+
+final function string BuildPlayerListJSON()
+{
+    local array<TurboPlayerController> PlayerList;
+    local array<string> PlayerIDList;
+    local int Index;
+
+    PlayerList = class'TurboGameplayHelper'.static.GetPlayerControllerList(Level);
+    PlayerIDList.Length = PlayerList.Length;
+
+    for (Index = PlayerList.Length - 1; Index >= 0; Index--)
+    {
+        PlayerIDList[Index] = PlayerList[Index].GetPlayerIDHash();
+    }
+
+    return StringArrayToJSON("playerlist", PlayerIDList);
 }
 
 /*
@@ -470,30 +512,6 @@ static final function string GetResultName(int GameResult)
     }
 
     return "aborted";
-}
-
-final function string GetPlayerList()
-{
-    local Controller C;
-    local string PlayerList;
-    PlayerList = "";
-
-    for (C = Level.ControllerList; C != None; C = C.NextController)
-    {
-        if (!C.bIsPlayer || C.PlayerReplicationInfo == None || C.PlayerReplicationInfo.bOnlySpectator || TurboPlayerController(C) == None)
-        {
-            continue;
-        }
-
-        PlayerList $= ",%q"$PlayerController(C).GetPlayerIDHash()$"%q";
-    }
-
-    if (PlayerList != "")
-    {
-        PlayerList = Mid(PlayerList, 1);
-    }
-
-    return "["$PlayerList$"]";
 }
 
 defaultproperties
