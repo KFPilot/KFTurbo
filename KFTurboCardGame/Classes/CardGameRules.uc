@@ -347,7 +347,7 @@ function int NetDamage(int OriginalDamage, int Damage, Pawn Injured, Pawn Instig
             return 0;
         }
 
-        if (MutatorOwner.HealCardEventHandler.bHealingBoost && IsInHealingBoostTime(InjuredCardInfo))
+        if (IsInHealingBoostTime(InjuredCardInfo))
         {
             DamageMultiplier *= 0.5f;
         }

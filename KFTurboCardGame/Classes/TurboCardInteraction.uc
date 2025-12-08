@@ -140,6 +140,31 @@ static final function bool ShouldReduceCardVisibility(TurboPlayerController Play
 	return false;
 }
 
+exec simulated function ServerDebugActivateCard(string CardID)
+{
+	local CardGamePlayerReplicationInfo CGPRI;
+	
+    if (ViewportOwner.Actor == None)
+    {
+        return;
+    }
+
+	CGPRI = FindCGPRI(ViewportOwner.Actor);
+	CGPRI.ServerDebugActivateCard(CardID);
+}
+
+exec simulated function ServerDebugDeactivateCard(string CardID)
+{
+	local CardGamePlayerReplicationInfo CGPRI;
+
+    if (ViewportOwner.Actor == None)
+    {
+        return;
+    }
+
+	CGPRI = FindCGPRI(ViewportOwner.Actor);
+	CGPRI.ServerDebugDeactivateCard(CardID);
+}
 
 defaultproperties
 {
