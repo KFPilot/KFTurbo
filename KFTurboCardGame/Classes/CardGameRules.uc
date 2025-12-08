@@ -348,7 +348,7 @@ function int NetDamage(int OriginalDamage, int Damage, Pawn Injured, Pawn Instig
     }
     else
     {
-        if (InstigatedBy.Controller == None || InstigatedBy.Controller.PlayerReplicationInfo == None || !InstigatedBy.Controller.bIsPlayer)
+        if (InstigatedBy.Controller != None && InstigatedBy.Controller.PlayerReplicationInfo != None && InstigatedBy.Controller.bIsPlayer)
         {
             InstigatorCardInfo = FindCustomInfo(TurboPlayerReplicationInfo(InstigatedBy.PlayerReplicationInfo));
         }
@@ -500,7 +500,7 @@ function int NetDamage(int OriginalDamage, int Damage, Pawn Injured, Pawn Instig
     
     if (InstigatorCardInfo != None && InjuredMonster != None)
     {
-        DamageMultiplier *= GetCriticalHitMultiplier(InstigatedBy, InstigatorCardInfo, HitLocation);
+        AttemptCriticalHit(DamageMultiplier, InstigatedBy, InstigatorCardInfo, HitLocation);
 
         MonsterNetDamage(DamageMultiplier, InjuredMonster, InstigatedBy, InstigatorCardInfo, HitLocation, Momentum, WeaponDamageType);
     }
@@ -619,7 +619,7 @@ function MonsterNetDamage(out float DamageMultiplier, KFMonster Injured, Pawn In
     }
 }
 
-function float GetCriticalHitMultiplier(Pawn InstigatedBy, TurboPlayerCardCustomInfo PlayerCardInfo, vector HitLocation)
+function AttemptCriticalHit(out float Damage, Pawn InstigatedBy, TurboPlayerCardCustomInfo PlayerCardInfo, vector HitLocation)
 {
     local float CurrentCriticalHitChance;
     local int NumCriticalHits;
@@ -655,7 +655,7 @@ function float GetCriticalHitMultiplier(Pawn InstigatedBy, TurboPlayerCardCustom
             PlayerCardInfo.NonCriticalHitCount++;
         }
             
-        return 1.f;
+        return;
     }
     else
     {
@@ -676,7 +676,7 @@ function float GetCriticalHitMultiplier(Pawn InstigatedBy, TurboPlayerCardCustom
         PlayerCardInfo.ClientCriticalHit(HitLocation, NumCriticalHits);
     }
     
-    return CriticalHitDamageMultiplier * float(NumCriticalHits);
+    Damage *= CriticalHitDamageMultiplier * float(NumCriticalHits);
 }
 
 function ApplyThornsDamage(int DamageTaken, KFHumanPawn Injured, KFMonster InstigatedBy)
