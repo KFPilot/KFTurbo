@@ -173,7 +173,6 @@ function SetOptionalCardEnabled(int OriginalOptionalIndex, bool bEnabled)
         if (OptionalCardList[Index].Card == Card)
         {
             OptionalCardList[Index].bEnabled = bEnabled;
-            log("Set optional card "+Card.CardID+" state to "+bEnabled, 'KFTurboCardVerbose');
             return;
         }
     }
