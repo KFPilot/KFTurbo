@@ -47,7 +47,7 @@ simulated function PostBeginPlay()
 	Super.PostBeginPlay();
 	
 	//Make sure CommonCore is added to server packages.
-	AddToPackageMap("CommonCore");
+	//AddToPackageMap("CommonCore");
 
 	//Make sure fonts are added to server packages.
 	AddToPackageMap("KFTurboFonts");
