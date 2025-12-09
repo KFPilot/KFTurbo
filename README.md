@@ -26,7 +26,6 @@ KFTurbo has the following official servers:
 * London `45.63.98.121:7707`
 * Frankfurt `209.250.232.3:7707`
 * Warsaw `70.34.255.50:7707`
-* Ireland `38.180.21.26:7707`
 ### East Asia
 * Singapore `45.76.163.43:7707`
 * Tokyo `45.76.223.226:7707`
