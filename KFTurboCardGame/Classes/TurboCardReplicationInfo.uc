@@ -854,7 +854,7 @@ function DeactivateAllGoodCards()
     {
         if (AuthActiveCardList[Index] == None)
         {
-            return;
+            continue;
         }
 
         if (TurboCard_Good(AuthActiveCardList[Index]) != None)
