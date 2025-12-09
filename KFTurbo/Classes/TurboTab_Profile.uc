@@ -11,6 +11,18 @@ function InitComponent(GUIController MyController, GUIComponent MyOwner)
 	Super.Initcomponent(MyController, MyOwner);
 }
 
+function ShowPanel(bool bShow)
+{
+	Super.ShowPanel(bShow);
+
+	if (!bShow)
+	{
+		return;
+	}
+
+	lb_PerkSelect.List.InitList(None);
+}
+
 function OnPerkSelected(GUIComponent Sender)
 {
 	local ClientPerkRepLink ST;

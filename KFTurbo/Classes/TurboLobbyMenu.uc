@@ -5,6 +5,7 @@ class TurboLobbyMenu extends SRLobbyMenu;
 
 var array<GUILabel> PlayerNameLabelList;
 var float PlayerEntryHeight;
+var float LastKnownPerkProgress, PerkProgressInterpRate, LastKnownWorldTime;
 
 function bool ShowPerkMenu(GUIComponent Sender)
 {
@@ -66,14 +67,6 @@ function DrawPerk(Canvas Canvas)
 		HandleClientNotReady();
 		return;
 	}
-
-	CPRL = TurboPlayerController(PlayerOwner()).GetClientPerkRepLink();
-
-	if (CPRL == None || !CPRL.bRepCompleted)
-	{
-		HandleClientNotReady();
-		return;
-	}
 	
 	SelectedVeterancy = class<TurboVeterancyTypes>(KFPRI.ClientVeteranSkill);
 
@@ -98,7 +91,28 @@ function DrawPerk(Canvas Canvas)
 	Width -= 6.f;
 	Height -= 34.f;
 	
-	class'TurboHUDPerkEntryDrawer'.static.Draw(Canvas, TurboHUDKillingFloor(PlayerOwner().myHUD), X, Y, Width, Height, SelectedVeterancy, KFPRI.ClientVeteranSkillLevel, SelectedVeterancy.static.GetTotalProgress(CPRL, KFPRI.ClientVeteranSkillLevel + 1), 1.f, 0.f, true);
+
+	CPRL = TurboPlayerController(PlayerOwner()).GetClientPerkRepLink();
+
+	if (CPRL != None && CPRL.bRepCompleted)
+	{
+		if (LastKnownWorldTime <= 0.f)
+		{
+			LastKnownWorldTime = CPRL.Level.TimeSeconds;
+		}
+		else
+		{
+			LastKnownPerkProgress = Lerp(PerkProgressInterpRate * (CPRL.Level.TimeSeconds - LastKnownWorldTime), LastKnownPerkProgress, SelectedVeterancy.static.GetTotalProgress(CPRL, KFPRI.ClientVeteranSkillLevel + 1));
+			LastKnownWorldTime = CPRL.Level.TimeSeconds;
+		}
+
+		class'TurboHUDPerkEntryDrawer'.static.Draw(Canvas, TurboHUDKillingFloor(PlayerOwner().myHUD), X, Y, Width, Height, SelectedVeterancy, KFPRI.ClientVeteranSkillLevel, LastKnownPerkProgress, 1.f, 0.f, true);
+	}
+	else
+	{
+		class'TurboHUDPerkEntryDrawer'.static.Draw(Canvas, TurboHUDKillingFloor(PlayerOwner().myHUD), X, Y, Width, Height, SelectedVeterancy, KFPRI.ClientVeteranSkillLevel, 0.f, 1.f, 0.f, true);
+	}
+
 	class'TurboHUDKillingFloor'.static.ResetCanvas(Canvas);
 }
 
@@ -248,4 +262,8 @@ defaultproperties
 	t_Footer=TurboLobbyFooter'KFTurbo.TurboLobbyMenu.BuyFooter'
 
 	PlayerEntryHeight=0.055f
+
+	LastKnownPerkProgress=0.f
+	PerkProgressInterpRate=2.f
+	LastKnownWorldTime=-1.f
 }

@@ -23,6 +23,7 @@ function InitList(KFSteamStatsAndAchievements StatsAndAchievements)
 	local TurboPlayerController KFPC;
 	local ClientPerkRepLink CPRL;
 	local class<KFVeterancyTypes> CurCL;
+	local bool bFoundVeterancy;
 
 	KFPC = TurboPlayerController(PlayerOwner());
 
@@ -44,7 +45,7 @@ function InitList(KFSteamStatsAndAchievements StatsAndAchievements)
 	}
 
 	ItemCount = CPRL.CachePerks.Length;
-	SetIndex(0);
+	bFoundVeterancy = false;
 
 	PerkName.Remove(0, PerkName.Length);
 	PerkLevelString.Remove(0, PerkLevelString.Length);
@@ -71,7 +72,7 @@ function InitList(KFSteamStatsAndAchievements StatsAndAchievements)
 
 		if (PerkList[PerkIndex] == CurCL)
 		{
-			SetIndex(Index);
+			SetIndex(PerkIndex);
 		}
 	}
 
