@@ -3,92 +3,26 @@
 //For more information see https://github.com/KFPilot/KFTurbo.
 class TurboCardDeck_ProCon extends TurboCardDeck;
 
-//We need a better way to handle conditional cards. This is annoying.
-var bool bCanUseTradeIn, bHasUsedTradeIn;
-var TurboCard TradeInCard;
-
-var bool bCanUseSoulForASoul, bHasUsedSoulForASoul;
-var TurboCard SoulForASoulCard;
+enum ProConOptional
+{
+    TradeIn,
+    SoulForASoul
+};
 
 var array<TurboCard> SomethingCardList;
-
-function InitializeDeck()
-{
-    local int Index;
-
-    Super.InitializeDeck();
-
-    Index = DeckCardObjectList.Length;
-
-    InitializeCard(TradeInCard, Index);
-    Index++;
-
-    InitializeCard(SoulForASoulCard, Index);
-    Index++;
-}
-
-static function TurboCard GetCardFromReference(TurboCardReplicationInfo.CardReference Reference)
-{
-    if (Reference.Deck != default.Class)
-    {
-        return None;
-    }
-
-    if (Reference.CardIndex == default.DeckCardObjectList.Length)
-    {
-        return default.TradeInCard;
-    }
-    else if (Reference.CardIndex == default.DeckCardObjectList.Length + 1)
-    {
-        return default.SoulForASoulCard;
-    }
-
-    return Super.GetCardFromReference(Reference);
-}
-
-function TurboCard DrawRandomCard()
-{
-    local int EffectiveDeckSize;
-    EffectiveDeckSize = DeckCardObjectList.Length;
-    
-    if (!bHasUsedTradeIn && bCanUseTradeIn)
-    {
-        EffectiveDeckSize++;
-    }
-
-    if (!bCanUseSoulForASoul && bHasUsedSoulForASoul)
-    {
-        EffectiveDeckSize++;
-    }
-
-    if (!bHasUsedTradeIn && bCanUseTradeIn && FRand() < (1.f / float(EffectiveDeckSize)))
-    {
-        bHasUsedTradeIn = true;
-        return TradeInCard;
-    }     
-
-    if (!bCanUseSoulForASoul && bHasUsedSoulForASoul && FRand() < (1.f / float(EffectiveDeckSize)))
-    {
-        bHasUsedSoulForASoul = true;
-        return SoulForASoulCard;
-    }
-
-    return Super.DrawRandomCard();
-}
 
 function OnDeckDraw(TurboCardReplicationInfo TCRI)
 {
     local int GoodCardCount, SuperCardCount, ProConCardCount, EvilCardCount;
     TCRI.GetActiveCardCounts(GoodCardCount, SuperCardCount, ProConCardCount, EvilCardCount);
-    bCanUseTradeIn = GoodCardCount >= 3;
-    bCanUseSoulForASoul = SuperCardCount > 0 && EvilCardCount > 0;
+    SetOptionalCardEnabled(int(ProConOptional.TradeIn), GoodCardCount >= 3);
+    SetOptionalCardEnabled(int(ProConOptional.SoulForASoul), SuperCardCount > 0 && EvilCardCount > 0);
 }
 
 function ActivateTradeIn(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
     if (bActivate)
     {
-        bHasUsedTradeIn = true;
         GameplayManager.DeactivateAllGoodCards();
         GameplayManager.GrantRandomSuperCard();
     }
@@ -644,7 +578,7 @@ defaultproperties
         OnActivateCard=ActivateTradeIn
         CardID="PROCON_TRADEIN"
     End Object
-    TradeInCard=TurboCard'TradeIn'
+    OptionalCardList(0)=(Card=TurboCard'TradeIn')
     
     Begin Object Name=SoulForASoul Class=TurboCard_ProConStrange
         CardName(0)="A Soul For"
@@ -656,7 +590,7 @@ defaultproperties
         OnActivateCard=ActivateSoulForASoul
         CardID="PROCON_SOULFORSOUL"
     End Object
-    SoulForASoulCard=TurboCard'SoulForASoul'
+    OptionalCardList(1)=(Card=TurboCard'SoulForASoul')
 
     Begin Object Name=ExtraMoneyTraderTime Class=TurboCard_ProCon
         CardName(0)="Short Term"

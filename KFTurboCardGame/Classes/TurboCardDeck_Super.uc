@@ -3,60 +3,16 @@
 //For more information see https://github.com/KFPilot/KFTurbo.
 class TurboCardDeck_Super extends TurboCardDeck;
 
-var bool bCanUseCleanse, bHasUsedCleanse;
-var TurboCard CleanseCard;
-
-function InitializeDeck()
+enum SuperOptional
 {
-    local int Index;
-
-    Super.InitializeDeck();
-
-    Index = DeckCardObjectList.Length;
-
-    InitializeCard(CleanseCard, Index);
-    Index++;
-}
-
-static function TurboCard GetCardFromReference(TurboCardReplicationInfo.CardReference Reference)
-{
-    if (Reference.Deck != default.Class)
-    {
-        return None;
-    }
-
-    if (Reference.CardIndex == default.DeckCardObjectList.Length)
-    {
-        return default.CleanseCard;
-    }
-
-    return Super.GetCardFromReference(Reference);
-}
-
-function TurboCard DrawRandomCard()
-{
-    local int EffectiveDeckSize;
-    EffectiveDeckSize = DeckCardObjectList.Length;
-
-    if (!bCanUseCleanse && bHasUsedCleanse)
-    {
-        EffectiveDeckSize++;
-    }
-
-    if (!bCanUseCleanse && bHasUsedCleanse && FRand() < (1.f / float(EffectiveDeckSize)))
-    {
-        bHasUsedCleanse = true;
-        return CleanseCard;
-    }
-
-    return Super.DrawRandomCard();
-}
+    Cleanse
+};
 
 function OnDeckDraw(TurboCardReplicationInfo TCRI)
 {
     local int GoodCardCount, SuperCardCount, ProConCardCount, EvilCardCount;
     TCRI.GetActiveCardCounts(GoodCardCount, SuperCardCount, ProConCardCount, EvilCardCount);
-    bCanUseCleanse = EvilCardCount >= 2;
+    SetOptionalCardEnabled(int(SuperOptional.Cleanse), EvilCardCount >= 2);
 }
 
 function ActivateBerserker(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
@@ -428,7 +384,7 @@ defaultproperties
         CardID="SUPER_CLEANSE"
         OnActivateCard=ActivateCleanse
     End Object
-    CleanseCard=TurboCard'Cleanse'
+    OptionalCardList(0)=(Card=TurboCard'Cleanse')
 
     Begin Object Name=Berserker Class=TurboCard_Super
         CardName(0)="Fist of the"
