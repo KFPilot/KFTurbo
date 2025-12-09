@@ -75,12 +75,17 @@ function TurboCard DrawRandomCard()
     local int Index;
 
     CurrentDeckCardObjectList = DeckCardObjectList;
+
+    //Append any optional cards to the card list.
     for (Index = 0; Index < OptionalCardList.Length; Index++)
     {
         if (!OptionalCardList[Index].bEnabled)
         {
             continue;
         }
+
+        CurrentDeckCardObjectList.Length = CurrentDeckCardObjectList.Length + 1;
+        CurrentDeckCardObjectList[CurrentDeckCardObjectList.Length - 1] = OptionalCardList[Index].Card;
     }
 
     Index = Rand(CurrentDeckCardObjectList.Length);
@@ -168,6 +173,7 @@ function SetOptionalCardEnabled(int OriginalOptionalIndex, bool bEnabled)
         if (OptionalCardList[Index].Card == Card)
         {
             OptionalCardList[Index].bEnabled = bEnabled;
+            log("Set optional card "+Card.CardID+" state to "+bEnabled, 'KFTurboCardVerbose');
             return;
         }
     }
@@ -186,11 +192,11 @@ function TurboCard FindCardByCardID(string CardID)
         }
     }
     
-    for (Index = OptionalCardList.Length - 1; Index >= 0; Index--)
+    for (Index = OriginalOptionalCardList.Length - 1; Index >= 0; Index--)
     {
-        if (OptionalCardList[Index].Card.CardID ~= CardID)
+        if (OriginalOptionalCardList[Index].Card.CardID ~= CardID)
         {
-            return OptionalCardList[Index].Card;
+            return OriginalOptionalCardList[Index].Card;
         }
     }
 
