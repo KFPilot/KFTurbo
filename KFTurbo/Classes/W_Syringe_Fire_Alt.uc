@@ -7,7 +7,7 @@ Function Timer()
 {
 	local float HealSum;
 
-	HealSum = Syringe(Weapon).HealBoostAmount;
+	HealSum = WeaponSyringe(Weapon).HealBoostAmount;
 
 	if ( KFPlayerReplicationInfo(Instigator.PlayerReplicationInfo) != none && KFPlayerReplicationInfo(Instigator.PlayerReplicationInfo).ClientVeteranSkill != none )
 	{

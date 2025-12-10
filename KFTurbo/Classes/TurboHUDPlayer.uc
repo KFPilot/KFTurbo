@@ -48,7 +48,7 @@ var float CurrentPulseRatio;
 var float CurrentArmor;
 var float ArmorInterpRate;
 
-var Syringe CurrentSyringe;
+var WeaponSyringe CurrentSyringe;
 var float CurrentSyringeCharge;
 var float SyringeInterpRate;
 var Texture SyringeIcon;
@@ -57,12 +57,12 @@ var float CurrentHealingRatio;
 var float CurrentHealingInterpRate;
 var Material HealingMaterial;
 
-var Frag CurrentGrenade;
+var WeaponFrag CurrentGrenade;
 var float CurrentGrenadeCount;
 var float MaxGrenadeCount;
 var Texture GrenadeIcon;
 
-var Welder CurrentWelder;
+var WeaponWelder CurrentWelder;
 var float CurrentWelderCharge;
 var float WelderInterpRate;
 
@@ -360,7 +360,7 @@ simulated final function FindSyringe(Pawn CurrentPawn)
 		return;
 	}	
 	
-	CurrentSyringe = Syringe(CurrentPawn.FindInventoryType(class'Syringe'));
+	CurrentSyringe = WeaponSyringe(CurrentPawn.FindInventoryType(class'WeaponSyringe'));
 }
 
 simulated final function FindWelder(Pawn CurrentPawn)
@@ -370,7 +370,7 @@ simulated final function FindWelder(Pawn CurrentPawn)
 		return;
 	}	
 	
-	CurrentWelder = Welder(CurrentPawn.FindInventoryType(class'Welder'));
+	CurrentWelder = WeaponWelder(CurrentPawn.FindInventoryType(class'WeaponWelder'));
 }
 
 simulated final function FindGrenade(Pawn CurrentPawn)
@@ -380,7 +380,7 @@ simulated final function FindGrenade(Pawn CurrentPawn)
 		return;
 	}	
 	
-	CurrentGrenade = Frag(CurrentPawn.FindInventoryType(class'Frag'));
+	CurrentGrenade = WeaponFrag(CurrentPawn.FindInventoryType(class'WeaponFrag'));
 }
 
 simulated final function TickPlayerReplicationInfo(float DeltaTime, KFPlayerReplicationInfo KFPRI)
