@@ -101,6 +101,8 @@ State MatchInProgress {
 		waveCountDown = 0;
 
 		OpenShops();
+		
+		class'TurboWaveEventHandler'.static.BroadcastGameStarted(Self, WaveNum);
 	}
 }
 
