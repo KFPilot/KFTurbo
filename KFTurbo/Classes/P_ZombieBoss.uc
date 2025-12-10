@@ -1,8 +1,7 @@
 //Killing Floor Turbo P_ZombieBoss
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class P_ZombieBoss extends MonsterBoss
-    DependsOn(PawnHelper);
+class P_ZombieBoss extends MonsterBoss;
 
 var AI_ZombieBoss ZombieBossAI;
 

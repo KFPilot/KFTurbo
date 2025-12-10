@@ -1,7 +1,7 @@
 //Killing Floor Turbo P_Gorefast
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class P_Gorefast extends MonsterGorefast DependsOn(PawnHelper);
+class P_Gorefast extends MonsterGorefast;
 
 defaultproperties
 {

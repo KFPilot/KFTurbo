@@ -7,7 +7,6 @@ class MC_Turbo extends MC_DEF;
 
 defaultproperties
 {
-     //NOTE: THESE CLASSES MUST LINE UP WITH THE PAWNHELPER EMONSTER ENUM LIST.
      //Standard Monsters
      MonsterClasses(0)=(MClassName="KFTurbo.P_Clot_STA")
      MonsterClasses(1)=(MClassName="KFTurbo.P_Crawler_STA")

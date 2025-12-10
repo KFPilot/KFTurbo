@@ -2,8 +2,7 @@
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
 class P_Fleshpound extends MonsterFleshpound
-    abstract
-    DependsOn(PawnHelper);
+    abstract;
 
 var AI_Fleshpound ProAI;
 

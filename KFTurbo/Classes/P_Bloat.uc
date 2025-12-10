@@ -1,7 +1,7 @@
 //Killing Floor Turbo P_Bloat
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class P_Bloat extends MonsterBloat DependsOn(PawnHelper);
+class P_Bloat extends MonsterBloat;
 
 //TODO: MAKE RANGED ATTACK NOT WORK WHEN ANY bDecapitated && !bZapped && !bHarpoonStunned
 

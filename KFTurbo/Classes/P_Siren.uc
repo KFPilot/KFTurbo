@@ -1,7 +1,7 @@
 //Killing Floor Turbo P_Siren
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class P_Siren extends MonsterSiren DependsOn(PawnHelper);
+class P_Siren extends MonsterSiren;
 
 var bool bUnstunTimeReady;
 var float UnstunTime;

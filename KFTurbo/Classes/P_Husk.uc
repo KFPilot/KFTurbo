@@ -1,7 +1,7 @@
 //Killing Floor Turbo P_Husk
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class P_Husk extends MonsterHusk DependsOn(PawnHelper);
+class P_Husk extends MonsterHusk;
 
 //TODO: MAKE RANGED ATTACK NOT WORK WHEN ANY bDecapitated && !bZapped && !bHarpoonStunned
 

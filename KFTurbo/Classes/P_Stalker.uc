@@ -1,7 +1,7 @@
 //Killing Floor Turbo P_Stalker
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class P_Stalker extends MonsterStalker DependsOn(PawnHelper);
+class P_Stalker extends MonsterStalker;
 
 var bool bUnstunTimeReady;
 var float UnstunTime;
