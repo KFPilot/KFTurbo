@@ -26,14 +26,32 @@ final function WeaponLocker GetOrCreateServerWeaponLocker()
 final function GameStarted(KFTurboGameType GameType, int StartingWave)
 {
     local int Index;
+    local ShopVolume Shop;
+
     for (Index = GameType.ShopList.Length - 1; Index >= 0; Index--)
     {
-        if (GameType.ShopList[Index] == None || GameType.ShopList[Index].MyTrader != None)
+        Shop = GameType.ShopList[Index];
+        if (Shop == None || Shop.MyTrader != None)
         {
             continue;
         }
 
-        GameType.ShopList[Index].MyTrader = GetOrCreateServerWeaponLocker();
+        Shop.MyTrader = GetOrCreateServerWeaponLocker();
+    }
+
+    if (!class'KFTurboGameType'.static.StaticIsTestGameType(self))
+    {
+        return;
+    }
+
+    foreach AllActors(class'ShopVolume', Shop)
+    {
+        if (Shop.MyTrader != None)
+        {
+            continue;
+        }
+        
+        Shop.MyTrader = GetOrCreateServerWeaponLocker();
     }
 
     LifeSpan = 2.f;

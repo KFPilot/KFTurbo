@@ -83,7 +83,7 @@ simulated function PostBeginPlay()
 		Spawn(class'TurboRepLinkTester', Self);
 	}
 
-	Spawn(class'ServerWeaponLockerEventHandler',  Self);
+	class'ServerWeaponLockerEventHandler'.static.CreateHandler(self);
 
 	SetupBroadcaster();
 	StatsGameRules = SetupTurboStatsGameRules();
