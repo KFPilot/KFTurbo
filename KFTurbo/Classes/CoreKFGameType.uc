@@ -261,13 +261,17 @@ function DramaticEvent(float BaseZedTimePossibility, optional float DesiredZedTi
 function SetupWave()
 {
 	Super.SetupWave();
-
-    MaxMonsters = float(MaxMonsters) * GameMaxMonstersModifier * MapMaxMonstersModifier * AdminMaxMonstersModifier;
+    UpdateMaxMonsters();
 
     TotalMaxMonsters = CalculateTotalMaxMonsters();
     KFGameReplicationInfo(Level.Game.GameReplicationInfo).MaxMonsters = TotalMaxMonsters;
 	
     DoWaveStartForPlayers();
+}
+
+function UpdateMaxMonsters()
+{
+    MaxMonsters = float(MaxMonsters) * GameMaxMonstersModifier * MapMaxMonstersModifier * AdminMaxMonstersModifier;
 }
 
 function DoWaveStartForPlayers()
