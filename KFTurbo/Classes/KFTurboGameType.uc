@@ -738,7 +738,7 @@ state MatchInProgress
         AlivePlayers = GetAlivePlayerCount();
         if (AlivePlayers <= 6)
         {
-            return;
+            return NextSquadSpawnTime;
         }
 
         NextSquadSpawnTime *= (0.75f ** float(AlivePlayers));
