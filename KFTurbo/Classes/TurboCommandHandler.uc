@@ -208,11 +208,6 @@ function SetMaxPlayers(TurboPlayerController CommandInstigator, int PlayerCount)
 
 	TurboGameType = KFTurboGameType(CommandInstigator.Level.Game);
 
-	if (TurboGameType == None || TurboGameType.bWaveInProgress)
-	{
-		return;
-	}
-
  	TurboGameType.MaxPlayers = PlayerCount;
     TurboGameType.default.MaxPlayers = PlayerCount;
 	

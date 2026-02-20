@@ -185,6 +185,7 @@ simulated function SetFontLocale(string LocaleString)
 	FontLocaleUpdateCounter++;
 	default.FontLocaleUpdateCounter = FontLocaleUpdateCounter;
 	class'TurboHUDKillingFloorBase'.default.FontLocaleUpdateCounter = FontLocaleUpdateCounter; //Let TurboGUIFonts they need to reset.
+	OnFontLocaleChanged();
 }
 
 simulated function CleanupFontPackage()
@@ -203,6 +204,9 @@ simulated function CleanupFontPackage()
 	default.FontHelperClass = None;
 	class'TurboHUDKillingFloorBase'.default.FontHelperClass = None;
 }
+
+//Can be used to notify HUD/Overlays that font locale has changed.
+simulated function OnFontLocaleChanged() {}
 
 defaultproperties
 {

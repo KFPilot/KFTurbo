@@ -10,6 +10,7 @@ var globalconfig TurboPlayerMarkReplicationInfo.EMarkColor MarkColor;
 
 var bool bHasInitializedInteraction;
 var bool bHasInitializedStyles;
+var bool bHasInitializedFontLocale;
 var bool bHasInitializedPerkTierPreference;
 var globalconfig array<TurboRepLink.VeterancyTierPreference> PerkTierPreferenceList;
 
@@ -74,6 +75,8 @@ simulated function OnInteractionCreated()
 	{
 		ExtendedConsole(ViewportOwner.Console).ChatMenuClass = string(class'KFTurbo.TurboInGameChat');
 	}
+	
+	InitializeFontLocale();
 
 	if (ViewportOwner != None)
 	{
@@ -93,7 +96,6 @@ simulated function InitializeTurboInteraction()
 	UpdateMerchant();
 	InitializePipebombUsesSpecialGroup();
 	UpdateUseBaseGameFontForChat();
-	InitializeFontLocale();
 
 	RegisterStyles(GUIController(ViewportOwner.GUIController));
 }
@@ -524,7 +526,7 @@ static final function string GetFontLocale(TurboPlayerController PlayerControlle
 	return "ENG";
 }
 
-simulated function EDetectedLocale ResolveLocale(string String)
+static final function EDetectedLocale ResolveLocale(string String)
 {
     local int Index, Code;
 
@@ -569,6 +571,7 @@ simulated function InitializeFontLocale()
 	}
 
 	UpdateFontLocale();
+	bHasInitializedFontLocale = true;
 }
 
 simulated function CheckForFontOverrides()

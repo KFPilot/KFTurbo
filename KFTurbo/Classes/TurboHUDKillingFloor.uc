@@ -1333,6 +1333,27 @@ static final function ResetCanvas(Canvas Canvas)
 	Canvas.Z           = 1.0;
 }
 
+simulated function OnFontLocaleChanged()
+{
+	local int Index;
+	Super.OnFontLocaleChanged();
+	for (Index = 0; Index < Overlays.Length; Index++)
+	{
+		if (TurboHUDOverlay(Overlays[Index]) != None)
+		{
+			TurboHUDOverlay(Overlays[Index]).OnFontLocaleChange();
+		}
+	}
+
+	for (Index = 0; Index < PreDrawOverlays.Length; Index++)
+	{
+		if (TurboHUDOverlay(PreDrawOverlays[Index]) != None)
+		{
+			TurboHUDOverlay(PreDrawOverlays[Index]).OnFontLocaleChange();
+		}
+	}
+}
+
 defaultproperties
 {
 	TextReactionSettingsClass=class'TurboTextReactionSettings'
