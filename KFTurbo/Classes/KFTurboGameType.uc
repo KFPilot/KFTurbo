@@ -741,6 +741,7 @@ state MatchInProgress
             return NextSquadSpawnTime;
         }
 
+        AlivePlayers -= 6;
         NextSquadSpawnTime *= (0.75f ** float(AlivePlayers));
         return NextSquadSpawnTime;
 	}
