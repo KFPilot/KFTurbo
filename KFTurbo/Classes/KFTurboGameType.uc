@@ -729,6 +729,21 @@ state MatchInProgress
         class'KFTurboMut'.static.FindMutator(Self).OnWaveEnd();
 		class'TurboWaveEventHandler'.static.BroadcastWaveEnded(Self, WaveNum - 1);
 	}
+
+    function float CalcNextSquadSpawnTime()
+	{
+        local float NextSquadSpawnTime;
+        local int AlivePlayers;
+		NextSquadSpawnTime = Super.CalcNextSquadSpawnTime() / (GameWaveSpawnRateModifier * MapWaveSpawnRateModifier * AdminSpawnRateModifier);
+        AlivePlayers = GetAlivePlayerCount();
+        if (AlivePlayers <= 6)
+        {
+            return;
+        }
+
+        NextSquadSpawnTime *= (0.75f ** float(AlivePlayers));
+        return NextSquadSpawnTime;
+	}
 }
 
 function bool IsPreventGameOverEnabled()
