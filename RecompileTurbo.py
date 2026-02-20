@@ -59,7 +59,7 @@ def UpdateBuildType():
 
     if Arguments.onlyturbo:
         BuildType = EBuildType.TURBO
-        TurboFiles = [ "CommonCore.u", "CommonCoreGame.u", "CommonCoreGame.u", "KFTurbo.u", "KFTurboServer.u", "KFTurboCommon.u" ]
+        TurboFiles = [ "CommonCore.u", "CommonCoreGame.u", "CommonCoreGame.u", "KFTurboGUI.u", "KFTurbo.u", "KFTurboServer.u", "KFTurboCommon.u" ]
         TurboStagingFiles = [ "KFTurbo.ucl", "KFTurboServer.ucl" ]
     elif Arguments.onlyholdout:
         BuildType = EBuildType.HOLDOUT
