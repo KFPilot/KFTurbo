@@ -582,7 +582,7 @@ function AdjustPlayerCountMaxMonsters()
     }
 
     AlivePlayers -= 6;
-    PlayerCountMaxMonstersModifier = 1.f + (0.16f);
+    PlayerCountMaxMonstersModifier = 1.f + (0.16f * float(AlivePlayers));
 }
 
 //Function needs to be declared outside of state scope if it wants to be called outside of the state's scope...
