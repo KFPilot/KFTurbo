@@ -33,6 +33,9 @@ const MAX_FORCED_PLAYER_HEALTH = 6;
 
 var bool bHasVisibleSpectatorMutator;
 
+//Max Monsters modifier based on player count (over 6 players).
+var float PlayerCountMaxMonstersModifier;
+
 //Events that KFTurboServerMut binds to for bridging communication with ServerPerksMut.
 Delegate OnStatsAndAchievementsDisabled();
 Delegate LockPerkSelection(bool bLock);
@@ -85,6 +88,7 @@ function float SetAdminMaxMonstersModifier(float NewAdminMaxMonstersModifier)
     NewAdminMaxMonstersModifier = FClamp(NewAdminMaxMonstersModifier, 1.f, 100.f);
     NewAdminMaxMonstersModifier = FMax(NewAdminMaxMonstersModifier, 1.f);
     AdminMaxMonstersModifier = NewAdminMaxMonstersModifier;
+    UpdateMaxMonsters();
     return AdminMaxMonstersModifier;
 }
 
@@ -163,15 +167,72 @@ function DistributeCash(TurboPlayerController ExitingPlayer)
 
 function int SetFakedPlayerCount(int NewFakedPlayerCount)
 {
-    FakedPlayerCount = Min(Max(NewFakedPlayerCount, 0), MAX_FAKED_PLAYERS - 1);
-    return FakedPlayerCount;
+    return Super.SetFakedPlayerCount(Min(NewFakedPlayerCount, MAX_FAKED_PLAYERS - 1));
+}
+
+function int CalculateTotalMaxMonsters()
+{
+    local int NewTotalMaxMonsters;
+    local float Modifier;
+    NewTotalMaxMonsters = Waves[WaveNum].WaveMaxMonsters;
+    Modifier = 1.f;
+
+    if (GameDifficulty >= 7.0)
+    {
+        Modifier *= 1.7f;
+    }
+    else if (GameDifficulty >= 5.0)
+    {
+        Modifier *= 1.5f;
+    }
+    else if (GameDifficulty >= 4.0)
+    {
+        Modifier *= 1.3f;
+    }
+    else if (GameDifficulty >= 2.0)
+    {
+        Modifier *= 1.f;
+    }
+    else
+    {
+        Modifier *= 0.7f;
+    }
+
+    switch (GetMaxMonsterPlayerCount())
+    {
+        case 1:
+            Modifier *= 1.f;
+            break;
+        case 2:
+            Modifier *= 2.f;
+            break;
+        case 3:
+            Modifier *= 2.75f;
+            break;
+        case 4:
+            Modifier *= 3.5f;
+            break;
+        case 5:
+            Modifier *= 4.f;
+            break;
+        case 6:
+            Modifier *= 4.5f;
+            break;
+        default:
+            Modifier *= (2.f * (float(GetMaxMonsterPlayerCount()) ** 0.5f)) - 0.4f;
+    }
+
+    return float(NewTotalMaxMonsters) * Modifier * GameTotalMonstersModifier;
+}
+
+function int GetMonsterHealthPlayerCount()
+{
+    return Min(MAX_FORCED_PLAYER_HEALTH, Super.GetMonsterHealthPlayerCount());
 }
 
 function int SetForcedPlayerHealthCount(int NewForcedPlayerHealthCount)
 {
-    NewForcedPlayerHealthCount = Clamp(NewForcedPlayerHealthCount, 0, MAX_FORCED_PLAYER_HEALTH);
-    ForcedPlayerHealthCount = NewForcedPlayerHealthCount;
-    return ForcedPlayerHealthCount;
+    return Super.SetForcedPlayerHealthCount(Min(NewForcedPlayerHealthCount, MAX_FORCED_PLAYER_HEALTH));
 }
 
 function int GetPlayerStartingCash()
@@ -182,29 +243,12 @@ function int GetPlayerStartingCash()
 //Provide full context on something dying to TurboGameRules.
 function Killed(Controller Killer, Controller Killed, Pawn KilledPawn, class<DamageType> DamageType)
 {
-    local GameRules GameRules;
-    local TurboGameRules TurboGameRules;
-
     Super.Killed(Killer, Killed, KilledPawn, DamageType);
 
-    GameRules = GameRulesModifiers;
-
-    //Find the first TurboGameRules in the chain and start the event flow.
-    while (GameRules != None)
+    if (PlayerController(Killed) != None)
     {
-        TurboGameRules = TurboGameRules(GameRules);
-
-        if (TurboGameRules != None)
-        {
-            break;
-        }
-
-        GameRules = GameRules.NextGameRules;
-    }
-
-    if (TurboGameRules != None)
-    {
-        TurboGameRules.Killed(Killer, Killed, KilledPawn, DamageType);
+        AdjustPlayerCountMaxMonsters();
+        UpdateMaxMonsters();
     }
 }
 
@@ -514,10 +558,31 @@ function AddBossBuddySquad()
 
 function SetupWave()
 {
+    AdjustPlayerCountMaxMonsters();
+
 	Super.SetupWave();
 
     class'KFTurboMut'.static.FindMutator(Self).OnWaveStart();
 	class'TurboWaveEventHandler'.static.BroadcastWaveStarted(Self, WaveNum);
+}
+
+function UpdateMaxMonsters()
+{
+    MaxMonsters = float(MaxMonsters) * GameMaxMonstersModifier * MapMaxMonstersModifier * AdminMaxMonstersModifier * PlayerCountMaxMonstersModifier;
+}
+
+function AdjustPlayerCountMaxMonsters()
+{
+    local int AlivePlayers;
+    AlivePlayers = GetAlivePlayerCount();
+    if (AlivePlayers <= 6)
+    {
+        PlayerCountMaxMonstersModifier = 1.f;
+        return;
+    }
+
+    AlivePlayers -= 6;
+    PlayerCountMaxMonstersModifier = 1.f + (0.16f);
 }
 
 //Function needs to be declared outside of state scope if it wants to be called outside of the state's scope...
@@ -727,6 +792,8 @@ function DramaticEvent(float BaseZedTimePossibility, optional float DesiredZedTi
 
 defaultproperties
 {
+    PlayerCountMaxMonstersModifier=1.f
+
     bIsHighDifficulty=false
     bStatsAndAchievementsEnabled=true
 	bIsTestGameType=false
