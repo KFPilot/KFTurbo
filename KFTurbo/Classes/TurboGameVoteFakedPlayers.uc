@@ -21,7 +21,7 @@ function OnVoteResult(Name Outcome)
 defaultproperties
 {
     MinVoteIntValue=0
-    MaxVoteIntValue=6
+    MaxVoteIntValue=15
 
     VoteID="FAKEDPLAYERS"
 
