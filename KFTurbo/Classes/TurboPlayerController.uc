@@ -420,7 +420,7 @@ function AttemptMarkActor(vector Start, vector End, Actor TargetActor, class<Tur
 	local TurboPlayerMarkReplicationInfo TurboMarkPRI;
 	local Pickup FoundPickup;
 
-	if ((TargetActor == None || TargetActor.bWorldGeometry) && (Player != None))
+	if ((TargetActor == None || TargetActor.bWorldGeometry) && IsLocalPlayerController())
 	{
 		foreach CollidingActors(class'Pickup', FoundPickup, 40.f, End)
 			break;
