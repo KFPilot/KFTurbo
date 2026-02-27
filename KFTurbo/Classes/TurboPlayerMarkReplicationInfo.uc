@@ -219,7 +219,7 @@ final function TurboPlayerMarkReplicationInfo GetPRIMarkingActor(Actor TargetAct
     {
         TurboMarkPRI = GetTurboMarkPRI(PRIArray[Index]);
 
-        if (TurboMarkPRI != Self && TurboMarkPRI.MarkedActor == TargetActor)
+        if (TurboMarkPRI != None && TurboMarkPRI != Self && TurboMarkPRI.MarkedActor == TargetActor)
         {
             return TurboMarkPRI;
         }
