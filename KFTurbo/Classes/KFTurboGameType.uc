@@ -26,8 +26,8 @@ var array< TurboHealEventHandler > HealEventHandlerList;
 var array< TurboWaveEventHandler > WaveEventHandlerList;
 var array< TurboWaveSpawnEventHandler > WaveSpawnEventHandlerList;
 
-//Used to keep faked player count equal to or less than 12.
-const MAX_FAKED_PLAYERS = 12;
+//Used to keep faked player count equal to or less than 15.
+const MAX_FAKED_PLAYERS = 15;
 //Used to keep monster health at 6 players or fewer.
 const MAX_FORCED_PLAYER_HEALTH = 6;
 
@@ -35,6 +35,8 @@ var bool bHasVisibleSpectatorMutator;
 
 //Max Monsters modifier based on player count (over 6 players).
 var float PlayerCountMaxMonstersModifier;
+//Spawn rate modifier based on player count (over 6 players).
+var float PlayerCountSpawnRateModifier;
 
 //Events that KFTurboServerMut binds to for bridging communication with ServerPerksMut.
 Delegate OnStatsAndAchievementsDisabled();
@@ -173,6 +175,7 @@ function int SetFakedPlayerCount(int NewFakedPlayerCount)
 function int CalculateTotalMaxMonsters()
 {
     local int NewTotalMaxMonsters;
+    local int MaxMonsterPlayerCount;
     local float Modifier;
     NewTotalMaxMonsters = Waves[WaveNum].WaveMaxMonsters;
     Modifier = 1.f;
@@ -198,28 +201,32 @@ function int CalculateTotalMaxMonsters()
         Modifier *= 0.7f;
     }
 
-    switch (GetMaxMonsterPlayerCount())
+    MaxMonsterPlayerCount = GetMaxMonsterPlayerCount();
+
+    if (MaxMonsterPlayerCount > 6)
     {
-        case 1:
-            Modifier *= 1.f;
-            break;
-        case 2:
-            Modifier *= 2.f;
-            break;
-        case 3:
-            Modifier *= 2.75f;
-            break;
-        case 4:
-            Modifier *= 3.5f;
-            break;
-        case 5:
-            Modifier *= 4.f;
-            break;
-        case 6:
-            Modifier *= 4.5f;
-            break;
-        default:
-            Modifier *= (2.f * (float(GetMaxMonsterPlayerCount()) ** 0.5f)) - 0.4f;
+        Modifier *= (2.f * (float(MaxMonsterPlayerCount) ** 0.5291f)) - 0.65f; //Much less aggressive scaling than vanilla.
+    }
+    else
+    {
+        switch (MaxMonsterPlayerCount)
+        {
+            case 2:
+                Modifier *= 2.f;
+                break;
+            case 3:
+                Modifier *= 2.75f;
+                break;
+            case 4:
+                Modifier *= 3.5f;
+                break;
+            case 5:
+                Modifier *= 4.f;
+                break;
+            case 6:
+                Modifier *= 4.5f;
+                break;
+        }
     }
 
     return float(NewTotalMaxMonsters) * Modifier * GameTotalMonstersModifier;
@@ -240,14 +247,14 @@ function int GetPlayerStartingCash()
     return StartingCash;
 }
 
-//Provide full context on something dying to TurboGameRules.
 function Killed(Controller Killer, Controller Killed, Pawn KilledPawn, class<DamageType> DamageType)
 {
     Super.Killed(Killer, Killed, KilledPawn, DamageType);
 
-    if (PlayerController(Killed) != None)
+    if (Killed != None && Killed.bIsPlayer)
     {
-        AdjustPlayerCountMaxMonsters();
+        UpdatePlayerCountMaxMonsters();
+        UpdateExtraAlivePlayerSpawnRateModifier();
         UpdateMaxMonsters();
     }
 }
@@ -558,7 +565,8 @@ function AddBossBuddySquad()
 
 function SetupWave()
 {
-    AdjustPlayerCountMaxMonsters();
+    UpdatePlayerCountMaxMonsters();
+    UpdateExtraAlivePlayerSpawnRateModifier();
 
 	Super.SetupWave();
 
@@ -571,9 +579,15 @@ function UpdateMaxMonsters()
     MaxMonsters = float(MaxMonsters) * GameMaxMonstersModifier * MapMaxMonstersModifier * AdminMaxMonstersModifier * PlayerCountMaxMonstersModifier;
 }
 
-function AdjustPlayerCountMaxMonsters()
+function UpdatePlayerCountMaxMonsters()
 {
     local int AlivePlayers;
+    if (MaxPlayers <= 6)
+    {
+        PlayerCountMaxMonstersModifier = 1.f;
+        return;
+    }
+
     AlivePlayers = GetAlivePlayerCount();
     if (AlivePlayers <= 6)
     {
@@ -732,19 +746,51 @@ state MatchInProgress
 
     function float CalcNextSquadSpawnTime()
 	{
-        local float NextSquadSpawnTime;
-        local int AlivePlayers;
-		NextSquadSpawnTime = Super.CalcNextSquadSpawnTime() / (GameWaveSpawnRateModifier * MapWaveSpawnRateModifier * AdminSpawnRateModifier);
-        AlivePlayers = GetAlivePlayerCount();
-        if (AlivePlayers <= 6)
-        {
-            return NextSquadSpawnTime;
-        }
-
-        AlivePlayers -= 6;
-        NextSquadSpawnTime *= (0.75f ** float(AlivePlayers));
-        return NextSquadSpawnTime;
+		return Super.CalcNextSquadSpawnTime() / FMax((GameWaveSpawnRateModifier * MapWaveSpawnRateModifier * AdminSpawnRateModifier * PlayerCountSpawnRateModifier), 0.1f);
 	}
+}
+
+//This is applied on top of the existing vanilla modifier (so base speed is 1.667x faster with 6 players or more).
+function UpdateExtraAlivePlayerSpawnRateModifier()
+{
+    local int AlivePlayers;
+
+    if (MaxPlayers <= 6)
+    {
+        PlayerCountSpawnRateModifier = 1.f;
+        return;
+    }
+
+    AlivePlayers = GetAlivePlayerCount();
+    if (AlivePlayers <= 6)
+    {
+        PlayerCountSpawnRateModifier = 1.f;
+        return;
+    }
+
+    if (IsEarlyGame())
+    {
+        PlayerCountSpawnRateModifier = (1.14f ** float(AlivePlayers)) - 1.25f; //~7x spawn rate at 16 players.
+        return;
+    }
+
+    PlayerCountSpawnRateModifier = (1.1f ** float(AlivePlayers)) - 0.75f; //~4.5x spawn rate at 16
+}
+
+function bool IsEarlyGame()
+{
+    switch(KFGameLength)
+    {
+        case GL_Short:
+            return WaveNum < 2;
+        case GL_Normal:
+            return WaveNum < 4;
+        case GL_Long:
+            return WaveNum < 7;
+    }
+    
+    //GL_Custom
+    return false;
 }
 
 function bool IsPreventGameOverEnabled()
@@ -809,6 +855,7 @@ function DramaticEvent(float BaseZedTimePossibility, optional float DesiredZedTi
 defaultproperties
 {
     PlayerCountMaxMonstersModifier=1.f
+    PlayerCountSpawnRateModifier=1.f
 
     bIsHighDifficulty=false
     bStatsAndAchievementsEnabled=true
