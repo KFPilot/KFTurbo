@@ -21,6 +21,7 @@ const DIFFICULTY = "diff";
 const MAP_FILE = "mapf";
 const MAP_NAME = "mapn";
 const MATCH_STATE = "ms";
+const WAVE_STATE = "ws";
 const PLAYER_COUNT = "pc";
 const PLAYER_LIST = "pl";
 const SPECTATOR_LIST = "sl";
@@ -31,9 +32,13 @@ var TurboGameReplicationInfo GameReplicationInfo;
 //Cache of JSON data that will not change over the course of the game.
 var string PayloadCache;
 
-//Match count JSON data cache.
+//Match state JSON data cache.
 var string MatchStateCache;
-var int LastKnownMatchStateID; //Used to determine if we need to update MatchStateCache.
+var int LastKnownMatchStateID;
+
+//Wave state JSON data cache.
+var string WaveStateCache;
+var int LastKnownWaveStateID;
 
 //Player count JSON data cache.
 var string PlayerCountCache;
@@ -66,11 +71,17 @@ static function class<TurboInfoTcpLink> GetInfoTcpLinkClass()
     return TcpLinkClass;
 }
 
-static final function TurboInfoTcpLink FindStatsTcpLink(GameInfo GameInfo)
+static final function TurboInfoTcpLink FindStatusTcpLink(GameInfo GameInfo)
 {
     local KFTurboServerMut TurboServerMut;
     TurboServerMut = class'KFTurboServerMut'.static.FindMutator(GameInfo);
-    return TurboServerMut.InfoTcpLink;
+
+    if (TurboServerMut != None)
+    {
+        return TurboServerMut.InfoTcpLink;
+    }
+    
+    return None;
 }
 
 function PostBeginPlay()
@@ -78,7 +89,7 @@ function PostBeginPlay()
     GameType = KFTurboGameType(Level.Game);
     GameReplicationInfo = TurboGameReplicationInfo(Level.GRI);
     
-    log("KFTurbo has created an status TCP link!", 'KFTurboInfoTcpLink');
+    log("KFTurbo has created a status TCP link!", 'KFTurboInfoTcpLink');
 
 	CRLF = Chr(13) $ Chr(10);
 
@@ -96,14 +107,17 @@ function Timer()
 
 function BuildGameStateData()
 {
-    PayloadCache = "{"$StringToJSON(SERVER_NAME, Sanitize(class'GUIComponent'.static.StripColorCodes(Level.GRI.ServerName)))$","
+    PayloadCache = "{%runtime%,"$StringToJSON(SERVER_NAME, Sanitize(class'GUIComponent'.static.StripColorCodes(Level.GRI.ServerName)))$","
         $StringToJSON(GAME_TYPE, class'KFTurboMut'.static.FindMutator(Level.Game).GetGameType())$","
         $StringToJSON(DIFFICULTY, int(Round(Level.Game.GameDifficulty)))$","
         $StringToJSON(MAP_FILE, Left(string(Level), InStr(string(Level), ".")))$","
-        $StringToJSON(MAP_NAME, Level.Title)$",%runtime%}";
+        $StringToJSON(MAP_NAME, Level.Title)$"}";
 
     UpdateMatchStateJSON();
+    UpdateWaveStateJSON();
     UpdatePlayerCountJSON();
+
+    //Don't bother updating player list now. We don't cache its outcome.
 }
 
 state AttemptResolve
@@ -121,12 +135,13 @@ state AttemptResolve
     
     function ResolveFailed()
     {
-        SetTimer(1.f, false);
+        SetTimer(10.f, false);
     }
 
     function Resolved(IpAddr Addr)
     {
         ResolvedDomainAddress = Addr;
+        ResolvedDomainAddress.Port = TargetPort;
         GotoState('AttemptConnection');
     }
 
@@ -164,12 +179,15 @@ Begin:
     log("Now heartbeating status.", 'KFTurboInfoTcpLink');
     while(true)
     {
-        Sleep(2.f);
+        Sleep(5.f);
         SendText("keepalive");
         Sleep(1.f);
         UpdateMatchStateJSON();
         Sleep(1.f);
+        UpdateWaveStateJSON();
+        Sleep(1.f);
         UpdatePlayerCountJSON();
+        Sleep(1.f);
         UpdatePlayerListJSON();
         Sleep(1.f);
         SendStatus();
@@ -178,13 +196,13 @@ Begin:
 
 function SendStatus()
 {
-    SendText(Repl(PayloadCache, "%runtime%", MatchStateCache$","$PlayerCountCache$","$PlayerListCache)$CRLF);
+    SendText(Repl(PayloadCache, "%runtime%", MatchStateCache$","$WaveStateCache$","$PlayerCountCache$","$PlayerListCache)$CRLF);
 }
 
 function UpdateMatchStateJSON()
 {
     local int NewMatchStateID;
-    if (GameType == None)
+    if (GameType == None || GameReplicationInfo == None)
     {
         return;
     }
@@ -206,6 +224,38 @@ function UpdateMatchStateJSON()
 
     LastKnownMatchStateID = NewMatchStateID;
     MatchStateCache = DataToJSON(MATCH_STATE, NewMatchStateID);
+}
+
+function UpdateWaveStateJSON()
+{
+    local int NewWaveStateID;
+    if (GameType == None)
+    {
+        return;
+    }
+
+    if (GameType.bWaitingToStartMatch)
+    {
+        NewWaveStateID = 0;
+    }
+    else
+    {
+        NewWaveStateID = GameType.GetCurrentWaveNum();
+
+        if (!GameType.bWaveInProgress)
+        {
+            NewWaveStateID = NewWaveStateID | (1 << 31); //write to last bit
+        }
+    }
+
+
+    if (NewWaveStateID == LastKnownWaveStateID)
+    {
+        return;
+    }
+
+    LastKnownWaveStateID = NewWaveStateID;
+    WaveStateCache = DataToJSON(WAVE_STATE, NewWaveStateID);
 }
 
 function UpdatePlayerCountJSON()
