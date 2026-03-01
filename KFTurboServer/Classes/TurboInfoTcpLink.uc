@@ -20,6 +20,7 @@ const GAME_TYPE = "game";
 const DIFFICULTY = "diff";
 const MAP_FILE = "mapf";
 const MAP_NAME = "mapn";
+const FINAL_WAVE = "fw";
 const MATCH_STATE = "ms";
 const WAVE_STATE = "ws";
 const PLAYER_COUNT = "pc";
@@ -111,7 +112,8 @@ function BuildGameStateData()
         $StringToJSON(GAME_TYPE, class'KFTurboMut'.static.FindMutator(Level.Game).GetGameType())$","
         $StringToJSON(DIFFICULTY, int(Round(Level.Game.GameDifficulty)))$","
         $StringToJSON(MAP_FILE, Left(string(Level), InStr(string(Level), ".")))$","
-        $StringToJSON(MAP_NAME, Level.Title)$"}";
+        $StringToJSON(MAP_NAME, Level.Title)$","
+        $DataToJSON(FINAL_WAVE, Level.Game.GetFinalWaveNum())$"}";
 
     UpdateMatchStateJSON();
     UpdateWaveStateJSON();
