@@ -15,16 +15,27 @@ var IpAddr ResolvedDomainAddress;
 var string CRLF;
 
 //JSON keys
+//String
 const SERVER_NAME = "serv";
+//String (atm reads from KFTurbo's gametype ID system... which is different from UE2's)
 const GAME_TYPE = "game";
+//String (but is an int).
 const DIFFICULTY = "diff";
+//String (map file name - fallback if map name is not set)
 const MAP_FILE = "mapf";
+//String (map level summary title)
 const MAP_NAME = "mapn";
+//int (the final wave for this game, -1 if there isn't one)
 const FINAL_WAVE = "fw";
+//int (-1 match not started, 0 match in progress, 1 game over, 2 game win)
 const MATCH_STATE = "ms";
+//int (current wave, negative if wave is not active)
 const WAVE_STATE = "ws";
-const PLAYER_COUNT = "pc";
+//String (encoded as player_count|max_player_count|spec_count)
+const PLAYER_COUNT = "pc"; 
+//Array of String (SteamID)
 const PLAYER_LIST = "pl";
+//Array of String (SteamID)
 const SPECTATOR_LIST = "sl";
 
 var KFTurboGameType GameType;
