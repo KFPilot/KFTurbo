@@ -5,14 +5,21 @@
 class TurboTcpLink extends TcpLink
     abstract;
 
+const ValueReplacement = "%v";
+
+const StringValue = "\"%v\"";
+
+const CommaValue = ",%v";
+const CommaStringValue = ",\"%v\"";
+
 static final function string StringToJSON(string Key, coerce string Value)
 {
-    return "\""$Key$"\":\""$Value$"\"";
+    return Repl(StringValue, ValueReplacement, Key)$":"$Repl(StringValue, ValueReplacement, Value);
 }
 
 static final function string DataToJSON(string Key, coerce string Value)
 {
-    return "\""$Key$"\":"$Value;
+    return Repl(StringValue, ValueReplacement, Key)$":"$Value;
 }
 
 //Will encase values in quotes before adding them into the JSON array.
@@ -21,10 +28,20 @@ static final function string StringArrayToJSON(string Key, array<string> ValueLi
     local string Result;
     local int Index;
     
-    Result = "\""$Key$"\":[";
+    if (ValueList.Length == 0)
+    {
+        return Repl(StringValue, ValueReplacement, Key)$":[]";
+    }
+
+    if (ValueList.Length == 1)
+    {
+        return Repl(StringValue, ValueReplacement, Key)$":["$Repl(StringValue, ValueReplacement, ValueList[0])$"]";
+    }
+
+    Result = Repl(StringValue, ValueReplacement, Key)$":["$ValueList[0];
     for (Index = 0; Index < ValueList.Length; Index++)
     {
-        Result $= "\""$ValueList[Index]$"\"";
+        Result $= Repl(CommaStringValue, ValueReplacement, ValueList[Index]);
     }
 
     return Result$"]";
@@ -36,10 +53,20 @@ static final function string DataArrayToJSON(string Key, array<string> ValueList
     local string Result;
     local int Index;
     
-    Result = "\""$Key$"\":[";
+    if (ValueList.Length == 0)
+    {
+        return Repl(StringValue, ValueReplacement, Key)$":[]";
+    }
+
+    if (ValueList.Length == 1)
+    {
+        return Repl(StringValue, ValueReplacement, Key)$":["$ValueList[0]$"]";
+    }
+
+    Result = Repl(StringValue, ValueReplacement, Key)$":["$ValueList[0];
     for (Index = 0; Index < ValueList.Length; Index++)
     {
-        Result $= "\""$ValueList[Index]$"\"";
+        Result $= Repl(CommaValue, ValueReplacement, ValueList[Index]);
     }
 
     return Result$"]";
