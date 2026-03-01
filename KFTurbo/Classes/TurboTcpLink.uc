@@ -38,8 +38,8 @@ static final function string StringArrayToJSON(string Key, array<string> ValueLi
         return Repl(StringValue, ValueReplacement, Key)$":["$Repl(StringValue, ValueReplacement, ValueList[0])$"]";
     }
 
-    Result = Repl(StringValue, ValueReplacement, Key)$":["$ValueList[0];
-    for (Index = 0; Index < ValueList.Length; Index++)
+    Result = Repl(StringValue, ValueReplacement, Key)$":["$Repl(StringValue, ValueReplacement, ValueList[0]);
+    for (Index = 1; Index < ValueList.Length; Index++)
     {
         Result $= Repl(CommaStringValue, ValueReplacement, ValueList[Index]);
     }
@@ -64,7 +64,7 @@ static final function string DataArrayToJSON(string Key, array<string> ValueList
     }
 
     Result = Repl(StringValue, ValueReplacement, Key)$":["$ValueList[0];
-    for (Index = 0; Index < ValueList.Length; Index++)
+    for (Index = 1; Index < ValueList.Length; Index++)
     {
         Result $= Repl(CommaValue, ValueReplacement, ValueList[Index]);
     }
