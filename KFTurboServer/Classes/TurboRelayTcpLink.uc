@@ -15,8 +15,11 @@ var IpAddr ResolvedDomainAddress;
 var string CRLF;
 
 //JSON keys
+//String (SteamID)
 const STEAM_ID = "id";
+//String (player display name)
 const PLAYER_NAME = "name";
+//String (chat message)
 const MESSAGE = "msg";
 
 struct RelayEntry
