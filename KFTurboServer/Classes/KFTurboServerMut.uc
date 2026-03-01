@@ -8,6 +8,7 @@ var globalconfig bool bAutoRestartEmptyIdleServer; //Server will restart after 1
 
 var TurboRepLinkHandler RepLinkHandler;
 var TurboInfoTcpLink InfoTcpLink;
+var TurboRelayTcpLink RelayTcpLink;
 
 static final function KFTurboServerMut FindMutator(GameInfo GameInfo)
 {
@@ -59,6 +60,7 @@ simulated function PostBeginPlay()
 	}
 
 	InfoTcpLink = SetupInfoTcpLink();
+	RelayTcpLink = SetupRelayTcpLink();
 
 	if (bAutoRestartEmptyIdleServer && Level.NetMode == NM_DedicatedServer)
 	{
@@ -82,6 +84,24 @@ function TurboInfoTcpLink SetupInfoTcpLink()
 	}
 
 	TcpLinkClass = class'TurboInfoTcpLink'.static.GetInfoTcpLinkClass();
+
+	if (TcpLinkClass == None)
+	{
+		return None;
+	}
+
+	return Spawn(TcpLinkClass, Self);
+}
+
+function TurboRelayTcpLink SetupRelayTcpLink()
+{
+	local class<TurboRelayTcpLink> TcpLinkClass;
+	if (!class'TurboRelayTcpLink'.static.ShouldCreateRelay())
+	{
+		return None;
+	}
+
+	TcpLinkClass = class'TurboRelayTcpLink'.static.GetRelayTcpLinkClass();
 
 	if (TcpLinkClass == None)
 	{
