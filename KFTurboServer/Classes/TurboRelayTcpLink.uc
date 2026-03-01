@@ -14,6 +14,11 @@ var IpAddr ResolvedDomainAddress;
 
 var string CRLF;
 
+//JSON keys
+const STEAM_ID = "id";
+const PLAYER_NAME = "name";
+const MESSAGE = "msg";
+
 struct RelayEntry
 {
     var string PlayerName;
@@ -93,9 +98,9 @@ function SendNextMessage()
     Entry = MessageBuffer[0];
     MessageBuffer.Remove(0, 1);
 
-    SendText("{"$StringToJSON("id", Entry.SteamID)$","
-        $StringToJSON("name", Sanitize(Entry.PlayerName))$","
-        $StringToJSON("msg", Sanitize(Entry.Message))$"}"$CRLF);
+    SendText("{"$StringToJSON(STEAM_ID, Entry.SteamID)$","
+        $StringToJSON(PLAYER_NAME, Sanitize(Entry.PlayerName))$","
+        $StringToJSON(MESSAGE, Sanitize(Entry.Message))$"}"$CRLF);
 }
 
 state AttemptResolve
