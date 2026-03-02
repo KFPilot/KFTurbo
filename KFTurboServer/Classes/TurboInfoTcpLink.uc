@@ -143,6 +143,7 @@ state AttemptResolve
 
     function Timer()
     {
+        BindPort();
         Resolve(TargetDomain);
     }
     
@@ -193,7 +194,7 @@ Begin:
     while(true)
     {
         Sleep(5.f);
-        SendText("keepalive");
+        SendText("keepalive"$CRLF);
         Sleep(1.f);
         UpdateMatchStateJSON();
         Sleep(1.f);
@@ -220,7 +221,7 @@ function UpdateMatchStateJSON()
         return;
     }
 
-    if (GameType.bWaitingToStartMatch)
+    if (!GameReplicationInfo.bMatchHasBegun)
     {
         NewMatchStateID = -1;
     }
@@ -249,7 +250,7 @@ function UpdateWaveStateJSON()
 
     if (GameType.bWaitingToStartMatch)
     {
-        NewWaveStateID = 0;
+        NewWaveStateID = -1;
     }
     else
     {
@@ -326,6 +327,12 @@ final function string GeneratePlayerJSON()
 defaultproperties
 {
     LinkMode=MODE_Text
+
+    LastKnownMatchStateID=-100000000
+    LastKnownWaveStateID=-1
+    LastPlayerCount=-1
+    LastMaxPlayerCount=-1
+    LastSpectatorCount=-1
 
     bCreateInfoLink=false
     TargetDomain=""
