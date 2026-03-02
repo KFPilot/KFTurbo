@@ -27,6 +27,8 @@ const MAP_FILE = "mapf";
 const MAP_NAME = "mapn";
 //int (the final wave for this game, -1 if there isn't one)
 const FINAL_WAVE = "fw";
+//String (ID of the current session)
+const SESSION_ID = "sid";
 //int (-1 match not started, 0 match in progress, 1 game over, 2 game win)
 const MATCH_STATE = "ms";
 //int (current wave, negative if wave is not active)
@@ -119,12 +121,16 @@ function Timer()
 
 function BuildGameStateData()
 {
+    local KFTurboMut Mutator;
+    Mutator = class'KFTurboMut'.static.FindMutator(Level.Game);
+
     PayloadCache = "{%runtime%,"$StringToJSON(SERVER_NAME, Sanitize(class'GUIComponent'.static.StripColorCodes(Level.GRI.ServerName)))$","
-        $StringToJSON(GAME_TYPE, class'KFTurboMut'.static.FindMutator(Level.Game).GetGameType())$","
+        $StringToJSON(GAME_TYPE, Mutator.GetGameType())$","
         $StringToJSON(DIFFICULTY, int(Round(Level.Game.GameDifficulty)))$","
         $StringToJSON(MAP_FILE, Left(string(Level), InStr(string(Level), ".")))$","
         $StringToJSON(MAP_NAME, Level.Title)$","
-        $DataToJSON(FINAL_WAVE, Level.Game.GetFinalWaveNum())$"}";
+        $DataToJSON(FINAL_WAVE, Level.Game.GetFinalWaveNum())$","
+        $StringToJSON(SESSION_ID, Mutator.GetSessionID())$"}";
 
     UpdateMatchStateJSON();
     UpdateWaveStateJSON();
