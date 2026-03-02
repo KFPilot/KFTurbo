@@ -12,7 +12,7 @@ var globalconfig string StatsTcpLinkClassOverride;
 
 var KFTurboMut Mutator;
 var IpAddr StatsAddress;
-var string VersionSessionJson; //Cache this. It's a small optimization over rebuilding it every time.
+
 
 var string CRLF;
 
@@ -21,6 +21,16 @@ var float LastDataSendTime;
 
 var int MaxRetryCount;
 var bool bIsFlushing;
+
+//JSON data that does not change over the course of a game.
+//Cached to reduce the amount of string manipulation needed to produce payloads.
+var string VersionIDJson; 
+var string SessionIDJson;
+var string GameStartPayloadCache;
+var string GameEndPayloadCache;
+var string WaveStartPayloadCache;
+var string WaveEndPayloadCache;
+var string WaveStatsPayloadCache;
 
 static function bool ShouldBroadcastAnalytics()
 {
@@ -63,7 +73,15 @@ function PostBeginPlay()
 
 function OnGameStart()
 {
-    VersionSessionJson = StringToJSON("version", Mutator.GetTurboVersionID()) $ "," $ StringToJSON("session", Mutator.GetSessionID());
+    //Precache the static parts of the payloads.
+    
+    VersionIDJson = StringToJSON("version", Mutator.GetTurboVersionID());
+    SessionIDJson = StringToJSON("session", Mutator.GetSessionID());
+    GameStartPayloadCache = "{" $ StringToJSON("type", "gamebegin") $ "," $ SessionIDJson $ "," $ VersionIDJson $ "," $ StringToJSON("map", Left(string(Level), InStr(string(Level), "."))) $ "," $ StringToJSON("time", Mutator.GetSessionStartTime()) $ ",";
+    GameEndPayloadCache = "{" $ StringToJSON("type", "gameend") $ "," $ SessionIDJson $ ",";
+    WaveStartPayloadCache = "{" $ StringToJSON("type", "wavestart") $ "," $ SessionIDJson $ ",";
+    WaveEndPayloadCache = "{" $ StringToJSON("type", "waveend") $ "," $ SessionIDJson $ ",";
+    WaveStatsPayloadCache = "{" $ StringToJSON("type", "wavestats") $ "," $ SessionIDJson $ ",";
 
     BindPort();
     Resolve(StatsDomain);
@@ -133,7 +151,7 @@ state ConnectionReady
 {
     function BeginState()
     {
-        SetTimer(9.f, true);
+        SetTimer(2.f, true);
     }
 
     function EndState()
@@ -168,7 +186,7 @@ Begin:
         }
 
         LastDataSendTime = Level.TimeSeconds;
-        SendText(DeferredDataList[0]);
+        SendText(DeferredDataList[0]$CRLF);
         DeferredDataList.Remove(0, 1);
     }
 }
@@ -230,7 +248,7 @@ Begin:
 			Level.NextSwitchCountdown = FMax(Level.NextSwitchCountdown, 1.f);
         }
 
-        SendText(DeferredDataList[0]);
+        SendText(DeferredDataList[0]$CRLF);
         DeferredDataList.Remove(0, 1);
     }
 
@@ -252,6 +270,8 @@ Data payload for a game starting looks like the following;
 
 {
     "type": "gamebegin",
+    "map" : "<.rom file>",
+    "time" : "<Date/Time in MYSQL format>"
     "version": "5.2.2",
     "session": "<session ID>",
     "gametype" : "turbo"
@@ -259,15 +279,15 @@ Data payload for a game starting looks like the following;
 
 type - refers to the type of payload this is.
 version - The KFTurbo version currently running.
-session - The session ID for this game."
+session - The session ID for this game.
+map - The rom file that is being played.
+time - The MYSQL time the game started.
 gametype - The type of game being played. Can be "turbo", "turbocardgame", "turborandomizer", "turboplus".
 */
 
 final function string BuildGameStartPayload()
 {
-    return "{" $ StringToJSON("type", "gamebegin") $ ","
-        $ VersionSessionJson $ ","
-        $ StringToJSON("gametype", Mutator.GetGameType()) $ "}";
+    return GameStartPayloadCache $ StringToJSON("gametype", Mutator.GetGameType()) $ "}";
 }
 
 /*
@@ -277,7 +297,7 @@ Data payload for a game ending looks like the following;
     "type": "gameend",
     "version": "5.2.2",
     "session": "<session ID>",
-    "wavenum" : 3,
+    "wavenum" : "3",
     "result" : "won"
 }
 
@@ -296,10 +316,7 @@ function SendGameEnd(int Result)
 
 final function string BuildGameEndPayload(int WaveNum, string Result)
 {
-    return "{" $ StringToJSON("type", "gameend") $ ","
-        $ VersionSessionJson $ ","
-        $ StringToJSON("wavenum", WaveNum) $ ","
-        $ DataToJSON("result", Result) $ "}";
+    return GameEndPayloadCache $ StringToJSON("wavenum", WaveNum) $ "," $ StringToJSON("result", Result) $ "}";
 }
 
 /*
@@ -309,7 +326,7 @@ Data payload for a wave starting looks like the following;
     "type": "wavestart",
     "version": "5.2.2",
     "session": "<session ID>",
-    "wavenum" : 2,
+    "wavenum" : "2",
     "playerlist" : ["<steam ID 1>","<steam ID 2>", "<steam ID 3>", ...]
 }
 
@@ -327,10 +344,7 @@ function SendWaveStart()
 
 final function string BuildWaveStartPayload(int WaveNum)
 {
-    return "{" $ StringToJSON("type", "wavestart") $ ","
-        $ VersionSessionJson $ ","
-        $ StringToJSON("wavenum", WaveNum) $ ","
-        $ DataToJSON("playerlist", GetPlayerList()) $ "}";
+    return WaveStartPayloadCache $ StringToJSON("wavenum", WaveNum) $ "," $ GeneratePlayerJSON() $ "}";
 }
 
 /*
@@ -340,7 +354,7 @@ Data payload for a wave ending looks like the following;
     "type": "waveend",
     "version": "5.2.2",
     "session": "<session ID>",
-    "wavenum" : 2
+    "wavenum" : "2"
 }
 
 type - refers to the type of payload this is.
@@ -356,9 +370,7 @@ function SendWaveEnd()
 
 final function string BuildWaveEndPayload(int WaveNum)
 {
-    return "{" $ StringToJSON("type", "waveend") $ ","
-        $ VersionSessionJson $ ","
-        $ StringToJSON("wavenum", WaveNum) $ "}";
+    return WaveEndPayloadCache $ StringToJSON("wavenum", WaveNum) $ "}";
 }
 
 /*
@@ -368,7 +380,7 @@ Data payload for a player's wave stats looks like the following;
     "type": "wavestats",
     "version": "5.2.2",
     "session": "<session ID>",
-    "wavenum" : 8,
+    "wavenum" : "8",
     "player" : "<steam ID>",
     "playername" : "Player Name",
     "perk" : "<perk name>",
@@ -404,8 +416,7 @@ function SendWaveStats(TurboWavePlayerStatCollector Stats)
 
 final function string BuildWaveStatsPayload(TurboWavePlayerStatCollector Stats)
 {
-    return "{" $ StringToJSON("type", "wavestats") $ ","
-        $ VersionSessionJson $ ","
+    return WaveStatsPayloadCache
         $ StringToJSON("wavenum", Stats.Wave) $ ","
         $ StringToJSON("player", Stats.PlayerID) $ ","
         $ StringToJSON("playername", Sanitize(Stats.GetPlayerName())) $ ","
@@ -439,24 +450,23 @@ static final function string GetPerkID(TurboPlayerReplicationInfo TPRI)
             return "DEM";
     }
 
-    return "NONE";
+    return "INV";
 }
 
 static final function string BuildStatsMap(TurboWavePlayerStatCollector Stats)
 {
-    return "{" $ DataToJSON("Kills", Stats.Kills) $
-        Eval(Stats.KillsFleshpound > 0, "," $ DataToJSON("KillsFP", Stats.KillsFleshpound), "") $
-        Eval(Stats.KillsScrake > 0, "," $ DataToJSON("KillsSC", Stats.KillsScrake), "") $
-        Eval(Stats.DamageDone > 0, "," $ DataToJSON("Damage", Stats.DamageDone), "") $
-        Eval(Stats.DamageDoneFleshpound > 0, "," $ DataToJSON("DamageFP", Stats.DamageDoneFleshpound), "") $
-        Eval(Stats.DamageDoneScrake > 0, "," $ DataToJSON("DamageSC", Stats.DamageDoneScrake), "") $
-        Eval(Stats.ShotsFired > 0, "," $ DataToJSON("ShotsFired", Stats.ShotsFired), "") $
-        Eval(Stats.MeleeSwings > 0, "," $ DataToJSON("MeleeSwings", Stats.MeleeSwings), "") $
-        Eval(Stats.ShotsHit > 0, "," $ DataToJSON("ShotsHit", Stats.ShotsHit), "") $
-        Eval(Stats.ShotsHeadshot > 0, "," $ DataToJSON("ShotsHeadshot", Stats.ShotsHeadshot), "") $
-        Eval(Stats.Reloads > 0, "," $ DataToJSON("Reloads", Stats.Reloads), "") $
-        Eval(Stats.HealingDone > 0, "," $ DataToJSON("Heals", Stats.HealingDone), "") $
-        "}";
+    return "{" $ DataToJSON("Kills", Stats.Kills)
+        $ "," $ DataToJSON("KillsFP", Stats.KillsFleshpound)
+        $ "," $ DataToJSON("KillsSC", Stats.KillsScrake)
+        $ "," $ DataToJSON("Damage", Stats.DamageDone)
+        $ "," $ DataToJSON("DamageFP", Stats.DamageDoneFleshpound)
+        $ "," $ DataToJSON("DamageSC", Stats.DamageDoneScrake)
+        $ "," $ DataToJSON("ShotsFired", Stats.ShotsFired)
+        $ "," $ DataToJSON("MeleeSwings", Stats.MeleeSwings)
+        $ "," $ DataToJSON("ShotsHit", Stats.ShotsHit)
+        $ "," $ DataToJSON("ShotsHeadshot", Stats.ShotsHeadshot)
+        $ "," $ DataToJSON("Reloads", Stats.Reloads)
+        $ "," $ DataToJSON("Heals", Stats.HealingDone) $ "}";
 }
 
 static final function string GetResultName(int GameResult)
@@ -472,28 +482,21 @@ static final function string GetResultName(int GameResult)
     return "aborted";
 }
 
-final function string GetPlayerList()
+
+final function string GeneratePlayerJSON()
 {
-    local Controller C;
-    local string PlayerList;
-    PlayerList = "";
+    local int Index;
+    local array<TurboPlayerController> PlayerControllerList;
+    local array<string> PlayerList;
 
-    for (C = Level.ControllerList; C != None; C = C.NextController)
+	PlayerControllerList = class'TurboGameplayHelper'.static.GetPlayerControllerList(Level, false);
+
+    for (Index = 0; Index < PlayerControllerList.Length; Index++)
     {
-        if (!C.bIsPlayer || C.PlayerReplicationInfo == None || C.PlayerReplicationInfo.bOnlySpectator || TurboPlayerController(C) == None)
-        {
-            continue;
-        }
-
-        PlayerList $= ",%q"$PlayerController(C).GetPlayerIDHash()$"%q";
+        PlayerList[PlayerList.Length] = PlayerControllerList[Index].GetPlayerIDHash();
     }
 
-    if (PlayerList != "")
-    {
-        PlayerList = Mid(PlayerList, 1);
-    }
-
-    return "["$PlayerList$"]";
+    return StringArrayToJSON("playerlist", PlayerList);
 }
 
 defaultproperties

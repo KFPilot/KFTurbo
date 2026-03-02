@@ -32,7 +32,7 @@ var private string TurboVersion;
 var private bool bHasVersionUpdate;
 
 var protected string SessionID;
-var protected string GameStartTime;
+var protected string SessionStartTime;
 var protected string GameType;
 
 var globalconfig bool bRequireAdminForDifficultyCommands;
@@ -347,8 +347,7 @@ simulated function String GetHumanReadableName()
 final function string GetSessionID()
 {
     if (SessionID == "")
-	{
-		GameStartTime = FullTimeDate();
+	{	
 		SessionID = GenerateSessionID();
 	}
 
@@ -356,16 +355,33 @@ final function string GetSessionID()
 }
 
 //Taken from GameStats.uc
-// Date/Time in MYSQL format
-function String FullTimeDate()
+//Date/Time in MYSQL format
+function String GetSessionStartTime()
 {
-	return Level.Year$"-"$Level.Month$"-"$Level.Day$" "$Level.Hour$":"$Level.Minute$":"$Level.Second;
+	if (SessionStartTime == "")
+	{
+		SessionStartTime = Level.Year$"-"$Level.Month$"-"$Level.Day$" "$Level.Hour$":"$Level.Minute$":"$Level.Second;
+	}
+
+	return SessionStartTime;
 }
 
-//By default session IDs are Y-M-D H:M:S|<map_file_name_without_ext>
+static final function string HashSessionID(string Input)
+{
+    local int Index, Hash;
+    Hash = 0x811c9dc5;
+    for (Index = 0; Index < Len(Input); Index++)
+    {
+        Hash *= 0x01000193;
+        Hash = Hash ^ Asc(Mid(Input, Index, 1));
+    }
+    return string(Hash);
+}
+
+//By default session ID is a hash of "Y-M-D H:M:S|<server name>".
 function string GenerateSessionID()
 {
-	return GameStartTime $ "|" $ Left(string(Level), InStr(string(Level), "."));
+	return HashSessionID(GetSessionStartTime() $ "|" $ Level.GRI.ServerName);
 }
 
 function SetGameType(Object Context, string InGameType)
