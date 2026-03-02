@@ -75,7 +75,22 @@ function PostBeginPlay()
     LinkMode = MODE_Text;
     ReceiveMode = RMODE_Event;
 
+    SetTimer(2.f, false);
+}
+
+function Timer()
+{
+    RegisterBroadcastHandler();
     GotoState('AttemptResolve');
+}
+
+function RegisterBroadcastHandler()
+{
+    local BroadcastHandler BroadcastHandler;
+
+    BroadcastHandler = Level.Game.BroadcastHandler;
+    Level.Game.BroadcastHandler = Spawn(class'TurboRelayBroadcastHandler', self);
+    Level.Game.BroadcastHandler.NextBroadcastHandler = BroadcastHandler;
 }
 
 function RelayMessage(PlayerController Sender, string Message)
@@ -110,12 +125,13 @@ state AttemptResolve
 {
     function BeginState()
     {
-        log("Attempting to resolve relay domain.", 'KFTurboRelayTcpLink');
         SetTimer(1.f, false);
     }
 
     function Timer()
     {
+        log("Attempting to resolve relay domain.", 'KFTurboRelayTcpLink');
+        BindPort();
         Resolve(RelayDomain);
     }
 
@@ -126,6 +142,7 @@ state AttemptResolve
 
     function Resolved(IpAddr Addr)
     {
+        log("Relay domain successfully resolved!", 'KFTurboRelayTcpLink');
         ResolvedDomainAddress = Addr;
         ResolvedDomainAddress.Port = RelayPort;
         GotoState('AttemptConnection');
@@ -158,12 +175,12 @@ state Connected
 {
     function Timer()
     {
-        SendNextMessage();
+        SendText("keepalive"$CRLF);
     }
 
     function BeginState()
     {
-        SetTimer(SendInterval, true);
+        log("Relay connection succeeded!", 'KFTurboRelayTcpLink');
     }
 
     function EndState()
@@ -174,6 +191,15 @@ state Connected
     function Closed()
     {
         GotoState('AttemptConnection');
+    }
+
+Begin:
+    Sleep(1.f);
+    SetTimer(5.f, true);
+    while(true)
+    {
+        Sleep(SendInterval);
+        SendNextMessage();
     }
 }
 
