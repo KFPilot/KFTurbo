@@ -110,7 +110,7 @@ function PostBeginPlay()
     LinkMode = MODE_Text;
     ReceiveMode = RMODE_Event;
 
-    SetTimer(1.f, false);
+    SetTimer(FRand() + 1.f, false);
 }
 
 function Timer()
