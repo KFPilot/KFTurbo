@@ -120,8 +120,6 @@ state AttemptResolve
         StatsAddress.Port = StatsPort;
         GotoState('AttemptConnection');
     }
-
-    function Closed() {}
 }
 
 state AttemptConnection
