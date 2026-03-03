@@ -21,6 +21,7 @@ var float LastDataSendTime;
 
 var int MaxRetryCount;
 var bool bIsFlushing;
+var bool bFlushPending;
 
 //JSON data that does not change over the course of a game.
 //Cached to reduce the amount of string manipulation needed to produce payloads.
@@ -73,8 +74,12 @@ function PostBeginPlay()
 
 function OnGameStart()
 {
+    SetTimer(FRand() + 1.f, false);
+}
+
+function Timer()
+{
     //Precache the static parts of the payloads.
-    
     VersionIDJson = StringToJSON("version", Mutator.GetTurboVersionID());
     SessionIDJson = StringToJSON("session", Mutator.GetSessionID());
     GameStartPayloadCache = "{" $ StringToJSON("type", "gamebegin") $ "," $ SessionIDJson $ "," $ VersionIDJson $ "," $ StringToJSON("map", Left(string(Level), InStr(string(Level), "."))) $ "," $ StringToJSON("time", Mutator.GetSessionStartTime()) $ ",";
@@ -83,45 +88,144 @@ function OnGameStart()
     WaveEndPayloadCache = "{" $ StringToJSON("type", "waveend") $ "," $ SessionIDJson $ ",";
     WaveStatsPayloadCache = "{" $ StringToJSON("type", "wavestats") $ "," $ SessionIDJson $ ",";
 
-    BindPort();
-    Resolve(StatsDomain);
+    GotoState('AttemptResolve');
 }
 
-event Resolved(IpAddr ResolvedAddress)
-{
-    log("Resolved stats domain"@StatsDomain$".", 'KFTurboStatsTcp');
-    StatsAddress = ResolvedAddress;
-    StatsAddress.Port = StatsPort;
 
-    if (!OpenNoSteam(StatsAddress))
+state AttemptResolve
+{
+    function BeginState()
     {
-        log("OpenNoSteam failed for stats domain"@StatsDomain$"!", 'KFTurboStatsTcp');
-        Close();
-        LifeSpan = 1.f;
+        log("Attempting to resolve target domain.", 'KFTurboStatsTcp');
+        SetTimer(1.f, false);
+    }
+
+    function Timer()
+    {
+        BindPort();
+        Resolve(StatsDomain);
+    }
+    
+    function ResolveFailed()
+    {
+        SetTimer(10.f, false);
+    }
+
+    function Resolved(IpAddr Addr)
+    {
+        //Put first payload in now.
+        DeferredDataList[0] = BuildGameStartPayload();
+
+        StatsAddress = Addr;
+        StatsAddress.Port = StatsPort;
+        GotoState('AttemptConnection');
+    }
+
+    function Closed() {}
+}
+
+state AttemptConnection
+{
+    function Opened()
+    {
+        GotoState('Connected');
+    }
+    
+Begin:
+    log("Attempting to connect to resolved address.", 'KFTurboStatsTcp');
+    Sleep(1.f);
+    OpenNoSteam(StatsAddress);
+    Sleep(10.f);
+    if (!IsConnected())
+    {
+        goto 'Begin';
     }
 }
 
-event ResolveFailed()
+state Connected
 {
-    log("Failed to resolve stats domain.", 'KFTurboStatsTcp');
-
-    Close();
-    LifeSpan = 1.f;
-}
-
-function Opened()
-{
-    if (bIsFlushing)
+    function BeginState()
     {
-        log("Connection to stats domain"@StatsDomain@" was opened after we started flushing stats. This should not be possible.", 'KFTurboStatsTcp');
-        return;
+        SetTimer(1.f, true);
     }
 
-    log("Connection to stats domain"@StatsDomain@"opened. Sending game start payload.", 'KFTurboStatsTcp');
+    function EndState()
+    {
+        SetTimer(0.f, false);
+    }
 
-    DeferredDataList.Insert(0, 1);
-    DeferredDataList[0] = BuildGameStartPayload(); //Make sure this is the first thing we send out.
-    GotoState('ConnectionReady');
+    function Closed()
+    {
+        GotoState('AttemptConnection');
+    }
+
+    function Timer()
+    {
+        if (LastDataSendTime + 5.f < Level.TimeSeconds && DeferredDataList.Length == 0)
+        {
+            LastDataSendTime = Level.TimeSeconds;
+            SendText("keepalive"$CRLF);
+        }
+    }
+    
+    function FlushData()
+    {
+        bIsFlushing = true;
+        GotoState('FlushAllData');
+    }
+
+Begin:
+    if (bFlushPending)
+    {
+        GotoState('FlushAllData');
+    }
+    else
+    {
+        log("Now sending payloads.", 'KFTurboInfoTcpLink');
+        while(true)
+        {
+            Sleep(0.2f);
+            SendNextPayload();
+        }
+    }
+}
+
+//Game ended. Get all this data out asap.
+state FlushAllData
+{
+    function Closed()
+    {
+        log("WARNING: Connection was closed before data was able to be flushed!", 'KFTurboStatsTcp');
+        GotoState('FlushComplete');
+    }
+
+Begin:
+    log("Attempting to flush all pending data.", 'KFTurboStatsTcp');
+    while (true)
+    {
+        Sleep(0.1f);
+
+        if (DeferredDataList.Length == 0)
+        {
+            break;
+        }
+
+		if (Level.bLevelChange)
+        {
+			Level.NextSwitchCountdown = FMax(Level.NextSwitchCountdown, 2.f);
+        }
+
+        SendText(DeferredDataList[0]$CRLF);
+        DeferredDataList.Remove(0, 1);
+    }
+
+    Sleep(0.1f);
+    GotoState('FlushComplete');
+}
+
+state FlushComplete
+{
+    
 }
 
 function SendData(string Data)
@@ -145,124 +249,21 @@ function SendData(string Data)
     DeferredDataList[DeferredDataList.Length] = Data;
 }
 
-function FlushData() {}
-
-state ConnectionReady
+function SendNextPayload()
 {
-    function BeginState()
+    if (DeferredDataList.Length == 0)
     {
-        SetTimer(2.f, true);
+        return;
     }
 
-    function EndState()
-    {
-        SetTimer(0.f, false);
-    }
-
-    function Timer()
-    {
-        if (Level.TimeSeconds < LastDataSendTime + 4.f)
-        {
-            return;
-        }
-
-        SendData("keepalive");
-    }
-
-    function FlushData()
-    {
-        bIsFlushing = true;
-        GotoState('FlushAllData');
-    }
-
-Begin:
-    while (true)
-    {
-        Sleep(0.15f);
-
-        if (DeferredDataList.Length == 0)
-        {
-            continue;
-        }
-
-        LastDataSendTime = Level.TimeSeconds;
-        SendText(DeferredDataList[0]$CRLF);
-        DeferredDataList.Remove(0, 1);
-    }
+    LastDataSendTime = Level.TimeSeconds;
+    SendText(DeferredDataList[0]$CRLF);
+    DeferredDataList.Remove(0, 1);
 }
 
-function Closed()
+function FlushData()
 {
-    log("Connection to stats domain"@StatsDomain@"was closed.", 'KFTurboStatsTcp');
-    GotoState('ConnectionClosed');
-}
-
-//Will attempt to re-establish the connection to the stats server.
-state ConnectionClosed
-{
-Begin:
-    if (MaxRetryCount <= 0)
-    {
-        log("Connection to stats domain"@StatsDomain@"failed"@default.MaxRetryCount@"times. Stopping reconnection attempts.", 'KFTurboStatsTcp');
-        GotoState('ConnectionFailed');
-        stop;
-    }
-
-    MaxRetryCount--;
-
-    Sleep(1.f);
-    Close();
-    Sleep(2.f * (float(default.MaxRetryCount) / float(MaxRetryCount)));
-    BindPort();
-    Resolve(StatsDomain);
-}
-
-//Game ended. Get all this data out asap.
-state FlushAllData
-{
-    function OnGameStart() {}
-    function Opened() {}
-
-    function Closed()
-    {
-        if (DeferredDataList.Length != 0)
-        {
-            log("WARNING: Connection to stats domain was closed before buffer was finished sending! ", 'KFTurboStatsTcp');
-        }
-
-        GotoState('ConnectionFailed');
-    }
-
-Begin:
-    while (true)
-    {
-        Sleep(0.1f);
-
-        if (DeferredDataList.Length == 0)
-        {
-            break;
-        }
-
-		if (Level.bLevelChange)
-        {
-			Level.NextSwitchCountdown = FMax(Level.NextSwitchCountdown, 1.f);
-        }
-
-        SendText(DeferredDataList[0]$CRLF);
-        DeferredDataList.Remove(0, 1);
-    }
-
-    Sleep(0.1f);
-    Close();
-}
-
-//Either we were unable to connect after retrying a few times or the connection was closed for an unknown reason while trying to flush data.
-state ConnectionFailed
-{
-    function OnGameStart() {}
-    function Resolved(IpAddr ResolvedAddress) {}
-    function Opened() { Close(); }
-    function Closed() {}
+    bFlushPending = true;
 }
 
 /*
