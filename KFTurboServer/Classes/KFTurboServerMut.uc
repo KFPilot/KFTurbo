@@ -209,6 +209,18 @@ simulated function String GetHumanReadableName()
 	return FriendlyName;
 }
 
+
+
+function ServerTraveling(string URL, bool bItems)
+{
+	Super.ServerTraveling(URL, bItems);
+
+	if (InfoTcpLink != None)
+	{
+		InfoTcpLink.NotifyLevelTravel();
+	}
+}
+
 defaultproperties
 {
 	bAddToServerPackages=False

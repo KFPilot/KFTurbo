@@ -42,6 +42,7 @@ const SPECTATOR_LIST = "sl";
 
 var KFTurboGameType GameType;
 var TurboGameReplicationInfo GameReplicationInfo;
+var bool bIsShuttingDown;
 
 //Cache of JSON data that will not change over the course of the game.
 var string PayloadCache;
@@ -62,6 +63,7 @@ var int LastSpectatorCount;
 
 //Player list JSON data cache.
 var string PlayerListCache;
+
 
 
 static function bool ShouldBroadcastInfo()
@@ -99,10 +101,7 @@ static final function TurboInfoTcpLink FindStatusTcpLink(GameInfo GameInfo)
 }
 
 function PostBeginPlay()
-{
-    GameType = KFTurboGameType(Level.Game);
-    GameReplicationInfo = TurboGameReplicationInfo(Level.GRI);
-    
+{   
     log("KFTurbo has created a status TCP link!", 'KFTurboInfoTcpLink');
 
 	CRLF = Chr(13) $ Chr(10);
@@ -115,6 +114,9 @@ function PostBeginPlay()
 
 function Timer()
 {
+    GameType = KFTurboGameType(Level.Game);
+    GameReplicationInfo = TurboGameReplicationInfo(Level.GRI);
+
     BuildGameStateData();
     GotoState('AttemptResolve');
 }
@@ -132,8 +134,8 @@ function BuildGameStateData()
         $DataToJSON(FINAL_WAVE, Level.Game.GetFinalWaveNum())$","
         $StringToJSON(SESSION_ID, Mutator.GetSessionID())$"}";
 
-    UpdateMatchStateJSON();
-    UpdateWaveStateJSON();
+    UpdateMatchStateJSON(true);
+    UpdateWaveStateJSON(true);
     UpdatePlayerCountJSON();
 
     //Don't bother updating player list now. We don't cache its outcome.
@@ -214,12 +216,40 @@ Begin:
     }
 }
 
+state Shutdown
+{
+Begin:
+    log("Now sending final shutdown status.", 'KFTurboInfoTcpLink');
+    Level.NextSwitchCountdown = FMax(Level.NextSwitchCountdown, 1.f);
+    Sleep(0.1f);
+    UpdateMatchStateJSON();
+    Sleep(0.1f);
+    UpdateWaveStateJSON();
+    Sleep(0.1f);
+    UpdatePlayerCountJSON();
+    Sleep(0.1f);
+    UpdatePlayerListJSON();
+    Sleep(0.1f);
+    SendStatus();
+}
+
 function SendStatus()
 {
     SendText(Repl(PayloadCache, "%runtime%", MatchStateCache$","$WaveStateCache$","$PlayerCountCache$","$PlayerListCache)$CRLF);
 }
 
-function UpdateMatchStateJSON()
+function NotifyLevelTravel()
+{
+    if (!IsConnected())
+    {
+        return;
+    }
+
+    bIsShuttingDown = true;
+    GotoState('Shutdown');
+}
+
+function UpdateMatchStateJSON(optional bool bForce)
 {
     local int NewMatchStateID;
     if (GameType == None || GameReplicationInfo == None)
@@ -236,8 +266,12 @@ function UpdateMatchStateJSON()
         NewMatchStateID = GameReplicationInfo.EndGameType;
     }
 
+    if (bIsShuttingDown && NewMatchStateID == 0)
+    {
+        NewMatchStateID = 3;
+    }
 
-    if (NewMatchStateID == LastKnownMatchStateID)
+    if (!bForce && NewMatchStateID == LastKnownMatchStateID)
     {
         return;
     }
@@ -246,7 +280,7 @@ function UpdateMatchStateJSON()
     MatchStateCache = DataToJSON(MATCH_STATE, NewMatchStateID);
 }
 
-function UpdateWaveStateJSON()
+function UpdateWaveStateJSON(optional bool bForce)
 {
     local int NewWaveStateID;
     if (GameType == None)
@@ -256,7 +290,7 @@ function UpdateWaveStateJSON()
 
     if (GameType.bWaitingToStartMatch)
     {
-        NewWaveStateID = -1;
+        NewWaveStateID = 0;
     }
     else
     {
@@ -264,12 +298,11 @@ function UpdateWaveStateJSON()
 
         if (!GameType.bWaveInProgress)
         {
-            NewWaveStateID = NewWaveStateID | (1 << 31); //write to last bit
+            NewWaveStateID = NewWaveStateID  * -1; //Make negative if during trader time.
         }
     }
 
-
-    if (NewWaveStateID == LastKnownWaveStateID)
+    if (!bForce && NewWaveStateID == LastKnownWaveStateID)
     {
         return;
     }
@@ -290,6 +323,13 @@ function UpdatePlayerCountJSON()
     LastPlayerCount = Level.Game.NumPlayers;
     LastMaxPlayerCount = Level.Game.MaxPlayers;
     LastSpectatorCount = Level.Game.NumSpectators;
+    
+
+    if (bIsShuttingDown)
+    {
+        LastPlayerCount = 0;
+        LastSpectatorCount = 0;
+    }
 
     PlayerCountCache = StringToJSON(PLAYER_COUNT, LastPlayerCount$"|"$LastMaxPlayerCount$"|"$LastSpectatorCount);
 }
@@ -307,6 +347,11 @@ final function string GeneratePlayerJSON()
     local TurboPlayerController Player;
 
 	PlayerControllerList = class'TurboGameplayHelper'.static.GetPlayerControllerList(Level, true);
+
+    if (bIsShuttingDown)
+    {
+        return StringArrayToJSON(PLAYER_LIST, PlayerList) $ "," $ StringArrayToJSON(SPECTATOR_LIST, SpectatorList);
+    }
 
     for (Index = 0; Index < PlayerControllerList.Length; Index++)
     {
