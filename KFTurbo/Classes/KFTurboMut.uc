@@ -369,11 +369,10 @@ function String GetSessionStartTime()
 static final function string HashSessionID(string Input)
 {
     local int Index, Hash;
-    Hash = 0x811c9dc5;
+    Hash = 5381;
     for (Index = 0; Index < Len(Input); Index++)
     {
-        Hash *= 0x01000193;
-        Hash = Hash ^ Asc(Mid(Input, Index, 1));
+        Hash = ((Hash << 5) + Hash) + Asc(Mid(Input, Index, 1));
     }
     return string(Hash);
 }
