@@ -207,7 +207,7 @@ Begin:
     {
         if (UpdateCountdown > 0)
         {
-            Sleep(5.f);
+            Sleep(5.f + FRand());
             SendText("keepalive"$CRLF);
             UpdateCountdown--;
             continue;
