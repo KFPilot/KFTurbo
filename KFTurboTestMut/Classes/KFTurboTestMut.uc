@@ -83,6 +83,8 @@ function PostBeginPlay() {
 			GT.PlayerControllerClass = class'KFTTPlayerController';
 			GT.PlayerControllerClassName = string(class'KFTTPlayerController');
 		}
+
+		class'KFTurboMut'.static.FindMutator(Level.Game).SetGameType(Self, "turbotest");
 	}
 }
 
