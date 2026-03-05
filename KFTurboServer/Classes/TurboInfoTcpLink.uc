@@ -263,7 +263,21 @@ function UpdateMatchStateJSON(optional bool bForce)
     }
     else
     {
-        NewMatchStateID = GameReplicationInfo.EndGameType;
+        if (!GameType.IsTestGameType())
+        {
+            NewMatchStateID = GameReplicationInfo.EndGameType;
+        }
+        else
+        {
+            if (GameType.NumPlayers > 0)
+            {
+                NewMatchStateID = 0;
+            }
+            else
+            {
+                NewMatchStateID = 3;
+            }
+        }
     }
 
     if (bIsShuttingDown && NewMatchStateID == 0)
@@ -368,11 +382,40 @@ final function string GeneratePlayerJSON()
         }
         else
         {
-            PlayerList[PlayerList.Length] = Player.GetPlayerIDHash();
+            PlayerList[PlayerList.Length] = Player.GetPlayerIDHash()$"|"$GetPerkID(TurboPlayerReplicationInfo(Player.PlayerReplicationInfo));
         }
     }
 
     return StringArrayToJSON(PLAYER_LIST, PlayerList) $ "," $ StringArrayToJSON(SPECTATOR_LIST, SpectatorList);
+}
+
+
+static final function string GetPerkID(TurboPlayerReplicationInfo TPRI)
+{
+    if (TPRI == None || TPRI.ClientVeteranSkill == None)
+    {
+        return "NONE";
+    }
+
+    switch(TPRI.ClientVeteranSkill)
+    {
+        case class'KFTurbo.V_FieldMedic':
+            return "MED";
+        case class'KFTurbo.V_SupportSpec':
+            return "SUP";
+        case class'KFTurbo.V_Sharpshooter':
+            return "SHA";
+        case class'KFTurbo.V_Commando':
+            return "COM";
+        case class'KFTurbo.V_Berserker':
+            return "BER";
+        case class'KFTurbo.V_Firebug':
+            return "FIR";
+        case class'KFTurbo.V_Demolitions':
+            return "DEM";
+    }
+
+    return "INV";
 }
 
 defaultproperties
