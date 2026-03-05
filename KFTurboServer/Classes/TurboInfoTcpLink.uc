@@ -10,6 +10,10 @@ var globalconfig string TargetDomain;
 var globalconfig int TargetPort;
 var globalconfig string InfoTcpLinkClassOverride;
 
+//Update frequency. This number is multiplied by 5 to get the seconds between updates.
+var globalconfig int UpdateFrequency;
+var int UpdateCountdown;
+
 var IpAddr ResolvedDomainAddress;
 
 var string CRLF;
@@ -63,8 +67,6 @@ var int LastSpectatorCount;
 
 //Player list JSON data cache.
 var string PlayerListCache;
-
-
 
 static function bool ShouldBroadcastInfo()
 {
@@ -194,24 +196,33 @@ state Heartbeat
 {
     function Closed()
     {
-        GotoState('AttemptConnection');
+        Close();
+        GotoState('AttemptResolve');
     }
 
 Begin:
     log("Now heartbeating status.", 'KFTurboInfoTcpLink');
+    UpdateCountdown = 1;
     while(true)
     {
-        Sleep(5.f);
-        SendText("keepalive"$CRLF);
-        Sleep(1.f);
+        if (UpdateCountdown > 0)
+        {
+            Sleep(5.f);
+            SendText("keepalive"$CRLF);
+            UpdateCountdown--;
+            continue;
+        }
+
+        UpdateCountdown = UpdateFrequency;
+        Sleep(0.1f);
         UpdateMatchStateJSON();
-        Sleep(1.f);
+        Sleep(0.1f);
         UpdateWaveStateJSON();
-        Sleep(1.f);
+        Sleep(0.1f);
         UpdatePlayerCountJSON();
-        Sleep(1.f);
+        Sleep(0.1f);
         UpdatePlayerListJSON();
-        Sleep(1.f);
+        Sleep(0.1f);
         SendStatus();
     }
 }
@@ -432,4 +443,5 @@ defaultproperties
     TargetDomain=""
     TargetPort=-1
     InfoTcpLinkClassOverride=""
+    UpdateFrequency=6
 }
