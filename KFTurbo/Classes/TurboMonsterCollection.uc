@@ -53,21 +53,23 @@ static final function float GetPlayerCountModifier(int PlayerCount)
 {
     switch ( PlayerCount )
     {
+        case 0:
+            return 1.f;
         case 1:
             return 1.f;
         case 2:
-            return 2.f;
+            return 1.5f;
         case 3:
-            return 2.75f;
+            return 2.f;
         case 4:
-            return 3.5f;
+            return 2.5f;
         case 5:
-            return 4.f;
+            return 2.75f;
         case 6:
-            return 4.5f;
+            return 3.f;
     }
 
-    return float(PlayerCount) * 0.8f;
+    return 3.f + (float(PlayerCount - 6) * 0.25f);
 }
 
 //Gets the initial total monsters for a wave.
