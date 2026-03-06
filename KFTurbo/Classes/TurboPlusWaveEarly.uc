@@ -10,18 +10,18 @@ static final function float GetPlayerCountMaxMonstersModifier(int PlayerCount)
 		case 1:
 			return 0.4f;
 		case 2:
-			return 0.55f;
+			return 0.5f;
 		case 3:
-			return 0.7f;
+			return 0.6f;
 		case 4:
-			return 0.8f;
+			return 0.7f;
 		case 5:
-			return 0.9f;
+			return 0.75f;
 		case 6:
-			return 1.f;
+			return 0.8f;
 	}
 
-	return 1.f;
+	return 0.8f;
 }
 
 function int GetMaxMonsters(int PlayerCount)
