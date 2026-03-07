@@ -1,8 +1,9 @@
 class TestLaneWaveManager extends Info
+	dependson(PawnHelper)
 	hidecategories(Advanced,Force,Karma,LightColor,Lighting,Sound,UseTrigger)
 	placeable;
 
-var TurboMonsterCollectionWaveBase TurboMonsterCollection;
+var(LaneManager) editinline TurboMonsterCollectionWaveBase TurboMonsterCollection;
 
 var(LaneManager) Name VolumeTag;
 var array<ZombieVolume> VolumeList;
@@ -18,6 +19,13 @@ var float NextSpawnTime, SpawnTimer;
 var array< class<KFMonster> > CurrentSquad;
 var array<ZombieVolume> CurrentVolumeList;
 var TurboHumanPawn WaveInstigator;
+
+//If true, we track how fast things spawned (and how much was spawned).
+var(LaneManager) bool bDebugSpawning;
+const MAX_MONSTER_TYPE = 9;
+var int MonsterList[MAX_MONSTER_TYPE];
+var float WaveStartTime;
+var float WaveEndTime;
 
 replication
 {
@@ -95,6 +103,13 @@ state ActiveWave
 {
 	function BeginState()
 	{
+		if (bDebugSpawning)
+		{
+			ResetMonsterList();
+			WaveEndTime = -1.f;
+			WaveStartTime = Level.TimeSeconds;
+		}
+
 		bIsActive = true;
 
 		TurboMonsterCollection.Reset();
@@ -103,6 +118,12 @@ state ActiveWave
 		TotalMonsters = TurboMonsterCollection.GetWaveTotalMonsters(WaveNumber, Level.Game.GameDifficulty, PlayerCount);
 		MaxMonsters = TurboMonsterCollection.GetWaveMaxMonsters(WaveNumber, Level.Game.GameDifficulty, PlayerCount);
 		NextSpawnTime = TurboMonsterCollection.GetNextSquadSpawnTime(WaveNumber, PlayerCount);
+
+		if (bDebugSpawning)
+		{
+			log("Starting spawn: TotalMonsters:"$TotalMonsters$" MaxMonsters:"$MaxMonsters$" NextSpawnTime:"$NextSpawnTime);
+		}
+
 		SpawnTimer = NextSpawnTime;
 
 		CurrentSquad.Length = 0;
@@ -114,6 +135,12 @@ state ActiveWave
 
 	function EndState()
 	{
+		if (bDebugSpawning)
+		{
+			WaveEndTime = Level.TimeSeconds;
+			DumpDebugSpawnResults();
+		}
+
 		ClearAllZeds();
 		WaveInstigator = None;
 		Disable('Tick');
@@ -194,8 +221,9 @@ function PerformSpawn()
 
 	RemainingMaxMonsters = Max(MaxMonsters - GetMonsterCount(), 0);
 
-	Volume = CurrentVolumeList[0];
-	CurrentVolumeList.Remove(0, 1);
+	ZedIndex = Rand(CurrentVolumeList.Length);
+	Volume = CurrentVolumeList[ZedIndex];
+	CurrentVolumeList.Remove(ZedIndex, 1);
 
 	ZedIndex = Volume.ZEDList.Length;
 
@@ -218,12 +246,18 @@ function OnMonsterSpawned(KFMonster Monster)
 	if (KFMonsterController(Monster.Controller) != None)
 	{
 		KFMonsterController(Monster.Controller).SetEnemy(WaveInstigator);
+		KFMonsterController(Monster.Controller).PathFindState = 2;
 	}
 
 	Monster.Health = Monster.default.Health * Monster.DifficultyHealthModifer() * GetPlayerHealthModifier(Monster.PlayerCountHealthScale);
 	Monster.HealthMax = Monster.Health;
 
 	Monster.HeadHealth = Monster.default.HeadHealth * Monster.DifficultyHeadHealthModifer() * GetPlayerHealthModifier(Monster.PlayerNumHeadHealthScale);
+
+	if (bDebugSpawning)
+	{
+		MonsterList[class'PawnHelper'.static.GetMonsterType(Monster.Class)]++;
+	}
 }
 
 function CheckIfWaveComplete()
@@ -257,6 +291,49 @@ function ClearAllZeds()
 			}
 		}
 	}	
+}
+
+static final function int GetEnumAsInt(PawnHelper.EMonster Monster)
+{
+	return int(Monster);
+}
+
+function ResetMonsterList()
+{
+	local int Index;
+	for (Index = 0; Index < ArrayCount(MonsterList); Index++)
+	{
+		MonsterList[Index] = 0;
+	}
+}
+
+function DumpDebugSpawnResults()
+{
+	local float ElapsedTime;
+	local int TrashCount;
+	local int SpecialCount;
+	local int ScrakeCount;
+	local int FleshpoundCount;
+	
+	ElapsedTime = WaveEndTime - WaveStartTime;
+
+	TrashCount = MonsterList[GetEnumAsInt(Clot)] + MonsterList[GetEnumAsInt(Crawler)] + MonsterList[GetEnumAsInt(Gorefast)] + MonsterList[GetEnumAsInt(Stalker)];
+	SpecialCount = MonsterList[GetEnumAsInt(Bloat)] + MonsterList[GetEnumAsInt(Siren)] + MonsterList[GetEnumAsInt(Husk)];
+	ScrakeCount = MonsterList[GetEnumAsInt(Scrake)];
+	FleshpoundCount = MonsterList[GetEnumAsInt(Fleshpound)];
+	log("====================== WAVE ENDED =============================");
+	log("- Total Monsters: "$TrashCount+SpecialCount+ScrakeCount+FleshpoundCount);
+	log("- Elapsed Time: "$ElapsedTime);
+	log("- Trash Per Second: "$GetPerSecondAsString(TrashCount, ElapsedTime)$" ("$TrashCount$")");
+	log("- Special Per Second: "$GetPerSecondAsString(SpecialCount, ElapsedTime)$" ("$SpecialCount$")");
+	log("- Scrake Per Second: "$GetPerSecondAsString(ScrakeCount, ElapsedTime)$" ("$ScrakeCount$")");
+	log("- Fleshpound Per Second: "$GetPerSecondAsString(FleshpoundCount, ElapsedTime)$" ("$FleshpoundCount$")");
+	log("===============================================================");
+}
+
+static final function string GetPerSecondAsString(int Count, float Time)
+{
+	return (float(Count)/Time)$"/s";
 }
 
 defaultproperties
