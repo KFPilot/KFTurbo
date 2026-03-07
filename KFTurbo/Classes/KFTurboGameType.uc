@@ -38,6 +38,9 @@ var float PlayerCountMaxMonstersModifier;
 //Spawn rate modifier based on player count (over 6 players).
 var float PlayerCountSpawnRateModifier;
 
+//If set, will be used to play music instead of KFGameType.
+var MusicManager MusicManager;
+
 //Events that KFTurboServerMut binds to for bridging communication with ServerPerksMut.
 Delegate OnStatsAndAchievementsDisabled();
 Delegate LockPerkSelection(bool bLock);
@@ -45,6 +48,11 @@ Delegate LockPerkSelection(bool bLock);
 function InitGame(string Options, out string Error)
 {
     Super.InitGame(Options, Error);
+
+    if (MusicManager != None)
+    {
+        MusicManager.Initialize(self);
+    }
 
     bNoLateJoiners = false;
 }
@@ -71,6 +79,7 @@ function ProcessServerTravel(string URL, bool bItems)
     WaveSpawnEventHandlerList.Length = 0;
     
     MapConfigurationObject = None;
+    MusicManager = None;
 
     OnStatsAndAchievementsDisabled = None;
     LockPerkSelection = None;
@@ -852,6 +861,64 @@ function DramaticEvent(float BaseZedTimePossibility, optional float DesiredZedTi
     Super.DramaticEvent(BaseZedTimePossibility, DesiredZedTimeDuration);
 }
 
+function StartGameMusic(bool bCombat)
+{
+    local Controller C;
+    local string Song;
+
+    if (MusicManager == None)
+    {
+        Super.StartGameMusic(bCombat);
+        return;
+    }
+
+    if (bCombat)
+    {
+        Song = MusicManager.GetCombatSong(self, WaveNum);
+        MusicPlaying = true;
+        CalmMusicPlaying = false;
+    }
+    else
+    {
+        Song = MusicManager.GetCalmSong(self, WaveNum);
+        CalmMusicPlaying = true;
+        MusicPlaying = false;
+    }
+
+    for (C = Level.ControllerList; C != None; C = C.NextController)
+    {
+        if (KFPlayerController(C) != None)
+        {
+            KFPlayerController(C).NetPlayMusic(Song, MapSongHandler.FadeInTime, MapSongHandler.FadeOutTime);
+        }
+    }
+}
+
+function StartInitGameMusic(KFPlayerController Other)
+{
+    local string Song;
+
+    if (MusicManager == None)
+    {
+        Super.StartInitGameMusic(Other);
+        return;
+    }
+
+    if (MusicPlaying)
+    {
+        Song = MusicManager.GetCombatSong(self, WaveNum);
+    }
+    else if (CalmMusicPlaying)
+    {
+        Song = MusicManager.GetCalmSong(self, WaveNum);
+    }
+
+    if (Song != "")
+    {
+        Other.NetPlayMusic(Song, 0.5f, 0);
+    }
+}
+
 defaultproperties
 {
     PlayerCountMaxMonstersModifier=1.f
@@ -915,4 +982,8 @@ defaultproperties
     Waves(13)=(WaveMask=62578607,WaveMaxMonsters=50,WaveDuration=255,WaveDifficulty=0.300000)
     Waves(14)=(WaveMask=100663295,WaveMaxMonsters=50,WaveDuration=255,WaveDifficulty=0.300000)
     Waves(15)=(WaveMask=125892608,WaveMaxMonsters=50,WaveDuration=255,WaveDifficulty=0.300000)
+
+    Begin Object name=DefaultMusicManager class=MusicManager
+    End Object
+    MusicManager=MusicManager'DefaultMusicManager'
 }
