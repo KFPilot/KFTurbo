@@ -75,7 +75,12 @@ simulated function PostBeginPlay()
 		DeathMatch(Level.Game).LoginMenuClass = string(class'TurboInvasionLoginMenu');
 	}
 
-	CustomZedHandler = Spawn(class'TurboCustomZedHandler', self);
+	//Do not do any custom zed replacement in Turbo+.
+	if (!class'KFTurboGameType'.static.StaticIsHighDifficulty(self))
+	{
+		CustomZedHandler = Spawn(class'TurboCustomZedHandler', self);
+	}
+
 	DoorManager = Spawn(class'TurboDoorManager', self);
 
 	if (bDebugClientPerkRepLink)
