@@ -11,6 +11,7 @@ var automated moCheckbox PipebombGroupCheckBox;
 var automated moCheckbox UseBaseGameChatFontBox;
 var automated moComboBox FontLocaleComboBox;
 var automated moButton NeonWeaponConfigureButton;
+var automated moCheckbox AltF4EnabledBox;
 
 var string LocaleOptionList[3]; //3 for now (ENG/JPN/CYR). KOR will be added eventually but need to figure out the character set.
 
@@ -58,6 +59,8 @@ function InitComponent(GUIController MyController, GUIComponent MyOwner)
     FontLocaleComboBox.bIgnoreChange = false;
 
     MiddleSection.ManageComponent(NeonWeaponConfigureButton);
+    MiddleSection.ManageComponent(AltF4EnabledBox);
+    AltF4EnabledBox.Checked(class'TurboInteraction'.static.GetIsAltF4Enabled(PlayerController));
     
     if (PlayerController.HasExtraOptions())
     {
@@ -195,6 +198,20 @@ function OnConfigureNeonWeaponSkinsClicked(GUIComponent Sender)
 	}
 }
 
+function OnAltF4EnabledChange(GUIComponent Sender)
+{
+	local TurboInteraction TurboInteraction;
+
+    TurboInteraction = TurboPlayerController(PlayerOwner()).TurboInteraction;
+
+    if (TurboInteraction == None || TurboInteraction.bAltF4Exits == AltF4EnabledBox.IsChecked())
+    {
+        return;
+    }
+
+    TurboInteraction.SetAltF4Enabled(AltF4EnabledBox.IsChecked());
+}
+
 defaultproperties
 {
     LocaleOptionList(0)="ENG"
@@ -301,4 +318,13 @@ defaultproperties
         OnChange=OnConfigureNeonWeaponSkinsClicked
     End Object
     NeonWeaponConfigureButton=moButton'NeonWeaponSkinsButton'
+
+    Begin Object Class=TurboOptionCheckBox Name=AltF4EnabledBoxButton
+        Caption="Enabled Alt F4"
+        OnCreateComponent=UseBaseGameChatFont.InternalOnCreateComponent
+        Hint="Will enable Alt F4 closing the game."
+        TabOrder=12
+        OnChange=OnAltF4EnabledChange
+    End Object
+    AltF4EnabledBox=moCheckbox'AltF4EnabledBoxButton'
 }

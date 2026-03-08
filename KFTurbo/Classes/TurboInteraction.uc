@@ -645,6 +645,27 @@ simulated function AltF4Pressed()
 	ViewportOwner.Actor.ConsoleCommand("exit");
 }
 
+simulated function SetAltF4Enabled(bool bEnabled)
+{
+	if (bEnabled == bAltF4Exits)
+	{
+		return;
+	}
+
+	bAltF4Exits = bEnabled;
+	SaveConfig();
+}
+
+static final function bool GetIsAltF4Enabled(TurboPlayerController PlayerController)
+{
+	if (PlayerController != None && PlayerController.TurboInteraction != None)
+	{
+		return PlayerController.TurboInteraction.bAltF4Exits;
+	}
+
+	return false;
+}
+
 defaultproperties
 {
 	bHasInitializedInteraction=false
