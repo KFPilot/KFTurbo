@@ -32,6 +32,10 @@ var globalconfig bool bUseBaseGameFontForChat;
 var globalconfig bool bHasPerformedInitialFontLocalCheck;
 var globalconfig string FontLocale;
 
+var globalconfig bool bAltF4Exits;
+
+var bool bIsAltPressed;
+
 enum EDetectedLocale
 {
 	Latin,
@@ -48,8 +52,22 @@ const JapaneseBUpperBound = 0x31FF;
 const CyrillicLowerBound = 0x0400;
 const CyrillicUpperBound = 0x052F;
 
-simulated function bool KeyEvent( out EInputKey Key, out EInputAction Action, FLOAT Delta )
+simulated function bool KeyEvent(out EInputKey Key, out EInputAction Action, FLOAT Delta)
 {
+	if (Key == IK_Alt)
+	{
+		if (Action == IST_Press)
+		{
+			bIsAltPressed = true;
+		}
+		else if(Action == IST_Release)
+		{
+			bIsAltPressed = false;
+		}
+
+		return false;
+	}
+
 	if (Action != IST_Press)
 	{
 		return false;
@@ -62,6 +80,11 @@ simulated function bool KeyEvent( out EInputKey Key, out EInputAction Action, FL
 	else if (Key == IK_F3 && bF3VotesYes)
 	{
 		VoteYes();
+	}
+
+	if (bIsAltPressed && Key == IK_F4)
+	{
+		AltF4Pressed();
 	}
 
 	return false;
@@ -612,6 +635,16 @@ simulated function UpdateFontLocale()
 	}
 }
 
+simulated function AltF4Pressed()
+{
+	if (!bAltF4Exits || ViewportOwner.Actor == None)
+	{
+		return;
+	}
+
+	ViewportOwner.Actor.ConsoleCommand("exit");
+}
+
 defaultproperties
 {
 	bHasInitializedInteraction=false
@@ -637,4 +670,7 @@ defaultproperties
 
 	bHasPerformedInitialFontLocalCheck=true
 	FontLocale="ENG"
+	bAltF4Exits=false
+	
+	bIsAltPressed=false
 }
