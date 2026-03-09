@@ -217,7 +217,7 @@ simulated function UpdateBlackout()
     
     if (bBlackout)
     {
-        FogManagerActor.SetFog(class'HUD'.default.BlackColor, -16.f, 800.f, 1.f);
+        FogManagerActor.SetFog(class'HUD'.default.BlackColor, -16.f, 1000.f, 1.f);
     }
     else
     {
