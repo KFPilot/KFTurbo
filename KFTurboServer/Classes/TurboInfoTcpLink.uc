@@ -147,7 +147,7 @@ state AttemptResolve
 {
     function BeginState()
     {
-        log("Attempting to resolve target domain.", 'KFTurboInfoTcpLink');
+        log("Status Tcp Link attempting to resolve target domain.", 'KFTurboInfoTcpLink');
         SetTimer(1.f, false);
     }
 
@@ -182,10 +182,10 @@ state AttemptConnection
     function Closed() {}
     
 Begin:
-    log("Attempting to connect to resolved address.", 'KFTurboInfoTcpLink');
+    log("Status Tcp Link attempting to connect to resolved address.", 'KFTurboInfoTcpLink');
     Sleep(1.f);
     OpenNoSteam(ResolvedDomainAddress);
-    Sleep(10.f);
+    Sleep(30.f);
     if (!IsConnected())
     {
         goto 'Begin';
@@ -194,14 +194,25 @@ Begin:
 
 state Heartbeat
 {
+    function EndState()
+    {
+        SetTimer(0.f, false);
+    }
+
     function Closed()
+    {
+        log("Status Tcp Link connection was closed. Going back to AttemptResolve in 30 seconds.", 'KFTurboInfoTcpLink');
+        SetTimer(30.f, false);
+    }
+
+    function Timer()
     {
         Close();
         GotoState('AttemptResolve');
     }
 
 Begin:
-    log("Now heartbeating status.", 'KFTurboInfoTcpLink');
+    log("Status Tcp Link now heartbeating status.", 'KFTurboInfoTcpLink');
     UpdateCountdown = 1;
     while(true)
     {
@@ -230,7 +241,7 @@ Begin:
 state Shutdown
 {
 Begin:
-    log("Now sending final shutdown status.", 'KFTurboInfoTcpLink');
+    log("Status Tcp Link now sending final shutdown status.", 'KFTurboInfoTcpLink');
     Level.NextSwitchCountdown = FMax(Level.NextSwitchCountdown, 1.f);
     Sleep(0.1f);
     UpdateMatchStateJSON();
