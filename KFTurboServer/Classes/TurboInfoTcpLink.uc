@@ -342,7 +342,7 @@ function UpdateWaveStateJSON(optional bool bForce)
     }
     else
     {
-        NewWaveStateID = GameType.GetCurrentWaveNum();
+        NewWaveStateID = Min(GameType.GetCurrentWaveNum(), GameType.GetFinalWaveNum() + 1);
 
         if (!GameType.bWaveInProgress)
         {
@@ -466,5 +466,5 @@ defaultproperties
     TargetDomain=""
     TargetPort=-1
     InfoTcpLinkClassOverride=""
-    UpdateFrequency=6
+    UpdateFrequency=2
 }
