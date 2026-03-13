@@ -9,7 +9,7 @@ defaultproperties
     Begin Object name=MusicPackOne class=MusicFallbackPack
         PackName="Departed"
         CombatMusicList=("KF_Containment","KF_Pathogen","KF_WPrevention","KF_Infectious_Cadaver","KF_WPrevention","KF_Pathogen","KF_Infectious_Cadaver","KF_Pathogen","KF_Infectious_Cadaver","KF_Containment")
-        CalmMusicList=("KF_Peripheral","KF_Peripheral","KF_Peripheral","KF_Peripheral","KF_Peripheral","KF_Peripheral","KF_Peripheral","KF_Peripheral","KF_Peripheral","KF_Peripheral")
+        CalmMusicList=("KF_Peripheral")
     End object
 
     //BioticsLab
@@ -22,7 +22,7 @@ defaultproperties
     //Biohazard
     Begin Object name=MusicPackThree class=MusicFallbackPack
         PackName="Biohazard"
-        CombatMusicList=("DirgeRepulse1","KF_Pathogen","DirgeDefective2","KF_Containment","KF_Abandon","DirgeRepulse2","KF_Pathogen","DirgeDefective1","KF_Containment","DirgeRepulse1","KF3")
+        CombatMusicList=("DirgeRepulse1","KF_Pathogen","DirgeDefective2","KF_Containment","KF_Abandon","DirgeRepulse2","KF_Pathogen","DirgeDefective1","KF_Containment","DirgeRepulse1","KF_AbandonV3")
         CalmMusicList=("KF_Defection","KF_Defection","KF_Defection","KF_Defection","KF_Defection","KF_Defection","KF_Defection","KF_Defection","KF_Defection","KF_Defection","KF_Insect")
     End Object
 
@@ -44,7 +44,7 @@ defaultproperties
     Begin Object name=MusicPackSix class=MusicFallbackPack
         PackName="HospitalHorrors"
         CombatMusicList=("DirgeRepulse1","KF_Pathogen","DirgeDefective2","KF_Containment","KF_Abandon","DirgeRepulse2","KF_Pathogen","DirgeDefective1","KF_Containment","DirgeRepulse1")
-        CalmMusicList=("KF_Treatments","KF_Treatments","KF_Treatments","KF_Treatments","KF_Treatments","KF_Treatments","KF_Treatments","KF_Treatments","KF_Treatments","KF_Treatments")
+        CalmMusicList=("KF_Treatments")
     End Object
 
     PackList(0)=MusicFallbackPack'MusicPackOne'
