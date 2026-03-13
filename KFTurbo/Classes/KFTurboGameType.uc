@@ -887,10 +887,7 @@ function StartGameMusic(bool bCombat)
 
     for (C = Level.ControllerList; C != None; C = C.NextController)
     {
-        if (KFPlayerController(C) != None)
-        {
-            KFPlayerController(C).NetPlayMusic(Song, MapSongHandler.FadeInTime, MapSongHandler.FadeOutTime);
-        }
+        MusicManager.PlayMusic(self, KFPlayerController(C), bCombat, Song);
     }
 }
 

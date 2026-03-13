@@ -6,3 +6,14 @@ class MusicFallbackPack extends Object;
 var string PackName;
 var array<string> CombatMusicList;
 var array<string> CalmMusicList;
+var array<string> BossMusicList;
+var float MusicFadeInTime;
+var float MusicFadeOutTime;
+
+defaultproperties
+{
+    MusicFadeInTime=3.f
+    MusicFadeOutTime=3.f
+
+    BossMusicList=("KF_Abandon","KF_AbandonV3","KF_BledDry","KF_Containment")
+}
