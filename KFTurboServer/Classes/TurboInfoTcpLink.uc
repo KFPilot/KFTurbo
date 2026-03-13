@@ -47,6 +47,8 @@ const SPECTATOR_LIST = "sl";
 var KFTurboGameType GameType;
 var TurboGameReplicationInfo GameReplicationInfo;
 var bool bIsShuttingDown;
+var int ResolveAttemptCount; //Number of times we've attempted to resolve our endpoint's domain.
+var int ConnectAttemptCount; //Number of times we've attempted to connect to our endpoint.
 
 //Cache of JSON data that will not change over the course of the game.
 var string PayloadCache;
@@ -147,6 +149,7 @@ state AttemptResolve
 {
     function BeginState()
     {
+        ResolveAttemptCount = 0;
         log("Status Tcp Link attempting to resolve target domain.", 'KFTurboInfoTcpLink');
         SetTimer(1.f, false);
     }
@@ -159,7 +162,8 @@ state AttemptResolve
     
     function ResolveFailed()
     {
-        SetTimer(10.f, false);
+        ResolveAttemptCount++;
+        SetTimer(10.f * float(ResolveAttemptCount), false);
     }
 
     function Resolved(IpAddr Addr)
@@ -174,6 +178,12 @@ state AttemptResolve
 
 state AttemptConnection
 {
+    function BeginState()
+    {
+        ConnectAttemptCount = 0;
+        log("Status Tcp Link attempting to connect to resolved address.", 'KFTurboInfoTcpLink');
+    }
+
     function Opened()
     {
         GotoState('Heartbeat');
@@ -182,10 +192,12 @@ state AttemptConnection
     function Closed() {}
     
 Begin:
-    log("Status Tcp Link attempting to connect to resolved address.", 'KFTurboInfoTcpLink');
     Sleep(1.f);
     OpenNoSteam(ResolvedDomainAddress);
-    Sleep(30.f);
+
+    ConnectAttemptCount++;
+    Sleep(30.f * float(ConnectAttemptCount));
+    
     if (!IsConnected())
     {
         goto 'Begin';
