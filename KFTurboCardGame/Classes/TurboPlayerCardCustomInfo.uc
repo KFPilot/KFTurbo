@@ -4,12 +4,14 @@
 class TurboPlayerCardCustomInfo extends TurboPlayerCustomInfo;
 
 var ServerTimeActor ServerTimeActor;
+var int FireCounter;
 
 var int CheatDeathWave;
 var float CheatDeathTime;
 
 var int NegateDamageCount;
 
+var float LastCriticalHitTime;
 var float PerpetualCriticalHitStartTime;
 var float PerpetualCriticalHitTime;
 var float PerpetualCriticalHitCooldown;
@@ -30,6 +32,8 @@ var float RackEmUpHeadshotStackExpireTime;
 
 var float LastDropWeaponTime;
 var float MinDropWeaponTime;
+
+var int StunningHitFireCounter;
 
 replication
 {
@@ -122,6 +126,16 @@ final function AttemptGrantPerpetualCriticalHit()
 	PerpetualCriticalHitStartTime = Level.TimeSeconds;
 }
 
+final function PlayerFire(TurboPlayerController Player, WeaponFire FireMode)
+{
+	FireCounter++;
+	if (FireCounter < 0)
+	{
+		FireCounter = 0;
+		StunningHitFireCounter = -1;
+	}
+}
+
 final simulated function PlayerThrewGrenade()
 {
 	LastGrenadeThrowTime = Level.TimeSeconds;
@@ -178,6 +192,17 @@ final simulated function PlayerDroppedWeapon()
 	LastDropWeaponTime = Level.TimeSeconds;
 }
 
+final function SendClientCriticalHit(Vector Location, int CriticalHitCount)
+{
+	if (Level.TimeSeconds - LastCriticalHitTime < 0.25f)
+	{
+		return;
+	}
+
+	ClientCriticalHit(Location, CriticalHitCount);
+	LastCriticalHitTime = Level.TimeSeconds;
+}
+
 simulated function ClientCriticalHit(Vector Location, int CriticalHitCount)
 {
     if (Level.NetMode == NM_DedicatedServer || CriticalHitCount <= 0 || PlayerTPRI == None)
@@ -186,6 +211,17 @@ simulated function ClientCriticalHit(Vector Location, int CriticalHitCount)
     }
 
     Spawn(HitEffectList[Min(CriticalHitCount - 1, ArrayCount(HitEffectList) - 1)], PlayerTPRI.Owner,, Location);
+}
+
+final function bool AttemptStunningHit()
+{
+	if (StunningHitFireCounter >= FireCounter)
+	{
+		return false;
+	}
+
+	StunningHitFireCounter = FireCounter;
+	return true;
 }
 
 defaultproperties

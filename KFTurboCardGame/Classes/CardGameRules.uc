@@ -164,6 +164,8 @@ function Tick(float DeltaTime)
 		ClotPawnList[Index].OriginalGroundSpeed *= ClotMovementSpeedModifier;
 	}
 
+    ClotPawnList.Length = 0;
+
 	for(Index = BloatPawnList.Length - 1; Index > -1; Index--)
 	{
 		if(BloatPawnList[Index] == None)
@@ -592,9 +594,12 @@ function MonsterNetDamage(out float DamageMultiplier, KFMonster Injured, Pawn In
         }
     }
 
-    if (MonsterStunChance > 0.f && FRand() < MonsterStunChance)
+    if (InsitgatorCardInfo != None && MonsterStunChance > 0.f && DamageMultiplier > 0.f && InsitgatorCardInfo.AttemptStunningHit())
     {
-        ForceFlipOver(Injured);
+        if (FRand() < MonsterStunChance)
+        {
+            ForceFlipOver(Injured);
+        }
     }
 }
 
@@ -652,7 +657,7 @@ function AttemptCriticalHit(out float Damage, Pawn InstigatedBy, TurboPlayerCard
     if (!bHasPerformedCriticalHitEffect)
     {
         bHasPerformedCriticalHitEffect = true;
-        PlayerCardInfo.ClientCriticalHit(HitLocation, NumCriticalHits);
+        PlayerCardInfo.SendClientCriticalHit(HitLocation, NumCriticalHits);
     }
     
     Damage *= CriticalHitDamageMultiplier * float(NumCriticalHits);
@@ -804,8 +809,6 @@ function PerformSuddenDeath()
 
 function AddMassDetonationEntry(KFMonster KilledMonster, PlayerController Killer)
 {
-    MassDetonationList.Length = MassDetonationList.Length + 1;
-
     MassDetonationList.Insert(0, 1);
     MassDetonationList[0].ExplodeTime = Level.TimeSeconds + 0.25f;
     MassDetonationList[0].Location = KilledMonster.Location;
@@ -816,33 +819,25 @@ function AddMassDetonationEntry(KFMonster KilledMonster, PlayerController Killer
 function ProcessMassDetonationList()
 {
     local int Index;
-    local bool bPerformedDetonation;
-
-    bPerformedDetonation = false;
 
     for (Index = MassDetonationList.Length - 1; Index >= 0; Index--)
     {
         if (MassDetonationList[Index].ExplodeTime > Level.TimeSeconds)
         {
+            Index = -1;
             break;
         }
 
-        PerformMassDetonation(MassDetonationList[Index]);
-        MassDetonationList.Remove(Index, 1);
-        bPerformedDetonation = true;
+        break;
     }
 
-    if (!bPerformedDetonation)
+    if (Index < 0)
     {
         return;
     }
 
-    Index--;
-    while (Index >= 0)
-    {
-        MassDetonationList[Index].ExplodeTime += 0.1f;
-        Index--;
-    }
+    PerformMassDetonation(MassDetonationList[Index]);
+    MassDetonationList.Remove(Index, 1);
 }
 
 final function PerformMassDetonation(MassDetonationEntry Detonation)

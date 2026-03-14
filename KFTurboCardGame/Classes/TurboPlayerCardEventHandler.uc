@@ -26,9 +26,13 @@ function PostBeginPlay()
 
 final function PlayerFire(TurboPlayerController Player, WeaponFire FireMode)
 {
+    local TurboPlayerCardCustomInfo PlayerCardCustomInfo;
+    PlayerCardCustomInfo = FindCardCustomInfo(Player);
+    PlayerCardCustomInfo.PlayerFire(Player, FireMode);
+    
     if (bTossGrenadeBuff && W_Frag_Fire(FireMode) != None)
     {
-        FindCardCustomInfo(Player).PlayerThrewGrenade(); 
+        PlayerCardCustomInfo.PlayerThrewGrenade(); 
     }
 }
 
