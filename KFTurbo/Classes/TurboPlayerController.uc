@@ -318,22 +318,35 @@ exec function Speech( Name Type, int Index, string CallSign )
 
 function bool AllowTextMessage(string Msg)
 {
+	local float MessageCooldown;
+
 	if (Level.NetMode == NM_Standalone || PlayerReplicationInfo.bAdmin || PlayerReplicationInfo.bSilentAdmin)
 	{
 		return true;
 	}
 
-	if (Level.TimeSeconds - LastBroadcastTime > 0.75f)
+	MessageCooldown = 0.75f;
+	if (Level.NetMode == NM_DedicatedServer)
 	{
-		LastBroadcastTime = Level.TimeSeconds;
-		return true;
+		MessageCooldown *= 0.66f;
 	}
 
-	return false;
+	if (Level.TimeSeconds - LastBroadcastTime < MessageCooldown)
+	{
+		return false;
+	}
+
+	LastBroadcastTime = Level.TimeSeconds;
+	return true;
 }
 
 function ServerSay(string Msg)
 {
+	if (!AllowTextMessage(Msg))
+	{
+		return;
+	}
+
 	Super.ServerSay(Msg);
 
 	if (Len(Msg) > 10)
@@ -354,6 +367,16 @@ function ServerSay(string Msg)
 			Vote("NO");
 			break;
 	}
+}
+
+function ServerTeamSay( string Msg )
+{
+	if (!AllowTextMessage(Msg))
+	{
+		return;
+	}
+	
+	Super.ServerTeamSay(Msg);
 }
 
 event TeamMessage(PlayerReplicationInfo PRI, coerce string Message, name Type)
