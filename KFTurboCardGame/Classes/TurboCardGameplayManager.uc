@@ -301,7 +301,7 @@ function OnNextSpawnSquadGenerated(out array < class<KFMonster> > NextSpawnSquad
         {
             AttemptReplaceWeakMonster(NextSpawnSquad[SquadIndex]);
         }
-        else if (ScrakeMonsterReplacementFlag.IsFlagSet() && FRand() < 0.08f)
+        else if (ScrakeMonsterReplacementFlag.IsFlagSet() && FRand() < 0.05f)
         {
             NextSpawnSquad[SquadIndex] = class'P_Scrake_STA';
         }
