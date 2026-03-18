@@ -65,6 +65,7 @@ simulated function Render(Canvas C)
 }
 
 event OnScreenSizeChange(Canvas C, Vector2D CurrentScreenSize, Vector2D PreviousScreenSize);
+event OnFontLocaleChange();
 
 static final function String GetStringOfZeroes(int NumberOfDigits)
 {
