@@ -13,7 +13,7 @@ var automated moComboBox FontLocaleComboBox;
 var automated moButton NeonWeaponConfigureButton;
 var automated moCheckbox AltF4EnabledBox;
 
-var string LocaleOptionList[3]; //3 for now (ENG/JPN/CYR). KOR will be added eventually but need to figure out the character set.
+var string LocaleOptionList[5]; //5 for now (ENG/JPN/CYR/KOR/THA). KOR is now added (we are just repacking someone else's work from 2010 though...)
 
 //Returns the container responsible for holding custom options.
 function GUISectionBackground GetCustomOptionContainer()
@@ -55,6 +55,8 @@ function InitComponent(GUIController MyController, GUIComponent MyOwner)
     FontLocaleComboBox.AddItem(LocaleOptionList[0]);
     FontLocaleComboBox.AddItem(LocaleOptionList[1]);
     FontLocaleComboBox.AddItem(LocaleOptionList[2]);
+    FontLocaleComboBox.AddItem(LocaleOptionList[3]);
+    FontLocaleComboBox.AddItem(LocaleOptionList[4]);
     FontLocaleComboBox.SetIndex(GetFontLocaleIndex(class'TurboInteraction'.static.GetFontLocale(PlayerController)));
     FontLocaleComboBox.bIgnoreChange = false;
 
@@ -185,6 +187,10 @@ function int GetFontLocaleIndex(string Locale)
             return 1;
         case "CYR":
             return 2;
+        case "KOR":
+            return 3;
+        case "THA":
+            return 4;
     }
 
     return 0;
@@ -217,6 +223,8 @@ defaultproperties
     LocaleOptionList(0)="ENG"
     LocaleOptionList(1)="JPN"
     LocaleOptionList(2)="CYR"
+    LocaleOptionList(3)="KOR"
+    LocaleOptionList(4)="THA"
 
     Begin Object Class=TurboGUISectionBackground Name=BGLeftSection
         bFillClient=True

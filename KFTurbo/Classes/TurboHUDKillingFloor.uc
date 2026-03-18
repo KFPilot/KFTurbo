@@ -258,6 +258,26 @@ simulated function RenderPreDrawOverlays(Canvas C)
 	}
 }
 
+simulated function OnFontLocaleChanged()
+{
+	local int Index;
+	for (Index = 0; Index < Overlays.Length; Index++)
+	{
+		if (TurboHUDOverlay(Overlays[Index]) != None)
+		{
+			TurboHUDOverlay(Overlays[Index]).OnFontLocaleChange();
+		}
+	}
+
+	for (Index = 0; Index < PreDrawOverlays.Length; Index++)
+	{
+		if (TurboHUDOverlay(PreDrawOverlays[Index]) != None)
+		{
+			TurboHUDOverlay(PreDrawOverlays[Index]).OnFontLocaleChange();
+		}
+	}
+}
+
 simulated function PostBeginPlay()
 {
 	Super.PostBeginPlay();
@@ -707,7 +727,7 @@ simulated function InitializeEndGameUI(bool bVictory)
 }
 
 simulated function DrawHudPassA(Canvas C)
-{	
+{
 	DrawStoryHUDInfo(C);
 
 	DrawDoorHealthBars(C);
@@ -1336,9 +1356,6 @@ static final function ResetCanvas(Canvas Canvas)
 defaultproperties
 {
 	TextReactionSettingsClass=class'TurboTextReactionSettings'
-	FontHelperClass=class'KFTurboFonts.KFTurboFontHelperEN'
-	FontHelperClassCYString = "KFTurboFontsCY.KFTurboFontHelperCY"
-	FontHelperClassJPString = "KFTurboFontsJP.KFTurboFontHelperJP"
 	
 	MerchantPortrait=Texture'KFTurbo.Merchant.Merchant_Portrait'
 	MerchantString="Merchant"

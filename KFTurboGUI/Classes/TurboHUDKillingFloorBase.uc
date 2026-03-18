@@ -11,6 +11,10 @@ var string FontHelperClassCYString;
 var class<KFTurboFontHelper> FontHelperClassCY;
 var string FontHelperClassJPString;
 var class<KFTurboFontHelper> FontHelperClassJP;
+var string FontHelperClassKRString;
+var class<KFTurboFontHelper> FontHelperClassKR;
+var string FontHelperClassTHString;
+var class<KFTurboFontHelper> FontHelperClassTH;
 
 //Used by GUIFont to check if helper changed.
 var int FontLocaleUpdateCounter;
@@ -114,6 +118,11 @@ simulated function Font LoadFont(int i)
 	return FontHelperClass.static.LoadFontStatic(i);
 }
 
+static function Font LoadLargeNumberFontStatic(int i)
+{
+	return default.FontHelperClass.static.LoadLargeNumberFont(i);
+}
+
 final simulated function Font LoadLargeNumberFont(int i)
 {
 	return FontHelperClass.static.LoadLargeNumberFont(i);
@@ -172,6 +181,20 @@ simulated function SetFontLocale(string LocaleString)
 			}
 			FontHelperClass = FontHelperClassCY;
 			break;
+		case "KOR":
+			if (FontHelperClassKR == None)
+			{
+				FontHelperClassKR = class<KFTurboFontHelper>(DynamicLoadObject(FontHelperClassKRString, Class'Class'));
+			}
+			FontHelperClass = FontHelperClassKR;
+			break;
+		case "THA":
+			if (FontHelperClassTH == None)
+			{
+				FontHelperClassTH = class<KFTurboFontHelper>(DynamicLoadObject(FontHelperClassTHString, Class'Class'));
+			}
+			FontHelperClass = FontHelperClassTH;
+			break;
 	}
 
 	if (FontHelperClass == None)
@@ -185,6 +208,7 @@ simulated function SetFontLocale(string LocaleString)
 	FontLocaleUpdateCounter++;
 	default.FontLocaleUpdateCounter = FontLocaleUpdateCounter;
 	class'TurboHUDKillingFloorBase'.default.FontLocaleUpdateCounter = FontLocaleUpdateCounter; //Let TurboGUIFonts they need to reset.
+	OnFontLocaleChanged();
 }
 
 simulated function CleanupFontPackage()
@@ -204,10 +228,17 @@ simulated function CleanupFontPackage()
 	class'TurboHUDKillingFloorBase'.default.FontHelperClass = None;
 }
 
+simulated function OnFontLocaleChanged()
+{
+
+}
+
 defaultproperties
 {
 	FontLocaleUpdateCounter=0
 	FontHelperClass=class'KFTurboFonts.KFTurboFontHelperEN'
 	FontHelperClassCYString = "KFTurboFontsCY.KFTurboFontHelperCY"
 	FontHelperClassJPString = "KFTurboFontsJP.KFTurboFontHelperJP"
+	FontHelperClassKRString = "KFTurboFontsKR.KFTurboFontHelperKR"
+	FontHelperClassTHString = "KFTurboFontsTH.KFTurboFontHelperTH"
 }

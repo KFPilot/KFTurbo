@@ -29,7 +29,14 @@ var globalconfig bool bPipebombUsesSpecialGroup;
 
 var globalconfig bool bUseBaseGameFontForChat;
 
+enum ELocaleVersion
+{
+	NoLocaleVersion,
+	Version1
+};
+
 var globalconfig bool bHasPerformedInitialFontLocalCheck;
+var globalconfig ELocaleVersion LocaleVersion;
 var globalconfig string FontLocale;
 
 var globalconfig bool bAltF4Exits;
@@ -41,6 +48,8 @@ enum EDetectedLocale
 	Latin,
 	Japanese,
 	Cyrillic,
+	Korean,
+	Thai,
 	Unknown
 };
 
@@ -51,6 +60,14 @@ const JapaneseBUpperBound = 0x31FF;
 
 const CyrillicLowerBound = 0x0400;
 const CyrillicUpperBound = 0x052F;
+
+const KoreanJamoLowerBound = 0x3131;
+const KoreanJamoUpperBound = 0x3163;
+const KoreanSyllableLowerBound = 0xAC00;
+const KoreanSyllableUpperBound = 0xD7A3;
+
+const ThaiLowerBound = 0x0E00;
+const ThaiUpperBound = 0xE7F;
 
 simulated function bool KeyEvent(out EInputKey Key, out EInputAction Action, FLOAT Delta)
 {
@@ -102,6 +119,8 @@ simulated function OnInteractionCreated()
 	{
 		RegisterStyles(GUIController(ViewportOwner.GUIController));
 	}
+
+	InitializeFontLocale();
 }
 
 simulated function InitializeTurboInteraction()
@@ -116,7 +135,6 @@ simulated function InitializeTurboInteraction()
 	UpdateMerchant();
 	InitializePipebombUsesSpecialGroup();
 	UpdateUseBaseGameFontForChat();
-	InitializeFontLocale();
 
 	RegisterStyles(GUIController(ViewportOwner.GUIController));
 }
@@ -393,47 +411,69 @@ simulated function UpdateMerchant()
 	{
 		TurboHUDKillingFloor(ViewportOwner.Actor.myHUD).UpdateTraderPortrait(bReplaceTraderWithMerchant);
 	}
-	
-	if (ViewportOwner.Actor != None)
+
+	if (ViewportOwner.Actor == None)
 	{
-		if (MerchantMesh == None)
-		{
-			MerchantMesh = Mesh(DynamicLoadObject(MerchantMeshRef, class'Mesh'));
-		}
+		return;
+	}
 
-		if (MerchantAnim == None)
-		{
-			MerchantAnim = MeshAnimation(DynamicLoadObject(MerchantAnimRef, class'MeshAnimation'));
-		}
+	if (bReplaceTraderWithMerchant)
+	{
+		LoadMerchantAssets();
+	}
 
-		if (MerchantMaterial == None)
+	foreach ViewportOwner.Actor.AllActors(class'WeaponLocker', Trader)
+	{
+		if ((Trader.Mesh == Trader.default.Mesh && (Trader.Skins.Length == 0 || Trader.Skins[0] == DefaultTraderMaterial)) || Trader.Mesh == MerchantMesh)
 		{
-			MerchantMaterial = Material(DynamicLoadObject(MerchantMaterialRef, class'Material'));
-		}
-
-		foreach ViewportOwner.Actor.AllActors(class'WeaponLocker', Trader)
-		{
-			if ((Trader.Mesh == Trader.default.Mesh && (Trader.Skins.Length == 0 || Trader.Skins[0] == DefaultTraderMaterial)) || Trader.Mesh == MerchantMesh)
+			if (bReplaceTraderWithMerchant)
 			{
-				if (bReplaceTraderWithMerchant)
-				{
-					Trader.LinkMesh(MerchantMesh, false);
-					Trader.LinkSkelAnim(MerchantAnim);
-					Trader.LoopAnim('Idle');
-					Trader.Skins.Length = 1;
-					Trader.Skins[0] = MerchantMaterial;
-				}
-				else
-				{
-					Trader.LinkMesh(Trader.default.Mesh, false);
-					Trader.LinkSkelAnim(MeshAnimation'KF_Soldier_Trip.shopkeeper_anim');
-					Trader.LoopAnim('Idle');
-					Trader.Skins.Length = 1;
-					Trader.Skins[0] = DefaultTraderMaterial;
-				}
+				Trader.LinkMesh(MerchantMesh, false);
+				Trader.LinkSkelAnim(MerchantAnim);
+				Trader.LoopAnim('Idle');
+				Trader.Skins.Length = 1;
+				Trader.Skins[0] = MerchantMaterial;
+			}
+			else
+			{
+				Trader.LinkMesh(Trader.default.Mesh, false);
+				Trader.LinkSkelAnim(MeshAnimation'KF_Soldier_Trip.shopkeeper_anim');
+				Trader.LoopAnim('Idle');
+				Trader.Skins.Length = 1;
+				Trader.Skins[0] = DefaultTraderMaterial;
 			}
 		}
 	}
+
+	if (!bReplaceTraderWithMerchant)
+	{
+		UnloadMerchantAssets();
+	}
+}
+
+simulated function LoadMerchantAssets()
+{
+	if (MerchantMesh == None)
+	{
+		MerchantMesh = Mesh(DynamicLoadObject(MerchantMeshRef, class'Mesh'));
+	}
+
+	if (MerchantAnim == None)
+	{
+		MerchantAnim = MeshAnimation(DynamicLoadObject(MerchantAnimRef, class'MeshAnimation'));
+	}
+
+	if (MerchantMaterial == None)
+	{
+		MerchantMaterial = Material(DynamicLoadObject(MerchantMaterialRef, class'Material'));
+	}
+}
+
+simulated function UnloadMerchantAssets()
+{
+	MerchantMesh = None;
+	MerchantAnim = None;
+	MerchantMaterial = None;
 }
 
 simulated function SetShiftTradeEnabled(bool bNewShiftOpensTrader)
@@ -563,17 +603,41 @@ simulated function EDetectedLocale ResolveLocale(string String)
 		{
             return Cyrillic;
 		}
+		else if ((Code >= KoreanJamoLowerBound && Code <= KoreanJamoUpperBound)
+			|| (Code >= KoreanSyllableLowerBound && Code <= KoreanSyllableUpperBound))
+		{
+			return Korean;
+		}
+		else if (Code >= ThaiLowerBound && Code <= ThaiUpperBound)
+		{
+			return Thai;
+		}
     }
 
     return Latin;
 }
 
+static final function ELocaleVersion GetLatestLocaleVersion()
+{
+	return Version1;
+}
+
 simulated function InitializeFontLocale()
 {
+	local string LocaleCheckString;
+
+	if (bHasPerformedInitialFontLocalCheck && LocaleVersion < GetLatestLocaleVersion())
+	{
+		log("Locale check version is out of date, performing locale check again.", 'KFTurbo');
+		bHasPerformedInitialFontLocalCheck = false;
+	}
+
 	if (!bHasPerformedInitialFontLocalCheck)
 	{
+		//We sample from a bunch of different strings that are likely to be localized.
+		LocaleCheckString = class'HUDKillingFloor'.default.TraderString $ class'KFVetBerserker'.default.VeterancyName $ class'WaitingMessage'.default.DoorMessage $ class'ZombieClotBase'.default.MenuName;
 		log("Performing initial locale check so the correct font locale is used. Test string is "$ class'HUDKillingFloor'.default.TraderString $".", 'KFTurbo');
-		switch (ResolveLocale(class'HUDKillingFloor'.default.TraderString))
+		switch (ResolveLocale(LocaleCheckString))
 		{
 			case Latin:
 				FontLocale = "ENG";
@@ -585,9 +649,17 @@ simulated function InitializeFontLocale()
 			case Cyrillic:
 				FontLocale = "CYR";
 				break;
+			case Korean:
+				FontLocale = "KOR";
+				break;
+			case Thai:
+				FontLocale = "THA";
+				break;
 		}
 		
+		log("- Resolved to "$FontLocale$".", 'KFTurbo');
 		bHasPerformedInitialFontLocalCheck = true;
+		LocaleVersion = GetLatestLocaleVersion();
 		SaveConfig();
 	}
 
@@ -690,8 +762,10 @@ defaultproperties
 	bPipebombUsesSpecialGroup=false
 
 	bHasPerformedInitialFontLocalCheck=true
+	LocaleVersion = NoLocaleVersion
 	FontLocale="ENG"
 	bAltF4Exits=false
 	
 	bIsAltPressed=false
+	bUseBaseGameFontForChat=true
 }
