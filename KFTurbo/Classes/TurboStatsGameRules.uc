@@ -81,7 +81,7 @@ function int NetDamage(int OriginalDamage, int Damage, Pawn Injured, Pawn Instig
 
     if (InstigatedBy != None && KFMonster(Injured) != None)
     {
-        class'TurboPlayerEventHandler'.static.BroadcastPlayerDamagedMonster(InstigatedBy.Controller, KFMonster(Injured), Damage);
+        class'TurboPlayerEventHandler'.static.BroadcastPlayerDamagedMonster(InstigatedBy.Controller, KFMonster(Injured), Damage, DamageType);
     }
 
     if (Injured != None && Injured.Controller != None && Injured.Controller.bIsPlayer)
@@ -164,7 +164,7 @@ final function OnPlayerReload(TurboPlayerController Player, KFWeapon Weapon)
     WavePlayerStatCollector.IncrementReloads();
 }
 
-final function OnPlayerDamagedMonster(TurboPlayerController Player, KFMonster Target, int Damage)
+final function OnPlayerDamagedMonster(TurboPlayerController Player, KFMonster Target, int Damage, class<DamageType> DamageType)
 {
     local TurboWavePlayerStatCollector WavePlayerStatCollector;
     WavePlayerStatCollector = GetPlayerWaveStats(Player);

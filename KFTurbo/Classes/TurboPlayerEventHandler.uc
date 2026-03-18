@@ -20,7 +20,7 @@ delegate OnPlayerMedicDartFire(TurboPlayerController Player, WeaponFire FireMode
 
 delegate OnPlayerReload(TurboPlayerController Player, KFWeapon Weapon);
 
-delegate OnPlayerDamagedMonster(TurboPlayerController Player, KFMonster Target, int Damage);
+delegate OnPlayerDamagedMonster(TurboPlayerController Player, KFMonster Target, int Damage, class<DamageType> DamageType);
 delegate OnPlayerReceivedDamage(TurboPlayerController Player, KFMonster Instigator, int Damage, class<DamageType> DamageType);
 
 delegate OnPlayerKilledMonster(TurboPlayerController Player, KFMonster Target, class<DamageType> DamageType);
@@ -271,7 +271,7 @@ static final function BroadcastPlayerReload(Controller Player, KFWeapon Weapon)
     }
 }
 
-static final function BroadcastPlayerDamagedMonster(Controller Player, KFMonster Target, int Damage)
+static final function BroadcastPlayerDamagedMonster(Controller Player, KFMonster Target, int Damage, class<DamageType> DamageType)
 {
     local TurboPlayerController TurboPlayerController;
     local KFTurboGameType GameType;
@@ -293,12 +293,12 @@ static final function BroadcastPlayerDamagedMonster(Controller Player, KFMonster
 
     for (Index = TurboPlayerController.PlayerEventHandlerList.Length - 1; Index >= 0; Index--)
     {
-        TurboPlayerController.PlayerEventHandlerList[Index].OnPlayerDamagedMonster(TurboPlayerController, Target, Damage);
+        TurboPlayerController.PlayerEventHandlerList[Index].OnPlayerDamagedMonster(TurboPlayerController, Target, Damage, DamageType);
     }
 
     for (Index = GameType.GlobalPlayerEventHandlerList.Length - 1; Index >= 0; Index--)
     {
-        GameType.GlobalPlayerEventHandlerList[Index].OnPlayerDamagedMonster(TurboPlayerController, Target, Damage);
+        GameType.GlobalPlayerEventHandlerList[Index].OnPlayerDamagedMonster(TurboPlayerController, Target, Damage, DamageType);
     }
 }
 
