@@ -179,7 +179,7 @@ function bool CheckReplacement(Actor Other, out byte bSuperRelevant)
 
 	if (KFPlayerReplicationInfo(Other) != None)
 	{
-		AddTurboPlayerMarkReplicationInfo(KFPlayerReplicationInfo(Other));
+		AddTurboPlayerReplicationInfo(KFPlayerReplicationInfo(Other));
 	}
 	//Looks like tinkering with these directly doesn't work... just replace it.
 	else if (KFRandomItemSpawn(Other) != None && TurboRandomItemSpawn(Other) == None)
@@ -207,7 +207,7 @@ function bool CheckReplacement(Actor Other, out byte bSuperRelevant)
 	return true;
 }
 
-function AddTurboPlayerMarkReplicationInfo(KFPlayerReplicationInfo PlayerReplicationInfo)
+function AddTurboPlayerReplicationInfo(KFPlayerReplicationInfo PlayerReplicationInfo)
 {
 	local TurboPlayerMarkReplicationInfo TurboPRI;
 
