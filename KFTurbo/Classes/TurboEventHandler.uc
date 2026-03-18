@@ -6,16 +6,26 @@
 class TurboEventHandler extends Info
     abstract;
 
+var const bool bDisableTick;
+
 //We disable tick by default as a convenience.
 function PostBeginPlay()
 {
     Super.PostBeginPlay();
-    Disable('Tick');
+
+    if (bDisableTick)
+    {
+        Disable('Tick');
+    }
 }
 
 function Destroyed()
 {
-    RemoveEventHandler();
+    if (Role == ROLE_Authority)
+    {
+        RemoveEventHandler();
+    }
+    
     Super.Destroyed();
 }
 
@@ -69,4 +79,6 @@ defaultproperties
     bBlockNonZeroExtentTraces=false
     
     NetUpdateFrequency=0.001
+
+    bDisableTick=true
 }
