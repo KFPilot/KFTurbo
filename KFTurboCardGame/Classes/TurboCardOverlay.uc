@@ -1068,6 +1068,29 @@ simulated function DrawRackEmUp(Canvas C)
 	C.DrawText(RackEmUpLastKnownHeadshot$"x");
 }
 
+simulated function OnFontLocaleChange()
+{
+	local int Index;
+
+	Super.OnFontLocaleChange();
+
+	for (Index = 0; Index < CardRenderActorList.Length; Index++)
+	{
+		if (CardRenderActorList[Index].CardActor != None && CardRenderActorList[Index].CardActor.CardScriptedTexture != None)
+		{
+			CardRenderActorList[Index].CardActor.CardScriptedTexture.Revision++;
+		}
+	}
+
+	for (Index = 0; Index < ActiveCardRenderActorList.Length; Index++)
+	{
+		if (ActiveCardRenderActorList[Index].CardActor != None && ActiveCardRenderActorList[Index].CardActor.CardScriptedTexture != None)
+		{
+			ActiveCardRenderActorList[Index].CardActor.CardScriptedTexture.Revision++;
+		}
+	}
+}
+
 defaultproperties
 {
 	VotedCardIndex=-1
