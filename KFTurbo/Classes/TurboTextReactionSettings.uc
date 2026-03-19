@@ -86,4 +86,5 @@ defaultproperties
     TextSoundList(6)=(Text=":thatsterror:",SoundRef="KFTurbo.UI.ThatsTerror",bFullCooldown=true)
     TextSoundList(7)=(Text=":metalpipe:",SoundRef="KFTurbo.UI.MetalPipe")
     TextSoundList(8)=(Text=":mcdonal:",SoundRef="KFTurbo.UI.Mcdonal",bFullCooldown=true)
+    TextSoundList(9)=(Text=":callit:",SoundRef="KFTurbo.UI.Callit",bFullCooldown=true)
 }
