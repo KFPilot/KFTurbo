@@ -419,22 +419,62 @@ simulated final function DrawScaledSmileyText(string S, canvas C, optional out f
 
 simulated final function int FindNextSmile( string S, out int SmileNr )
 {
-	local int i,p,bp;
-	local string CS;
+	local int Low, MidIndex, High;
+	local int ColonStart, ColonEnd, SearchOffset;
+	local string CS, EmoteCandidate;
+	local int CompareResult, EmoteCandidateLength;
 
 	CS = Locs(S);
-	bp = -1;
-	for( i=(SortedEmoteList.Length-1); i>=0; --i )
-	{
-        p = InStr(CS,SortedEmoteList[i].SmileyTag);
+	SearchOffset = 0;
 
-		if( p!=-1 && (p<bp || bp==-1) )
+	while (SearchOffset < Len(CS))
+	{
+		ColonStart = InStr(Mid(CS, SearchOffset), ":");
+		if (ColonStart == -1)
 		{
-			bp = p;
-			SmileNr = i;
+			return -1;
 		}
+
+		ColonStart += SearchOffset;
+		ColonEnd = InStr(Mid(CS, ColonStart + 1), ":");
+		if (ColonEnd == -1)
+		{
+			return -1;
+		}
+
+		ColonEnd += ColonStart + 1;
+		EmoteCandidate = Mid(CS, ColonStart, ColonEnd - ColonStart + 1);
+		EmoteCandidateLength = Len(EmoteCandidate);
+
+		//Binary search for exact match.
+		Low = 0;
+		High = SortedEmoteList.Length - 1;
+
+		while (Low <= High)
+		{
+			MidIndex = (Low + High) / 2;
+			CompareResult = StrCmp(SortedEmoteList[MidIndex].SmileyTag, EmoteCandidate);
+
+			if (CompareResult == 0)
+			{
+				SmileNr = MidIndex;
+				return ColonStart;
+			}
+			else if (CompareResult < 0)
+			{
+				Low = MidIndex + 1;
+			}
+			else
+			{
+				High = MidIndex - 1;
+			}
+		}
+
+		//No match for this pair, advance past the first colon.
+		SearchOffset = ColonStart + 1;
 	}
-	Return bp;
+
+	return -1;
 }
 static final function string StripColorForTTS(string s) // Strip color codes.
 {
