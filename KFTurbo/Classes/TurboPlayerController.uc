@@ -42,6 +42,8 @@ replication
 		ServerDebugSkipWave, ServerDebugRestartWave, ServerDebugSetWave, ServerDebugPreventGameOver, ServerDebugSpawnFriend;
 	reliable if( Role < ROLE_Authority )
 		AdminSetTraderTime, AdminSetMaxPlayers, AdminSetFakedPlayer, AdminSetPlayerHealth, AdminSetSpawnRate, AdminSetMaxMonsters, AdminShowSettings;
+	reliable if( Role < ROLE_Authority )
+		ServerInitializeSteamStats;
 }
 
 simulated function PostBeginPlay()
@@ -562,11 +564,14 @@ simulated function ShowLoginMenu()
 	}
 }
 
-function ServerInitializeSteamStatInt(byte Index, int Value)
+function ServerInitializeSteamStats(TurboSteamStatsHandler.StatPayload Payload)
 {
+	local int Index, StatValue;
+
 	local ClientPerkRepLink CPRL;
-	local SRCustomProgressInt Progress;
+	
 	local class<SRCustomProgressInt> ProgressClass;
+	local SRCustomProgressInt Progress;
 
 	if (!class'KFTurboGameType'.static.StaticAreStatsAndAchievementsEnabled(Self))
 	{
@@ -585,54 +590,69 @@ function ServerInitializeSteamStatInt(byte Index, int Value)
 		return;
 	}
 
-	Value = Max(Value, 0);
-
-	switch (Index)
+	for (Index = ArrayCount(Payload.StatList) - 1; Index >= 0; Index--)
 	{
-	case 0:
-		ProgressClass = class'VP_DamageHealed';
-		break;
-	case 1:
-		ProgressClass = class'VP_WeldingPoints';
-		break;
-	case 2:
-		ProgressClass = class'VP_ShotgunDamage';
-		break;
-	case 3:
-		ProgressClass = class'VP_HeadshotKills';
-		break;
-	case 4:
-		ProgressClass = class'VP_StalkerKills';
-		break;
-	case 5:
-		ProgressClass = class'VP_BullpupDamage';
-		break;
-	case 6:
-		ProgressClass = class'VP_MeleeDamage';
-		break;
-	case 7:
-		ProgressClass = class'VP_FlamethrowerDamage';
-		break;
-	case 21:
-		ProgressClass = class'VP_ExplosiveDamage';
-		break;
-	default:
-		return;
-	}
+		if (Payload.StatList[Index].Stat == StatMax)
+		{
+			continue;
+		}
 
-	Progress = SRCustomProgressInt(CPRL.AddCustomValue(ProgressClass));
+		StatValue = Payload.StatList[Index].StatValue;
+		if (StatValue == 0)
+		{
+			continue;
+		}
 
-	if (Progress == None)
-	{
-		return;
-	}
+		ProgressClass = GetProgressClass(Payload.StatList[Index].Stat);
 
-	if (Progress.CurrentValue < Value)
-	{
-		Progress.CurrentValue = Value;
-		Progress.ValueUpdated();
+		if (ProgressClass == None)
+		{
+			continue;
+		}
+		
+		Progress = SRCustomProgressInt(CPRL.AddCustomValue(ProgressClass));
+
+		if (Progress == None)
+		{
+			continue;
+		}
+
+		if (Progress.CurrentValue < StatValue)
+		{
+			Progress.CurrentValue = StatValue;
+			Progress.ValueUpdated();
+		}
 	}
 }
+
+function final class<SRCustomProgressInt> GetProgressClass(TurboSteamStatsHandler.EStatType StatType)
+{
+	switch (StatType)
+	{
+		case DamageHealed:
+			return class'VP_DamageHealed';
+		case WeldingPoints:
+			return class'VP_WeldingPoints';
+		case ShotgunDamage:
+			return class'VP_ShotgunDamage';
+		case HeadshotKills:
+			return class'VP_HeadshotKills';
+		case StalkerKills:
+			return class'VP_StalkerKills';
+		case BullpupDamage:
+			return class'VP_BullpupDamage';
+		case MeleeDamage:
+			return class'VP_MeleeDamage';
+		case FlamethrowerDamage:
+			return class'VP_FlamethrowerDamage';
+		case ExplosiveDamage:
+			return class'VP_ExplosiveDamage';
+	}
+
+	return None;
+}
+
+function ServerInitializeSteamStatInt(byte Index, int Value) {}
 
 function AddPerkChangeLock(class<PerkLockTurboLocalMessage> Lock)
 {

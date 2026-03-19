@@ -450,7 +450,7 @@ simulated function UpdateVariantStatus()
     }
 
     bHasPerformedVariantStatusUpdate = true;
-
+    
     if (OwningController != None && Viewport(OwningController.Player) != None)
     {
         Spawn(Class'TurboSteamStatsGet', Owner).Link = Self;

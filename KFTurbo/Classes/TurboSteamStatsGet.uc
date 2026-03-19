@@ -15,7 +15,13 @@ simulated event PostBeginPlay()
 
 simulated event PostNetBeginPlay();
 
+//Throttle processing of steam stats because it gets called multiple times for some reason...
 simulated event OnStatsAndAchievementsReady()
+{
+	SetTimer(1.f, false);
+}
+
+simulated function Timer()
 {
 	local int WeaponIndex, VariantIndex, WeaponLockID;
 	local class<KFWeapon> WeaponClass;
