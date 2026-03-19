@@ -25,14 +25,46 @@ var() float QuatPitch;
 var() float QuatYaw;
 var() float QuatRoll;
 
+simulated function bool HasEnoughAmmoForExtraThrow()
+{
+    local float MaxAmmo, CurrentAmmo;
+    GetAmmoCount(MaxAmmo, CurrentAmmo);
+    return CurrentAmmo > GetFireMode(0).Load;
+}
+
 simulated event StartThrow()
 {
+    if (bTossActive && !bTossSpawned && HasEnoughAmmoForExtraThrow())
+    {
+        ServerThrow();
+        bTossSpawned = true;
+    }
+
+    if (!HasAmmo())
+    {
+        bTossActive = false;
+        KFPawn(Instigator).ThrowGrenadeFinished();
+        return;
+    }
+
     if (Level.NetMode != NM_DedicatedServer)
     {
         PerformMeshUpdate();
     }
 
     Super.StartThrow();
+}
+
+
+function ServerThrow()
+{
+    if (!ConsumeAmmo(0, 1))
+    {
+        return;
+    }
+    
+	FireMode[0].DoFireEffect();
+	PlaySound(ThrowSound,SLOT_Interact,2.0);
 }
 
 //Updates grenade mesh and material.
