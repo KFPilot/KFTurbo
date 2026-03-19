@@ -33,7 +33,7 @@ simulated function TryChatAutoComplete()
 		return;
 	}
 
-	EmoteIndex = class'TurboHUDKillingFloor'.static.CheckEmotePrompt(ViewportOwner.Console.TypedStr);
+	EmoteIndex = class'TurboTypingPrompt'.static.CheckEmotePrompt(ViewportOwner.Console.TypedStr);
 	if (EmoteIndex == -1)
 	{
 		return;
@@ -41,7 +41,7 @@ simulated function TryChatAutoComplete()
 
 	EmoteText = Mid(ViewportOwner.Console.TypedStr, EmoteIndex);
 
-	if (!class'TurboHUDKillingFloor'.static.GetEmoteHintList(EmoteText, TurboHUDKillingFloor(ViewportOwner.Actor.myHUD).SmileyMsgs, HintList))
+	if (!TurboHUDKillingFloor(ViewportOwner.Actor.myHUD).TurboTypingPrompt.GetEmoteHintList(EmoteText, HintList))
 	{
 		return;
 	}

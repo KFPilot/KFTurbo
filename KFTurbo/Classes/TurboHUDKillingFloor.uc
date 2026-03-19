@@ -10,7 +10,6 @@ var Material EndGameHUDMaterial;
 var bool bHasInitializedEndGameHUD;
 var float EndGameHUDAnimationProgress;
 
-var bool bSortedEmoteList;
 var bool bUseBaseGameFontForChat;
 
 var class<TurboHUDOverlay> PlayerInfoHUDClass;
@@ -28,6 +27,8 @@ var TurboHUDOverlay MarkInfoHUD;
 var class<TurboHUDOverlay> WaveStatsHUDClass;
 var TurboHUDOverlay WaveStatsHUD;
 
+var TurboTypingPrompt TurboTypingPrompt;
+
 var class<TextReactionSettings> TextReactionSettingsClass;
 var TextReactionSettings TextReactionSettings;
 
@@ -43,6 +44,9 @@ var(Turbo) Plane ActiveModulate;
 simulated function Destroyed()
 {
 	Super.Destroyed();
+
+	TextReactionSettings = None;
+	TurboTypingPrompt = None;
 
 	CleanupFontPackage();
 }
@@ -322,6 +326,11 @@ simulated function PostBeginPlay()
 	WaveStatsHUD = Spawn(WaveStatsHUDClass, Self);
 	WaveStatsHUD.Initialize(Self);
 
+	if (TurboTypingPrompt != None)
+	{
+		TurboTypingPrompt.Initialize(Self);
+	}
+
 	if (TextReactionSettingsClass != None)
 	{
 		TextReactionSettings = Spawn(TextReactionSettingsClass, Self);
@@ -344,26 +353,25 @@ simulated function SetScoreBoardClass(class<Scoreboard> ScoreBoardClass)
 
 simulated function Tick(float DeltaTime)
 {
-	if( ClientRep == None )
+	if (ClientRep == None)
 	{
-		ClientRep = Class'ClientPerkRepLink'.Static.FindStats(PlayerOwner);
-
-		if( ClientRep != None )
-		{
-			SmileyMsgs = ClientRep.SmileyTags;
-		}
+		UpdateClientPerkRepLink();
 	}
-
-	if( bDisplayingProgress )
+	else
+	{
+		UpdateEmoteList();
+	}
+	
+	if (bDisplayingProgress)
 	{
 		bDisplayingProgress = false;
-		if( VisualProgressBar<LevelProgressBar )
+		if (VisualProgressBar < LevelProgressBar)
 		{
-			VisualProgressBar = FMin(VisualProgressBar+DeltaTime,LevelProgressBar);
+			VisualProgressBar = FMin(VisualProgressBar + DeltaTime, LevelProgressBar);
 		}
-		else if( VisualProgressBar>LevelProgressBar )
+		else if (VisualProgressBar > LevelProgressBar)
 		{
-			VisualProgressBar = FMax(VisualProgressBar-DeltaTime,LevelProgressBar);
+			VisualProgressBar = FMax(VisualProgressBar - DeltaTime, LevelProgressBar);
 		}
 	}
 
@@ -373,10 +381,25 @@ simulated function Tick(float DeltaTime)
 	{
 		EndGameHUDAnimationProgress += DeltaTime;
 	}
+}
 
-	if (!bSortedEmoteList)
+simulated final function UpdateClientPerkRepLink()
+{
+	ClientRep = Class'ClientPerkRepLink'.Static.FindStats(PlayerOwner);
+}
+
+simulated final function UpdateEmoteList()
+{
+	if (SmileyMsgs.Length == ClientRep.SmileyTags.Length)
 	{
-		bSortedEmoteList = true;
+		return;
+	}
+
+	SmileyMsgs = ClientRep.SmileyTags;
+
+	if (TurboTypingPrompt != None)
+	{
+		TurboTypingPrompt.OnEmoteListUpdate(Self);
 	}
 }
 
@@ -846,386 +869,20 @@ function AddTextMessage(string M, class<LocalMessage> MessageClass, PlayerReplic
 	}
 }
 
-//Added drop shadow.
-function DisplayMessages(Canvas C)
+function DisplayMessages(Canvas Canvas)
 {
-	local int i, j, XPos, YPos,MessageCount;
-	local float XL, YL, XXL, YYL;
-	local float InitialClip;
-	InitialClip = C.ClipX;
-	C.ClipX = C.SizeX;
-
-	for( i = 0; i < ConsoleMessageCount; i++ )
+	if (TurboTypingPrompt != None)
 	{
-		if ( TextMessages[i].Text == "" )
-			break;
-		else if( TextMessages[i].MessageLife < Level.TimeSeconds )
-		{
-			TextMessages[i].Text = "";
-
-			if( i < ConsoleMessageCount - 1 )
-			{
-				for( j=i; j<ConsoleMessageCount-1; j++ )
-					TextMessages[j] = TextMessages[j+1];
-			}
-			TextMessages[j].Text = "";
-			break;
-		}
-		else
-			MessageCount++;
-	}
-
-	YPos = (ConsoleMessagePosY * HudCanvasScale * C.SizeY) + (((1.0 - HudCanvasScale) / 2.0) * C.SizeY);
-	if ( PlayerOwner == none || PlayerOwner.PlayerReplicationInfo == none || !PlayerOwner.PlayerReplicationInfo.bWaitingPlayer )
-	{
-		XPos = (ConsoleMessagePosX * HudCanvasScale * C.SizeX) + (((1.0 - HudCanvasScale) / 2.0) * C.SizeX);
-	}
-	else
-	{
-		XPos = (0.005 * HudCanvasScale * C.SizeX) + (((1.0 - HudCanvasScale) / 2.0) * C.SizeX);
-	}
-
-	if (bUseBaseGameFontForChat)
-	{
-		C.Font = GetDefaultConsoleFont(C);
-	}
-	else
-	{
-		C.Font = GetChatFont(C);
-	}
-	C.DrawColor = LevelActionFontColor;
-
-	C.TextSize ("A", XL, YL);
-
-	YPos -= YL * MessageCount+1; // DP_LowerLeft
-	YPos -= YL; // Room for typing prompt
-
-	for( i=0; i<MessageCount; i++ )
-	{
-		if ( TextMessages[i].Text == "" )
-		{
-			break;
-		}
-
-		C.DrawColor = C.MakeColor(0, 0, 0, 120);
-		C.SetPos(XPos + 2.f, YPos + 2.f);
-		if( TextMessages[i].PRI!=None )
-		{
-			XL = Class'SRScoreBoard'.Static.DrawCountryName(C,TextMessages[i].PRI,XPos + 2.f,YPos + 2.f);
-			C.SetPos( XPos + XL + 2.f, YPos + 2.f );
-		}
-
-		if( SmileyMsgs.Length!=0 )
-		{
-			DrawScaledSmileyText(class'GUIComponent'.static.StripColorCodes(TextMessages[i].Text),C,,YYL);
-		}
-		else
-		{
-			C.DrawText(class'GUIComponent'.static.StripColorCodes(TextMessages[i].Text),false);
-		}
-
-		C.DrawColor = C.MakeColor(255, 255, 255, 255);
-		YYL = 0;
-		XXL = 0;
-		
-		C.SetPos(XPos, YPos);
-		if( TextMessages[i].PRI!=None )
-		{
-			XL = Class'SRScoreBoard'.Static.DrawCountryName(C,TextMessages[i].PRI,XPos,YPos);
-			C.SetPos( XPos+XL, YPos );
-		}
-
-		if( SmileyMsgs.Length!=0 )
-		{
-			DrawScaledSmileyText(TextMessages[i].Text,C,,YYL);
-		}
-		else
-		{
-			C.DrawText(TextMessages[i].Text,false);
-		}
-		YPos += (YL+YYL);
-	}
-	
-	C.ClipX = InitialClip;
-}
-
-simulated function DrawTypingPrompt(Canvas C, String Text, optional int Pos)
-{
-    local float XPos, YPos;
-    local float XL, YL;
-	local string PromptText;
-	
-	if (bUseBaseGameFontForChat)
-	{
-		C.Font = GetDefaultConsoleFont(C);
-	}
-	else
-	{
-		C.Font = GetChatFont(C);
-	}
-
-    C.Style = ERenderStyle.STY_Alpha;
-
-    C.TextSize("A", XL, YL);
-
-    XPos = (ConsoleMessagePosX * HudCanvasScale * C.SizeX) + (((1.0 - HudCanvasScale) * 0.5) * C.SizeX);
-    YPos = (ConsoleMessagePosY * HudCanvasScale * C.SizeY) + (((1.0 - HudCanvasScale) * 0.5) * C.SizeY) - YL;
-
-	PromptText = "(>"@Left(Text, Pos)$chr(4)$Eval(Pos < Len(Text), Mid(Text, Pos), "_");
-
-    C.SetDrawColor(0, 0, 0, 120);
-    C.SetPos(XPos + 2.f, YPos + 2.f);
-    C.DrawTextClipped(PromptText, true);
-    C.SetDrawColor(255, 255, 255, 255);
-    C.SetPos(XPos, YPos);
-    C.DrawTextClipped(PromptText, true);
-
-	if (Pos >= Len(Text))
-	{
-		DrawEmoteHintPrompt(C, Text, XPos, YPos);
+		TurboTypingPrompt.DisplayMessages(Self, Canvas);
 	}
 }
 
-//Returns index where the emote starts in the string. Returns -1 if no emote was present.
-static final function int CheckEmotePrompt(string EmoteText)
+simulated function DrawTypingPrompt(Canvas Canvas, String Text, optional int Position)
 {
-	local int Index, StringSize;
-	local int ColonCount, LastColonIndex;
-	local string Char;
-	local bool bIsSay;
-	bIsSay = false;
-
-	if (StrCmp(EmoteText, "Say ", 4) == 0)
+	if (TurboTypingPrompt != None)
 	{
-		bIsSay = true;
-		Index = 4;
+		TurboTypingPrompt.DrawTypingPrompt(Self, Canvas, Text, Position);
 	}
-	else if(StrCmp(EmoteText, "TeamSay ", 8) == 0)
-	{
-		bIsSay = true;
-		Index = 8;
-	}
-
-	if (!bIsSay)
-	{
-		return -1;
-	}
-	
-	StringSize = Len(EmoteText);
-	ColonCount = 0;
-	LastColonIndex = -1;
-
-	while(Index < StringSize)
-	{
-		Char = Mid(EmoteText, Index, 1);
-		if (Char == ":")
-		{
-			ColonCount++;
-			LastColonIndex = Index;
-		}
-		else if (Char == " ")
-		{
-			ColonCount = 0;
-		}
-
-		Index++;
-	}
-
-	if (ColonCount == 0 || (ColonCount & 1) == 0)
-	{
-		return -1;
-	}
-
-	return LastColonIndex;
-}
-
-static final function bool GetEmoteHintList(string EmoteText, array<SmileyMessageType> EmoteList, out array<string> HintList)
-{
-	local int Index, LastAllocatedIndex;
-	local int EmoteTextLength;
-	local string CapsEmoteText;
-
-	CapsEmoteText = Caps(EmoteText);
-	EmoteTextLength = Len(EmoteText);
-	HintList.Length = Min(EmoteList.Length, 8);
-	LastAllocatedIndex = -1;
-
-	Index = EmoteList.Length - 1;
-	while(Index >= 0 && LastAllocatedIndex < 8)
-	{
-		if (EmoteList[Index].bInCAPS)
-		{
-			if (StrCmp(EmoteList[Index].SmileyTag, CapsEmoteText, EmoteTextLength) == 0)
-			{
-				LastAllocatedIndex++;
-				HintList[LastAllocatedIndex] = Locs(EmoteList[Index].SmileyTag);
-			}
-		}
-		else
-		{
-			if (StrCmp(EmoteList[Index].SmileyTag, EmoteText, EmoteTextLength) == 0)
-			{
-				LastAllocatedIndex++;
-				HintList[LastAllocatedIndex] = EmoteList[Index].SmileyTag;
-			}
-		}
-		
-		Index--;
-	}
-
-	HintList.Length = LastAllocatedIndex + 1;
-	if (LastAllocatedIndex == -1)
-	{
-		return false;
-	}
-
-	return true;
-}
-
-simulated function DrawEmoteHintPrompt(Canvas C, String Text, float DrawX, float DrawY)
-{
-	local int Index;
-	local array<string> HintList;
-	local int LastColonIndex;
-
-	local float XL, YL;
-	local float TextSizeX, TextSizeY;
-	local float LargestTextSizeX, TotalTextSizeY;
-
-	LastColonIndex = CheckEmotePrompt(Text);
-	if (LastColonIndex == -1)
-	{
-		return;
-	}
-    
-    C.TextSize(Left(Text, LastColonIndex), XL, YL);
-	DrawX += XL;
-	Text = Mid(Text, LastColonIndex);
-
-	if (!GetEmoteHintList(Text, SmileyMsgs, HintList))
-	{
-		return;
-	}
-
-	C.TextSize(HintList[0], TextSizeX, TextSizeY);
-	TotalTextSizeY = TextSizeY * float(HintList.Length + 1);
-
-	for (Index = 0; Index < HintList.Length; Index++)
-	{
-		C.TextSize(HintList[Index], TextSizeX, TextSizeY);
-		LargestTextSizeX = FMax(LargestTextSizeX, TextSizeX);
-	}
-
-	LargestTextSizeX += TextSizeY;
-	C.SetPos(DrawX, DrawY - TotalTextSizeY);
-	C.SetDrawColor(0, 0, 0, 120);
-	C.DrawTile(Texture'Engine.WhiteSquareTexture', LargestTextSizeX, TotalTextSizeY, 0.f, 0.f, 1.f, 1.f);
-
-	DrawX += TextSizeY * 0.5f;
-	DrawY = (DrawY - TotalTextSizeY) + (TextSizeY * 0.5f);
-	C.SetDrawColor(255, 255, 255, 255);
-
-	for (Index = 0; Index < HintList.Length; Index++)
-	{
-		C.SetPos(DrawX, DrawY);
-
-		//Last hint is autocomplete one.
-		if (Index == HintList.Length - 1)
-		{
-			C.SetDrawColor(244, 67, 54, 255);
-		}
-
-		C.DrawText(HintList[Index]);
-		DrawY += TextSizeY;
-	}
-}
-
-simulated final function DrawScaledSmileyText( string S, canvas C, optional out float XXL, optional out float XYL )
-{
-	local int i,n;
-	local float PX,PY,XL,YL,CurX,CurY,SScale,Sca,AdditionalY;
-	local string D;
-
-	// Initilize
-	C.TextSize("T",XL,YL);
-	SScale = YL;
-	PX = C.CurX;
-	PY = C.CurY;
-	CurX = PX;
-	CurY = PY;
-
-	// Search for smiles in text
-	i = FindNextSmile(S,n);
-	While( i!=-1 )
-	{
-		D = Left(S,i);
-		S = Mid(S,i+Len(SmileyMsgs[n].SmileyTag));
-		// Draw text behind
-		C.SetPos(CurX,CurY);
-		C.DrawText(D);
-		// Draw smile
-		C.StrLen(StripColorForTTS(D),XL,YL);
-		CurX+=XL;
-		While( CurX>C.ClipX )
-		{
-			CurY+=(YL+AdditionalY);
-			XYL+=(YL+AdditionalY);
-			AdditionalY = 0;
-			CurX-=C.ClipX;
-		}
-		
-		C.SetPos(CurX,CurY);
-
-		Sca = SScale;
-
-		C.DrawRect(SmileyMsgs[n].SmileyTex, Sca * (float(SmileyMsgs[n].SmileyTex.USize) / float(SmileyMsgs[n].SmileyTex.VSize)), Sca);
-		CurX += Sca * (float(SmileyMsgs[n].SmileyTex.USize) / float(SmileyMsgs[n].SmileyTex.VSize));
-
-		While( CurX>C.ClipX )
-		{
-			CurY+=(YL+AdditionalY);
-			XYL+=(YL+AdditionalY);
-			AdditionalY = 0;
-			CurX-=C.ClipX;
-		}
-		// Then go for next smile
-		
-		i = FindNextSmile(S,n);
-	}
-	// Then draw rest of text remaining
-	C.SetPos(CurX,CurY);
-	C.StrLen(StripColorForTTS(S),XL,YL);
-	C.DrawText(S);
-	CurX+=XL;
-	While( CurX>C.ClipX )
-	{
-		CurY+=(YL+AdditionalY);
-		XYL+=(YL+AdditionalY);
-		AdditionalY = 0;
-		CurX-=C.ClipX;
-	}
-	XYL+=AdditionalY;
-	AdditionalY = 0;
-	XXL = CurX;
-	C.SetPos(PX,PY);
-}
-
-static final function bool CheckVotePrompt(string VoteText)
-{
-	local array<string> StringSplitList;
-	if (StrCmp(VoteText, "vote ", 5) != 0)
-	{
-		return false;
-	}
-
-	Split(VoteText, " ", StringSplitList);
-
-	if (StringSplitList.Length > 2)
-	{
-		return false;
-	}
-
-	return true;
 }
 
 simulated function DrawHealthBar(Canvas C, Actor A, int Health, int MaxHealth, float Height)
@@ -1367,11 +1024,13 @@ defaultproperties
 	bHasInitializedEndGameHUD=false
 	EndGameHUDAnimationProgress=0.f
 
-	bSortedEmoteList=false
-
 	BarLength=70.000000
 	BarHeight=10.000000
 
 	InvactiveModulate=(X=0.f,Y=0.f,Z=0.f,W=0.f)
 	ActiveModulate=(X=1.f,Y=1.f,Z=1.f,W=1.f)
+
+	begin object name=DefaultTurboTypingPrompt class=TurboTypingPrompt
+	end object
+	TurboTypingPrompt=TurboTypingPrompt'DefaultTurboTypingPrompt'
 }
