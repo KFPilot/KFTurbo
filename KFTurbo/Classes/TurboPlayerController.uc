@@ -568,12 +568,17 @@ function ServerInitializeSteamStatInt(byte Index, int Value)
 	local SRCustomProgressInt Progress;
 	local class<SRCustomProgressInt> ProgressClass;
 
-	CPRL = GetClientPerkRepLink();
-
 	if (!class'KFTurboGameType'.static.StaticAreStatsAndAchievementsEnabled(Self))
 	{
 		return;
 	}
+
+	if (Level.bLevelChange || KFGameReplicationInfo(Level.GRI).EndGameType != 0)
+	{
+		return;
+	}
+
+	CPRL = GetClientPerkRepLink();
 
 	if (CPRL == None)
 	{
