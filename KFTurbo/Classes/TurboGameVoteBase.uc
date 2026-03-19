@@ -302,7 +302,7 @@ static function bool CanInitiateVote(TurboGameReplicationInfo TGRI, TurboPlayerR
         return false;
     }
 
-    if (!default.bCanVoteDuringEndGame && (TGRI.Level.Game.GetCurrentWaveNum() > TGRI.Level.Game.GetFinalWaveNum()))
+    if (!default.bCanVoteDuringEndGame && (TGRI.Level.Game.GetCurrentWaveNum() > TGRI.Level.Game.GetFinalWaveNum() + 1))
     {
         return false;
     }
