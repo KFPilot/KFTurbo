@@ -50,4 +50,6 @@ defaultproperties
 
     VoteTitleString="Disable Zed Wandering"
     VoteDescriptionString="Accepting this vote will disable initial zed wandering."
+    
+	CommandHint=(Command="Vote DisableWander",Hint="Starts a vote to disable zed wandering.",ParameterType=NoParam)
 }

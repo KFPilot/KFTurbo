@@ -5,15 +5,45 @@
 class TurboTypingPrompt extends Object
     instanced;
 
+enum ECommandParameterType
+{
+	NoParam,
+	Integer,
+	Float,
+	Boolean,
+	String
+};
+
+struct CommandHint
+{
+	var string Command;
+	var localized string Hint;
+	var ECommandParameterType ParameterType;
+	var string DefaultValue;
+};
+
+struct CommandEntry
+{
+	var string Command;
+	var CommandHint Hint;
+};
+
 var array<SRHUDKillingFloor.SmileyMessageType> SortedEmoteList;
 
-simulated function Initialize(TurboHUDKillingFloor HUD)
-{
-    SortedEmoteList = HUD.SmileyMsgs;
-    SortEmoteList();
-}
+//Commands to present when the console is empty.
+var array<CommandEntry> SortedBaseCommandHintList;
 
-simulated function OnEmoteListUpdate(TurboHUDKillingFloor HUD)
+//Commands to check when trying to provide a hint based on the entered string.
+var array<CommandEntry> SortedCommandHintList;
+var array<CommandEntry> SortedAdminCommandHintList;
+
+var const string CommandHintString;
+var const string CommandHintDefaultValueString;
+var const Color CommandDefaultColor;
+var const Color CommandHintColor;
+var const Color CommandExampleColor;
+
+simulated function Initialize(TurboHUDKillingFloor HUD)
 {
     SortedEmoteList = HUD.SmileyMsgs;
     SortEmoteList();
@@ -42,6 +72,48 @@ simulated function SortEmoteList()
 		}
 
 		SortedEmoteList[InnerIndex + 1] = Temp;
+	}
+}
+
+simulated function OnEmoteListUpdate(TurboHUDKillingFloor HUD)
+{
+    SortedEmoteList = HUD.SmileyMsgs;
+    SortEmoteList();
+}
+
+simulated function OnCommandListUpdate(TurboHUDKillingFloor HUD)
+{
+	SortCommandHintArray(HUD.RegisteredBaseCommandList, SortedBaseCommandHintList);
+
+	SortCommandHintArray(HUD.RegisteredCommandList, SortedCommandHintList);
+	SortCommandHintArray(HUD.RegisteredAdminCommandList, SortedAdminCommandHintList);
+}
+
+//Insertion sort. Forces all commands in the list to lowercase.
+static final function SortCommandHintArray(array<CommandHint> HintList, out array<CommandEntry> EntryList)
+{
+	local int Index, InnerIndex;
+	local CommandEntry Temp;
+
+	EntryList.Length = HintList.Length;
+	for (Index = 0; Index < HintList.Length; Index++)
+	{
+		EntryList[Index].Command = Locs(HintList[Index].Command);
+		EntryList[Index].Hint = HintList[Index];
+	}
+
+	for (Index = 1; Index < EntryList.Length; Index++)
+	{
+		Temp = EntryList[Index];
+		InnerIndex = Index - 1;
+
+		while (InnerIndex >= 0 && StrCmp(EntryList[InnerIndex].Command, Temp.Command) > 0)
+		{
+			EntryList[InnerIndex + 1] = EntryList[InnerIndex];
+			InnerIndex--;
+		}
+
+		EntryList[InnerIndex + 1] = Temp;
 	}
 }
 
@@ -309,13 +381,13 @@ simulated function DrawEmoteHintPrompt(Canvas C, String Text, float DrawX, float
 	DrawX += XL;
 	Text = Mid(Text, LastColonIndex);
 
-	if (Len(Text) <= 1 || !GetEmoteHintList(Text, HintList))
+	if (!GetEmoteHintList(Text, HintList))
 	{
 		return;
 	}
 
 	C.TextSize(HintList[0], TextSizeX, TextSizeY);
-	TotalTextSizeY = TextSizeY * float(HintList.Length + 1);
+	TotalTextSizeY = TextSizeY * (float(HintList.Length) + 0.5f);
 
 	for (Index = 0; Index < HintList.Length; Index++)
 	{
@@ -329,7 +401,7 @@ simulated function DrawEmoteHintPrompt(Canvas C, String Text, float DrawX, float
 	C.DrawTile(Texture'Engine.WhiteSquareTexture', LargestTextSizeX, TotalTextSizeY, 0.f, 0.f, 1.f, 1.f);
 
 	DrawX += TextSizeY * 0.5f;
-	DrawY = (DrawY - TotalTextSizeY) + (TextSizeY * 0.5f);
+	DrawY = (DrawY - TotalTextSizeY) + (TextSizeY * 0.25f);
 	C.SetDrawColor(255, 255, 255, 255);
 
 	for (Index = 0; Index < HintList.Length; Index++)
@@ -476,6 +548,7 @@ simulated final function int FindNextSmile( string S, out int SmileNr )
 
 	return -1;
 }
+
 static final function string StripColorForTTS(string s) // Strip color codes.
 {
 	local int p;
@@ -487,4 +560,173 @@ static final function string StripColorForTTS(string s) // Strip color codes.
 		p = InStr(s,Chr(27));
 	}
 	return s;
+}
+
+simulated final function bool GetCommandHintList(string CommandText, bool bAdmin, out array<CommandHint> HintList)
+{
+	if (CommandText == "")
+	{
+		HintList = ConvertToHintList(SortedBaseCommandHintList);
+		return HintList.Length != 0;
+	}
+
+	HintList.Length = 0;
+	CommandText = Locs(CommandText);
+
+	BinarySearchCommandArray(CommandText, SortedCommandHintList, HintList);
+
+	if (bAdmin && HintList.Length < 8)
+	{
+		BinarySearchCommandArray(CommandText, SortedAdminCommandHintList, HintList);
+	}
+
+	return HintList.Length != 0;
+}
+
+static final function array<CommandHint> ConvertToHintList(array<CommandEntry> CommandEntryList)
+{
+	local int Index;
+	local array<CommandHint> HintList;
+	
+	HintList.Length = CommandEntryList.Length;
+
+	for (Index = 0; Index < HintList.Length; Index++)
+	{
+		HintList[Index] = CommandEntryList[Index].Hint;
+	}
+
+	return HintList;
+}
+
+static final function BinarySearchCommandArray(string CommandText, array<CommandEntry> List, out array<CommandHint> HintList)
+{
+	local int Low, Mid, High, Index;
+	local int CommandTextLength;
+	local int CompareResult;
+
+	CommandTextLength = Len(CommandText);
+
+	if (CommandTextLength == 0 || List.Length == 0)
+	{
+		return;
+	}
+
+	Low = 0;
+	High = List.Length - 1;
+
+	while (Low < High)
+	{
+		Mid = (Low + High) / 2;
+		CompareResult = StrCmp(List[Mid].Command, CommandText, CommandTextLength);
+
+		if (CompareResult < 0)
+		{
+			Low = Mid + 1;
+		}
+		else
+		{
+			High = Mid;
+		}
+	}
+
+	for (Index = Low; Index < List.Length && HintList.Length < 8; Index++)
+	{
+		if (StrCmp(List[Index].Command, CommandText, CommandTextLength) != 0)
+		{
+			break;
+		}
+
+		HintList[HintList.Length] = List[Index].Hint;
+	}
+}
+
+simulated function DrawCommandHintPrompt(TurboHUDKillingFloor HUD, Canvas Canvas, String Text, float DrawX, float DrawY, bool bAdmin)
+{
+	local int Index;
+	local array<CommandHint> HintList;
+	local array<string> BuiltHintList;
+	local string HintString;
+	local string HintColorString, ExampleColorString, DefaultColorString;
+
+	local float TextSizeX, TextSizeY;
+	local float LargestTextSizeX, TotalTextSizeY;
+
+	if (!GetCommandHintList(Text, bAdmin, HintList))
+	{
+		return;
+	}
+
+	if (HUD.bUseBaseGameFontForChat)
+	{
+		Canvas.Font = HUD.GetDefaultConsoleFont(Canvas);
+	}
+	else
+	{
+		Canvas.Font = HUD.GetChatFont(Canvas);
+	}
+
+	Canvas.TextSize(HintList[0].Command, TextSizeX, TextSizeY);
+	TotalTextSizeY = TextSizeY * (float(HintList.Length) + 0.5f);
+
+	for (Index = 0; Index < HintList.Length; Index++)
+	{
+		if (HintList[Index].DefaultValue == "")
+		{
+			HintString = Repl(Repl(CommandHintString, "%c", HintList[Index].Command), "%h", HintList[Index].Hint);
+		}
+		else
+		{
+			HintString = Repl(Repl(CommandHintDefaultValueString, "%c", HintList[Index].Command), "%h", HintList[Index].Hint)$HintList[Index].Command@HintList[Index].DefaultValue;
+		}
+
+		BuiltHintList[Index] = HintString;
+
+		Canvas.TextSize(HintString, TextSizeX, TextSizeY);
+		LargestTextSizeX = FMax(LargestTextSizeX, TextSizeX);
+	}
+
+	LargestTextSizeX += TextSizeY;
+	Canvas.SetPos(DrawX, DrawY);
+	Canvas.SetDrawColor(0, 0, 0, 180);
+	Canvas.DrawTile(Texture'Engine.WhiteSquareTexture', LargestTextSizeX, TotalTextSizeY, 0.f, 0.f, 1.f, 1.f);
+
+	DrawX += TextSizeY * 0.5f;
+	DrawY += TextSizeY * 0.25f;
+	Canvas.SetDrawColor(255, 255, 255, 255);
+
+	HintColorString = class'GameInfo'.static.MakeColorCode(default.CommandHintColor);
+	ExampleColorString = class'GameInfo'.static.MakeColorCode(default.CommandExampleColor);
+	DefaultColorString = class'GameInfo'.static.MakeColorCode(default.CommandDefaultColor);
+
+	for (Index = 0; Index < HintList.Length; Index++)
+	{
+		Canvas.SetDrawColor(0, 0, 0, 120);
+		Canvas.SetPos(DrawX + 2.f, DrawY + 2.f);
+		Canvas.DrawText(BuiltHintList[Index]);
+
+		
+		Canvas.SetDrawColor(255, 255, 255, 255);
+		Canvas.SetPos(DrawX, DrawY);
+
+		if (HintList[Index].DefaultValue == "")
+		{
+			HintString = Repl(Repl(CommandHintString, "%c", HintList[Index].Command), "%h", HintColorString$HintList[Index].Hint);
+		}
+		else
+		{
+			HintString = Repl(Repl(CommandHintDefaultValueString, "%c", HintList[Index].Command), "%h", HintColorString$HintList[Index].Hint$DefaultColorString)$ExampleColorString$HintList[Index].Command@HintList[Index].DefaultValue;
+		}
+
+		Canvas.DrawText(HintString);
+		DrawY += TextSizeY;
+	}
+}
+
+defaultproperties
+{
+	CommandHintString="%c / %h"
+	CommandHintDefaultValueString="%c / %h / "
+	CommandDefaultColor=(R=255,G=255,B=255)
+	CommandHintColor=(R=180,G=220,B=180)
+	CommandExampleColor=(R=160,G=160,B=160)
 }

@@ -5,15 +5,37 @@
 class TurboCommandHandler extends Info
 	dependson(TurboAdminLocalMessage);
 
+//Always grabbed via class<TurboCommandHandler>.default.
+var const array<TurboTypingPrompt.CommandHint> CommandBaseHintList;
+var const array<TurboTypingPrompt.CommandHint> CommandHintList;
+var const array<TurboTypingPrompt.CommandHint> AdminCommandHintList;
+
+enum ECommandPermissionType
+{
+	Admin,
+	Difficulty,
+	Anyone
+};
+
 //Used by commands to figure out if a given user has permission to execute a command.
-function bool CanExecuteCommand(TurboPlayerController CommandInstigator, bool bIsAdminOnlyCommand)
+function bool CanExecuteCommand(TurboPlayerController CommandInstigator, ECommandPermissionType PermissionType)
 {
 	if (CommandInstigator == None || CommandInstigator.Role != ROLE_Authority)
 	{
 		return false;
 	}
 
-	if (!CommandInstigator.HasPermissionForCommand(bIsAdminOnlyCommand))
+	if (PermissionType == Anyone)
+	{
+		return true;
+	}
+
+	if (PermissionType == Difficulty && class'KFTurboMut'.default.bRequireAdminForDifficultyCommands)
+	{
+		PermissionType = Admin;
+	}
+
+	if (PermissionType == Admin && !CommandInstigator.HasAdminPermission())
 	{
 		return false;
 	}
@@ -52,7 +74,7 @@ function SkipWave(TurboPlayerController CommandInstigator)
 {
 	local KFTurboGameType TurboGameType;
 
-	if (!CanExecuteCommand(CommandInstigator, true))
+	if (!CanExecuteCommand(CommandInstigator, Admin))
 	{
 		return;
 	}
@@ -77,7 +99,7 @@ function RestartWave(TurboPlayerController CommandInstigator)
 {
 	local KFTurboGameType TurboGameType;
 
-	if (!CanExecuteCommand(CommandInstigator, true))
+	if (!CanExecuteCommand(CommandInstigator, Admin))
 	{
 		return;
 	}
@@ -106,7 +128,7 @@ function SetWave(TurboPlayerController CommandInstigator, int NewWaveNum)
 {
 	local KFTurboGameType TurboGameType;
 
-	if (!CanExecuteCommand(CommandInstigator, true))
+	if (!CanExecuteCommand(CommandInstigator, Admin))
 	{
 		return;
 	}
@@ -140,14 +162,14 @@ function SetWave(TurboPlayerController CommandInstigator, int NewWaveNum)
 	TurboGameType.ClearEndGame();
 	
 	//Encode the wave number into the switch value.
-	BroadcastCommand(CommandInstigator, Encode(AC_SetWave));
+	BroadcastCommand(CommandInstigator, EncodeInt(AC_SetWave, NewWaveNum));
 }
 
 function PreventGameOver(TurboPlayerController CommandInstigator)
 {
 	local KFTurboGameType TurboGameType;
 	
-	if (!CanExecuteCommand(CommandInstigator, true))
+	if (!CanExecuteCommand(CommandInstigator, Admin))
 	{
 		return;
 	}
@@ -170,7 +192,7 @@ function SetTraderTime(TurboPlayerController CommandInstigator, int Time)
 {
 	local KFTurboGameType TurboGameType;
 	
-	if (!CanExecuteCommand(CommandInstigator, true))
+	if (!CanExecuteCommand(CommandInstigator, Admin))
 	{
 		return;
 	}
@@ -198,7 +220,7 @@ function SetMaxPlayers(TurboPlayerController CommandInstigator, int PlayerCount)
 {
 	local KFTurboGameType TurboGameType;
 	
-	if (!CanExecuteCommand(CommandInstigator, true))
+	if (!CanExecuteCommand(CommandInstigator, Admin))
 	{
 		return;
 	}
@@ -223,7 +245,7 @@ function SetFakedPlayer(TurboPlayerController CommandInstigator, int FakedPlayer
 {
 	local KFTurboGameType TurboGameType;
 	
-	if (!CanExecuteCommand(CommandInstigator, false))
+	if (!CanExecuteCommand(CommandInstigator, Admin))
 	{
 		return;
 	}
@@ -238,7 +260,7 @@ function SetPlayerHealth(TurboPlayerController CommandInstigator, int PlayerHeal
 {
 	local KFTurboGameType TurboGameType;
 	
-	if (!CanExecuteCommand(CommandInstigator, false))
+	if (!CanExecuteCommand(CommandInstigator, Admin))
 	{
 		return;
 	}
@@ -253,7 +275,7 @@ function SetSpawnRate(TurboPlayerController CommandInstigator, float SpawnRateMo
 {
 	local KFTurboGameType TurboGameType;
 	
-	if (!CanExecuteCommand(CommandInstigator, false))
+	if (!CanExecuteCommand(CommandInstigator, Admin))
 	{
 		return;
 	}
@@ -267,7 +289,7 @@ function SetMaxMonsters(TurboPlayerController CommandInstigator, float MaxMonste
 {
 	local KFTurboGameType TurboGameType;
 	
-	if (!CanExecuteCommand(CommandInstigator, false))
+	if (!CanExecuteCommand(CommandInstigator, Admin))
 	{
 		return;
 	}
@@ -282,7 +304,7 @@ function SetMonsterWanderEnabled(TurboPlayerController CommandInstigator, bool b
 {
     local KFTurboMut KFTurboMut;
 	
-	if (!CanExecuteCommand(CommandInstigator, false))
+	if (!CanExecuteCommand(CommandInstigator, Admin))
 	{
 		return;
 	}
@@ -295,7 +317,7 @@ function SetMonsterWanderEnabled(TurboPlayerController CommandInstigator, bool b
 
 function SetZedTimeEnabled(TurboPlayerController CommandInstigator, bool bEnabled)
 {	
-	if (!CanExecuteCommand(CommandInstigator, false))
+	if (!CanExecuteCommand(CommandInstigator, Admin))
 	{
 		return;
 	}
@@ -309,7 +331,7 @@ function ShowSettings(TurboPlayerController CommandInstigator)
 	local KFTurboGameType TurboGameType;
     local KFTurboMut KFTurboMut;
 	
-	if (!CanExecuteCommand(CommandInstigator, false))
+	if (!CanExecuteCommand(CommandInstigator, Anyone))
 	{
 		return;
 	}
@@ -322,4 +344,31 @@ function ShowSettings(TurboPlayerController CommandInstigator)
 	BroadcastCommand(CommandInstigator, EncodeFloat(AC_GetMaxMonstersModifier, TurboGameType.AdminMaxMonstersModifier));
 	BroadcastCommand(CommandInstigator, EncodeBool(AC_GetMonsterWanderEnabled, !KFTurboMut.bSkipInitialMonsterWander));
 	BroadcastCommand(CommandInstigator, EncodeBool(AC_GetZedTimeEnabled, TurboGameType.IsZedTimeEnabled()));
+}
+
+defaultproperties
+{
+	//The Vote and EndTrader are actually handled elsewhere but this is a convenient place to put them so they're here!
+	CommandBaseHintList(0)=(Command="Vote",Hint="Command for initiating a vote.",ParameterType=String)
+	CommandBaseHintList(1)=(Command="AdminShowSettings",Hint="Display current game settings.",ParameterType=NoParam)
+	CommandBaseHintList(2)=(Command="EndTrader",Hint="Shortcut for Vote EndTrader.",ParameterType=NoParam)
+
+	CommandHintList(0)=(Command="AdminShowSettings",Hint="Display current game settings.",ParameterType=NoParam)
+	CommandHintList(1)=(Command="AdminLogin",Hint="Log in as admin.",ParameterType=String,DefaultValue="admin 123")
+	CommandHintList(2)=(Command="EndTrader",Hint="Shortcut for vote endtrader.",ParameterType=NoParam)
+	CommandHintList(3)=(Command="TossCash",Hint="Tosses cash of a specified amount.",ParameterType=NoParam,DefaultValue="50")
+
+	AdminCommandHintList(0)=(Command="AdminSetTraderTime",Hint="Set trader countdown time.",ParameterType=Integer)
+	AdminCommandHintList(1)=(Command="AdminSetMaxPlayers",Hint="Set maximum player count.",ParameterType=Integer,DefaultValue="6")
+	AdminCommandHintList(2)=(Command="AdminSetFakedPlayer",Hint="Set faked player count.",ParameterType=Integer,DefaultValue="0")
+	AdminCommandHintList(3)=(Command="AdminSetPlayerHealth",Hint="Set forced player health count.",ParameterType=Integer,DefaultValue="0")
+	AdminCommandHintList(4)=(Command="AdminSetSpawnRate",Hint="Set spawn rate modifier.",ParameterType=Float,DefaultValue="1.0")
+	AdminCommandHintList(5)=(Command="AdminSetMaxMonsters",Hint="Set max monsters modifier.",ParameterType=Float,DefaultValue="1.0")
+	AdminCommandHintList(6)=(Command="AdminSetMonsterWanderEnabled",Hint="Enable or disable initial monster wander.",ParameterType=Boolean,DefaultValue="true")
+	AdminCommandHintList(7)=(Command="AdminSetZedTimeEnabled",Hint="Enable or disable zed time.",ParameterType=Boolean,DefaultValue="true")
+	AdminCommandHintList(8)=(Command="ServerDebugSkipWave",Hint="Skip the current wave.",ParameterType=NoParam)
+	AdminCommandHintList(9)=(Command="ServerDebugRestartWave",Hint="Restart the current wave.",ParameterType=NoParam)
+	AdminCommandHintList(10)=(Command="ServerDebugSetWave",Hint="Set the current wave number.",ParameterType=Integer)
+	AdminCommandHintList(11)=(Command="ServerDebugPreventGameOver",Hint="Prevent the game from ending.",ParameterType=NoParam)
+	AdminCommandHintList(12)=(Command="ServerDebugSpawnFriend",Hint="Spawn a bot ally.",ParameterType=NoParam)
 }

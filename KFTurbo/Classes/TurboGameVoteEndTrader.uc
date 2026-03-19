@@ -69,4 +69,6 @@ defaultproperties
 
     VoteTitleString="End Trader"
     VoteDescriptionString="Accepting this vote will end trader time."
+    
+	CommandHint=(Command="Vote EndTrader",Hint="Votes to end trader.",ParameterType=NoParam)
 }

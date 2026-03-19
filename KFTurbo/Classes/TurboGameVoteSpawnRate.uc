@@ -32,4 +32,6 @@ defaultproperties
 
     VoteTitleString="%fx Spawn Rate"
     VoteDescriptionString="Accepting this vote will change spawn rate for the rest of the game."
+    
+	CommandHint=(Command="Vote SpawnRate",Hint="Starts a vote to apply a multiplier to spawn rate.",ParameterType=Float,DefaultValue="1.0")
 }

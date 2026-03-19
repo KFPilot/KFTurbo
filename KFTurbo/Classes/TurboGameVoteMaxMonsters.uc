@@ -34,4 +34,6 @@ defaultproperties
 
     VoteTitleString="%fx Max Monsters"
     VoteDescriptionString="Accepting this vote will change max monsters for the rest of the game."
+
+	CommandHint=(Command="Vote MaxMonsters",Hint="Starts a vote to apply a multiplier to max monsters.",ParameterType=Float,DefaultValue="1.0")
 }

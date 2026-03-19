@@ -241,6 +241,23 @@ simulated function ForceNetUpdate()
     NetUpdateTime = Max(Level.TimeSeconds - ((1.f / NetUpdateFrequency) + 1.f), 0.1f);
 }
 
+simulated function array<TurboTypingPrompt.CommandHint> GetCommandHintList()
+{
+    local int Index;
+    local array<TurboTypingPrompt.CommandHint> CommandList;
+    for (Index = VoteClassList.Length - 1; Index >= 0; Index--)
+    {
+        if (VoteClassList[Index].default.CommandHint.Command == "")
+        {
+            continue;
+        }
+
+        CommandList[CommandList.Length] = VoteClassList[Index].default.CommandHint;
+    }
+
+    return CommandList;
+}
+
 defaultproperties
 {
     VoteClassList(0)=class'TurboGameVoteEndTrader'

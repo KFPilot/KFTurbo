@@ -35,4 +35,6 @@ defaultproperties
 
     VoteTitleString="%i Player Health"
     VoteDescriptionString="Accepting this vote will change player health for the rest of the game."
+    
+	CommandHint=(Command="Vote PlayerHealth",Hint="Starts a vote to modify player health.",ParameterType=Integer,DefaultValue="0")
 }

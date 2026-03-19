@@ -3,6 +3,7 @@
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
 class TurboGameVoteBase extends ReplicationInfo
+    dependson(TurboTypingPrompt)
     abstract;
 
 var TurboGameReplicationInfo OwnerGRI;
@@ -65,6 +66,8 @@ var protected localized string VoteTitleString;
 var protected localized string VoteDescriptionString;
 var protected localized string YesString, NoString;
 var protected Color TitleColor;
+
+var const TurboTypingPrompt.CommandHint CommandHint;
 
 delegate OnVoteStateChanged(TurboGameVoteBase VoteInstance, EVotingState NewState);
 delegate OnVoteTallyChanged(TurboGameVoteBase VoteInstance, int NewYesVoteCount, int NewNoVoteCount);

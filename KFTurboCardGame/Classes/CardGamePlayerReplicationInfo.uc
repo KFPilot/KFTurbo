@@ -99,7 +99,7 @@ simulated function ForceNetUpdate()
 
 function ServerDebugActivateCard(string CardID)
 {
-    if (OwningReplicationInfo == None || TurboPlayerController(OwningReplicationInfo.Owner) == None || !TurboPlayerController(OwningReplicationInfo.Owner).HasPermissionForCommand(true))
+    if (OwningReplicationInfo == None || TurboPlayerController(OwningReplicationInfo.Owner) == None || !TurboPlayerController(OwningReplicationInfo.Owner).HasAdminPermission())
     {
         return;
     }
@@ -109,7 +109,7 @@ function ServerDebugActivateCard(string CardID)
 
 function ServerDebugDeactivateCard(string CardID)
 {
-    if (OwningReplicationInfo == None || TurboPlayerController(OwningReplicationInfo.Owner) == None || !TurboPlayerController(OwningReplicationInfo.Owner).HasPermissionForCommand(true))
+    if (OwningReplicationInfo == None || TurboPlayerController(OwningReplicationInfo.Owner) == None || !TurboPlayerController(OwningReplicationInfo.Owner).HasAdminPermission())
     {
         return;
     }

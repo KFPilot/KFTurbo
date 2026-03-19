@@ -35,4 +35,6 @@ defaultproperties
 
     VoteTitleString="%i Faked Players"
     VoteDescriptionString="Accepting this vote will change faked players for the rest of the game."
+    
+	CommandHint=(Command="Vote FakedPlayers",Hint="Starts a vote to modify faked players.",ParameterType=Integer,DefaultValue="0")
 }

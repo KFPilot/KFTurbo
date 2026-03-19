@@ -39,4 +39,6 @@ defaultproperties
 
     VoteTitleString="Disable Zed Time"
     VoteDescriptionString="Accepting this vote will disable zed time for the rest of the game."
+    
+	CommandHint=(Command="Vote DisableZedTime",Hint="Starts a vote to disable zed time.",ParameterType=NoParam)
 }

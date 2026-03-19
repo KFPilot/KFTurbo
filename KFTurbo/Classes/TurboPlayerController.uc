@@ -8,7 +8,7 @@ var private TurboRepLink TurboRepLink;
 var class<WeaponRemappingSettings> WeaponRemappingSettings;
 var TurboInteraction TurboInteraction;
 var TurboChatInteraction TurboChatInteraction;
-var class<TurboCommandHandler> TurboCommandHandlerClass; //Can be modified in a Mutator's CheckReplacement() within a submodule. 
+var const class<TurboCommandHandler> TurboCommandHandlerClass;
 var TurboCommandHandler TurboCommandHandler;
 
 var float ClientNextMarkTime, NextMarkTime;
@@ -66,14 +66,19 @@ simulated function PostBeginPlay()
 	}
 }
 
-simulated function CreateCommandHandler()
+simulated final function class<TurboCommandHandler> GetCommandHandlerClass()
 {
 	if (TurboCommandHandlerClass == None)
 	{
-		TurboCommandHandlerClass = class'TurboCommandHandler';
+		return class'TurboCommandHandler';
 	}
 
-	TurboCommandHandler = Spawn(TurboCommandHandlerClass, Self);
+	return TurboCommandHandlerClass;
+}
+
+simulated function CreateCommandHandler()
+{
+	TurboCommandHandler = Spawn(GetCommandHandlerClass(), Self);
 }
 
 simulated function InitInputSystem()
@@ -781,13 +786,8 @@ exec function GetWeapon(class<Weapon> NewWeaponClass )
 	Super.GetWeapon(NewWeaponClass);
 }
 
-final function bool HasPermissionForCommand(bool bIsAdminOnlyCommand)
+final function bool HasAdminPermission()
 {
-	if (!bIsAdminOnlyCommand || !class'KFTurboMut'.default.bRequireAdminForDifficultyCommands)
-	{
-		return true;
-	}
-
 	return PlayerReplicationInfo != None && (Level.NetMode == NM_Standalone || PlayerReplicationInfo.bAdmin);
 }
 
@@ -828,7 +828,7 @@ exec function ServerDebugSpawnFriend()
 	local TeamAI TeamAI;
 	local TurboHumanBot Soldier;
 
-	if (TurboCommandHandler == None || !TurboCommandHandler.CanExecuteCommand(self, true))
+	if (TurboCommandHandler == None || !TurboCommandHandler.CanExecuteCommand(self, Admin))
 	{
 		return;
 	}

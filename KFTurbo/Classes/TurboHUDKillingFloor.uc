@@ -41,6 +41,13 @@ var localized string MerchantString;
 var(Turbo) Plane InvactiveModulate;
 var(Turbo) Plane ActiveModulate;
 
+var TurboGameReplicationInfo TurboGRI;
+
+var array<TurboTypingPrompt.CommandHint> RegisteredBaseCommandList;
+var array<TurboTypingPrompt.CommandHint> RegisteredCommandList;
+var array<TurboTypingPrompt.CommandHint> RegisteredAdminCommandList;
+var bool bHasPendingCommands;
+
 simulated function Destroyed()
 {
 	Super.Destroyed();
@@ -357,9 +364,21 @@ simulated function Tick(float DeltaTime)
 	{
 		UpdateClientPerkRepLink();
 	}
+	else if (TurboGRI == None)
+	{
+		UpdateGameReplicationInfo();
+	}
 	else
 	{
-		UpdateEmoteList();
+		if (SmileyMsgs.Length != ClientRep.SmileyTags.Length)
+		{
+			UpdateEmoteList();
+		}
+		
+		if (bHasPendingCommands)
+		{
+			UpdateCommandList();
+		}
 	}
 	
 	if (bDisplayingProgress)
@@ -383,24 +402,62 @@ simulated function Tick(float DeltaTime)
 	}
 }
 
-simulated final function UpdateClientPerkRepLink()
+simulated function UpdateClientPerkRepLink()
 {
 	ClientRep = Class'ClientPerkRepLink'.Static.FindStats(PlayerOwner);
 }
 
-simulated final function UpdateEmoteList()
+simulated function UpdateGameReplicationInfo()
 {
-	if (SmileyMsgs.Length == ClientRep.SmileyTags.Length)
+	TurboGRI = TurboGameReplicationInfo(Level.GRI);
+
+	if (TurboGRI == None)
 	{
 		return;
 	}
 
+	InitializeAdminCommandList();
+}
+
+simulated function UpdateEmoteList()
+{
 	SmileyMsgs = ClientRep.SmileyTags;
 
 	if (TurboTypingPrompt != None)
 	{
 		TurboTypingPrompt.OnEmoteListUpdate(Self);
 	}
+}
+
+simulated function UpdateCommandList()
+{
+	bHasPendingCommands = false;
+
+	if (TurboTypingPrompt != None)
+	{
+		TurboTypingPrompt.OnCommandListUpdate(Self);
+	}
+}
+
+simulated function InitializeAdminCommandList()
+{
+	local class<TurboCommandHandler> CommandHandlerClass;
+	local int Index, IndexOffset;
+	local array<TurboTypingPrompt.CommandHint> CommandHintList;
+
+	CommandHandlerClass = TurboPlayerController(PlayerOwner).GetCommandHandlerClass();
+	RegisteredBaseCommandList = CommandHandlerClass.default.CommandBaseHintList;
+	RegisteredCommandList = CommandHandlerClass.default.CommandHintList;
+	RegisteredAdminCommandList = CommandHandlerClass.default.AdminCommandHintList;
+
+	CommandHintList = TurboGRI.GetCommandHintList();
+	IndexOffset = RegisteredCommandList.Length;
+	for (Index = 0; Index < CommandHintList.Length; Index++)
+	{
+		RegisteredCommandList[IndexOffset + Index] = CommandHintList[Index];
+	}
+
+	bHasPendingCommands = (RegisteredCommandList.Length != 0) || (RegisteredAdminCommandList.Length != 0) || (RegisteredBaseCommandList.Length != 0);
 }
 
 simulated function DrawHud(Canvas C)
@@ -812,6 +869,10 @@ simulated function DrawHudPassC(Canvas C)
 	C.ColorModulate = ActiveModulate;
 	
 	ResetCanvas(C);
+
+	DrawConsoleCommandHint(C);
+	
+	ResetCanvas(C);
 }
 
 simulated final function float GetTextMessageLifeTime(string M, class<LocalMessage> MessageClass, PlayerReplicationInfo PRI)
@@ -1008,6 +1069,54 @@ static final function ResetCanvas(Canvas Canvas)
 	Canvas.bCenter     = false;
 	Canvas.bNoSmooth   = false;
 	Canvas.Z           = 1.0;
+}
+
+simulated function RegisterCommand(TurboTypingPrompt.CommandHint Command, bool bAdminOnly)
+{
+	local int Index;
+	if (bAdminOnly)
+	{
+		Index = RegisteredCommandList.Length;
+		RegisteredCommandList.Length = Index + 1;
+		RegisteredCommandList[Index] = Command;
+	}
+	else
+	{
+		Index = RegisteredCommandList.Length;
+		RegisteredCommandList.Length = Index + 1;
+		RegisteredCommandList[Index] = Command;
+	}
+	
+	bHasPendingCommands = true;
+}
+
+simulated function DrawConsoleCommandHint(Canvas Canvas)
+{
+	local ExtendedConsole Console;
+	local float DrawX, DrawY;
+	local float XL, YL;
+
+	if (TurboTypingPrompt == None || PlayerOwner == None || PlayerOwner.Player == None)
+	{
+		return;
+	}
+
+	Console = ExtendedConsole(PlayerOwner.Player.Console);
+
+	if (Console == None || !Console.IsInState('ConsoleVisible'))
+	{
+		return;
+	}
+
+	Canvas.Font = class'HudBase'.static.GetConsoleFont(Canvas);
+	Canvas.FontScaleX = 1.f;
+	Canvas.FontScaleY = 1.f;
+	Canvas.StrLen("X", XL, YL);
+
+	DrawX = XL;
+	DrawY = (Canvas.ClipY * 0.5f) + XL;
+
+	TurboTypingPrompt.DrawCommandHintPrompt(Self, Canvas, Console.TypedStr, DrawX, DrawY, TurboPlayerController(PlayerOwner) != None && TurboPlayerController(PlayerOwner).HasAdminPermission());
 }
 
 defaultproperties

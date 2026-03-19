@@ -51,4 +51,6 @@ defaultproperties
 
     VoteTitleString="%ix Max Players"
     VoteDescriptionString="Accepting this vote will change max players for the rest of the game."
+    
+	CommandHint=(Command="Vote MaxPlayers",Hint="Starts a vote to modify max players.",ParameterType=Integer,DefaultValue="6")
 }
