@@ -313,7 +313,7 @@ simulated function DrawGameData(Canvas C)
 	}
 	
 	C.DrawColor = C.MakeColor(255, 255, 255, 255);
-	TestText = FillStringWithZeroes(string(Min(TGRI.WaveNumber + 1, 99)), 2);
+	TestText = FillStringWithZeroes(string(Min(Min(TGRI.WaveNumber + 1, 99), TGRI.FinalWave + 1)), 2);
 	TestText = TestText $ "|";
 	TestText = TestText $ FillStringWithZeroes(string(Min(TGRI.FinalWave, 99)), 2);
 	C.SetPos((TempX + (SizeX * 0.5f)) - (TextSizeX * 0.5f), (TempY + (SizeY * 0.5f)) - (TextSizeY * 0.5f));
@@ -613,11 +613,11 @@ simulated final function DrawKillFeedEntry(Canvas C, out float DrawY, out KillFe
 	if (bIsElite)
 	{
 		KillTextString = Caps(KillTextString);
-		C.Font = TurboHUD.LoadBoldFont(0 + FontSizeOffset);
+		C.Font = TurboHUD.LoadBoldFont(1 + FontSizeOffset);
 	}
 	else
 	{
-		C.Font = TurboHUD.LoadFont(1 + FontSizeOffset);
+		C.Font = TurboHUD.LoadBoldFont(2 + FontSizeOffset);
 	}
 	
 	C.FontScaleX = 1.f;
@@ -687,7 +687,7 @@ simulated final function DrawKillFeedEntry(Canvas C, out float DrawY, out KillFe
 	if (!Entry.bIsLocalPlayer)
 	{
 		C.DrawColor = MakeColor(255, 255, 255, byte(FadeOutRatio * 255.f));
-		C.Font = TurboHUD.LoadItalicFont(3 + FontSizeOffset);
+		C.Font = TurboHUD.LoadBoldFont(3 + FontSizeOffset);
 		C.FontScaleX = BaseTextScale * 1.25f;
 		C.FontScaleY = BaseTextScale * 1.25f;
 
