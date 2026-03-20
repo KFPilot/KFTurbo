@@ -41,14 +41,14 @@ simulated function ReceivedMessage(TurboPlayerController PlayerController, strin
 
     for (Index = TextSoundList.Length - 1; Index >= 0; Index--)
     {
-        if (InStr(M, TextSoundList[Index].Text) > 0)
+        if (InStr(M, TextSoundList[Index].Text) != -1)
         { 
             if (TextSoundList[Index].Sound == None)
             {
                 TextSoundList[Index].Sound = Sound(DynamicLoadObject(TextSoundList[Index].SoundRef, class'Sound', true));
                 if (TextSoundList[Index].Sound == None)
                 {
-                    return;
+                    continue;
                 }
             }
 
@@ -87,4 +87,5 @@ defaultproperties
     TextSoundList(7)=(Text=":metalpipe:",SoundRef="KFTurbo.UI.MetalPipe")
     TextSoundList(8)=(Text=":mcdonal:",SoundRef="KFTurbo.UI.Mcdonal",bFullCooldown=true)
     TextSoundList(9)=(Text=":callit:",SoundRef="KFTurbo.UI.Callit",bFullCooldown=true)
+    TextSoundList(10)=(Text=":fridaynight:",SoundRef="KFTurbo.UI.fridaynight",bFullCooldown=true)
 }
