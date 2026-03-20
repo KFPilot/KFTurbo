@@ -232,23 +232,23 @@ simulated final function DrawPlayerEntry(Canvas Canvas, TurboPlayerReplicationIn
 	}
 
 	Canvas.SetPos(int(TempX), PositionY);
-	Canvas.DrawTileScaled(ScoreboardBackplate, ScoreboardSize.X * Canvas.ClipX / float(ScoreboardBackplate.USize), SizeY / float(ScoreboardBackplate.VSize));
-	
-	Canvas.DrawColor = Canvas.MakeColor(255, 255, 255, 32);
-	Canvas.SetPos(TempX + 1.f, ((PositionY + SizeY) - 1.f) - (SizeY * 0.04f));
-
-	Canvas.DrawTileStretched(ScoreboardBackplate, (SizeX * FClamp(float(TurboPRI.PlayerHealth) / float(TurboPRI.HealthMax), 0.f, 1.f)) - 2.f, SizeY * 0.04f);
-
-	Canvas.DrawColor.A = 255;
+	Canvas.DrawTileScaled(ScoreboardBackplate, SizeX / float(ScoreboardBackplate.USize), SizeY / float(ScoreboardBackplate.VSize));
 
 	//Draw Perk
-	TempX += SizeX * PerkIconOffsetX;
 	if (Class<SRVeterancyTypes>(TurboPRI.ClientVeteranSkill) != None)
 	{
 		NumStars = Class<SRVeterancyTypes>(TurboPRI.ClientVeteranSkill).static.PreDrawPerk(Canvas, TurboPRI.ClientVeteranSkillLevel, PerkIcon, PerkStarIcon);
+		
+		Canvas.SetPos(TempX + 1.f, ((PositionY + SizeY) - 1.f) - (SizeY * 0.04f));
+		Canvas.DrawColor.A = 200;
+		Canvas.DrawTileStretched(ScoreboardBackplate, ((SizeX * FClamp(float(TurboPRI.PlayerHealth) / float(TurboPRI.HealthMax), 0.f, 1.f)) * 0.9925f) - 2.f, SizeY * 0.04f);
+		Canvas.DrawColor.A = 255;
 
-		Canvas.SetPos(int(TempX - (SizeX * PerkIconOffsetX)), PositionY);
-		Canvas.DrawTileScaled(ScoreboardBackplateLeft, SizeY / float(ScoreboardBackplateLeft.USize), SizeY / float(ScoreboardBackplateLeft.VSize));
+		Canvas.SetPos(int(TempX), PositionY);
+		Canvas.DrawTileScaled(ScoreboardBackplateLeft, (SizeY * 0.25f) / float(ScoreboardBackplateLeft.USize), (SizeY * 0.25f) / float(ScoreboardBackplateLeft.VSize));
+		
+		Canvas.SetPos(int(TempX + SizeX - (SizeX * 0.00725f)), PositionY);
+		Canvas.DrawTileScaled(ScoreboardBackplate, (SizeX * 0.0075f) / float(ScoreboardBackplate.USize), SizeY / float(ScoreboardBackplate.VSize));
 
 		Canvas.SetPos(TempX, CenterY - (SizeY * PerkIconSizeY * 0.5f));
 		Canvas.DrawTile(PerkIcon, SizeY * PerkIconSizeY, SizeY * PerkIconSizeY, 0, 0, PerkIcon.MaterialUSize(), PerkIcon.MaterialVSize());
@@ -264,6 +264,13 @@ simulated final function DrawPlayerEntry(Canvas Canvas, TurboPlayerReplicationIn
 			Canvas.DrawTileScaled(PerkStarIcon, PerkStarSize / float(PerkStarIcon.MaterialUSize()), PerkStarSize / float(PerkStarIcon.MaterialVSize()));
 			StarCounter++;
 		}
+	}
+	else
+	{
+		Canvas.SetPos(TempX + 1.f, ((PositionY + SizeY) - 1.f) - (SizeY * 0.04f));
+		Canvas.DrawColor = Canvas.MakeColor(255, 255, 255, 200);
+		Canvas.DrawTileStretched(ScoreboardBackplate, (SizeX * FClamp(float(TurboPRI.PlayerHealth) / float(TurboPRI.HealthMax), 0.f, 1.f)) - 2.f, SizeY * 0.04f);
+		Canvas.DrawColor.A = 255;
 	}
 
 	DrawText = "000";
@@ -443,7 +450,7 @@ defaultproperties
 	CashIconColor=(R=40,G=40,B=40,A=230)
 	CashIcon=Texture'KFTurbo.Scoreboard.ScoreboardCash_D'
 
-	PingOffsetX = 0.975f
+	PingOffsetX = 0.95f
 	PingSizeY = 0.75f
 	PingIconColor=(R=40,G=40,B=40,A=230)
 	PingIcon=Texture'KFTurbo.Scoreboard.ScoreboardPing_D'
