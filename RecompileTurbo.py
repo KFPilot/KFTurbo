@@ -42,7 +42,7 @@ BuildType = EBuildType.ALL
 
 #Files KFTurbo compiles.
 TurboFiles = ["KFTurboMapVote.u", "KFTurboEmbeddable.u", #Turbo-agnostic packages.
-            "KFTurboGUI.u", "KFTurboFonts.u", "KFTurboFontsJP.u", "KFTurboFontsCY.u", #Asset packages.
+            "KFTurboGUI.u", "KFTurboFonts.u", "KFTurboFontsJP.u", "KFTurboFontsCY.u", "KFTurboFontsKR.u", "KFTurboFontsTH.u", #Asset packages.
             "KFTurbo.u", "KFTurboServer.u", "KFTurboCommon.u", #Turbo Core packages.
             "KFTurboHoldout.u", "KFTurboRandomizer.u", "KFTurboCardGame.u", "KFTurboTestMut.u"] #Special gamemode packages.
 
