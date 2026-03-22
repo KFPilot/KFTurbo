@@ -192,7 +192,7 @@ static function float AddExtraAmmoFor(KFPlayerReplicationInfo KFPRI, class<Ammun
 	{
 		Multiplier *= LerpStat(KFPRI, 1.f, 1.2f);
 	}
-	else if (IsPerkAmmunition(AmmoType))
+	else if (IsPerkAmmunition(AmmoType) && class<W_FNFAL_Ammo>(AmmoType) == None)
 	{
 		Multiplier *= LerpStat(KFPRI, 1.f, 1.25f);
 	}

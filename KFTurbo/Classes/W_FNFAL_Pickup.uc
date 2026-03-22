@@ -17,7 +17,7 @@ function Destroyed()
 
 defaultproperties
 {
-	 Weight=8.000000
+	 Weight=6.000000
      Cost=2500
      VariantClasses(0)=Class'KFTurbo.W_FNFAL_Pickup'
      VariantClasses(1)=Class'KFTurbo.W_V_FNFAL_Turbo_Pickup'
