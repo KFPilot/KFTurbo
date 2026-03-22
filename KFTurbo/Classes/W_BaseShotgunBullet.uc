@@ -70,31 +70,29 @@ simulated function ProcessTouch(Actor Other, vector HitLocation)
 
 	local TurboPlayerEventHandler.MonsterHitData HitData;
 
-	if (Other == None || Other == Instigator || Other.Base == Instigator || !Other.bBlockHitPointTraces)
+    if (Role != ROLE_Authority)
+    {
+        return;
+    }
+
+	if (Other == None || Other == Instigator || Other.Base == Instigator || !Other.bBlockHitPointTraces || Other.bDeleteMe)
     {
         return;
     }
 
     X = Vector(Rotation);
 
- 	if (ROBulletWhipAttachment(Other) != None)
+ 	if (KFPawn(Other) != None && Instigator != None)
 	{
-        if (!Other.Base.bDeleteMe)
+        HitPawn = KFPawn(Other);
+        HitPawn = KFPawn(Instigator.HitPointTrace(TempHitLocation, HitNormal, HitLocation + (200 * X), HitPoints, HitLocation,, 1));
+
+        if (HitPawn == None || HitPoints.Length == 0)
         {
-	        Other = Instigator.HitPointTrace(TempHitLocation, HitNormal, HitLocation + (200 * X), HitPoints, HitLocation,, 1);
-
-			if (Other == none || HitPoints.Length == 0)
-            {
-				return;
-            }
-
-			HitPawn = KFPawn(Other);
-
-            if (Role == ROLE_Authority && HitPawn != None && !HitPawn.bDeleteMe)
-            {
-                HitPawn.ProcessLocationalDamage(Damage, Instigator, TempHitLocation, MomentumTransfer * Normal(Velocity), MyDamageType, HitPoints);
-            }
+            return;
         }
+        
+        HitPawn.ProcessLocationalDamage(Damage, Instigator, TempHitLocation, MomentumTransfer * Normal(Velocity), MyDamageType, HitPoints);
 	}
     else
     {
@@ -111,7 +109,7 @@ simulated function ProcessTouch(Actor Other, vector HitLocation)
         }
     }
 
-	if (KFPlayerReplicationInfo(Instigator.PlayerReplicationInfo) != None && KFPlayerReplicationInfo(Instigator.PlayerReplicationInfo).ClientVeteranSkill != None)
+	if (Instigator != None && KFPlayerReplicationInfo(Instigator.PlayerReplicationInfo) != None && KFPlayerReplicationInfo(Instigator.PlayerReplicationInfo).ClientVeteranSkill != None)
 	{
    		PenDamageReduction = KFPlayerReplicationInfo(Instigator.PlayerReplicationInfo).ClientVeteranSkill.static.GetShotgunPenetrationDamageMulti(KFPlayerReplicationInfo(Instigator.PlayerReplicationInfo), default.PenDamageReduction);
 	}
