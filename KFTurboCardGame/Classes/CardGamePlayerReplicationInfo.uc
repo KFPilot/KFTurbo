@@ -228,5 +228,5 @@ defaultproperties
     VoteIndex = 0
     NetUpdateFrequency=0.1
 
-    bDebug=true
+    bDebug=false
 }

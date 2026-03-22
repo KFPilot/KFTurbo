@@ -199,5 +199,5 @@ defaultproperties
 {
 	MaxFailureCount=20
 
-	bDebug = true
+	bDebug=false
 }
