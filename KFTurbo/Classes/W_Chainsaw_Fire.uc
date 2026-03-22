@@ -127,5 +127,7 @@ function DoFireEffect()
 
 defaultproperties
 {
+	MeleeDamage=22.500000
 	LastHitRegisterCount=-1
+    weaponRange=110.000000
 }

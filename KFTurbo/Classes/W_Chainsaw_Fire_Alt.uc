@@ -71,6 +71,7 @@ defaultproperties
     NextHitTimerPop = 0.f
 
     MeleeDamage = 540
+    weaponRange=110.000000
     DamagedelayMin=0.50
     DamagedelayMax=0.50
 

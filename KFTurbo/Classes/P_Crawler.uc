@@ -24,6 +24,11 @@ function TakeDamage(int Damage, Pawn InstigatedBy, Vector HitLocation, Vector Mo
 		class'PawnHelper'.static.TakeDamage(Self, Damage, InstigatedBy, HitLocation, Momentum, DamageType, HitIndex, AfflictionData);
 	}
 
+    if ( (class<DamTypeBurned>(DamageType) != none) )
+    {
+        Damage *= 1.25f;
+    }
+
 	Super.TakeDamage(Damage, InstigatedBy, HitLocation, Momentum, DamageType, HitIndex);
 
     if (Role == ROLE_Authority)

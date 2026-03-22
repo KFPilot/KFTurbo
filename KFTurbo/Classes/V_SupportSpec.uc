@@ -113,7 +113,7 @@ static function float AddExtraAmmoFor(KFPlayerReplicationInfo KFPRI, Class<Ammun
 		Multiplier = LerpStat(KFPRI, 1.f, 1.2f);
 		break;
 	case class'FragAmmo' :
-		Multiplier = LerpStat(KFPRI, 1.f, 2.2f);
+		Multiplier = LerpStat(KFPRI, 1.f, 2.0f);
 		break;
 	}
 
@@ -167,7 +167,7 @@ static function float GetCostScaling(KFPlayerReplicationInfo KFPRI, class<Pickup
 	case class'W_Shotgun_Pickup' :
 	case class'W_NailGun_Pickup' :
 	case class'W_SPShotgun_Pickup' :
-		Multiplier *= LerpStat(KFPRI, 0.9f, 0.3f);
+		Multiplier *= LerpStat(KFPRI, 0.9f, 0.4f);
 		break;
 	}
 
@@ -199,5 +199,5 @@ defaultproperties
 	PerkIndex=1
 	CustomLevelInfo=""
 	Requirements(0)="Deal %x damage with shotguns."
-	SRLevelEffects(6)="60% more damage with shotguns|90% better shotgun penetration|30% extra shotgun ammo|50% more damage with grenades|120% increase in grenade capacity|60% increased carry weight|150% faster welding/unwelding|70% discount on shotguns|Spawn with a Shotgun"
+	SRLevelEffects(6)="60% more damage with shotguns|90% better shotgun penetration|30% extra shotgun ammo|50% more damage with grenades|100% increase in grenade capacity|60% increased carry weight|150% faster welding/unwelding|60% discount on shotguns|Spawn with a Shotgun"
 }

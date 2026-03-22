@@ -17,7 +17,7 @@ function Destroyed()
 
 defaultproperties
 {
-     Weight=11.000000
-     cost=3000
+     Weight=9.000000
+     cost=2000
      InventoryType=Class'KFTurbo.W_NailGun_Weap'
 }

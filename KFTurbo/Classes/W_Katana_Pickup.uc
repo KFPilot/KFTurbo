@@ -22,4 +22,5 @@ defaultproperties
      VariantClasses(2)=Class'KFTurbo.W_V_Katana_VM_Pickup'
      VariantClasses(3)=Class'KFTurbo.W_V_Katana_Vet_Pickup'
      InventoryType=Class'KFTurbo.W_Katana_Weap'
+     Cost=1500
 }
