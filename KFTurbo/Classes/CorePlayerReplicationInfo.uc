@@ -42,6 +42,8 @@ simulated function UnregisterSparseInfo(SparsePlayerReplicationInfo SPRI)
 simulated function Destroyed()
 {
     local int Index;
+    local LinkedReplicationInfo LRI, NextLRI;
+
     for (Index = SparseReplicationInfoList.Length - 1; Index >= 0; Index--)
     {
         if (SparseReplicationInfoList[Index] == None)
@@ -50,6 +52,14 @@ simulated function Destroyed()
         }
 
 		SparseReplicationInfoList[Index].OnOwnerDestroyed();
+    }
+    
+    LRI = CustomReplicationInfo;
+    while(LRI != None)
+    {
+        NextLRI = LRI.NextReplicationInfo;
+        LRI.LifeSpan = 0.05f + (FRand() * 0.2f);
+        LRI = NextLRI;
     }
 
 	Super.Destroyed();
