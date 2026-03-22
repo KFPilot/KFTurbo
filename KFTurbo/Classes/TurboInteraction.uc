@@ -636,7 +636,7 @@ simulated function InitializeFontLocale()
 	{
 		//We sample from a bunch of different strings that are likely to be localized.
 		LocaleCheckString = class'HUDKillingFloor'.default.TraderString $ class'KFVetBerserker'.default.VeterancyName $ class'WaitingMessage'.default.DoorMessage $ class'ZombieClotBase'.default.MenuName;
-		log("Performing initial locale check so the correct font locale is used. Test string is "$ class'HUDKillingFloor'.default.TraderString $".", 'KFTurbo');
+		log("Performing initial locale check so the correct font locale is used. Test string is "$ LocaleCheckString $".", 'KFTurbo');
 		switch (ResolveLocale(LocaleCheckString))
 		{
 			case Latin:
