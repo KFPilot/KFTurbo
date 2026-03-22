@@ -15,6 +15,10 @@ var Texture ScoreboardBackplate;
 var(Color) Color ScoreboardBackplateLeftColor;
 var Texture ScoreboardBackplateLeft;
 
+
+var(Color) Color ScoreboardHeaderIconColor;
+var(Color) Color ScoreboardHeaderIconShadowColor;
+
 var(Color) Color ScoreboardTextColor;
 var(Layout) float ScoreboardTextY;
 
@@ -89,7 +93,7 @@ simulated function UpdateScoreBoard(Canvas Canvas)
 
 	PlayerCount = 0;
 	OwnerPRI = TurboPlayerReplicationInfo(KFPlayerController(Owner).PlayerReplicationInfo);
-	TempY = ((1.f - ScoreboardSize.Y) * 0.3f) * Canvas.ClipY;
+	TempY = ((1.f - ScoreboardSize.Y) * 0.25f) * Canvas.ClipY;
 	DrawScoreboardHeader(Canvas, TempY, ((1.f - ScoreboardSize.Y) * 0.25f) * Canvas.ClipY);
 
 	for ( Index = 0; Index < GRI.PRIArray.Length; Index++)
@@ -114,6 +118,8 @@ simulated function UpdateScoreBoard(Canvas Canvas)
 	EntrySizeY = (ScoreboardSize.Y * Canvas.ClipY) / float(PlayerCount);
 	EntrySizeY = Max(Min(EntrySizeY, Canvas.ClipY * 0.035f), 32.f);
 
+	DrawPlayerEntryHeader(Canvas, EntrySizeY, TempY);
+
 	for ( Index = 0; Index < GRI.PRIArray.Length; Index++)
 	{
 		TPRI = TurboPlayerReplicationInfo(GRI.PRIArray[Index]);
@@ -123,8 +129,8 @@ simulated function UpdateScoreBoard(Canvas Canvas)
 			continue;
 		}
 
-		DrawPlayerEntry(Canvas, TPRI, EntrySizeY, TempY, OwnerPRI == TPRI, Index == 0);
-		TempY += EntrySizeY * 1.2f;	
+		DrawPlayerEntry(Canvas, TPRI, EntrySizeY, TempY, OwnerPRI == TPRI);
+		TempY += EntrySizeY * 1.2f;
 	}
 
 	class'TurboHUDKillingFloor'.static.ResetCanvas(Canvas);
@@ -207,7 +213,34 @@ static final function string GetCompressedNumber(int Number)
 	}
 }
 
-simulated final function DrawPlayerEntry(Canvas Canvas, TurboPlayerReplicationInfo TurboPRI, float SizeY, float PositionY, bool bIsLocalPlayer, bool bIsFirstEntry)
+simulated function DrawPlayerEntryHeader(Canvas Canvas, float SizeY, float PositionY)
+{
+	local float LeftX;
+
+	LeftX = (Canvas.ClipX * 0.5f) - (ScoreboardSize.X * Canvas.ClipX * 0.5f);
+
+	DrawHeaderIcon(Canvas, KillIcon, LeftX + (ScoreboardSize.X * Canvas.ClipX * KillsOffsetX), PositionY, SizeY, KillSizeY * SizeY);
+	DrawHeaderIcon(Canvas, HealthIcon, LeftX + (ScoreboardSize.X * Canvas.ClipX * HealthOffsetX), PositionY, SizeY, HealthSizeY * SizeY);
+	DrawHeaderIcon(Canvas, HealedHealthIcon, LeftX + (ScoreboardSize.X * Canvas.ClipX * HealedHealthOffsetX), PositionY, SizeY, HealedHealthSizeY * SizeY);
+	DrawHeaderIcon(Canvas, CashIcon, LeftX + (ScoreboardSize.X * Canvas.ClipX * CashOffsetX), PositionY, SizeY, CashSizeY * SizeY);
+	DrawHeaderIcon(Canvas, PingIcon, LeftX + (ScoreboardSize.X * Canvas.ClipX * PingOffsetX), PositionY, SizeY, PingSizeY * SizeY);
+}
+
+simulated final function DrawHeaderIcon(Canvas Canvas, Texture Icon, float CenterX, float PositionY, float SizeY, float IconSize)
+{
+	CenterX = CenterX - (IconSize * 0.5f);
+	PositionY = PositionY - IconSize;
+
+	Canvas.SetPos(CenterX + (IconSize * 0.05f), PositionY + (IconSize * 0.05f));
+	Canvas.DrawColor = ScoreboardHeaderIconShadowColor;
+	Canvas.DrawTileScaled(Icon, IconSize / float(Icon.USize), IconSize / float(Icon.VSize));
+
+	Canvas.SetPos(CenterX, PositionY);
+	Canvas.DrawColor = ScoreboardHeaderIconColor;
+	Canvas.DrawTileScaled(Icon, IconSize / float(Icon.USize), IconSize / float(Icon.VSize));
+}
+
+simulated final function DrawPlayerEntry(Canvas Canvas, TurboPlayerReplicationInfo TurboPRI, float SizeY, float PositionY, bool bIsLocalPlayer)
 {
 	local float CenterX, CenterY;
 	local float SizeX;
@@ -239,7 +272,7 @@ simulated final function DrawPlayerEntry(Canvas Canvas, TurboPlayerReplicationIn
 	{
 		NumStars = Class<SRVeterancyTypes>(TurboPRI.ClientVeteranSkill).static.PreDrawPerk(Canvas, TurboPRI.ClientVeteranSkillLevel, PerkIcon, PerkStarIcon);
 		
-		Canvas.SetPos(TempX + 1.f, ((PositionY + SizeY) - 1.f) - (SizeY * 0.04f));
+		Canvas.SetPos(TempX + 1.f, int(((PositionY + SizeY) - 1.f) - (SizeY * 0.04f)));
 		Canvas.DrawColor.A = 200;
 		Canvas.DrawTileStretched(ScoreboardBackplate, ((SizeX * FClamp(float(TurboPRI.PlayerHealth) / float(TurboPRI.HealthMax), 0.f, 1.f)) * 0.9925f) - 2.f, SizeY * 0.04f);
 		Canvas.DrawColor.A = 255;
@@ -284,9 +317,17 @@ simulated final function DrawPlayerEntry(Canvas Canvas, TurboPlayerReplicationIn
 
 	//Draw Name
 	Canvas.DrawColor = ScoreboardTextColor;
-	DrawText = Eval(Len(TurboPRI.PlayerName) > 15, Left(TurboPRI.PlayerName, 15), TurboPRI.PlayerName);
-	Canvas.TextSize(DrawText, TextSizeX, TextSizeY);
 	TempX = TempX + (SizeY * PerkIconSizeY) + (SizeY * 0.1f);
+	TempY = ((CenterX - (SizeX * 0.5f)) + (SizeX * HealthOffsetX) - TempX) * 0.9f;
+
+	DrawText = TurboPRI.PlayerName;
+	Canvas.TextSize(DrawText, TextSizeX, TextSizeY);
+	if (TextSizeX > TempY)
+	{
+		DrawText = Left(DrawText, Max(int(float(Len(DrawText)) * (TempY / TextSizeX)), 1));
+		Canvas.TextSize(DrawText, TextSizeX, TextSizeY);
+	}
+
 	TempY = CenterY;
 	Canvas.SetPos(TempX, CenterY - (TextSizeY * 0.5f));
 	Canvas.DrawText(DrawText);
@@ -294,13 +335,6 @@ simulated final function DrawPlayerEntry(Canvas Canvas, TurboPlayerReplicationIn
 	//Draw Kills
 	TempX = (CenterX - (SizeX * 0.5f)) + (SizeX * KillsOffsetX);
 	TempY = CenterY - (SizeY * KillSizeY * 0.5f);
-
-	if (bIsFirstEntry)
-	{
-		Canvas.DrawColor = KillIconColor;
-		Canvas.SetPos(TempX - (SizeY * KillSizeY * 0.5f), (TempY - (SizeY * 0.5f)) - (SizeY * KillSizeY * 0.5f));
-		Canvas.DrawTileScaled(KillIcon, (SizeY * KillSizeY) / float(KillIcon.USize), (SizeY * KillSizeY) / float(KillIcon.VSize));
-	}
 
 	Canvas.DrawColor = ScoreboardTextColor;
 	DrawText = string(TurboPRI.Kills);
@@ -319,13 +353,6 @@ simulated final function DrawPlayerEntry(Canvas Canvas, TurboPlayerReplicationIn
 	TempX = (CenterX - (SizeX * 0.5f)) + (SizeX * HealthOffsetX);
 	TempY = CenterY - (SizeY * HealthSizeY * 0.5f);
 	
-	if (bIsFirstEntry)
-	{
-		Canvas.DrawColor = HealthIconColor;
-		Canvas.SetPos(TempX - (SizeY * HealthSizeY * 0.5f), (TempY - (SizeY * 0.5f)) - (SizeY * HealthSizeY * 0.5f));
-		Canvas.DrawTileScaled(HealthIcon, (SizeY * HealthSizeY) / float(HealthIcon.USize), (SizeY * HealthSizeY) / float(HealthIcon.VSize));
-	}
-
 	Canvas.DrawColor = ScoreboardTextColor;
 	DrawText = string(TurboPRI.PlayerHealth)$HealthyString;
 	Canvas.TextSize(class'TurboHUDOverlay'.static.GetStringOfZeroes(Len(DrawText)), TextSizeX, TextSizeY);
@@ -336,13 +363,6 @@ simulated final function DrawPlayerEntry(Canvas Canvas, TurboPlayerReplicationIn
 	TempX = (CenterX - (SizeX * 0.5f)) + (SizeX * HealedHealthOffsetX);
 	TempY = CenterY - (SizeY * HealedHealthSizeY * 0.5f);
 	
-	if (bIsFirstEntry)
-	{
-		Canvas.DrawColor = HealedHealthIconColor;
-		Canvas.SetPos(TempX - (SizeY * HealedHealthSizeY * 0.5f), (TempY - (SizeY * 0.5f)) - (SizeY * HealedHealthSizeY * 0.5f));
-		Canvas.DrawTileScaled(HealedHealthIcon, (SizeY * HealedHealthSizeY) / float(HealedHealthIcon.USize), (SizeY * HealedHealthSizeY) / float(HealedHealthIcon.VSize));
-	}
-
 	Canvas.DrawColor = ScoreboardTextColor;
 	DrawText = GetCompressedNumber(TurboPRI.HealthHealed);
 
@@ -354,13 +374,6 @@ simulated final function DrawPlayerEntry(Canvas Canvas, TurboPlayerReplicationIn
 	TempX = (CenterX - (SizeX * 0.5f)) + (SizeX * CashOffsetX);
 	TempY = CenterY - (SizeY * CashSizeY * 0.5f);
 	
-	if (bIsFirstEntry)
-	{
-		Canvas.DrawColor = CashIconColor;
-		Canvas.SetPos(TempX - (SizeY * CashSizeY * 0.5f), (TempY - (SizeY * 0.5f)) - (SizeY * CashSizeY * 0.5f));
-		Canvas.DrawTileScaled(CashIcon, (SizeY * CashSizeY) / float(CashIcon.USize), (SizeY * CashSizeY) / float(CashIcon.VSize));
-	}
-	
 	Canvas.DrawColor = ScoreboardTextColor;
 	DrawText = GetCompressedNumber(TurboPRI.Score) $ class'KFTab_BuyMenu'.default.MoneyCaption;
 	Canvas.TextSize(class'TurboHUDOverlay'.static.GetStringOfZeroes(Len(DrawText)), TextSizeX, TextSizeY);
@@ -371,13 +384,6 @@ simulated final function DrawPlayerEntry(Canvas Canvas, TurboPlayerReplicationIn
 	TempX = (CenterX - (SizeX * 0.5f)) + (SizeX * PingOffsetX);
 	TempY = CenterY - (SizeY * PingSizeY * 0.5f);
 	
-	if (bIsFirstEntry)
-	{
-		Canvas.DrawColor = PingIconColor;
-		Canvas.SetPos(TempX - (SizeY * PingSizeY * 0.5f), (TempY - (SizeY * 0.5f)) - (SizeY * PingSizeY * 0.5f));
-		Canvas.DrawTileScaled(PingIcon, (SizeY * PingSizeY) / float(PingIcon.USize), (SizeY * PingSizeY) / float(PingIcon.VSize));
-	}
-
 	Canvas.DrawColor = ScoreboardTextColor;
 	DrawText = Eval(TurboPRI.bBot, Eval(BotText != "", BotText, "BOT"), string(Min(TurboPRI.Ping * 4, 999)));
 	Canvas.TextSize(class'TurboHUDOverlay'.static.GetStringOfZeroes(Len(DrawText)), TextSizeX, TextSizeY);
@@ -415,7 +421,7 @@ simulated final function DrawPlayerEntry(Canvas Canvas, TurboPlayerReplicationIn
 defaultproperties
 {
 	ScoreboardHeaderSize=(X=0.6f,Y=0.1f)
-	ScoreboardSize=(X=0.5f,Y=0.6f)
+	ScoreboardSize=(X=0.6f,Y=0.6f)
 	ScoreboardBackplateColor=(R=24,G=24,B=24,A=160)
 	ScoreboardBackplate=Texture'KFTurbo.Scoreboard.ScoreboardBackplate_D'
 	ScoreboardBackplateLeftColor=(R=4,G=4,B=4,A=220)
@@ -424,33 +430,36 @@ defaultproperties
 	ScoreboardTextY=0.75f
 	ScoreboardTextColor=(R=255,G=255,B=255,A=220)
 
+	ScoreboardHeaderIconColor=(R=255,G=255,B=255,A=200)
+	ScoreboardHeaderIconShadowColor=(R=40,G=40,B=40,A=120)
+
 	PerkIconOffsetX=0.005f
 	PerkIconSizeY=1.f
 	
 	UsernameSizeY=0.8f
-	UsernameOffsetX=0.0525f
+	UsernameOffsetX=0.052500
 
-	HealthOffsetX=0.275f
+	HealthOffsetX=0.312500
 	HealthSizeY=0.75f
 	HealthIconColor=(R=40,G=40,B=40,A=230)
 	HealthIcon=Texture'KFTurbo.Scoreboard.ScoreboardHealth_D'
 
-	HealedHealthOffsetX=0.625f
+	HealedHealthOffsetX=0.650000
 	HealedHealthSizeY=0.75f
 	HealedHealthIconColor=(R=40,G=40,B=40,A=230)
 	HealedHealthIcon=Texture'KFTurbo.Scoreboard.ScoreboardHealed_D'
 
-	KillsOffsetX=0.45f
+	KillsOffsetX=0.48125
 	KillSizeY=0.75f
 	KillIconColor=(R=40,G=40,B=40,A=230)
 	KillIcon=Texture'KFTurbo.Scoreboard.ScoreboardKill_D'
 
-	CashOffsetX=0.8f
+	CashOffsetX=0.800000
 	CashSizeY=0.75f
 	CashIconColor=(R=40,G=40,B=40,A=230)
 	CashIcon=Texture'KFTurbo.Scoreboard.ScoreboardCash_D'
 
-	PingOffsetX = 0.95f
+	PingOffsetX = 0.962500
 	PingSizeY = 0.75f
 	PingIconColor=(R=40,G=40,B=40,A=230)
 	PingIcon=Texture'KFTurbo.Scoreboard.ScoreboardPing_D'
