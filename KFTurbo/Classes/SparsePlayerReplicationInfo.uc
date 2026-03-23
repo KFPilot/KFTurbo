@@ -5,6 +5,24 @@ class SparsePlayerReplicationInfo extends SparseReplicationInfo;
 
 var CorePlayerReplicationInfo OwningPRI;
 
+simulated function PreBeginPlay()
+{
+    if (Owner != None)
+    {
+        if (Controller(Owner) != None)
+        {
+            SparseOwningActor = Controller(Owner).PlayerReplicationInfo;
+        }
+        else
+        {
+            SparseOwningActor = Owner;
+        }
+    }
+
+    Super(ReplicationInfo).PreBeginPlay();
+}
+
+
 static function SparseReplicationInfo Find(Actor InSparseOwningActor)
 {
     local CorePlayerReplicationInfo PlayerReplicationInfo;
