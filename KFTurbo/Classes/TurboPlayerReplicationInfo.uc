@@ -32,6 +32,8 @@ var bool bHasRegisteredOnReceiveStatCollector;
 var bool bHasRegisteredOnReceiveStatReplicator;
 var bool bHasRegisteredOnReceiveCustomInfo;
 
+var bool bHasInitializedName;
+
 delegate OnReceiveStatCollector(TurboPlayerReplicationInfo PlayerReplicationInfo, TurboPlayerStatCollectorBase Collector);
 delegate OnReceiveStatReplicator(TurboPlayerReplicationInfo PlayerReplicationInfo, TurboPlayerStatCollectorBase Replicator);
 delegate OnReceiveCustomInfo(TurboPlayerReplicationInfo PlayerReplicationInfo, TurboPlayerCustomInfo Collector);
@@ -199,6 +201,17 @@ simulated final function EConnectionState GetConnectionState()
 
     LastConnectionState = Normal;
     return Normal;
+}
+
+function SetPlayerName(string NewPlayerName)
+{
+    if (!bHasInitializedName)
+    {
+        NewPlayerName = Repl(NewPlayerName, "_", " ");
+        bHasInitializedName = true;
+    }
+
+    Super.SetPlayerName(NewPlayerName);
 }
 
 defaultproperties

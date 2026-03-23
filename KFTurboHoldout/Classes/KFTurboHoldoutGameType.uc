@@ -121,7 +121,7 @@ State MatchInProgress
     {
         local Controller C;
         //Keep LastSeenOrRelevantTime current.
-        if (TotalMaxMonsters <= 0 && NumMonsters <= 5)
+        if (TotalMaxMonsters <= 0 && NumMonsters <= 10)
         {
             for ( C = Level.ControllerList; C != None; C = C.NextController )
             {
@@ -129,6 +129,19 @@ State MatchInProgress
                 {
                     KFMonster(C.Pawn).LastSeenOrRelevantTime = Level.TimeSeconds;
                 }   
+            }
+        }
+
+        //Keep WaveCountDown as a large number while we wait for players to ready.
+        if (WaveCountDown > 900)
+        {
+            if (!ArePlayersReady())
+            {
+                WaveCountDown = 1000;
+            }
+            else
+            {
+                WaveCountDown = 5;
             }
         }
 
@@ -163,6 +176,8 @@ State MatchInProgress
 
         class'KFTurboMut'.static.FindMutator(Self).OnWaveEnd();
 		class'TurboWaveEventHandler'.static.BroadcastWaveEnded(Self, WaveNum - 1);
+        ResetPlayersReady();
+        WaveCountDown = 1000;
     }
 }
 
@@ -360,6 +375,59 @@ final function HandleAssists(Controller Killer, KFMonsterController KilledMonste
 function int GetPlayerStartingCash()
 {
     return HOLDOUT_STARTING_CASH;
+}
+
+function bool ArePlayersReady()
+{
+    local array<TurboPlayerController> PlayerList;
+    local int Index;
+    local HoldoutPlayerSparseInfo Info;
+
+    PlayerList = class'TurboGameplayHelper'.static.GetPlayerControllerList(Level);
+
+    if (PlayerList.Length == 0)
+    {
+        return false;
+    }
+
+    for (Index = 0; Index < PlayerList.Length; Index++)
+    {
+        if (PlayerList[Index].PlayerReplicationInfo == None)
+        {
+            continue;
+        }
+
+        Info = class'HoldoutPlayerSparseInfo'.static.GetHoldoutInfo(PlayerList[Index].PlayerReplicationInfo);
+        if (Info == None || !Info.IsReady())
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+function ResetPlayersReady()
+{
+    local array<TurboPlayerController> PlayerList;
+    local int Index;
+    local HoldoutPlayerSparseInfo Info;
+
+    PlayerList = class'TurboGameplayHelper'.static.GetPlayerControllerList(Level);
+
+    for (Index = 0; Index < PlayerList.Length; Index++)
+    {
+        if (PlayerList[Index].PlayerReplicationInfo == None)
+        {
+            continue;
+        }
+        
+        Info = class'HoldoutPlayerSparseInfo'.static.GetHoldoutInfo(PlayerList[Index].PlayerReplicationInfo);
+        if (Info != None)
+        {
+            Info.SetReady(false);
+        }
+    }
 }
 
 function FillPlayerAmmo() {}

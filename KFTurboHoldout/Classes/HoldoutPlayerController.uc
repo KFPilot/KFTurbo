@@ -4,11 +4,32 @@
 class HoldoutPlayerController extends TurboPlayerController;
 
 var FadeColor ShortLivedPickupOverlay;
+var HoldoutInteraction HoldoutInteraction;
 
 replication
 {
 	reliable if( Role == ROLE_Authority )
 		ClientMarkPickupShortLived;
+}
+
+simulated function InitInputSystem()
+{
+	Super.InitInputSystem();
+
+	if (!Level.bLevelChange)
+	{
+		SetupHoldoutInteraction();
+	}
+}
+
+simulated function SetupHoldoutInteraction()
+{
+	if (HoldoutInteraction != None || Player == None)
+	{
+		return;
+	}
+
+	HoldoutInteraction = HoldoutInteraction(Player.InteractionMaster.AddInteraction("KFTurboHoldout.HoldoutInteraction", Player));
 }
 
 simulated function ClientSetHUD(class<HUD> newHUDClass, class<Scoreboard> newScoringClass )

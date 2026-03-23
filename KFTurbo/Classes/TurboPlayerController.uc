@@ -445,6 +445,19 @@ event TeamMessage(PlayerReplicationInfo PRI, coerce string Message, name Type)
 	Player.Console.Chat(MessagePrefix $ WhiteColorString $ class'GUIComponent'.static.StripColorCodes(Message), 6.0, PRI);
 }
 
+
+function ChangeName(coerce string S)
+{
+    if (Len(S) > 20)
+	{
+        S = left(S,20);
+	}
+	
+    S = Repl(S, "\"", "");
+
+    Level.Game.ChangeName(self, S, true);
+}
+
 function AttemptMarkActor(vector Start, vector End, Actor TargetActor, class<TurboMarkerType> DataClassOverride, int DataOverride, TurboPlayerMarkReplicationInfo.EMarkColor Color)
 {
 	local TurboPlayerMarkReplicationInfo TurboMarkPRI;

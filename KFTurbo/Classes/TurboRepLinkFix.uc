@@ -1,113 +1,203 @@
 //Killing Floor Turbo TurboRepLinkFix
-//Fixes up CPRLs that get broken due to replication quirks
+//Fixes up LRIs that get broken due to replication quirks
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
 class TurboRepLinkFix extends Info;
 
-var int VerifyCount;
-var bool bHasValidatedCPRL;
-var bool bHasValidatedTRL;
+var int FailureCount;
+var const int MaxFailureCount;
 
-simulated function BeginPlay()
+var PlayerController OwningPlayer;
+var LinkedReplicationInfo TestLRI;
+
+var const bool bDebug;
+
+simulated function PostBeginPlay()
 {
-	bHasValidatedCPRL = false;
-	bHasValidatedTRL = false;
+	Super.PostBeginPlay();
 
-    SetTimer(4.f, true);
+	OwningPlayer = PlayerController(Owner);
+	InitialState = 'ValidateClientPerkRepLink';
 }
 
-simulated function Timer()
+state ValidateLRI
 {
-	local PlayerController PlayerController;
- 
-	PlayerController = PlayerController(Owner);
+	simulated function BeginState()
+	{
+		FailureCount = 0;
+	}
+
+	simulated function bool AttemptValidate() { return false; }
+
+	simulated function OnValidate() {}
+
+Begin:
+	while (true)
+	{
+		Sleep(1.f);
+		if (AttemptValidate())
+		{
+			OnValidate();
+			break;
+		}
+
+		FailureCount++;
+
+		if (FailureCount > MaxFailureCount)
+		{
+			OwningPlayer.ClientMessage("FAILED TO VALIDATE LRI IN TIME.");
+			OwningPlayer.ConsoleCommand("DISCONNECT");
+			break;
+		}
+	}
+}
+
+//Returns true if the provided LRI is present in the provided PlayerController's LRI list.
+static final function bool HasLRI(PlayerController PlayerController, LinkedReplicationInfo TargetLRI)
+{
+	local LinkedReplicationInfo LRI;
 
 	if (PlayerController == None || PlayerController.PlayerReplicationInfo == None)
-    {
-		return;
-    }
-
-	//Wait until CPRL gives us the all clear.
-	if (!bHasValidatedCPRL && !ValidateClientPerkRepLink(PlayerController))
 	{
-		return;
-	}
-
-	if (!bHasValidatedCPRL)
-	{
-		bHasValidatedCPRL = true;
-		VerifyCount = 0;
-	}
-    
-	//Test TRL until it gives us the all clear.
-	if (!bHasValidatedTRL && !ValidateTurboRepLink(PlayerController))
-	{
-		return;
-	}
-
-	bHasValidatedTRL = true;
-	
-	SetTimer(0.f, false);
-	Destroy();
-}
-
-simulated function bool ValidateClientPerkRepLink(PlayerController PlayerController)
-{
-	local ClientPerkRepLink CPRL;
-
-	CPRL = class'ClientPerkRepLink'.Static.FindStats(PlayerController);
-
-	if (CPRL != None)
-	{
-        if (VerifyCount > 60)
-        {
-            return true;
-        }
-
-        VerifyCount++;
 		return false;
 	}
 
-	VerifyCount = 0;
-	
-    foreach DynamicActors(Class'ClientPerkRepLink', CPRL)
+	for (LRI = PlayerController.PlayerReplicationInfo.CustomReplicationInfo; LRI != None; LRI = LRI.NextReplicationInfo)
 	{
-		CPRL.SetOwner(PlayerController);
-		CPRL.RepLinkBroken();
+		if (LRI == TargetLRI)
+		{
+			return true;
+		}
 	}
 
 	return false;
 }
 
-simulated function bool ValidateTurboRepLink(PlayerController PlayerController)
+//Put our LRI into the front of the list. Hopefully putting the LRI in the front of the list reduces chance we ended up messing with someone else in the list.
+static final function ForceEmplaceLRI(PlayerReplicationInfo PRI, LinkedReplicationInfo LRI)
 {
-	local TurboRepLink TRL;
+	local LinkedReplicationInfo NextLRI;
+	NextLRI = PRI.CustomReplicationInfo;
+	PRI.CustomReplicationInfo = LRI;
+	LRI.NextReplicationInfo = NextLRI;
+}
 
-	TRL = class'TurboRepLink'.Static.FindTurboRepLink(PlayerController);
-
-	if (TRL != None)
+state ValidateClientPerkRepLink extends ValidateLRI
+{
+	simulated function BeginState()
 	{
-        if (VerifyCount > 60)
-        {
-            return true;
-        }
+		Global.BeginState();
 
-        VerifyCount++;
+		if (bDebug)
+		{
+			log("Starting ValidateClientPerkRepLink");
+		}
+	}
+
+	simulated function bool AttemptValidate()
+	{
+		local ClientPerkRepLink CPRL;
+    	
+		foreach DynamicActors(class'ClientPerkRepLink', CPRL) { break; }
+
+		if (CPRL == None)
+		{
+			FailureCount--;
+			return false;
+		}
+
+		if (HasLRI(OwningPlayer, CPRL))
+		{
+			return true;
+		}
+
+		if (FailureCount == (MaxFailureCount / 2))
+		{
+			if (bDebug)
+			{
+				log("Starting ValidateClientPerkRepLink Hit failure limit. Attempting emplace.");
+			}
+			ForceEmplaceLRI(OwningPlayer.PlayerReplicationInfo, CPRL);
+		}
+
 		return false;
 	}
-
-	VerifyCount = 0;
 	
-    foreach DynamicActors(Class'TurboRepLink', TRL)
+	simulated function OnValidate()
 	{
-		TRL.SetOwner(PlayerController);
-		TRL.RepLinkBroken();
+		if (bDebug)
+		{
+			log("ValidateClientPerkRepLink Validated CPRL.");
+		}
+		GotoState('ValidateTurboRepLink');
+	}
+}
+
+state ValidateTurboRepLink extends ValidateLRI
+{
+	simulated function BeginState()
+	{
+		Global.BeginState();
+
+		if (bDebug)
+		{
+			log("Starting ValidateTurboRepLink");
+		}
 	}
 
-	return false;
+	simulated function bool AttemptValidate()
+	{
+		local TurboRepLink TRL;
+
+    	foreach DynamicActors(class'TurboRepLink', TRL) { break; }
+
+		if (TRL == None)
+		{
+			FailureCount--;
+			return false;
+		}
+
+		if (HasLRI(OwningPlayer, TRL))
+		{
+			return true;
+		}
+
+		if (FailureCount == (MaxFailureCount / 2))
+		{
+			if (bDebug)
+			{
+				log("Starting ValidateTurboRepLink Hit failure limit. Attempting emplace.");
+			}
+
+			ForceEmplaceLRI(OwningPlayer.PlayerReplicationInfo, TRL);
+			TRL.OnSetupComplete();
+		}
+
+		return false;
+	}
+	
+	simulated function OnValidate()
+	{
+		if (bDebug)
+		{
+			log("ValidateTurboRepLink Validated TRL.");
+		}
+
+		GotoState('ValidationComplete');
+	}
+}
+
+state ValidationComplete
+{
+	simulated function BeginState()
+	{
+		LifeSpan = 0.1f;
+	}
 }
  
 defaultproperties
 {
+	MaxFailureCount=20
 
+	bDebug=false
 }

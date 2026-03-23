@@ -6,7 +6,7 @@ class CorePlayerReplicationInfo extends KFStoryGame.KF_StoryPRI;
 var array<SparsePlayerReplicationInfo> SparseReplicationInfoList;
 delegate OnReceiveSparseReplicationInfo(CorePlayerReplicationInfo PlayerReplicationInfo, SparsePlayerReplicationInfo ReplicationInfo);
 
-simulated function SparsePlayerReplicationInfo GetSparseInfo(class<SparsePlayerReplicationInfo> SparsePRIClass)
+simulated final function SparsePlayerReplicationInfo GetSparseInfo(class<SparsePlayerReplicationInfo> SparsePRIClass)
 {
     local int Index;
     for (Index = SparseReplicationInfoList.Length - 1; Index >= 0; Index--)

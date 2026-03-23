@@ -6,6 +6,7 @@ class KFTurboHoldoutMut extends Mutator;
 #exec obj load file="..\Textures\TurboHoldout.utx" package=KFTurboHoldout
 
 var array<WeaponPickup> WeaponPickupList;
+var array<TurboPlayerReplicationInfo> PendingPlayerReplicationInfoList;
 
 simulated function PostBeginPlay()
 {
@@ -21,6 +22,18 @@ simulated function PostBeginPlay()
 		Level.Game.PlayerControllerClass = class'HoldoutPlayerController';
 		Level.Game.PlayerControllerClassName = string(class'HoldoutPlayerController');
 	}
+
+	class'KFTurboMut'.static.FindMutator(Level.Game).SetGameType(Self, "turboholdoutgame");
+}
+
+function Tick(float DeltaTime)
+{
+	local int Index;
+	for (Index = PendingPlayerReplicationInfoList.Length - 1; Index >= 0; Index--)
+	{
+		SpawnHoldoutPlayerSparseInfo(PendingPlayerReplicationInfoList[Index]);
+	}
+	PendingPlayerReplicationInfoList.Length = 0;
 }
 
 function Timer()
@@ -63,20 +76,35 @@ function Timer()
 		HoldoutPlayerController(PlayerList[Index]).ClientMarkPickupShortLived(Pickup);
 	}
 
-	if (WeaponPickupList.Length == 0)
+	if (WeaponPickupList.Length != 0)
 	{
 		SetTimer(0.25f, false);
 	}
 }
 
-function Tick(float DeltaTime)
+function SpawnHoldoutPlayerSparseInfo(TurboPlayerReplicationInfo PRI)
 {
-	class'KFTurboMut'.static.FindMutator(Level.Game).SetGameType(Self, "turboholdoutgame");
-	Disable('Tick');
+	if (PRI == None || MessagingSpectator(PRI.Owner) != None)
+	{
+		return;
+	}
+
+	if (class'HoldoutPlayerSparseInfo'.static.GetHoldoutInfo(PRI) != None)
+	{
+		return;
+	}
+
+	Spawn(class'HoldoutPlayerSparseInfo', PRI.Owner);
 }
 
 function bool CheckReplacement(Actor Other, out byte bSuperRelevant)
 {
+	if (TurboPlayerReplicationInfo(Other) != None)
+	{
+		PendingPlayerReplicationInfoList[PendingPlayerReplicationInfoList.Length] = TurboPlayerReplicationInfo(Other);
+		return true;
+	}
+
 	if (WeaponPickup(Other) != None)
 	{
 		if (WeaponPickupList.Length == 0)

@@ -848,7 +848,7 @@ final function PerformMassDetonation(MassDetonationEntry Detonation)
     local vector Direction;
     local vector HitMomentum;
 
-    if (Detonation.Controller == None)
+    if (Detonation.Controller == None || Detonation.Controller.Pawn == None)
     {
         return;
     }

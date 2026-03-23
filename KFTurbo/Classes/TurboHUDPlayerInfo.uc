@@ -42,6 +42,7 @@ var Texture AlertIcon;
 var Texture MedicIcon;
 
 var int FontSizeOffset;
+var int BarSizeOffset;
 
 var InterpCurve MedicRequestOpacityCurve;
 var array<InterpCurvePoint> MedicRequestOpacityPointList;
@@ -51,6 +52,9 @@ var InterpCurve MedicRequestScaleCurve;
 var array<InterpCurvePoint> MedicRequestScalePointList;
 
 var bool bAllowSelfForDebug;
+
+var float CachedBarLength;
+var float CachedBarHeight;
 
 simulated function Initialize(TurboHUDKillingFloor OwnerHUD)
 {
@@ -335,6 +339,8 @@ simulated function Render(Canvas C)
 	C.GetCameraLocation(CamPos,CamRot);
 	ViewDir = vector(CamRot);
 
+	UpdateBarLength();
+
 	//Sample indices from PlayerInfoDataDistanceOrderList instead of directly iterating so draws are depth-ordered.
 	for (Index = PlayerInfoDataDistanceOrderList.Length - 1; Index >= 0; Index--)
 	{
@@ -395,6 +401,36 @@ simulated function OnScreenSizeChange(Canvas C, Vector2D CurrentClipSize, Vector
 	{
 		FontSizeOffset++;
 	}
+
+	BarSizeOffset = 0;
+
+	if (CurrentClipSize.X < 800)
+	{
+		BarSizeOffset = -2;
+	}
+	else if (CurrentClipSize.X < 1000)
+	{
+		BarSizeOffset = -1;
+	}
+	else if (CurrentClipSize.X < 1400)
+	{
+		BarSizeOffset = 0;
+	}
+	else if (CurrentClipSize.X < 1800)
+	{
+		BarSizeOffset = 1;
+	}
+	else
+	{
+		BarSizeOffset = 2;
+	}
+}
+
+
+final simulated function UpdateBarLength()
+{
+	CachedBarLength = TurboHUD.BarLength * (1.f + (float(Clamp(BarSizeOffset -(TurboHUD.default.ConsoleFontSize - 4), -4, 4)) * 0.2f));
+	CachedBarHeight = TurboHUD.BarHeight * (1.f + (float(Clamp(BarSizeOffset -(TurboHUD.default.ConsoleFontSize - 4), -4, 4)) * 0.1f));
 }
 
 final simulated function DrawPlayerInfo(Canvas C, PlayerInfoData PlayerInfo, float ScreenLocX, float ScreenLocY)
@@ -427,7 +463,7 @@ final simulated function DrawPlayerInfo(Canvas C, PlayerInfoData PlayerInfo, flo
 	C.Z = 1.0;
 	C.Style = TurboHUD.ERenderStyle.STY_Alpha;
 
-	OffsetX = TurboHUD.BarLength * 0.5f;
+	OffsetX = CachedBarLength * 0.5f;
 
 	if (TurboHUD.bUseBaseGameFontForChat)
 	{
@@ -452,7 +488,7 @@ final simulated function DrawPlayerInfo(Canvas C, PlayerInfoData PlayerInfo, flo
 	{
 		TempSize = 24.f * TurboHUD.VeterancyMatScaleFactor;
 
-		TempX = ScreenLocX + (TurboHUD.BarLength * 0.5f);
+		TempX = ScreenLocX + (CachedBarLength * 0.5f);
 		TempX = TempX + (TempSize * 0.25f);
 		TempY = (ScreenLocY - (TempSize * 0.5f));
 		
@@ -485,7 +521,7 @@ final simulated function DrawPlayerInfo(Canvas C, PlayerInfoData PlayerInfo, flo
 	}
 
 	TempX = ScreenLocX - (XL * 0.5);
-	TempY = ScreenLocY + (TurboHUD.BarHeight * 0.5f) - (YL * 0.125f);
+	TempY = ScreenLocY + (CachedBarHeight * 0.5f) - (YL * 0.125f);
 	TempX = int(TempX);
 	TempY = int(TempY);
 	C.SetDrawColor(0, 0, 0);
@@ -495,42 +531,42 @@ final simulated function DrawPlayerInfo(Canvas C, PlayerInfoData PlayerInfo, flo
 	C.DrawColor.A = BeaconAlpha;
 	class'SRScoreBoard'.Static.DrawCountryName(C, PlayerInfo.TPRI, TempX, TempY);
 
-	TempX = int(ScreenLocX - (TurboHUD.BarHeight * 2.5f));
-	TempY = int(ScreenLocY - (TurboHUD.BarHeight * 0.75f));
+	TempX = int(ScreenLocX - (CachedBarHeight * 2.5f));
+	TempY = int(ScreenLocY - (CachedBarHeight * 0.75f));
 
 	if (PlayerInfo.Entry.PreviousShield > 0.f || PlayerInfo.Entry.CurrentShield > 0.f)
 	{
-		TempY -= TurboHUD.BarHeight;
+		TempY -= CachedBarHeight;
 	}
 
 	if (PlayerInfo.HumanPawn.bIsTyping)
 	{
-		TempY -= (TurboHUD.BarHeight * 5.f);
+		TempY -= (CachedBarHeight * 5.f);
 		C.SetPos(TempX, TempY);
-		C.DrawRect(ChatIcon, TurboHUD.BarHeight * 5.f, TurboHUD.BarHeight * 5.f);
+		C.DrawRect(ChatIcon, CachedBarHeight * 5.f, CachedBarHeight * 5.f);
 	}
 
 	if (PlayerInfo.HumanPawn.IsShopping())
 	{
-		TempY -= (TurboHUD.BarHeight * 5.f);
+		TempY -= (CachedBarHeight * 5.f);
 		C.SetPos(TempX, TempY);
-		C.DrawRect(ShoppingIcon, TurboHUD.BarHeight * 5.f, TurboHUD.BarHeight * 5.f);
+		C.DrawRect(ShoppingIcon, CachedBarHeight * 5.f, CachedBarHeight * 5.f);
 	}
 
 	if (PlayerInfo.Entry.ConnectionState != Normal)
 	{
-		TempY -= (TurboHUD.BarHeight * 2.5f);
-		C.SetPos(TempX + TurboHUD.BarHeight * 1.25f, TempY);
+		TempY -= (CachedBarHeight * 2.5f);
+		C.SetPos(TempX + CachedBarHeight * 1.25f, TempY);
 
 		switch (PlayerInfo.Entry.ConnectionState)
 		{
 			case PoorConnection:
 			case BadConnection:
-				C.DrawRect(PoorSignalIcon, TurboHUD.BarHeight * 2.5f, TurboHUD.BarHeight * 2.5f);
+				C.DrawRect(PoorSignalIcon, CachedBarHeight * 2.5f, CachedBarHeight * 2.5f);
 				break;
 			case BrokenConnection:
 			case NoConnection:
-				C.DrawRect(NoSignalIcon, TurboHUD.BarHeight * 2.5f, TurboHUD.BarHeight * 2.5f);
+				C.DrawRect(NoSignalIcon, CachedBarHeight * 2.5f, CachedBarHeight * 2.5f);
 				break;
 		}
 	}
@@ -560,13 +596,13 @@ final simulated function DrawHealthBar(Canvas C, float ScreenLocX, float ScreenL
 	if (Entry.PreviousHealToHealth > 0.f && Entry.PreviousHealToHealth > Entry.CurrentHealth)
 	{
 		HealToHealthBarColor.A = byte(float(default.HealToHealthBarColor.A) * (float(BeaconAlpha) / 255.f));
-		DrawBar(C, ScreenLocX + FMax((TurboHUD.BarLength * (Entry.CurrentHealth - 0.01f)), 0.f), ScreenLocY, FClamp((Entry.PreviousHealToHealth - Entry.CurrentHealth) + 0.01f, 0, 1), HealToHealthBarColor, 1.f);
+		DrawBar(C, ScreenLocX + FMax((CachedBarLength * (Entry.CurrentHealth - 0.01f)), 0.f), ScreenLocY, FClamp((Entry.PreviousHealToHealth - Entry.CurrentHealth) + 0.01f, 0, 1), HealToHealthBarColor, 1.f);
 	}
 
 	if (Entry.PreviousHealth > Entry.CurrentHealth)
 	{
 		HealthLossBarColor.A = byte(float(default.HealthLossBarColor.A) * (float(BeaconAlpha) / 255.f));
-		DrawBar(C, ScreenLocX + FMax((TurboHUD.BarLength * (Entry.CurrentHealth - 0.01f)), 0.f), ScreenLocY, FClamp((Entry.PreviousHealth - Entry.CurrentHealth) + 0.01f, 0, 1), HealthLossBarColor, 1.f);
+		DrawBar(C, ScreenLocX + FMax((CachedBarLength * (Entry.CurrentHealth - 0.01f)), 0.f), ScreenLocY, FClamp((Entry.PreviousHealth - Entry.CurrentHealth) + 0.01f, 0, 1), HealthLossBarColor, 1.f);
 	}
 
 	if (Entry.CurrentHealth > 0.f )
@@ -578,18 +614,18 @@ final simulated function DrawHealthBar(Canvas C, float ScreenLocX, float ScreenL
 
 final simulated function DrawShieldBar(Canvas C, float ScreenLocX, float ScreenLocY, byte BeaconAlpha, TurboHUDPlayerInfoEntry Entry)
 {
-	DrawBackplate(C, ScreenLocX, ScreenLocY - (TurboHUD.BarHeight + 2.f), BeaconAlpha, 0.5f);
+	DrawBackplate(C, ScreenLocX, ScreenLocY - (CachedBarHeight + 2.f), BeaconAlpha, 0.5f);
 	
 	if (Entry.PreviousShield > Entry.CurrentShield)
 	{
 		ShieldLossBarColor.A = byte(float(default.ShieldLossBarColor.A) * (float(BeaconAlpha) / 255.f));
-		DrawBar(C, ScreenLocX + FMax((TurboHUD.BarLength * (Entry.CurrentShield - 0.01f)), 0.f), ScreenLocY - (TurboHUD.BarHeight + 2.f), FClamp((Entry.PreviousShield - Entry.CurrentShield) + 0.01f, 0, 1), ShieldLossBarColor, 0.5f);
+		DrawBar(C, ScreenLocX + FMax((CachedBarLength * (Entry.CurrentShield - 0.01f)), 0.f), ScreenLocY - (CachedBarHeight + 2.f), FClamp((Entry.PreviousShield - Entry.CurrentShield) + 0.01f, 0, 1), ShieldLossBarColor, 0.5f);
 	}
 	
 	if (Entry.CurrentShield > 0.f)
 	{
 		ShieldBarColor.A = byte(float(default.ShieldBarColor.A) * (float(BeaconAlpha) / 255.f));
-		DrawBar(C, ScreenLocX, ScreenLocY - (TurboHUD.BarHeight + 2.f), FClamp(Entry.CurrentShield, 0, 1), ShieldBarColor, 0.5f);
+		DrawBar(C, ScreenLocX, ScreenLocY - (CachedBarHeight + 2.f), FClamp(Entry.CurrentShield, 0, 1), ShieldBarColor, 0.5f);
 	}
 }
 
@@ -605,23 +641,23 @@ final simulated function DrawHitEffect(Canvas C, float ScreenLocX, float ScreenL
 	
 	C.DrawColor = HealthHitBarColor;
 	C.DrawColor.A = (LastHitAlpha * 255.f);
-	C.SetPos((ScreenLocX - (0.5 * TurboHUD.BarLength)) + (TurboHUD.BarLength * FClamp(Entry.CurrentHealth, 0, 1)), (ScreenLocY - (TurboHUD.BarHeight * 0.5f)) - (0.25f * TurboHUD.BarHeight * (LastHitScale * 1.f)));
-	C.DrawTileStretched(TurboHUD.WhiteMaterial, (TurboHUD.BarLength * Entry.LastHit.HitAmount * 1.1f) + ((TurboHUD.BarLength * 0.05f) / Entry.LastHit.FadeRate), TurboHUD.BarHeight * (1.f + (LastHitScale * 0.5f)));
+	C.SetPos((ScreenLocX - (0.5 * CachedBarLength)) + (CachedBarLength * FClamp(Entry.CurrentHealth, 0, 1)), (ScreenLocY - (CachedBarHeight * 0.5f)) - (0.25f * CachedBarHeight * (LastHitScale * 1.f)));
+	C.DrawTileStretched(TurboHUD.WhiteMaterial, (CachedBarLength * Entry.LastHit.HitAmount * 1.1f) + ((CachedBarLength * 0.05f) / Entry.LastHit.FadeRate), CachedBarHeight * (1.f + (LastHitScale * 0.5f)));
 }
 
 final simulated function DrawBackplate(Canvas C, float XCentre, float YCentre, byte Alpha, float HeightScale)
 {
 	BarBackplateColor.A = int(float(default.BarBackplateColor.A) * (float(Alpha) / 255.f));
 	C.DrawColor = BarBackplateColor;
-	C.SetPos(XCentre - 0.5 * TurboHUD.BarLength, YCentre - (0.5 * TurboHUD.BarHeight * HeightScale));
-	C.DrawTileStretched(TurboHUD.WhiteMaterial, TurboHUD.BarLength, TurboHUD.BarHeight * HeightScale);
+	C.SetPos(XCentre - 0.5 * CachedBarLength, YCentre - (0.5 * CachedBarHeight * HeightScale));
+	C.DrawTileStretched(TurboHUD.WhiteMaterial, CachedBarLength, CachedBarHeight * HeightScale);
 }
 
 final simulated function DrawBar(Canvas C, float XCentre, float YCentre, float BarPercentage, color Color, float HeightScale)
 {
 	C.DrawColor = Color;
-	C.SetPos(XCentre - 0.5 * TurboHUD.BarLength, YCentre - (0.5 * TurboHUD.BarHeight * HeightScale));
-	C.DrawTileStretched(TurboHUD.WhiteMaterial, TurboHUD.BarLength * BarPercentage, TurboHUD.BarHeight * HeightScale);
+	C.SetPos(XCentre - 0.5 * CachedBarLength, YCentre - (0.5 * CachedBarHeight * HeightScale));
+	C.DrawTileStretched(TurboHUD.WhiteMaterial, CachedBarLength * BarPercentage, CachedBarHeight * HeightScale);
 }
 
 simulated function StartVoiceSupportNotification(PlayerReplicationInfo Sender)
@@ -724,7 +760,7 @@ simulated function DrawMedicPlayerInfo(Canvas C)
 		C.SetPos((TempX + EntrySizeY) - MinEntrySizeX, TempY - EntrySizeY);
 		C.DrawTileStretched(MedicBackplate, (MinEntrySizeX - EntrySizeY) + 4.f, EntrySizeY);
 
-		PlayerName = Left(PlayerInfoDataList[PlayerInfoIndex].TPRI.PlayerName, 12);
+		PlayerName = Left(PlayerInfoDataList[PlayerInfoIndex].TPRI.PlayerName, 20);
 
 		C.SetDrawColor(255, 255, 255, 255);
 		C.TextSize(PlayerName, TextSizeX, TextSizeY);
