@@ -412,6 +412,6 @@ defaultproperties
 	ReadyUpBarTexture=Texture'KFTurbo.Scoreboard.ScoreboardBackplate_D'
 
 	PressShiftString="READY UP"
-	ReadyUpString="Press %kshift%d to start the %knext wave%d!"
+	ReadyUpString="Hold %kshift%d to start the %knext wave%d!"
 	WaitingForPlayersString="Waiting for players:"
 }
