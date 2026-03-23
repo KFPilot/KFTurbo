@@ -162,7 +162,7 @@ function SetWave(TurboPlayerController CommandInstigator, int NewWaveNum)
 	TurboGameType.ClearEndGame();
 	
 	//Encode the wave number into the switch value.
-	BroadcastCommand(CommandInstigator, EncodeInt(AC_SetWave, NewWaveNum));
+	BroadcastCommand(CommandInstigator, EncodeInt(AC_SetWave, NewWaveNum + 1));
 }
 
 function PreventGameOver(TurboPlayerController CommandInstigator)
