@@ -192,9 +192,16 @@ static function float AddExtraAmmoFor(KFPlayerReplicationInfo KFPRI, class<Ammun
 	{
 		Multiplier *= LerpStat(KFPRI, 1.f, 1.2f);
 	}
-	else if (IsPerkAmmunition(AmmoType) && class<W_FNFAL_Ammo>(AmmoType) == None)
+	else if (IsPerkAmmunition(AmmoType))
 	{
-		Multiplier *= LerpStat(KFPRI, 1.f, 1.25f);
+		if (class<W_FNFAL_Ammo>(AmmoType) != None)
+		{
+			Multiplier *= LerpStat(KFPRI, 1.f, 1.125f);
+		}
+		else
+		{
+			Multiplier *= LerpStat(KFPRI, 1.f, 1.25f);
+		}
 	}
 	
 	ApplyAdjustedExtraAmmo(KFPRI, AmmoType, Multiplier);
@@ -294,7 +301,10 @@ static function float GetCostScaling(KFPlayerReplicationInfo KFPRI, class<Pickup
 		Multiplier *= LerpStat(KFPRI, 0.9f, 0.3f);
 		break;
 	default:
-		Multiplier *= LerpStat(KFPRI, 0.9f, 0.9f);
+		if (class<KFWeaponPickup>(Item) != None)
+		{
+			Multiplier *= LerpStat(KFPRI, 0.9f, 0.9f);
+		}
 		break;
 	}
 
