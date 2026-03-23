@@ -5,6 +5,7 @@ class KFTurboHoldoutMut extends Mutator;
 
 #exec obj load file="..\Textures\TurboHoldout.utx" package=KFTurboHoldout
 
+var HoldoutGameRules HoldoutGameRules;
 var array<WeaponPickup> WeaponPickupList;
 var array<TurboPlayerReplicationInfo> PendingPlayerReplicationInfoList;
 
@@ -23,7 +24,35 @@ simulated function PostBeginPlay()
 		Level.Game.PlayerControllerClassName = string(class'HoldoutPlayerController');
 	}
 
+	HoldoutGameRules = CreateHoldoutGameRules();
+
 	class'KFTurboMut'.static.FindMutator(Level.Game).SetGameType(Self, "turboholdoutgame");
+}
+
+function HoldoutGameRules CreateHoldoutGameRules()
+{
+	local GameRules GameRules;
+	local HoldoutGameRules HGR;
+	HGR = Spawn(class'HoldoutGameRules', Self);
+	HGR.MutatorOwner = Self;
+
+	if (Level.Game.GameRulesModifiers == None)
+	{
+		Level.Game.GameRulesModifiers = HGR;
+	}
+	else
+	{
+		for (GameRules = Level.Game.GameRulesModifiers; GameRules != None; GameRules = GameRules.NextGameRules)
+		{
+			if (GameRules.NextGameRules == None)
+			{
+				GameRules.NextGameRules = HGR;
+				break;
+			}
+		}
+	}
+
+	return HGR;
 }
 
 function Tick(float DeltaTime)
@@ -34,52 +63,6 @@ function Tick(float DeltaTime)
 		SpawnHoldoutPlayerSparseInfo(PendingPlayerReplicationInfoList[Index]);
 	}
 	PendingPlayerReplicationInfoList.Length = 0;
-}
-
-function Timer()
-{
-	local int Index;
-	local array<TurboPlayerController> PlayerList;
-	local WeaponPickup Pickup;
-
-	if (WeaponPickupList.Length == 0)
-	{
-		return;
-	}
-
-	while (WeaponPickupList.Length != 0)
-	{
-		Pickup = WeaponPickupList[0];
-		WeaponPickupList.Remove(0, 1);
-		
-		if (Pickup != None && !Pickup.bThrown)
-		{
-			Pickup = None;
-		}
-
-		if (Pickup != None)
-		{
-			break;
-		}
-	}
-
-	if (Pickup == None)
-	{
-		return;
-	}
-
-	Pickup.LifeSpan = 15.f;
-
-	PlayerList = class'TurboGameplayHelper'.static.GetPlayerControllerList(Level, true);
-	for (Index = 0; Index < PlayerList.Length; Index++)
-	{
-		HoldoutPlayerController(PlayerList[Index]).ClientMarkPickupShortLived(Pickup);
-	}
-
-	if (WeaponPickupList.Length != 0)
-	{
-		SetTimer(0.25f, false);
-	}
 }
 
 function SpawnHoldoutPlayerSparseInfo(TurboPlayerReplicationInfo PRI)
@@ -105,27 +88,7 @@ function bool CheckReplacement(Actor Other, out byte bSuperRelevant)
 		return true;
 	}
 
-	if (WeaponPickup(Other) != None)
-	{
-		if (WeaponPickupList.Length == 0)
-		{
-			SetTimer(0.25f, false);
-		}
-
-		WeaponPickupList[WeaponPickupList.Length] = WeaponPickup(Other);
-	}
-
 	return true;
-}
-
-function HandleWeaponPickup(WeaponPickup Pickup)
-{
-	if (!Pickup.bThrown)
-	{
-		return;
-	}
-
-	Pickup.Lifespan = 15.f;
 }
 
 simulated function String GetHumanReadableName()
