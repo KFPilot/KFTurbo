@@ -86,9 +86,7 @@ function Killed(Controller Killer, Controller Killed, Pawn KilledPawn, class<Dam
 {
     local GameRules GameRules;
     local CoreGameRules CoreGameRules;
-
-    Super.Killed(Killer, Killed, KilledPawn, DamageType);
-
+    
     GameRules = GameRulesModifiers;
 
     //Find the first CoreGameRules in the chain and start the event flow.
@@ -108,6 +106,8 @@ function Killed(Controller Killer, Controller Killed, Pawn KilledPawn, class<Dam
     {
         CoreGameRules.Killed(Killer, Killed, KilledPawn, DamageType);
     }
+
+    Super.Killed(Killer, Killed, KilledPawn, DamageType);
 }
 
 state MatchInProgress
