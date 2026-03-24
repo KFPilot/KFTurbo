@@ -141,6 +141,7 @@ State MatchInProgress
             }
             else
             {
+                RemoveAllPickups();
                 WaveCountDown = 5;
             }
         }
@@ -178,6 +179,21 @@ State MatchInProgress
 		class'TurboWaveEventHandler'.static.BroadcastWaveEnded(Self, WaveNum - 1);
         ResetPlayersReady();
         WaveCountDown = 1000;
+    }
+}
+
+function RemoveAllPickups()
+{
+    local Pickup Pickup;
+
+    foreach AllActors(class'Pickup', Pickup)
+    {
+        if (!Pickup.bDropped)
+        {
+            continue;
+        }
+
+        Pickup.Destroy();
     }
 }
 
@@ -431,6 +447,82 @@ function ResetPlayersReady()
 }
 
 function FillPlayerAmmo() {}
+
+function DiscardInventory(Pawn Other)
+{
+    if (HoldoutHumanPawn(Other) != None)
+    {
+        DropAllWeapons(HoldoutHumanPawn(Other));
+    }
+
+    Super.DiscardInventory(Other);
+}
+
+function DropAllWeapons(HoldoutHumanPawn Pawn)
+{
+    local Inventory Inv;
+    local KFWeapon Weapon;
+    local array<KFWeapon> WeaponThrowList;
+    local int Index;
+    
+    for (Inv = Pawn.Inventory; Inv != None; Inv = Inv.Inventory)
+    {
+        Weapon = KFWeapon(Inv);
+        if (Weapon == None)
+        {
+            continue;
+        }
+
+        if (Weapon.bKFNeverThrow)
+        {
+            if (W_Syringe_Weap(Weapon) == None && W_9MM_Weap(Weapon) == None)
+            {
+                continue;
+            }
+        }
+
+        WeaponThrowList[WeaponThrowList.Length] = Weapon;
+    }
+
+    for (Index = 0; Index < WeaponThrowList.Length; Index++)
+    {
+        DropWeapon(Pawn, WeaponThrowList[Index]);
+        WeaponThrowList[Index].Destroy();
+    }
+}
+
+function DropWeapon(HoldoutHumanPawn Pawn, KFWeapon Weapon)
+{
+	local Pickup Pickup;
+	local WeaponPickup WeaponPickup;
+    local float MaxAmmo,Ammo;
+    
+    if (Weapon.PickupClass == None)
+    {
+        return;
+    }
+
+	Pickup = Spawn(Weapon.PickupClass,,, Pawn.Location);
+
+    if (Pickup == None)
+    {
+        return;
+    }
+
+    Pickup.InitDroppedPickupFor(Weapon);
+
+    WeaponPickup = WeaponPickup(Pickup);
+    if (WeaponPickup != None)
+    {
+
+        Weapon.GetAmmoCount(MaxAmmo,  Ammo);
+        WeaponPickup.AmmoAmount[0] = Weapon.AmmoAmount(0);
+        WeaponPickup.AmmoAmount[1] = Weapon.AmmoAmount(1);
+        WeaponPickup.bThrown = true;
+    }
+
+    Pickup.Velocity = Velocity + (VRand() * 100.f);
+}
 
 // Default properties for the game type
 defaultproperties
