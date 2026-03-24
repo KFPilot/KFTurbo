@@ -72,7 +72,9 @@ simulated function Tick(float DeltaTime)
     }
 
     DecayRate = 0.f;
+	ShiftHoldTime = FMax(0.f, ShiftHoldTime);
 	ShiftHoldTime += DeltaTime;
+	ShiftHoldTime = FMin(ShiftHoldTime, ReadyHoldDuration);
 
 	if (ShiftHoldTime < ReadyHoldDuration)
 	{
@@ -82,7 +84,6 @@ simulated function Tick(float DeltaTime)
 	ShiftHoldTime = 0.f;
 
 	SRI = FindHoldoutSRI();
-    log("Attempthing SRI Readyup.");
     if (SRI != None)
 	{
 		SRI.ReadyUp();
