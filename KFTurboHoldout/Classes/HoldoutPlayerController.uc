@@ -3,14 +3,7 @@
 //For more information see https://github.com/KFPilot/KFTurbo.
 class HoldoutPlayerController extends TurboPlayerController;
 
-var FadeColor ShortLivedPickupOverlay;
 var HoldoutInteraction HoldoutInteraction;
-
-replication
-{
-	reliable if( Role == ROLE_Authority )
-		ClientMarkPickupShortLived;
-}
 
 simulated function InitInputSystem()
 {
@@ -61,18 +54,7 @@ function AttemptMarkActor(vector Start, vector End, Actor TargetActor, class<Tur
 	Super.AttemptMarkActor(Start, End, TargetActor, DataClassOverride, DataOverride, Color);
 }
 
-simulated function ClientMarkPickupShortLived(WeaponPickup Pickup)
-{
-	if (Pickup == None)
-	{
-		return;
-	}
-
-	Pickup.UV2Texture = ShortLivedPickupOverlay;
-}
-
 defaultproperties
 {
 	PawnClass=Class'KFTurboHoldout.HoldoutHumanPawn'
-	ShortLivedPickupOverlay=FadeColor'KFTurboHoldout.Effects.ShortLivedPickupOverlay'
 }
