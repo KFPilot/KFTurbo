@@ -25,7 +25,6 @@ simulated function bool IsReady()
 //Sets ReadyUpAttemptTime to de-bounce the state of "I sent the RPC to ready up but my local state of bReady is not updated".
 simulated function ReadyUp()
 {
-    log("Attempthing ServerReadyUp.");
 	if (IsReady())
 	{
 		return;
@@ -37,7 +36,6 @@ simulated function ReadyUp()
 
 function ServerReadyUp()
 {
-    log("Received ServerReadyUp.");
 	SetReady(true);
 }
 
@@ -47,8 +45,7 @@ function SetReady(bool bNewReady)
 	{
 		return;
 	}
-
-    log("Set bReady to"@bReady);
+	
 	bReady = bNewReady;
 	ForceNetUpdate();
 }
