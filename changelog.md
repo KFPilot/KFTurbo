@@ -80,7 +80,7 @@ It is a best effort to provide a view into changes in an format easy to consume 
         - Headshot bonus damage increased by 55% 🟢
         
     - **Hunting Shotgun**:
-        - 67% cheaper 🟢
+        - 33% cheaper 🟢
 
     - **VLAD-9000**: Reworked ⚠️
         - Fires a single nail that deals high damage and pierces multiple zeds 🆕
@@ -89,7 +89,7 @@ It is a best effort to provide a view into changes in an format easy to consume 
         - 20% faster fire rate 🟢
         - 25% faster reload speed 🟢
         - 67% cheaper 🟢
-        
+
         - Weight 8 -> 9 🔻
         - Great for stunning scrakes or taking out long range threats ⚠️
 
