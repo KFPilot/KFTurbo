@@ -17,8 +17,8 @@ var localized string ReadyUpString;
 var localized string WaitingForPlayersString;
 
 var bool bShouldDrawReadyUp;
-var bool bCanDrawReadyUp;
 var float ReadyUpOpacity;
+var float ReadyUpProgress;
 
 simulated function Tick(float DeltaTime)
 {
@@ -32,28 +32,138 @@ simulated function Tick(float DeltaTime)
 		}
 	}
 
+	TickReadyUpOpacity(DeltaTime);
 	TickGameState(DeltaTime);
 	TickKillFeed(DeltaTime);
 
-	if (bCanDrawReadyUp)
+
+	if (CheckNextWave())
 	{
-		ReadyUpOpacity = Lerp(DeltaTime * 2.f, ReadyUpOpacity, 1.f);
+		return;
 	}
-	else
+}
+
+simulated function TickReadyUpOpacity(float DeltaTime)
+{
+	if (ReadyUpOpacity > 0.f)
 	{
-		ReadyUpOpacity = 0.f;
+		ReadyUpOpacity = Lerp(DeltaTime, ReadyUpOpacity, 0.f);
+		if (ReadyUpOpacity <= 0.005f)
+		{
+			ReadyUpOpacity = 0.f;
+		}
+	}
+}
+
+simulated function bool CheckNextWave()
+{	
+	if (TGRI == None || LastKnownWaveNumber == (TGRI.WaveNumber + 1))
+	{
+		return false;
 	}
 	
-	if (LastKnownWaveNumber != (TGRI.WaveNumber + 1))
+	if (LastKnownWaveNumber == 0)
 	{
-		if (LastKnownWaveNumber == 0)
+		LastKnownWaveNumber = (TGRI.WaveNumber + 1);
+		return false;
+	}
+
+	LastKnownWaveNumber = (TGRI.WaveNumber + 1);
+	GotoState('PlayNextWave');
+	return true;
+}
+
+state ShowReadyUp
+{
+	simulated function BeginState()
+	{
+
+	}
+
+	simulated function EndState()
+	{
+		bShouldDrawReadyUp = false;
+	}
+
+	simulated function float GetReadyUpProgress()
+	{
+		ReadyUpProgress = HoldoutPlayerController(TurboHUD.PlayerOwner).HoldoutInteraction.GetReadyHoldPercent();
+		return ReadyUpProgress;
+	}
+
+	simulated function TickReadyUpOpacity(float DeltaTime)
+	{
+		if (ReadyUpOpacity < 1.f)
 		{
-			LastKnownWaveNumber = (TGRI.WaveNumber + 1);
+			ReadyUpOpacity = Lerp(DeltaTime * 4.f, ReadyUpOpacity, 1.f);
+			if (ReadyUpOpacity >= 0.995f)
+			{
+				ReadyUpOpacity = 1.f;
+			}
+		}
+		
+		if (TGRI.TimeToNextWave < 100)
+		{
+			GotoState('');
+		}
+	}
+
+	simulated function bool CheckNextWave() { return false; }
+}
+
+state PlayNextWave extends ShowReadyUp
+{
+	simulated function BeginState()
+	{
+		Super.BeginState();
+		bShouldDrawReadyUp = true;
+		ReadyUpOpacity = FMax(0.f, ReadyUpOpacity);
+		NextWaveEffectProgress = 0.f;
+		NextWaveGlowDelay = default.NextWaveGlowDelay;
+		NextWaveGlowProgress = 0.f;
+	}
+
+	simulated function Tick(float DeltaTime)
+	{
+		Global.Tick(DeltaTime);
+		NextWaveEffectProgress = Lerp(DeltaTime * NextWaveEffectRate, NextWaveEffectProgress, 1.f);
+
+		if (NextWaveEffectProgress < 0.99f)
+		{
 			return;
 		}
 
-		LastKnownWaveNumber = (TGRI.WaveNumber + 1);
-		GotoState('PlayNextWave');
+		NextWaveEffectProgress = 1.f;
+		
+		NextWaveGlowDelay -= DeltaTime;
+
+		if (NextWaveGlowDelay > 0.f)
+		{
+			return;
+		}
+		
+		NextWaveGlowProgress = Lerp(DeltaTime * NextWaveGlowRate, NextWaveGlowProgress, 1.f);
+
+		if (NextWaveGlowProgress < 0.99f)
+		{
+			return;
+		}
+
+		NextWaveGlowProgress = 1.f;
+		NextWaveGlowDelay = default.NextWaveGlowDelay;
+		GotoState('ShowReadyUp');
+	}
+
+	simulated function TickReadyUpOpacity(float DeltaTime)
+	{
+		if (ReadyUpOpacity < 1.f)
+		{
+			ReadyUpOpacity = Lerp(DeltaTime * 4.f, ReadyUpOpacity, 1.f);
+			if (ReadyUpOpacity >= 0.995f)
+			{
+				ReadyUpOpacity = 1.f;
+			}
+		}
 	}
 }
 
@@ -148,7 +258,7 @@ simulated function DrawGameData(Canvas C)
 			C.DrawColor = MakeColor(255, 255, 255, Round(FMax((1.f - (NextWaveEffectProgress * 2.f)), 0.f) * 255.f));
 		}
 
-		C.DrawColor = MakeColor(255, 255, 255, Round(FMax((1.f - (NextWaveEffectProgress * 2.f)), 0.f) * 255.f));
+		//C.DrawColor = MakeColor(255, 255, 255, Round(FMax((1.f - (NextWaveEffectProgress * 2.f)), 0.f) * 255.f));
 
 		TestText = FillStringWithZeroes(string(Min(LastKnownWaveNumber - 1, 99)), 2);
 		C.SetPos(TempX, TempY + (SizeY * NextWaveEffectProgress));
@@ -189,52 +299,9 @@ static final function DrawTextClippedMeticulous(Canvas C, coerce String String, 
 	}
 }
 
-state PlayNextWave
-{
-	function BeginState()
-	{
-		Super.BeginState();
-		NextWaveEffectProgress = 0.f;
-		NextWaveGlowDelay = default.NextWaveGlowDelay;
-		NextWaveGlowProgress = 0.f;
-	}
-
-	simulated function Tick(float DeltaTime)
-	{
-		Global.Tick(DeltaTime);
-		NextWaveEffectProgress = Lerp(DeltaTime * NextWaveEffectRate, NextWaveEffectProgress, 1.f);
-
-		if (NextWaveEffectProgress < 0.99f)
-		{
-			return;
-		}
-
-		NextWaveEffectProgress = 1.f;
-		
-		NextWaveGlowDelay -= DeltaTime;
-
-		if (NextWaveGlowDelay > 0.f)
-		{
-			return;
-		}
-		
-		NextWaveGlowProgress = Lerp(DeltaTime * NextWaveGlowRate, NextWaveGlowProgress, 1.f);
-
-		if (NextWaveGlowProgress < 0.99f)
-		{
-			return;
-		}
-
-		NextWaveGlowProgress = 1.f;
-		NextWaveGlowDelay = default.NextWaveGlowDelay;
-		GotoState('');
-	}
-}
-
 simulated function DrawReadyUpStatus(Canvas Canvas)
 {
 	local KFGameReplicationInfo KFGRI;
-	bCanDrawReadyUp = false;
 
 	KFGRI = KFGameReplicationInfo(Level.GRI);
 	if (KFGRI == None || KFGRI.EndGameType != 0)
@@ -242,52 +309,31 @@ simulated function DrawReadyUpStatus(Canvas Canvas)
 		return;
 	}
 
-	if (!bShouldDrawReadyUp && KFGRI.bWaveInProgress)
-	{
-		bShouldDrawReadyUp = true;
-		return;
-	}
-
-	if (KFGRI.TimeToNextWave < 100)
-	{
-		return;
-	}
-
 	DrawReadyUpBar(Canvas);
-	DrawReadyUpList(Canvas);
+
+	if (bShouldDrawReadyUp)
+	{
+		DrawReadyUpList(Canvas);
+	}
+}
+
+simulated function float GetReadyUpProgress()
+{
+	return ReadyUpProgress;
 }
 
 simulated function DrawReadyUpBar(Canvas Canvas)
 {
-	local HoldoutPlayerController Player;
 	local float Percent;
 	local float BarX, BarY, BarW, BarH;
 	local float TextSizeX, TextSizeY;
 
-	if (TurboHUD == None)
-	{
-		return;
-	}
-
-	if (KFGameReplicationInfo(Level.GRI).bWaveInProgress)
-	{
-		return;
-	}
-
-	Player = HoldoutPlayerController(TurboHUD.PlayerOwner);
-	if (Player == None || Player.HoldoutInteraction == None)
-	{
-		return;
-	}
-
-	bCanDrawReadyUp = true;
-
-	Percent = Player.HoldoutInteraction.GetReadyHoldPercent();
+	Percent = GetReadyUpProgress();
 
 	BarW = Canvas.ClipX * 0.25f;
 	BarH = Canvas.ClipY * 0.05f;
 	BarX = (Canvas.ClipX - BarW) * 0.5f;
-	BarY = Canvas.ClipY * 0.725f;
+	BarY = Canvas.ClipY * 0.675f;
 
 	//Background
 	Canvas.DrawColor = MakeColor(255, 255, 255, int(60.f * ReadyUpOpacity));
@@ -343,7 +389,7 @@ simulated function DrawReadyUpList(Canvas Canvas)
 	Canvas.FontScaleX = 1.f;
 	Canvas.FontScaleY = 1.f;
 
-	TextY = (Canvas.ClipY * 0.75f) + (Canvas.ClipY * 0.05f);
+	TextY = (Canvas.ClipY * 0.675f) + (Canvas.ClipY * 0.075f);
 
 	if (LocalSRI == None || !LocalSRI.IsReady())
 	{
