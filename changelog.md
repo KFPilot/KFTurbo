@@ -7,10 +7,10 @@ It is a best effort to provide a view into changes in an format easy to consume 
 - **Removed level-based perk bonuses**: All perks now receive the Level 6 bonuses regardless of player level.
 - **Reworked trader menu**: Weapon skin options now display as subbuttons on individual weapon entries.
 - **HUD Update**: Player HUD and Scoreboard have been redesigned.
-- **Added a Ping system**: Players can now ping enemies and pickups by using the Look Out voice command or using console command MarkActor.
+- **Added a Ping system**: Players can now ping enemies and pickups by using the Look Out voice command or using console command `MarkActor`.
 - **Emotes Hints and Autocomplete**: Type a \[semicolon\] to show a list of possible emotes that match. Press \[Tab\] to autocomplete to the highlighted emote in the list.
 - **End of Wave statistics**: See Kills, Damage, Healing and Accuracy stats at the end of each wave.
-- **Vote to skip trader time**: Players can type `endtrader` in console to skip trader time.
+- **Vote to skip trader time**: Players can type `EndTrader` in console to skip trader time.
 
 ## Afflictions
 - **Burning**
@@ -35,6 +35,8 @@ It is a best effort to provide a view into changes in an format easy to consume 
 
 ### Support Specialist
 - Spawn with a Shotgun ⚠️
+- Hunting Shotgun and VLAD discount 70% -> 50% 🔻
+- 10% decrease to grenade capacity 🔻
 
 - **Weapons**
     - **Shotgun**: 
@@ -78,15 +80,16 @@ It is a best effort to provide a view into changes in an format easy to consume 
         - Headshot bonus damage increased by 55% 🟢
         
     - **Hunting Shotgun**:
-        - Unchanged 🟦
+        - 67% cheaper 🟢
 
     - **VLAD-9000**: Reworked ⚠️
         - Fires a single nail that deals high damage and pierces multiple zeds 🆕
         - Alternate fire toggles a laser aim module 🆕
         - Has no spread and inaccuracy 🟢
-        - 25% faster fire rate 🟢
-        - 40% faster reload speed 🟢
-        - Weight 8 -> 11 🔻
+        - 20% faster fire rate 🟢
+        - 25% faster reload speed 🟢
+        - 67% cheaper 🟢
+        - Weight 8 -> 9 🔻
         - Great for stunning scrakes or taking out long range threats ⚠️
 
 ### Sharpshooter
@@ -94,10 +97,9 @@ It is a best effort to provide a view into changes in an format easy to consume 
     - 2.17x bonus headshot multiplier for the 44 Magnum
     - 2.1x bonus headshot multiplier for the 9mm
     - 2.4x bonus headshot multiplier for all other perk weapons 
-    - 1.8x bonus headshot multiplier for the VLAD 9000
     - 1.5x bonus headshot multiplier for off-perk weapons
 - Crossbow and M99 Ammo now gets a 30% purchase cost discount 🟢
-- M99 and Crossbow bonus reload speed 60% -> 15%. 🔻
+- M99 and Crossbow bonus reload speed 60% -> 15% 🔻
 - Crossbow and M99 no longer get a purchase cost discount 🔻
 - 60% faster reload speed with perk weapons 🟦
 - Spawn with a Lever Action Rifle ⚠️
@@ -113,7 +115,7 @@ It is a best effort to provide a view into changes in an format easy to consume 
         - Penetration count 10 -> 0 🔻
     - **Handcannon & Dual Handcannon**
         - 27% less recoil 🟢
-        - Damage loss after penetrating reduced by 40%. 🟢
+        - Damage loss after penetrating reduced by 40% 🟢
 
         - Penetration count 10 -> 1 🔻
     - **44 Magnum & Dual 44 Magnum**
@@ -153,11 +155,14 @@ It is a best effort to provide a view into changes in an format easy to consume 
         - 35% more player pushback on firing 🔻
 
 ### Commando
+- 10% Discount for all non-commando weapons 🆕
 - Doubled distance at which invisible units are spotted 🟢
-- 25% extra ammo for perk weapons 🟢
+- 60% increase to grenade capacity 🟢
+- 12.5% extra ammo for FAL 🟢
+- 25% extra ammo for all other perk weapons 🟢
 - Thompson Drum bonus magazine size 25% -> 60% 🟢
 - M4 203 bonus magazine size 25% -> 34% 🟢
-- FN FAL bonus magazine size 25% -> 67% 🟢
+- FN FAL bonus magazine size 25% -> 110% 🟢
 - Thompson SMG bonus magazine size 25% -> 20% 🔻
 - Spawn with a Bullpup ⚠️
 
@@ -254,10 +259,10 @@ It is a best effort to provide a view into changes in an format easy to consume 
 
 - **Weapons**
     - **M79 Grenade Launcher**
-        - 44% cheaper base price. 🟢
+        - 52% cheaper 🟢
 
     - **M32 Grenade Launcher**
-        - 40% cheaper base price. 🟢
+        - 40% cheaper 🟢
 
     - **M4 203**
         - Replaces the original M4 ⚠️
@@ -265,7 +270,7 @@ It is a best effort to provide a view into changes in an format easy to consume 
         - Underbarrel grenade launcher is now loaded manually instead of automatically by pressing alt-fire again ⚠️
         - Firing type is no longer high RoF ⚠️
         - Now penetrates up to 2 zeds with a damage loss of 50% 🆕
-        - 56% cheaper base price 🟢
+        - 56% cheaper 🟢
         - 25% less recoil 🟢
         - 23% increased damage 🟢
         - 25% tighter spread 🟢
@@ -274,7 +279,7 @@ It is a best effort to provide a view into changes in an format easy to consume 
         - 17% less maximum grenades 🔻
         - 28% slower fire rate 🔻
     - **Orca Bomb Propeller**
-        - 36% cheaper base price 🟢
+        - 36% cheaper 🟢
 
         - High speed bounces multiply the damage output of the projectile 🆕
         - 42% less maximum and starting ammo 🔻
@@ -286,9 +291,10 @@ It is a best effort to provide a view into changes in an format easy to consume 
         - 50% faster fire rate 🟢
         - 33% faster reload speed 🟢
         - Has no spread and inaccuracy 🟢
-        - 14% increased damage 🟢
+        - 30% increased maximum ammo 🟢
+        - 23% increased damage 🟢
         - Projectiles cannot be disintegrated by sirens 🟢
-        - 40% cheaper base price 🟢
+        - 40% cheaper 🟢
 
         - 13% reduced explosion radius 🔻
         - 100% reduced impact damage 🔻
@@ -297,7 +303,7 @@ It is a best effort to provide a view into changes in an format easy to consume 
         - 5% increased damage 🟢
         - 138% increased dud impact damage 🟢
         - 20% more maximum and starting ammo 🟢
-        - 17% cheaper base price 🟢
+        - 17% cheaper 🟢
 
         - 43% more player pushback on firing 🔻
     - **Pipe Bomb**
@@ -306,7 +312,7 @@ It is a best effort to provide a view into changes in an format easy to consume 
 
     - **Seeker Six Rocket Launcher** 
         - 200% increased explosive damage 🟢
-        - 24% cheaper base price 🟢
+        - 24% cheaper 🟢
 
         - 33% reduced impact damage 🔻
         - Weight 7 -> 8 🔻
@@ -318,7 +324,7 @@ It is a best effort to provide a view into changes in an format easy to consume 
 - Healing grenades now have a new model and bounce more 🆕
 - 20% increase to grenade capacity 🟢
 - Receives 20% more ammo for M7A3 🟢
-- Knife movement speed bonus now applies to all on-perk weapons. 🟢
+- Knife movement speed bonus now applies to all on-perk weapons 🟢
 - Magazine capacity bonus on the M7A3 reduced to 50% from 100% 🔻
 - Movement speed bonus 25% -> 20% 🔻
 - Perk weapons discount 87% -> 50% 🔻
@@ -330,7 +336,7 @@ It is a best effort to provide a view into changes in an format easy to consume 
         - 33% stronger healing potency 🟢
         - 33% faster syringe recovery 🟢
         - 30% higher maximum healing charge 🟢
-        - 58% cheaper base price. 🟢
+        - 58% cheaper 🟢
         - Firing type is no longer high RoF ⚠️
 
         - 13% more expensive 🔻
@@ -339,7 +345,7 @@ It is a best effort to provide a view into changes in an format easy to consume 
     - **MP5**
         - 13% increased damage 🟢
         - 12% faster reload speed 🟢
-        - 56% cheaper base price. 🟢
+        - 56% cheaper 🟢
         - 50% tighter spread 🟢
         - 20% less recoil 🟢
         - Firing type is no longer high RoF ⚠️
@@ -354,7 +360,7 @@ It is a best effort to provide a view into changes in an format easy to consume 
         - 13% more maximum ammo 🟢
         - 50% tighter spread 🟢
         - 50% less recoil 🟢
-        - 70% cheaper base price. 🟢
+        - 70% cheaper 🟢
         - Firing type is no longer high RoF ⚠️
 
         - Weight 3 -> 4 🔻
@@ -368,7 +374,7 @@ It is a best effort to provide a view into changes in an format easy to consume 
         - 7% increased damage 🟢
         - Headshot bonus damage increased by 105% 🟢
         - 30% tighter spread 🟢
-        - 51% cheaper base price. 🟢
+        - 51% cheaper 🟢
 
         - 17% slower fire rate 🔻
         - 50% more charge consumed per dart 🔻
@@ -378,7 +384,7 @@ It is a best effort to provide a view into changes in an format easy to consume 
         - 50% slower syringe recovery 🔻
         - 66% less maximum ammo 🔻
     - **BlowerThrower Bile Launcher**
-        - 20% cheaper base price. 🟢
+        - 20% cheaper 🟢
         - Moved to inventory group 4 ⚠️
 
 ### Berserker
@@ -390,29 +396,32 @@ It is a best effort to provide a view into changes in an format easy to consume 
 - Damage resistance 40% -> 15% 🔻
 - Melee swing speed 25% -> 15% 🔻
 - Bloat bile damage reduction 80% -> 70% 🔻
+- Perk weapons discount 70% -> 40% 🔻
+- Katana and Buzzsaw discount 70% -> 20% 🔻
 - Patriarch can never deal more than 95 damage to the Berserker ⚠️
 - Spawn with a Machete ⚠️
 
 - **Weapons**
     - **Machete**
-        - Unchanged 🟦
+        - 50% cheaper 🟢
 
     - **Katana**
-        - Unchanged 🟦
+        - 63% cheaper 🟢
 
     - **Axe**
-        - Unchanged 🟦
+        - 50% cheaper 🟢
 
     - **Claymore**
         - 10% longer range 🟢
         - 2% increased damage 🟢
+        - 50% cheaper 🟢
 
         - 10% smaller hit angle 🔻
         - 16% more expensive 🔻
         - Weight 6 -> 7 🔻
     - **Scythe**
         - 15% longer range 🟢
-        - 25% cheaper 🟢
+        - 60% cheaper 🟢
         - 85% larger hit angle 🟢
         - 10% faster fire rate 🟢
 
@@ -421,11 +430,19 @@ It is a best effort to provide a view into changes in an format easy to consume 
         - Headshot bonus damage reduced by 100% 🔻
         - Weight 6 -> 7 🔻
     - **Chainsaw**
+        - 57% longer range 🟢
+        - 60% increased primary fire damage 🟢
         - 100% increased alternate fire damage 🟢
+        - 55% cheaper 🟢
         - Now receives Berserker speed multiplier 🆕
         - Alternate fire now does damage in 3 instances instead of 1 ⚠️
 
     - **Buzzsaw Bow**
+        - 63% cheaper 🟢
+        - Blade straight flight time increased by 40% 🟢
+        - Damage loss after penetrating reduced by 100% 🟢
+        - Can damage the same target after bouncing 🟢
+
         - 45% reduced damage 🔻
         - 60% reduced maximum ammo 🔻
 
@@ -447,6 +464,8 @@ It is a best effort to provide a view into changes in an format easy to consume 
         - Now pierces up to 10 zeds 🆕
         - Hitting a zed the first time causes a small explosion that deals AoE damage 🆕
         - No longer detonates projectiles 🆕
+        - 20% increased maximum and starting ammo 🟢
+
         - 33% reduced direct damage 🔻
         - 10% increased spread 🔻
         
@@ -465,7 +484,7 @@ It is a best effort to provide a view into changes in an format easy to consume 
 
     - **Trenchgun**
         - Weight 8 -> 7 🟢
-        - 23% less damage loss after penetrating. 🟢
+        - 23% less damage loss after penetrating 🟢
         - Headshot bonus damage increased by 18% 🟢
         - 50% less player pushback on firing 🟢
         
@@ -496,7 +515,10 @@ It is a best effort to provide a view into changes in an format easy to consume 
 
 ## Zed changes
 
+### Clot
+- Takes 25% increased damage from Flamethrower
 ### Crawler
+- Takes 25% increased damage from Flamethrower
 - Added a new special variant: Raptor
 ### Gorefast
 - Added a new cosmetic variant: Classy Gorefast
@@ -504,22 +526,23 @@ It is a best effort to provide a view into changes in an format easy to consume 
 ### Bloat
 - Added a new elite variant: Fathead
 ### Stalker
-- Fixed inconsistent cloaking state on dedicated servers.
+- Fixed inconsistent cloaking state on dedicated servers
 ### Husk
 - No longer fires cannon after dying
 - Added a new special variant: Scorcher
 ### Siren
 - No longer deals damage after dying
-- Now able to destroy high-speed projectiles on dedicated servers.
+- Now able to destroy high-speed projectiles on dedicated servers
 - Added a new special variant: Caroler
 ### Scrake
 - Fixed "Slow Rage" state, where the scrake would be stuck with a slow movement speed in his charging animation
 - Now has a 25% damage resistance to Flare Revolver
+- Takes 55% increased damage from VLAD headshots
 - No longer spins in place when stunned
-- 2 minutes after spotting a player, Scrakes will automatically rage.
+- 2 minutes after spotting a player, Scrakes will automatically rage
 ### Fleshpound
 - Fixed a bug that made the Fleshpound "friendly", preventing it from attacking
 - Fixed various issues with being on fire
 - Damage resistance to M99 reduced from 50% to 47.5%
 - Damage resistance to Commando weapons reduced from 50% to 0%
-- Takes 65% increased damage from Seeker Six instead of the normal 25% for explosives.
+- Takes 65% increased damage from Seeker Six instead of the normal 25% for explosives

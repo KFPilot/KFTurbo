@@ -17,5 +17,6 @@ function Destroyed()
 
 defaultproperties
 {
+	 Cost=500
      InventoryType=Class'KFTurbo.W_Axe_Weap'
 }

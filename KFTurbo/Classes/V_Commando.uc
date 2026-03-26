@@ -340,5 +340,5 @@ defaultproperties
     PerkIndex=3
 	CustomLevelInfo=""
 	Requirements(0)="Deal %x damage with Assault Rifles."
-	SRLevelEffects(6)="50% more damage with assault/battle rifles|40% less recoil with assault/battle rifles and SMGs|20% - 60% larger magazines for assault/battle rifles|25% more maximum ammo for assault/battle rifles|35% faster reload with all weapons|70% discount on assault/battle rifles|Spawn with an Bullpup|Can see cloaked Stalkers from 32m|Can see enemy health from 16m|Up to 4 zed-time extensions"
+	SRLevelEffects(6)="50% more damage with assault/battle rifles|40% less recoil with assault/battle rifles and SMGs|20% - 60% larger magazines for assault/battle rifles|25% more maximum ammo for assault/battle rifles|35% faster reload with all weapons|60% increase in grenade capacity|70% discount on assault/battle rifles|10% discount on all weapons|Spawn with an Bullpup|Can see cloaked Stalkers from 32m|Can see enemy health from 16m|Up to 4 zed-time extensions"
 }
