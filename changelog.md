@@ -1,22 +1,16 @@
 # Changelog
 
+🚧 This change log is not an exhaustive list of all changes and features present in KFTurbo.
+It is a best effort to provide a view into changes in an format easy to consume for the public. 🚧
+
 ## General Changes
 - **Removed level-based perk bonuses**: All perks now receive the Level 6 bonuses regardless of player level.
-- **Reworked trader menu**: Now you can select skins directly when you choose the weapon.
-- **Added custom weapon stickers and skins**: You can access these in the skin selector in the trader menu.
-
-- **Redesigned HUD**: Information is more visible, closer to the center of the screen
-- **New Scoreboard**: Easier to tell crucial information at a glance. Now includes healing done.
-- **Added a Ping system**: Players can now ping enemies or pickups (default: X) to create a little text for their teammates.
-- **Custom Achievements**: Players can complete brand new KFTurbo-related server-tracked achievements.
-- **Custom Emotes and Sound-Emotes**: Type a \[semicolon\] to insert an Emote in chat. Press \[Tab\] to autocomplete. Some of them even have cool sound effects.
+- **Reworked trader menu**: Weapon skin options now display as subbuttons on individual weapon entries.
+- **HUD Update**: Player HUD and Scoreboard have been redesigned.
+- **Added a Ping system**: Players can now ping enemies and pickups by using the Look Out voice command or using console command MarkActor.
+- **Emotes Hints and Autocomplete**: Type a \[semicolon\] to show a list of possible emotes that match. Press \[Tab\] to autocomplete to the highlighted emote in the list.
 - **End of Wave statistics**: See Kills, Damage, Healing and Accuracy stats at the end of each wave.
-- **Optimized weapon penetration**: Fixed penetrating weapons not using recoil and spread and fixed several bugs related to bad penetration calculation.
-- **Fixed Various Grenade-related Exploits**: Such as throwing 2 grenades at point blank and getting instant weapon switching by inputting a grenade throw command.
 - **Vote to skip trader time**: Players can type `endtrader` in console to skip trader time.
-
-
-- **TBA**: insert changes here🚧
 
 ## Afflictions
 - **Burning**
