@@ -165,12 +165,14 @@ static function float GetCostScaling(KFPlayerReplicationInfo KFPRI, class<Pickup
 	case class'W_Boomstick_Pickup' :
 	case class'W_KSG_Pickup' :
 	case class'W_Shotgun_Pickup' :
-	case class'W_NailGun_Pickup' :
 	case class'W_SPShotgun_Pickup' :
 		Multiplier *= LerpStat(KFPRI, 0.9f, 0.3f);
 		break;
 	}
-
+	case class'W_NailGun_Pickup' :
+		Multiplier *= LerpStat(KFPRI, 0.9f, 0.5f);
+		break;
+		
 	ApplyCostScalingModifier(KFPRI, Item, Multiplier);
 	return Multiplier;
 }

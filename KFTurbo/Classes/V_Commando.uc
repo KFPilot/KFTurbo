@@ -132,28 +132,29 @@ static function float GetMagCapacityMod(KFPlayerReplicationInfo KFPRI, KFWeapon 
 {
 	local float Multiplier;
 	Multiplier = 1.f;
-	if (ThompsonDrumSMG(Other) != None 
-		|| SPThompsonSMG(Other) != none 
-		|| W_FNFAL_Weap(Other) != None)
+	if (ThompsonDrumSMG(Other) != None || SPThompsonSMG(Other) != none)
 	{
-		Multiplier *= LerpStat(KFPRI, 1.f, 2.0f);
+		Multiplier *= LerpStat(KFPRI, 1.f, 1.6f);
 	}
 	else if (Bullpup(Other) != None
 		|| AK47AssaultRifle(Other) != None 
-		|| MKb42AssaultRifle(Other) != None
-		|| M4AssaultRifle(Other) != None)
+		|| SCARMK17AssaultRifle(Other) != None
+		|| MKb42AssaultRifle(Other) != None)
 	{
-		Multiplier *= LerpStat(KFPRI, 1.f, 1.34f);
+		Multiplier *= LerpStat(KFPRI, 1.f, 1.25f);
 	} 
 	else if (ThompsonSMG(Other) != None)
 	{
 		Multiplier *= LerpStat(KFPRI, 1.f, 1.2f);
 	}
-	else if (SCARMK17AssaultRifle(Other) != None)
+	else if (M4AssaultRifle(Other) != None)
 	{
-		Multiplier *= LerpStat(KFPRI, 1.f, 1.5f);
+		Multiplier *= LerpStat(KFPRI, 1.f, 1.34f);
 	}
-
+	else if (W_FNFAL_Weap(Other) != None)
+	{
+		Multiplier *= LerpStat(KFPRI, 1.f, 2.1f);
+	}
 	ApplyAdjustedMagCapacityModifier(KFPRI, Other, Multiplier);
 
 	return Multiplier;
@@ -190,7 +191,7 @@ static function float AddExtraAmmoFor(KFPlayerReplicationInfo KFPRI, class<Ammun
 
 	if (class<FragAmmo>(AmmoType) != None)
 	{
-		Multiplier *= LerpStat(KFPRI, 1.f, 1.2f);
+		Multiplier *= LerpStat(KFPRI, 1.f, 1.6f);
 	}
 	else if (IsPerkAmmunition(AmmoType))
 	{
