@@ -5,5 +5,7 @@ class W_Flamethrower_Ammo extends FlameAmmo;
 
 defaultproperties
 {
-
+     AmmoPickupAmount=100
+     MaxAmmo=500
+     InitialAmount=500
 }

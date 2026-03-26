@@ -5,6 +5,7 @@ class W_M99_Proj extends M99Bullet;
 
 var bool bRefreshedLifeSpan;
 var byte bHasRegisteredHit;
+var() float PenetrationDamageMult;
 
 simulated function HitWall( vector HitNormal, actor Wall)
 {
@@ -35,11 +36,12 @@ simulated function HitWall( vector HitNormal, actor Wall)
 
 simulated function ProcessTouch(Actor Other, vector HitLocation)
 {
-	class'WeaponHelper'.static.CrossbowProjectileProcessTouch(Self, HeadShotDamageMult, DamageTypeHeadShot, Other, HitLocation, Arrow_hitarmor, Arrow_hitflesh, IgnoreImpactPawn, bHasRegisteredHit);
+	class'WeaponHelper'.static.CrossbowProjectileProcessTouch(Self, HeadShotDamageMult, PenetrationDamageMult, DamageTypeHeadShot, Other, HitLocation, Arrow_hitarmor, Arrow_hitflesh, IgnoreImpactPawn, bHasRegisteredHit);
 }
 
 defaultproperties
 {
      HeadShotDamageMult=2.250000
+     PenetrationDamageMult=0.800000
      Damage=490.000000
 }

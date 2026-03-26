@@ -11,6 +11,7 @@ function AddReloadedAmmo()
 
 defaultproperties
 {
+     Weight=6.000000
      MagCapacity=12
      ReloadRate=3.200000
      ReloadAnimRate=1.125000

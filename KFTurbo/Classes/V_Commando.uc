@@ -155,7 +155,6 @@ static function float GetMagCapacityMod(KFPlayerReplicationInfo KFPRI, KFWeapon 
 	{
 		Multiplier *= LerpStat(KFPRI, 1.f, 2.1f);
 	}
-
 	ApplyAdjustedMagCapacityModifier(KFPRI, Other, Multiplier);
 
 	return Multiplier;
@@ -190,11 +189,22 @@ static function float AddExtraAmmoFor(KFPlayerReplicationInfo KFPRI, class<Ammun
 	local float Multiplier;
 	Multiplier = 1.f;
 
-	if (IsPerkAmmunition(AmmoType))
+	if (class<FragAmmo>(AmmoType) != None)
 	{
-		Multiplier *= LerpStat(KFPRI, 1.f, 1.25f);
+		Multiplier *= LerpStat(KFPRI, 1.f, 1.6f);
 	}
-
+	else if (IsPerkAmmunition(AmmoType))
+	{
+		if (class<W_FNFAL_Ammo>(AmmoType) != None)
+		{
+			Multiplier *= LerpStat(KFPRI, 1.f, 1.125f);
+		}
+		else
+		{
+			Multiplier *= LerpStat(KFPRI, 1.f, 1.25f);
+		}
+	}
+	
 	ApplyAdjustedExtraAmmo(KFPRI, AmmoType, Multiplier);
 
 	return Multiplier;
@@ -224,8 +234,7 @@ static function int AddDamage(KFPlayerReplicationInfo KFPRI, KFMonster Injured, 
 	case class'W_M4203_DT_Bullet' :
 	case class'W_FNFAL_DT' :
 	case class'W_ThompsonDrum_DT' :
-		return float(InDamage) * LerpStat(KFPRI, 1.05f, 1.5f);
-	case class'W_ThompsonSMG_DT' : //left this here for future balancing
+	case class'W_ThompsonSMG_DT' :
 		return float(InDamage) * LerpStat(KFPRI, 1.05f, 1.5f);
 	}
 
@@ -293,6 +302,10 @@ static function float GetCostScaling(KFPlayerReplicationInfo KFPRI, class<Pickup
 		Multiplier *= LerpStat(KFPRI, 0.9f, 0.3f);
 		break;
 	default:
+		if (class<KFWeaponPickup>(Item) != None)
+		{
+			Multiplier *= LerpStat(KFPRI, 0.9f, 0.9f);
+		}
 		break;
 	}
 
