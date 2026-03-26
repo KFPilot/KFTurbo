@@ -149,6 +149,6 @@ defaultproperties
      DrawScale=3.000000
      PenDamageReduction=0.900000
      
-     Damage=250.000000
+     Damage=260.000000
      MyDamageType=Class'KFTurbo.W_NailGun_DT'
 }

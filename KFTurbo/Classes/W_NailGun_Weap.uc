@@ -322,7 +322,7 @@ defaultproperties
 	SpotProjectorPullback=1.000000
 	LaserAttachmentClass=Class'KFTurbo.W_NailGun_LaserAttachment1st'
 	MagCapacity=3
-	Weight=11.000000
+    Weight=9.000000
 	FireModeClass(0)=Class'KFTurbo.W_NailGun_Fire'
 	FireModeClass(1)=Class'KFMod.NoFire'
 	InventoryGroup=4

@@ -81,6 +81,11 @@ function TakeDamage(int Damage, Pawn InstigatedBy, Vector HitLocation, Vector Mo
 		Damage *= 0.5f;
 	}
 
+	if ( bIsHeadshot && (class<W_NailGun_DT>(DamageType) != none ) )
+	{
+		Damage *= 1.55f;
+	}
+
 	Super(KFMonster).TakeDamage(Damage, InstigatedBy, HitLocation, Momentum, DamageType, HitIndex);
 
 	if (!IsInState('SawingLoop') && !IsInState('RunningState') && ShouldRage())

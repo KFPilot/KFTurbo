@@ -387,7 +387,7 @@ simulated function CheckPawnBase(Pawn PawnBase)
 defaultproperties
 {
 	ImpactDamage=0
-	Damage=400.000000
+	Damage=430.000000
 	DamageRadius=350.000000
     bGameRelevant=false
 }

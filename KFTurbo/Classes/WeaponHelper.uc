@@ -947,7 +947,7 @@ static final function SPGrenadeProjTakeDamage(SPGrenadeProjectile Projectile, in
     }
 }
 
-static final function CrossbowProjectileProcessTouch(Projectile Projectile, float HeadshotDamageMulti, class<DamageType> HeadshotDamageType, Actor Other, vector HitLocation, Sound HitArmor, Sound HitFlesh, out Pawn IgnoreImpactPawn, out byte bHasRegisteredHit)
+static final function CrossbowProjectileProcessTouch(Projectile Projectile, float HeadshotDamageMulti, float PenetrationDamageMulti, class<DamageType> HeadshotDamageType, Actor Other, vector HitLocation, Sound HitArmor, Sound HitFlesh, out Pawn IgnoreImpactPawn, out byte bHasRegisteredHit)
 {
 	local vector X,End,HL,HN;
 	local Vector TempHitLocation, HitNormal;
@@ -989,7 +989,7 @@ static final function CrossbowProjectileProcessTouch(Projectile Projectile, floa
 				HitPawn.ProcessLocationalDamage(Projectile.Damage, Projectile.Instigator, TempHitLocation, Projectile.MomentumTransfer * X, Projectile.MyDamageType, HitPoints);
 			}
 
-			Projectile.Damage /= 1.25;
+			Projectile.Damage *= PenetrationDamageMulti;
 			Projectile.Velocity *= 0.85;
 
 			IgnoreImpactPawn = HitPawn;
@@ -1033,7 +1033,7 @@ static final function CrossbowProjectileProcessTouch(Projectile Projectile, floa
 			class'TurboPlayerEventHandler'.static.BroadcastPlayerFireHit(Projectile.Owner.Instigator.Controller, Weapon(Projectile.Owner).GetFireMode(0), HitData);
 		}
 
-		Projectile.Damage /= 1.25;
+		Projectile.Damage *= PenetrationDamageMulti;
 		Projectile.Velocity *= 0.85;
 
 		return;
