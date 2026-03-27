@@ -665,7 +665,7 @@ simulated function DrawActiveCardList(Canvas C)
 		TempY += CardOffset;
 	}
 
-	if (CardIndexToDisplay != -1)
+	if (CardIndexToDisplay != -1 && ActiveCardRenderActorList[CardIndexToDisplay].CardActor != None)
 	{
 		CardBonusScale = Lerp(ActiveCardRenderActorList[CardIndexToDisplay].Ratio, 1.f, 1.75f);
 
