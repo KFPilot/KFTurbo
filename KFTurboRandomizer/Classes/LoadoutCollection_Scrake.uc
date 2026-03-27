@@ -18,6 +18,7 @@ defaultproperties
         Perk=class'V_SupportSpec'
         WeaponList(0)=class'KFTurbo.W_SPShotgun_Weap'
         WeaponList(1)=class'KFTurbo.W_AA12_Weap'
+        WeaponList(2)=class'KFTurbo.W_Deagle_Weap'
     End Object
 
     Begin Object Class=KFTurboRandomizerLoadout Name=ScrakeLoadout3
@@ -35,16 +36,15 @@ defaultproperties
 
     Begin Object Class=KFTurboRandomizerLoadout Name=ScrakeLoadout5
         Perk=class'V_Firebug'
-        WeaponList(0)=class'KFTurbo.W_Katana_Weap'
+        WeaponList(0)=class'KFTurbo.W_Deagle_Weap'
         WeaponList(1)=class'KFTurbo.W_Trenchgun_Weap'
         WeaponList(2)=class'KFTurbo.W_DualFlare_Weap'
     End Object
 
     Begin Object Class=KFTurboRandomizerLoadout Name=ScrakeLoadout6
         Perk=class'V_Berserker'
-        WeaponList(0)=class'KFTurbo.W_Chainsaw_Weap'
+        WeaponList(0)=class'KFTurbo.W_Claymore_Weap'
         WeaponList(1)=class'KFTurbo.W_DualDeagle_Weap'
-        WeaponList(2)=class'KFTurbo.W_Katana_Weap'
     End Object
 
     Begin Object Class=KFTurboRandomizerLoadout Name=ScrakeLoadout10
@@ -64,8 +64,8 @@ defaultproperties
     Begin Object Class=KFTurboRandomizerLoadout Name=ScrakeLoadout12
         Perk=class'V_Commando'
         WeaponList(0)=class'KFTurbo.W_SCARMK17_Weap'
-        WeaponList(1)=class'KFTurbo.W_M4203_Weap'
-        WeaponList(2)=class'KFMod.Machete'
+        WeaponList(1)=class'KFTurbo.W_M32_Weap'
+        WeaponList(2)=class'KFTurbo.W_Deagle_Weap'
     End Object
 
     Begin Object Class=KFTurboRandomizerLoadout Name=ScrakeLoadout13
@@ -92,11 +92,12 @@ defaultproperties
         Perk=class'V_Sharpshooter'
         WeaponList(0)=class'KFTurbo.W_LAR_Weap'
         WeaponList(1)=class'KFTurbo.W_Dual44_Weap'
+        WeaponList(2)=class'KFTurbo.W_Deagle_Weap'
     End Object
 
     Begin Object Class=KFTurboRandomizerLoadout Name=ScrakeLoadout17
         Perk=class'V_Sharpshooter'
-        WeaponList(0)=class'KFTurbo.W_Huskgun_Weap'
+        WeaponList(0)=class'KFTurbo.W_M99_Weap'
         WeaponList(1)=class'KFTurbo.W_Magnum44_Weap'
     End Object
 
@@ -104,12 +105,14 @@ defaultproperties
         Perk=class'V_Sharpshooter'
         WeaponList(0)=class'KFTurbo.W_Bullpup_Weap'
         WeaponList(1)=class'KFTurbo.W_SPSniper_Weap'
+        WeaponList(2)=class'KFTurbo.W_MK23_Weap'
     End Object
 
     Begin Object Class=KFTurboRandomizerLoadout Name=ScrakeLoadout19
         Perk=class'V_Sharpshooter'
         WeaponList(0)=class'KFTurbo.W_Nailgun_Weap'
-        WeaponList(1)=class'KFTurbo.W_Magnum44_Weap'
+        WeaponList(1)=class'KFTurbo.W_Dual44_Weap'
+        WeaponList(1)=class'KFTurbo.W_Deagle_Weap'
     End Object
 
     Begin Object Class=KFTurboRandomizerLoadout Name=ScrakeLoadout20
@@ -123,7 +126,7 @@ defaultproperties
         Perk=class'V_SupportSpec'
         WeaponList(0)=class'KFTurbo.W_BoomStick_Weap'
         WeaponList(1)=class'KFTurbo.W_Katana_Weap'
-        WeaponList(2)=class'KFTurbo.W_KSG_Weap'
+        WeaponList(2)=class'KFTurbo.W_AA12_Weap'
     End Object
 
     Begin Object Class=KFTurboRandomizerLoadout Name=ScrakeLoadout22
@@ -142,7 +145,7 @@ defaultproperties
 
     Begin Object Class=KFTurboRandomizerLoadout Name=ScrakeLoadout25
         Perk=class'V_SupportSpec'
-        WeaponList(0)=class'KFTurbo.W_Benelli_Weap'
+        WeaponList(0)=class'KFTurbo.W_AA12_Weap'
         WeaponList(1)=class'KFTurbo.W_Axe_Weap'
         WeaponList(2)=class'KFTurbo.W_Trenchgun_Weap'
     End Object
@@ -169,7 +172,7 @@ defaultproperties
 
     Begin Object Class=KFTurboRandomizerLoadout Name=ScrakeLoadout31
         Perk=class'V_Sharpshooter'
-        WeaponList(0)=class'KFTurbo.W_Nailgun_Weap'
+        WeaponList(0)=class'KFTurbo.W_M99_Weap'
         WeaponList(1)=class'KFTurbo.W_MK23_Weap'
     End Object
 
@@ -178,6 +181,7 @@ defaultproperties
         WeaponList(0)=class'KFTurbo.W_BoomStick_Weap'
         WeaponList(1)=class'KFTurbo.W_Katana_Weap'
         WeaponList(2)=class'KFTurbo.W_Shotgun_Weap'
+        WeaponList(2)=class'KFTurbo.W_KSG_Weap'
     End Object
 
     Begin Object Class=KFTurboRandomizerLoadout Name=ScrakeLoadout33
@@ -195,9 +199,8 @@ defaultproperties
 
     Begin Object Class=KFTurboRandomizerLoadout Name=ScrakeLoadout35
         Perk=class'V_Berserker'
-        WeaponList(0)=class'KFTurbo.W_Axe_Weap'
+        WeaponList(0)=class'KFTurbo.W_Claymore_Weap'
         WeaponList(1)=class'KFTurbo.W_Scythe_Weap'
-        WeaponList(2)=class'KFTurbo.W_MK23_Weap'
     End Object
 
     Begin Object Class=KFTurboRandomizerLoadout Name=ScrakeLoadout36
@@ -212,12 +215,44 @@ defaultproperties
         WeaponList(0)=class'KFTurbo.W_SPShotgun_Weap'
         WeaponList(1)=class'KFTurbo.W_NailGun_Weap'
         WeaponList(2)=class'KFTurbo.W_Magnum44_Weap'
-        WeaponList(3)=class'KFMod.Machete'
+        WeaponList(3)=class'KFTurbo.W_Machete_Weap'
+    End Object
+
+    Begin Object Class=KFTurboRandomizerLoadout Name=ScrakeLoadout38
+        Perk=class'V_Berserker'
+        WeaponList(0)=class'KFTurbo.W_Crossbuzzsaw_Weap'
+        WeaponList(1)=class'KFTurbo.W_Claymore_Weap'
+    End Object
+
+    Begin Object Class=KFTurboRandomizerLoadout Name=ScrakeLoadout39
+        Perk=class'V_Commando'
+        WeaponList(0)=class'KFTurbo.W_FNFAL_Weap'
+        WeaponList(1)=class'KFTurbo.W_SCARMK17_Weap'
+        WeaponList(2)=class'KFTurbo.W_Deagle_Weap'
+    End Object
+
+    Begin Object Class=KFTurboRandomizerLoadout Name=ScrakeLoadout40
+        Perk=class'V_Commando'
+        WeaponList(0)=class'KFTurbo.W_FNFAL_Weap'
+        WeaponList(1)=class'KFTurbo.W_M32_Weap'
+    End Object
+
+    Begin Object Class=KFTurboRandomizerLoadout Name=ScrakeLoadout41
+        Perk=class'V_Commando'
+        WeaponList(0)=class'KFTurbo.W_FNFAL_Weap'
+        WeaponList(1)=class'KFTurbo.W_AK47_Weap'
+        WeaponList(2)=class'KFTurbo.W_Deagle_Weap'
+    End Object
+
+    Begin Object Class=KFTurboRandomizerLoadout Name=ScrakeLoadout42
+        Perk=class'V_Berserker'
+        WeaponList(0)=class'KFTurbo.W_Crossbuzzsaw_Weap'
+        WeaponList(1)=class'KFTurbo.W_Claymore_Weap'
+        WeaponList(2)=class'KFTurbo.W_FlareRevolver_Weap'
     End Object
 
     // Loadout tally - PLEASE INCREMENT IF YOU ADD LOADOUTS
-    // Scrake: Medic: 0 | Firebug: 4 | Berserker: 3 | Demo: 2 | Commando: 4 | Support: 8 | Sharp: 11 
-
+    // Scrake: Medic: 0 | Firebug: 4 | Berserker: 4 | Demo: 2 | Commando: 7 | Support: 8 | Sharp: 11
     LoadoutList(0)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Scrake.ScrakeLoadout1'
     LoadoutList(1)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Scrake.ScrakeLoadout2'
     LoadoutList(2)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Scrake.ScrakeLoadout3'
@@ -249,4 +284,9 @@ defaultproperties
     LoadoutList(28)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Scrake.ScrakeLoadout35'
     LoadoutList(29)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Scrake.ScrakeLoadout36'
     LoadoutList(30)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Scrake.ScrakeLoadout37'
+    LoadoutList(31)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Scrake.ScrakeLoadout38'
+    LoadoutList(32)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Scrake.ScrakeLoadout39'
+    LoadoutList(33)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Scrake.ScrakeLoadout40'
+    LoadoutList(34)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Scrake.ScrakeLoadout41'
+    LoadoutList(35)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Scrake.ScrakeLoadout42'
 }

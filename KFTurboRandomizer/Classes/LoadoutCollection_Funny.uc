@@ -19,8 +19,8 @@ defaultproperties
     Begin Object Class=KFTurboRandomizerLoadout Name=FunnyLoadout2
         Perk=class'V_Firebug'
         WeaponList(0)=class'KFTurbo.W_BlowerThrower_Weap'
-        WeaponList(1)=class'KFMod.Dualies'
-        WeaponList(2)=class'KFMod.Machete'
+        WeaponList(1)=class'KFTurbo.W_Dual9MM_Weap'
+        WeaponList(2)=class'KFTurbo.W_Machete_Weap'
         WeaponList(3)=class'KFTurbo.W_M79_Weap'
     End Object
 
@@ -41,7 +41,7 @@ defaultproperties
         Perk=class'V_Commando'
         WeaponList(0)=class'KFTurbo.W_LAR_Weap'
         WeaponList(1)=class'KFTurbo.W_Dual44_Weap'
-        WeaponList(2)=class'KFMod.Machete'
+        WeaponList(2)=class'KFTurbo.W_Machete_Weap'
     End Object
 
     Begin Object Class=KFTurboRandomizerLoadout Name=FunnyLoadout6
@@ -176,7 +176,7 @@ defaultproperties
         Perk=class'V_SupportSpec'
         WeaponList(0)=class'KFTurbo.W_M99_Weap'
         WeaponList(1)=class'KFTurboRandomizer.W_M99_Weap_A'
-        WeaponList(2)=class'KFMod.Machete'
+        WeaponList(2)=class'KFTurbo.W_Machete_Weap'
     End Object
 
     Begin Object Class=KFTurboRandomizerLoadout Name=ScrakeLoadout26
@@ -190,7 +190,7 @@ defaultproperties
         Perk=class'V_Berserker'
         WeaponList(0)=class'KFTurboRandomizer.W_Knife_Weap_A'
         WeaponList(1)=class'KFTurboRandomizer.W_Machete_Weap_A'
-        WeaponList(2)=class'KFMod.Machete'
+        WeaponList(2)=class'KFTurbo.W_Machete_Weap'
         WeaponList(3)=class'KFTurbo.W_Axe_Weap'
         WeaponList(4)=class'KFTurboRandomizer.W_Axe_Weap_A'
     End Object
