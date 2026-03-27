@@ -1,7 +1,7 @@
 # Changelog
 
 🚧 This change log is not an exhaustive list of all changes and features present in KFTurbo.
-It is a best effort to provide a view into changes in an format easy to consume for the public. 🚧
+It is a best effort to provide a view into changes in a format easy to consume for the public. 🚧
 
 ## General Changes
 - **Removed level-based perk bonuses**: All perks now receive the Level 6 bonuses regardless of player level.
