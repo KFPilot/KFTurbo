@@ -18,6 +18,6 @@ function Destroyed()
 defaultproperties
 {    
      Weight=7.000000
-     cost=2000
+     cost=1000
      InventoryType=Class'KFTurbo.W_Scythe_Weap'
 }

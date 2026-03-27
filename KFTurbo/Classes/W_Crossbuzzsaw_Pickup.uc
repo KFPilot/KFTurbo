@@ -17,5 +17,6 @@ function Destroyed()
 
 defaultproperties
 {
+	 Cost=1500
      InventoryType=Class'KFTurbo.W_Crossbuzzsaw_Weap'
 }

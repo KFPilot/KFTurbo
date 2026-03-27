@@ -17,6 +17,7 @@ function Destroyed()
 
 defaultproperties
 {
+	 Cost=1250
      InventoryType=Class'KFTurbo.W_Chainsaw_Weap'
      VariantClasses(0)=Class'KFTurbo.W_Chainsaw_Pickup'
      VariantClasses(1)=Class'KFTurbo.W_V_Chainsaw_Gold_Pickup'

@@ -17,7 +17,7 @@ function Destroyed()
 
 defaultproperties
 {
-     cost=750
+     cost=500
      InventoryType=Class'KFTurbo.W_BoomStick_Weap'
 
      VariantClasses(0)=class'KFTurbo.W_BoomStick_Pickup'

@@ -18,6 +18,6 @@ function Destroyed()
 defaultproperties
 {    
      Weight=7.000000
-     cost=2500
+     cost=1250
      InventoryType=Class'KFTurbo.W_Claymore_Weap'
 }

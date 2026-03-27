@@ -172,14 +172,15 @@ static function float GetCostScaling(KFPlayerReplicationInfo KFPRI, class<Pickup
 	switch (Item)
 	{
 	case class'W_Axe_Pickup' :
-	case class'W_Katana_Pickup' :
 	case class'W_Chainsaw_Pickup' :
-	case class'W_Crossbuzzsaw_Pickup' :
-
 	case class'W_Claymore_Pickup' :
 	case class'W_Scythe_Pickup' :
 	case class'W_Machete_Pickup' :
-		Multiplier *= LerpStat(KFPRI, 0.9f, 0.3f);
+		Multiplier *= LerpStat(KFPRI, 0.9f, 0.6f);
+		break;
+	case class'W_Katana_Pickup' :
+	case class'W_Crossbuzzsaw_Pickup' :
+		Multiplier *= LerpStat(KFPRI, 0.9f, 0.8f);
 		break;
 	}
 
@@ -211,5 +212,5 @@ defaultproperties
     PerkIndex=4
 	CustomLevelInfo=""
     Requirements(0)="Deal %x damage with melee weapons."
-	SRLevelEffects(6)="100% extra melee damage|15% faster melee attacks|25% faster melee movement|40% less damage from Siren scream|70% less damage from Bloat bile|15% resistance to all damage|70% discount on melee weapons|20% increase in grenade capacity|Grenades put zeds into Stasis, increasing the damage they take|Spawn with a Machete|Can't be grabbed by Clots|Up to 4 zed-time extensions"
+	SRLevelEffects(6)="100% extra melee damage|15% faster melee attacks|25% faster melee movement|40% less damage from Siren scream|70% less damage from Bloat bile|15% resistance to all damage|40% discount on melee weapons|20% increase in grenade capacity|Grenades put zeds into Stasis, increasing the damage they take|Spawn with a Machete|Can't be grabbed by Clots|Up to 4 zed-time extensions"
 }

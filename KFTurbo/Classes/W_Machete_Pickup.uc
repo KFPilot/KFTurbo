@@ -17,6 +17,7 @@ function Destroyed()
 
 defaultproperties
 {
+	Cost=250
 	InventoryType=Class'KFTurbo.W_Machete_Weap'
 	VariantClasses(0)=Class'KFTurbo.W_Machete_Pickup'
 	VariantClasses(1)=Class'KFTurbo.W_V_Machete_Vet_Pickup'
