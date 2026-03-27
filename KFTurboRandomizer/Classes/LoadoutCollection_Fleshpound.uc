@@ -168,7 +168,7 @@ defaultproperties
     End Object
 
     // Loadout tally - PLEASE INCREMENT IF YOU ADD LOADOUTS
-    // Fleshpound: Medic: 0 | Firebug: 0 | Berserker: 0 | Demo: 9 | Commando: 4 | Support: 4 | Sharp: 5
+    // Fleshpound: Medic: 0 | Firebug: 0 | Berserker: 0 | Demo: 10 | Commando: 4 | Support: 5 | Sharp: 5
     LoadoutList(0)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Fleshpound.FleshpoundLoadout1'
     LoadoutList(1)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Fleshpound.FleshpoundLoadout2'
     LoadoutList(2)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Fleshpound.FleshpoundLoadout4'

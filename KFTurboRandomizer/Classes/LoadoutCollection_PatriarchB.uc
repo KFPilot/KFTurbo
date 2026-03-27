@@ -149,6 +149,86 @@ defaultproperties
         WeaponList(2)=class'KFTurbo.W_DualMK23_Weap'
     End Object
 
+
+
+    Begin Object Class=KFTurboRandomizerLoadout Name=PatriarchBLoadout0
+        Perk=class'V_SupportSpec'
+        WeaponList(0)=class'KFTurbo.W_AA12_Weap'
+        WeaponList(1)=class'KFTurbo.W_BoomStick_Weap'
+        WeaponList(2)=class'KFTurbo.W_Deagle_Weap'
+    End Object
+
+    Begin Object Class=KFTurboRandomizerLoadout Name=PatriarchBLoadout1
+        Perk=class'V_Demolitions'
+        WeaponList(0)=class'KFTurbo.W_LAW_Weap'
+        WeaponList(1)=class'KFTurbo.W_M79_Weap'
+    End Object
+
+    Begin Object Class=KFTurboRandomizerLoadout Name=PatriarchBLoadout2
+        Perk=class'V_Sharpshooter'
+        WeaponList(0)=class'KFTurbo.W_SPSniper_Weap'
+        WeaponList(1)=class'KFTurbo.W_Dual44_Weap'
+    End Object
+
+    Begin Object Class=KFTurboRandomizerLoadout Name=PatriarchBLoadout3
+        Perk=class'V_Berserker'
+        WeaponList(0)=class'KFTurbo.W_Crossbuzzsaw_Weap'
+        WeaponList(1)=class'KFTurbo.W_Claymore_Weap'
+    End Object
+
+    Begin Object Class=KFTurboRandomizerLoadout Name=PatriarchBLoadout4
+        Perk=class'V_Firebug'
+        WeaponList(0)=class'KFTurbo.W_Flamethrower_Weap'
+        WeaponList(1)=class'KFTurbo.W_Huskgun_Weap'
+    End Object
+
+    Begin Object Class=KFTurboRandomizerLoadout Name=PatriarchBLoadout5
+        Perk=class'V_Commando'
+        WeaponList(0)=class'KFTurbo.W_FNFAL_Weap'
+        WeaponList(1)=class'KFTurbo.W_SCARMK17_Weap'
+        WeaponList(2)=class'KFTurbo.W_Deagle_Weap'
+    End Object
+
+    Begin Object Class=KFTurboRandomizerLoadout Name=PatriarchBLoadout6
+        Perk=class'V_Demolitions'
+        WeaponList(0)=class'KFTurbo.W_M32_Weap'
+        WeaponList(1)=class'KFTurbo.W_LAW_Weap'
+    End Object
+
+    Begin Object Class=KFTurboRandomizerLoadout Name=PatriarchBLoadout7
+        Perk=class'V_FieldMedic'
+        WeaponList(0)=class'KFTurbo.W_M7A3M_Weap'
+        WeaponList(1)=class'KFTurbo.W_KrissM_Weap'
+        WeaponList(2)=class'KFTurbo.W_MP5M_Weap'
+    End Object
+
+    Begin Object Class=KFTurboRandomizerLoadout Name=PatriarchBLoadout8
+        Perk=class'V_Sharpshooter'
+        WeaponList(0)=class'KFTurbo.W_M99_Weap'
+        WeaponList(1)=class'KFTurbo.W_DualMK23_Weap'
+    End Object
+
+    Begin Object Class=KFTurboRandomizerLoadout Name=PatriarchBLoadout9
+        Perk=class'V_SupportSpec'
+        WeaponList(0)=class'KFTurbo.W_SPShotgun_Weap'
+        WeaponList(1)=class'KFTurbo.W_NailGun_Weap'
+        WeaponList(2)=class'KFTurbo.W_Magnum44_Weap'
+    End Object
+
+    Begin Object Class=KFTurboRandomizerLoadout Name=PatriarchBLoadout10
+        Perk=class'V_Berserker'
+        WeaponList(0)=class'KFTurbo.W_Claymore_Weap'
+        WeaponList(1)=class'KFTurbo.W_DualDeagle_Weap'
+        WeaponList(2)=class'KFTurbo.W_Crossbuzzsaw_Weap'
+    End Object
+
+    Begin Object Class=KFTurboRandomizerLoadout Name=PatriarchBLoadout11
+        Perk=class'V_Commando'
+        WeaponList(0)=class'KFTurbo.W_FNFAL_Weap'
+        WeaponList(1)=class'KFTurbo.W_M32_Weap'
+        WeaponList(2)=class'KFTurbo.W_MK23_Weap'
+    End Object
+
     LoadoutList(0)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_PatriarchB.ScrakeLoadout1'
     LoadoutList(1)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_PatriarchB.ScrakeLoadout2'
     LoadoutList(2)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_PatriarchB.ScrakeLoadout3'
@@ -172,4 +252,17 @@ defaultproperties
 
     LoadoutList(19)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_PatriarchB.MiscLoadout25'
     LoadoutList(20)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_PatriarchB.MiscLoadout31'
+    
+    LoadoutList(21)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_PatriarchB.PatriarchBLoadout0'
+    LoadoutList(22)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_PatriarchB.PatriarchBLoadout1'
+    LoadoutList(23)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_PatriarchB.PatriarchBLoadout2'
+    LoadoutList(24)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_PatriarchB.PatriarchBLoadout3'
+    LoadoutList(25)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_PatriarchB.PatriarchBLoadout4'
+    LoadoutList(26)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_PatriarchB.PatriarchBLoadout5'
+    LoadoutList(27)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_PatriarchB.PatriarchBLoadout6'
+    LoadoutList(28)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_PatriarchB.PatriarchBLoadout7'
+    LoadoutList(29)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_PatriarchB.PatriarchBLoadout8'
+    LoadoutList(30)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_PatriarchB.PatriarchBLoadout9'
+    LoadoutList(31)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_PatriarchB.PatriarchBLoadout10'
+    LoadoutList(32)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_PatriarchB.PatriarchBLoadout11'
 }

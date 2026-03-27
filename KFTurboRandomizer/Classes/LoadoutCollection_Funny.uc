@@ -247,7 +247,7 @@ defaultproperties
     End Object
 
     // Loadout tally - PLEASE INCREMENT IF YOU ADD LOADOUTS
-    // Funny: Medic: 3 | Firebug: 3 | Berserker: 4 | Demo: 3 | Commando: 3 | Support: 7 | Sharp: 6
+    // Funny: Medic: 3 | Firebug: 5 | Berserker: 5 | Demo: 4 | Commando: 4 | Support: 7 | Sharp: 6
     LoadoutList(0)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Funny.FunnyLoadout0'
     LoadoutList(1)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Funny.FunnyLoadout1'
     LoadoutList(2)=KFTurboRandomizerLoadout'KFTurboRandomizer.LoadoutCollection_Funny.FunnyLoadout2'

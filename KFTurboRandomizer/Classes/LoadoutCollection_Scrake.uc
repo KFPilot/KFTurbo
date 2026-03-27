@@ -112,7 +112,7 @@ defaultproperties
         Perk=class'V_Sharpshooter'
         WeaponList(0)=class'KFTurbo.W_Nailgun_Weap'
         WeaponList(1)=class'KFTurbo.W_Dual44_Weap'
-        WeaponList(1)=class'KFTurbo.W_Deagle_Weap'
+        WeaponList(2)=class'KFTurbo.W_Deagle_Weap'
     End Object
 
     Begin Object Class=KFTurboRandomizerLoadout Name=ScrakeLoadout20
@@ -181,7 +181,7 @@ defaultproperties
         WeaponList(0)=class'KFTurbo.W_BoomStick_Weap'
         WeaponList(1)=class'KFTurbo.W_Katana_Weap'
         WeaponList(2)=class'KFTurbo.W_Shotgun_Weap'
-        WeaponList(2)=class'KFTurbo.W_KSG_Weap'
+        WeaponList(3)=class'KFTurbo.W_KSG_Weap'
     End Object
 
     Begin Object Class=KFTurboRandomizerLoadout Name=ScrakeLoadout33
