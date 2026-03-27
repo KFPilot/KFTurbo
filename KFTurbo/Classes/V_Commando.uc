@@ -271,6 +271,19 @@ static function ApplyAdjustedReloadRate(KFPlayerReplicationInfo KFPRI, Weapon Ot
 	Super.ApplyAdjustedReloadRate(KFPRI, Other, Multiplier);
 }
 
+static function float GetFireSpeedMod(KFPlayerReplicationInfo KFPRI, Weapon Other)
+{
+	local float Multiplier;
+	Multiplier = 1.f;
+	
+	if (KFWeapon(Other) != None && KFWeapon(Other).default.MagCapacity <= 1)
+	{
+		Multiplier *= LerpStat(KFPRI, 1.05f, 1.35f);
+	}
+
+	return Multiplier;
+}
+
 static function float GetReloadSpeedModifier(KFPlayerReplicationInfo KFPRI, KFWeapon Other)
 {
 	local float Multiplier;
