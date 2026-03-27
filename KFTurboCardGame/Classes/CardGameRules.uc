@@ -562,7 +562,7 @@ function MonsterNetDamage(out float DamageMultiplier, KFMonster Injured, Pawn In
         DamageMultiplier *= MonsterFullHealthDamageMultiplier;
     }
 
-    if (WeaponDamageType.default.bCheckForHeadShots)
+    if (WeaponDamageType != None && WeaponDamageType.default.bCheckForHeadShots)
     {
         //It's fine to ask this again since we haven't run PlayHit yet or anything.
         if (class<DamTypeMelee>(WeaponDamageType) != None)
