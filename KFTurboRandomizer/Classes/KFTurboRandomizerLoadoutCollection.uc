@@ -2,7 +2,8 @@
 //Represents a collection of loadouts.
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class KFTurboRandomizerLoadoutCollection extends Object;
+class KFTurboRandomizerLoadoutCollection extends Object
+    instanced;
 
 var editinline array<KFTurboRandomizerLoadout> LoadoutList;
 var array<KFTurboRandomizerLoadout> OriginalLoadoutList;

@@ -3,7 +3,7 @@
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
 class KFTurboRandomizerLoadout extends Object
-    editinlinenew;
+    instanced;
 
 var() float SelectionWeight;
 var() class<KFVeterancyTypes> Perk;
@@ -14,6 +14,37 @@ var() bool bWelder;
 var() bool bKnife;
 
 var int DefaultIndex; //Index of this loadout in its loadout collection.
+
+//Used to validate if two loadout objects are the same.
+final function bool IsIdentical(KFTurboRandomizerLoadout Other)
+{
+    local int Index;
+
+    if (Other == None)
+    {
+        return false;
+    }
+
+    if (WeaponList.Length != Other.WeaponList.Length)
+    {
+        return false;
+    }
+
+    for (Index = 0; Index < WeaponList.Length; Index++)
+    {
+        if (WeaponList[Index] != Other.WeaponList[Index])
+        {
+            return false;
+        }
+    }
+
+    return SelectionWeight == Other.SelectionWeight
+        && Perk == Other.Perk
+        && bSingle == Other.bSingle
+        && bSyringe == Other.bSyringe
+        && bWelder == Other.bWelder
+        && bKnife == Other.bKnife;
+}
 
 final function bool HasWeapon(class<KFWeapon> WeaponClass)
 {

@@ -36,6 +36,10 @@ var KFTurboRandomizerSettings RandomizerSettings;
 
 var int ScrakeAndFleshpoundWaveNum;
 
+//If true, the mutator will perform validation instead of normal gameplay flow.
+var const bool bPerformValidation;
+var int SuccessfulValidationCount;
+
 function PreBeginPlay()
 {
 	local ShopVolume Shop;
@@ -67,6 +71,7 @@ function PostBeginPlay()
 		if (RandomizerSettings != None)
 		{
 			RandomizerSettings.InitializeCollection();
+			ValidateInitialization();
 		}
 	}
 
@@ -146,7 +151,14 @@ function InitializeRandomizer()
 		ScrakeAndFleshpoundWaveNum = 0;
 	}
 
-	GotoState('WaitingToRandomize');
+	if (bPerformValidation)
+	{
+		GotoState('PerformValidation');
+	}
+	else
+	{
+		GotoState('WaitingToRandomize');
+	}
 }
 
 state WaitingToRandomize
@@ -680,6 +692,154 @@ static final function GetAmmoCount(KFWeapon KFW, out int MaxAmmo, out int CurAmm
 	CurAmmo = int(retCur);
 }
 
+state PerformValidation
+{
+	function Timer() {}
+
+Begin:
+	while(true)
+	{
+		if (!ValidateRandomLoadouts())
+		{
+			log("Failed Validation ("$SuccessfulValidationCount$")");
+			break;
+		}
+		SuccessfulValidationCount++;
+		if (SuccessfulValidationCount%10 == 0)
+		{
+			log("Successful Validation Count:"@SuccessfulValidationCount);
+		}
+		sleep(0.1f);
+	}
+}
+
+function bool ValidateInitialization()
+{
+	local bool bSuccess;
+	bSuccess = ValidateCollection(RandomizerSettings.FleshpoundLoadout) && bSuccess;
+	bSuccess = ValidateCollection(RandomizerSettings.ScrakeLoadout) && bSuccess;
+	bSuccess = ValidateCollection(RandomizerSettings.EarlyWaveLoadout) && bSuccess;
+	bSuccess = ValidateCollection(RandomizerSettings.MiscLoadout) && bSuccess;
+	bSuccess = ValidateCollection(RandomizerSettings.FunnyLoadout) && bSuccess;
+
+	if (!bSuccess)
+	{
+		log("Failed to validate initialized collections.");
+	}
+
+	return bSuccess;
+}
+
+function bool ValidateCollection(KFTurboRandomizerLoadoutCollection Collection)
+{
+	local array<KFTurboRandomizerLoadout> CDOList;
+	local KFTurboRandomizerLoadout CollectionLoadout, CDOLoadout;
+	local int Index;
+	local bool bValid;
+
+	CDOList = Collection.Class.default.LoadoutList;
+	bValid = true;
+
+	if (Collection.LoadoutList.Length != CDOList.Length)
+	{
+		log("FAIL ["$Collection.Class$"]"@"LoadoutList length does not match CDO!", 'KFTurboRandomizer');
+		return false;
+	}
+
+	for (Index = 0; Index < Collection.LoadoutList.Length; Index++)
+	{
+		CollectionLoadout = Collection.LoadoutList[Index];
+		CDOLoadout = CDOList[Index];
+		
+		if (CDOLoadout == None || CollectionLoadout == None)
+		{
+			log("FAIL ["$Collection.Class$"] Instance at index"@Index@"was null.", 'KFTurboRandomizer');
+			bValid = false;
+			continue;
+		}
+
+		if (!CollectionLoadout.IsIdentical(CDOLoadout))
+		{
+			log("FAIL ["$Collection.Class$"] Instance at index"@Index@" is not identical to CDO. DefaultIndex="$Collection.OriginalLoadoutList[Index].DefaultIndex@"Object="$Collection.OriginalLoadoutList[Index], 'KFTurboRandomizer');
+			bValid = false;
+		}
+	}
+
+	if (bValid)
+	{
+		log("OK ["$Collection.Class$"]"@Collection.OriginalLoadoutList.Length@"loadouts validated", 'KFTurboRandomizer');
+	}
+
+	return bValid;
+}
+
+function bool ValidateRandomLoadouts()
+{
+	local int PlayerIndex, WeaponIndex;
+	local KFTurboRandomizerLoadout ServerLoadout, ClientLoadout;
+	local class<KFTurboRandomizerLoadoutCollection> CollectionClass;
+	local string ServerWeapons, ClientWeapons;
+
+	//Simulate 6 players: 2 FP, 2 Scrake, 2 Misc (matching late wave distribution).
+	PlayerLoadoutList.Length = 6;
+
+	PlayerLoadoutList[0].LoadoutType = LT_FleshpoundLoadout;
+	PlayerLoadoutList[1].LoadoutType = LT_FleshpoundLoadout;
+	PlayerLoadoutList[2].LoadoutType = LT_ScrakeLoadout;
+	PlayerLoadoutList[3].LoadoutType = LT_ScrakeLoadout;
+	PlayerLoadoutList[4].LoadoutType = LT_MiscLoadout;
+	PlayerLoadoutList[5].LoadoutType = LT_MiscLoadout;
+
+	//Select loadouts using the same code path as a real game.
+	SelectLoadouts();
+
+	for (PlayerIndex = 0; PlayerIndex < PlayerLoadoutList.Length; PlayerIndex++)
+	{
+		ServerLoadout = PlayerLoadoutList[PlayerIndex].Loadout;
+		CollectionClass = PlayerLoadoutList[PlayerIndex].Collection.Class;
+
+		//Simulate what the client does in TurboRandomizerLocalMessage.GetString.
+		ClientLoadout = CollectionClass.default.LoadoutList[ServerLoadout.DefaultIndex];
+
+		ServerWeapons = "";
+		for (WeaponIndex = 0; WeaponIndex < ServerLoadout.WeaponList.Length; WeaponIndex++)
+		{
+			if (WeaponIndex > 0)
+			{
+				ServerWeapons $= ", ";
+			}
+			ServerWeapons $= ServerLoadout.WeaponList[WeaponIndex].default.ItemName;
+		}
+
+		ClientWeapons = "";
+		for (WeaponIndex = 0; WeaponIndex < ClientLoadout.WeaponList.Length; WeaponIndex++)
+		{
+			if (WeaponIndex > 0)
+			{
+				ClientWeapons $= ", ";
+			}
+			ClientWeapons $= ClientLoadout.WeaponList[WeaponIndex].default.ItemName;
+		}
+		
+		if (!ServerLoadout.IsIdentical(ClientLoadout))
+		{
+			log("Player"@PlayerIndex@"["$GetEnum(Enum'ELoadoutType', PlayerLoadoutList[PlayerIndex].LoadoutType)$"]"
+				@"DefaultIndex="$ServerLoadout.DefaultIndex
+				@"Collection="$CollectionClass, 'KFTurboRandomizer');
+			log("  Server:"@ServerLoadout.Perk.default.VeterancyName@"-"@ServerWeapons, 'KFTurboRandomizer');
+			log("  Server Outer:"@ServerLoadout.Outer@ServerLoadout.DefaultIndex, 'KFTurboRandomizer');
+			log("  Client:"@ClientLoadout.Perk.default.VeterancyName@"-"@ClientWeapons, 'KFTurboRandomizer');
+			log("  Client Outer:"@ClientLoadout.Outer@ClientLoadout.DefaultIndex, 'KFTurboRandomizer');
+
+			log("  *** MISMATCH! Server loadout object != Client loadout object ***", 'KFTurboRandomizer');
+			return false;
+		}
+	}
+
+	PlayerLoadoutList.Length = 0;
+	return true;
+}
+
 simulated function String GetHumanReadableName()
 {
 	return FriendlyName;
@@ -693,4 +853,6 @@ defaultproperties
 	GroupName="KF-KFTurboMode"
 	FriendlyName="Killing Floor Turbo Randomizer"
 	Description="Killing Floor Turbo's randomizer mutator. Uses large lists of predefined loadouts with specific roles (good vs Fleshpound/Scrake) incorporated into selection."
+
+	bPerformValidation=false
 }
