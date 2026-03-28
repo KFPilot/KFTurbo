@@ -4,6 +4,7 @@
 class KFTurboHoldoutGameType extends KFTurboGameTypePlus;
 
 const HOLDOUT_WAVE_COUNTDOWN = 5;
+const HOLDOUT_WAVE_WAITING_COUNTDOWN = 1000;
 const HOLDOUT_STARTING_CASH = 200;
 
 var float ScoreMultiplier;
@@ -133,16 +134,16 @@ State MatchInProgress
         }
 
         //Keep WaveCountDown as a large number while we wait for players to ready.
-        if (WaveCountDown > 900)
+        if (WaveCountDown > (HOLDOUT_WAVE_WAITING_COUNTDOWN - 100))
         {
             if (!ArePlayersReady())
             {
-                WaveCountDown = 1000;
+                WaveCountDown = HOLDOUT_WAVE_WAITING_COUNTDOWN;
             }
             else
             {
                 RemoveAllPickups();
-                WaveCountDown = 5;
+                WaveCountDown = HOLDOUT_WAVE_COUNTDOWN;
             }
         }
 
@@ -160,10 +161,10 @@ State MatchInProgress
         bNotifiedLastManStanding = false;
         KFGameReplicationInfo(GameReplicationInfo).bWaveInProgress = false;
 
-        WaveCountDown = HOLDOUT_WAVE_COUNTDOWN;
-        KFGameReplicationInfo(GameReplicationInfo).TimeToNextWave = HOLDOUT_WAVE_COUNTDOWN;
         WaveNum++;
         InvasionGameReplicationInfo(GameReplicationInfo).WaveNumber = WaveNum;
+        WaveCountDown = HOLDOUT_WAVE_WAITING_COUNTDOWN;
+        KFGameReplicationInfo(GameReplicationInfo).TimeToNextWave = HOLDOUT_WAVE_WAITING_COUNTDOWN;
 
         PerformPendingVeterancyChanges();
         RespawnPlayers();
@@ -178,7 +179,6 @@ State MatchInProgress
         class'KFTurboMut'.static.FindMutator(Self).OnWaveEnd();
 		class'TurboWaveEventHandler'.static.BroadcastWaveEnded(Self, WaveNum - 1);
         ResetPlayersReady();
-        WaveCountDown = 1000;
     }
 }
 
