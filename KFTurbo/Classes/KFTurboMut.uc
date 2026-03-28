@@ -53,6 +53,8 @@ simulated function PostBeginPlay()
 	AddToPackageMap("KFTurboFonts");
 	AddToPackageMap("KFTurboFontsJP");
 	AddToPackageMap("KFTurboFontsCY");
+	AddToPackageMap("KFTurboFontsKR");
+	AddToPackageMap("KFTurboFontsTH");
 	
 	//Make sure GUI is also added to server packages.
 	AddToPackageMap("KFTurboGUI");
