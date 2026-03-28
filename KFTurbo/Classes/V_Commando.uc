@@ -304,15 +304,25 @@ static function float GetCostScaling(KFPlayerReplicationInfo KFPRI, class<Pickup
 
 	switch (Item)
 	{
-	case class'W_MKb42_Pickup':
 	case class'W_Bullpup_Pickup':
+		Multiplier *= LerpStat(KFPRI, 0.9f, 0.4f);
+		break;
 	case class'W_AK47_Pickup' :
-	case class'W_M4203_Pickup' :
+		Multiplier *= LerpStat(KFPRI, 0.9f, 0.35f);
+		break;
+	case class'W_MKb42_Pickup':
+		Multiplier *= LerpStat(KFPRI, 0.9f, 0.341f);
+		break;
 	case class'W_ThompsonDrum_Pickup':
+		Multiplier *= LerpStat(KFPRI, 0.9f, 0.334f);
+		break;
 	case class'W_FNFAL_Pickup' :
 	case class'W_SCARMK17_Pickup' :
 	case class'W_ThompsonSMG_Pickup' :
 		Multiplier *= LerpStat(KFPRI, 0.9f, 0.3f);
+		break;
+	case class'W_M4203_Pickup' :
+		Multiplier *= LerpStat(KFPRI, 0.9f, 0.52632f);
 		break;
 	default:
 		if (class<KFWeaponPickup>(Item) != None)
@@ -323,6 +333,22 @@ static function float GetCostScaling(KFPlayerReplicationInfo KFPRI, class<Pickup
 	}
 
 	ApplyCostScalingModifier(KFPRI, Item, Multiplier);
+	return Multiplier;
+}
+
+static function float GetAmmoCostScaling(KFPlayerReplicationInfo KFPRI, class<Pickup> Item)
+{
+	local float Multiplier;
+	Multiplier = 1.f;
+
+	switch(Item)
+	{
+		case class'W_Pipebomb_Pickup' :
+			Multiplier *= LerpStat(KFPRI, 0.9f, 0.9f);
+			break;
+	}
+
+	ApplyAmmoCostScalingModifier(KFPRI, Item, Multiplier);
 	return Multiplier;
 }
 

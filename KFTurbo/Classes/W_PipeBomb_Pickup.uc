@@ -17,5 +17,7 @@ function Destroyed()
 
 defaultproperties
 {
-     InventoryType=Class'KFTurbo.W_PipeBomb_Weap'
+	Cost=500
+	AmmoCost=250
+	InventoryType=Class'KFTurbo.W_PipeBomb_Weap'
 }

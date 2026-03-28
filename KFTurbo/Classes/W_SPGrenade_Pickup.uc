@@ -17,6 +17,6 @@ function Destroyed()
 
 defaultproperties
 {
-     Cost=800
+     Cost=750
      InventoryType=Class'KFTurbo.W_SPGrenade_Weap'
 }

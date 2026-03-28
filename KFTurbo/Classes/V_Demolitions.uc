@@ -167,17 +167,29 @@ static function float GetCostScaling(KFPlayerReplicationInfo KFPRI, class<Pickup
 
 	switch(Item)
 	{
-		case class'W_LAW_Pickup':
-		case class'W_SealSqueal_Pickup' :
 		case class'W_M79_Pickup' :
-		case class'W_M32_Pickup' :
-		case class'W_M4203_Pickup' :
-		case class'W_SPGrenade_Pickup' :
-		case class'W_SeekerSix_Pickup' :
 			Multiplier *= LerpStat(KFPRI, 0.9f, 0.5f);
 			break;
+		case class'W_SPGrenade_Pickup' :
+			Multiplier *= LerpStat(KFPRI, 0.9f, 0.5334f);
+			break;
+		case class'W_M4203_Pickup' :
+			Multiplier *= LerpStat(KFPRI, 0.9f, 0.5264f);
+			break;
+		case class'W_SealSqueal_Pickup' :
+			Multiplier *= LerpStat(KFPRI, 0.9f, 0.68f);
+			break;
+		case class'W_SeekerSix_Pickup' :
+			Multiplier *= LerpStat(KFPRI, 0.9f, 0.76f);
+			break;
+		case class'W_M32_Pickup' :
+			Multiplier *= LerpStat(KFPRI, 0.9f, 0.8f);
+			break;
+		case class'W_LAW_Pickup':
+			Multiplier *= LerpStat(KFPRI, 0.9f, 0.7143f);
+			break;
 		case class'W_Pipebomb_Pickup' :
-			Multiplier *= LerpStat(KFPRI, 0.5f, 0.26f);
+			Multiplier *= LerpStat(KFPRI, 0.9f, 0.8f);
 			break;
 	}
 
@@ -202,7 +214,7 @@ static function float GetAmmoCostScaling(KFPlayerReplicationInfo KFPRI, class<Pi
 			Multiplier *= LerpStat(KFPRI, 1.f, 0.7f);
 			break;
 		case class'W_Pipebomb_Pickup' :
-			Multiplier *= LerpStat(KFPRI, 0.5f, 0.26f);
+			Multiplier *= LerpStat(KFPRI, 0.5f, 0.8f);
 			break;
 	}
 

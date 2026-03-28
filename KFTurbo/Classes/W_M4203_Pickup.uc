@@ -60,7 +60,7 @@ function Destroyed()
 
 defaultproperties
 {
-	Cost=1200
+	Cost=950
 	VariantClasses(0)=Class'KFTurbo.W_M4203_Pickup'
 	VariantClasses(1)=Class'KFTurbo.W_V_M4203_Camo_Pickup'
 	VariantClasses(2)=Class'KFTurbo.W_V_M4203_Retart_Pickup'
