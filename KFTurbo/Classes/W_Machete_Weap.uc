@@ -29,7 +29,7 @@ defaultproperties
      SkinRefs(0)="KF_Weapons_Trip_T.melee.Machete_cmb"
 
      BloodyMaterial=None
-     BloodyMaterialRef="KF_Weapons2_Trip_T.melee.Katana_Bloody_cmb"
+     BloodyMaterialRef="KF_Weapons_Trip_T.melee.machete_bloody_cmb"
      
      Mesh=None
      MeshRef="KF_Weapons_Trip.Machete_Trip"
