@@ -68,7 +68,7 @@ defaultproperties
     End Object
 
     Begin Object Class=KFTurboRandomizerLoadout Name=FunnyLoadout101
-        Perk=class'V_Firebug'
+        Perk=class'V_FieldMedic'
         WeaponList(0)=class'KFTurbo.W_BlowerThrower_Weap'
         bSingle = false
         bKnife = false
@@ -81,8 +81,6 @@ defaultproperties
         WeaponList(0)=class'KFTurbo.W_Huskgun_Weap'
         WeaponList(1)=class'KFTurbo.W_LAW_Weap'
     End Object
-
-    
 
     Begin Object Class=KFTurboRandomizerLoadout Name=FleshpoundLoadout16
         Perk=class'V_Demolitions'
@@ -103,8 +101,6 @@ defaultproperties
         WeaponList(1)=class'KFTurboRandomizer.W_Dual44_Weap_A'
         WeaponList(2)=class'KFTurboRandomizer.W_Magnum44_bigiron_Weap'
     End Object
-
-    
 
     Begin Object Class=KFTurboRandomizerLoadout Name=MiscLoadout32
         Perk=class'V_Sharpshooter'
