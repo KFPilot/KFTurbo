@@ -16,6 +16,7 @@ function OnVoteResult(Name Outcome)
     }
 
     KFTurboGameType(Level.Game).AdminMaxMonstersModifier = VoteFloatValue;
+    KFTurboGameType(Level.Game).UpdateMaxMonsters();
 }
 
 defaultproperties
