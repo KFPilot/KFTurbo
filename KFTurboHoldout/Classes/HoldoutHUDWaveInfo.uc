@@ -77,7 +77,7 @@ state ShowReadyUp
 {
 	simulated function BeginState()
 	{
-
+		bShouldDrawReadyUp = true;
 	}
 
 	simulated function EndState()
@@ -100,6 +100,8 @@ state ShowReadyUp
 			{
 				ReadyUpOpacity = 1.f;
 			}
+
+			return;
 		}
 		
 		if (TGRI.TimeToNextWave < 100)
@@ -122,6 +124,8 @@ state PlayNextWave extends ShowReadyUp
 		NextWaveGlowDelay = default.NextWaveGlowDelay;
 		NextWaveGlowProgress = 0.f;
 	}
+
+	simulated function EndState() {}
 
 	simulated function Tick(float DeltaTime)
 	{
