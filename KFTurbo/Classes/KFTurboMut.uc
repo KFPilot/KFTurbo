@@ -463,7 +463,7 @@ defaultproperties
 	bDebugClientPerkRepLink=false
 
 	bCheckLatestTurboVersion=true
-	TurboVersion="6.8.1"
+	TurboVersion="6.8.2"
 	bHasVersionUpdate=false
 
 	bRequireAdminForDifficultyCommands=true
