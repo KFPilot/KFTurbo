@@ -11,6 +11,7 @@ function AddReloadedAmmo()
 
 defaultproperties
 {
+     MagCapacity=100
      PickupClass=Class'KFTurbo.W_BlowerThrower_Pickup'
      InventoryGroup=4
 }
