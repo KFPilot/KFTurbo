@@ -5,5 +5,7 @@ class W_MKb42_Ammo extends MKb42Ammo;
 
 defaultproperties
 {
-     
+    AmmoPickupAmount=26
+    MaxAmmo=260
+    InitialAmount=130
 }

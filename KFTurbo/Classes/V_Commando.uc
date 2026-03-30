@@ -134,15 +134,18 @@ static function float GetMagCapacityMod(KFPlayerReplicationInfo KFPRI, KFWeapon 
 	Multiplier = 1.f;
 	if (ThompsonDrumSMG(Other) != None || SPThompsonSMG(Other) != none)
 	{
-		Multiplier *= LerpStat(KFPRI, 1.f, 1.6f);
+		Multiplier *= LerpStat(KFPRI, 1.f, 1.3f);
 	}
 	else if (Bullpup(Other) != None
 		|| AK47AssaultRifle(Other) != None 
-		|| SCARMK17AssaultRifle(Other) != None
-		|| MKb42AssaultRifle(Other) != None)
+		|| SCARMK17AssaultRifle(Other) != None)
 	{
 		Multiplier *= LerpStat(KFPRI, 1.f, 1.25f);
-	} 
+	}
+	else if (MKb42AssaultRifle(Other) != None)
+	{
+		Multiplier *= LerpStat(KFPRI, 1.f, 1.231f);
+	}
 	else if (ThompsonSMG(Other) != None)
 	{
 		Multiplier *= LerpStat(KFPRI, 1.f, 1.2f);
@@ -166,15 +169,19 @@ static function float GetAmmoPickupMod(KFPlayerReplicationInfo KFPRI, KFAmmuniti
 
 	Multiplier = 1.f;
 
-	if ((BullpupAmmo(Other) != None || AK47Ammo(Other) != None ||
-		SCARMK17Ammo(Other) != None || M4Ammo(Other) != None
-		|| FNFALAmmo(Other) != None || MKb42Ammo(Other) != None
-		|| ThompsonAmmo(Other) != None || GoldenAK47Ammo(Other) != None
-		|| ThompsonDrumAmmo(Other) != None || SPThompsonAmmo(Other) != None
-		|| CamoM4Ammo(Other) != None || NeonAK47Ammo(Other) != None) &&
-		KFPRI.ClientVeteranSkillLevel > 0)
+	if ((BullpupAmmo(Other) != None || AK47Ammo(Other) != None || SCARMK17Ammo(Other) != None || M4Ammo(Other) != None
+		|| ThompsonAmmo(Other) != None || ThompsonDrumAmmo(Other) != None || SPThompsonAmmo(Other) != None
+		|| GoldenAK47Ammo(Other) != None || CamoM4Ammo(Other) != None || NeonAK47Ammo(Other) != None))
 	{
 		Multiplier *= LerpStat(KFPRI, 1.f, 1.25f);
+	}
+	else if (MKb42Ammo(Other) != None)
+	{
+		Multiplier *= LerpStat(KFPRI, 1.f, 1.231f);
+	}
+	else if (BullpupAmmo(Other) != None)
+	{
+		Multiplier *= LerpStat(KFPRI, 1.f, 1.2143f);
 	}
 	else if (FNFALAmmo(Other) != None)
 	{
@@ -198,6 +205,18 @@ static function float AddExtraAmmoFor(KFPlayerReplicationInfo KFPRI, class<Ammun
 		if (class<W_FNFAL_Ammo>(AmmoType) != None)
 		{
 			Multiplier *= LerpStat(KFPRI, 1.f, 1.125f);
+		}
+		else if (class<W_MKb42_Ammo>(AmmoType) != None)
+		{
+			Multiplier *= LerpStat(KFPRI, 1.f, 1.231f);
+		}
+		else if (class<W_Bullpup_Ammo>(AmmoType) != None)
+		{
+			Multiplier *= LerpStat(KFPRI, 1.f, 1.2143f);
+		}
+		else if (class<W_ThompsonDrum_Ammo>(AmmoType) != None)
+		{
+			Multiplier *= LerpStat(KFPRI, 1.f, 1.3f);
 		}
 		else
 		{
@@ -228,9 +247,8 @@ static function int AddDamage(KFPlayerReplicationInfo KFPRI, KFMonster Injured, 
 	case class'DamTypeAK47AssaultRifle' :
 	case class'DamTypeSCARMK17AssaultRifle' :
 	case class'DamTypeAK47AssaultRifle' :
-	case class'DamTypeM4AssaultRifle' :
-	case class'DamTypeMKb42AssaultRifle' :
 
+	case class'W_MKb42_DT':
 	case class'W_M4203_DT_Bullet' :
 	case class'W_FNFAL_DT' :
 	case class'W_ThompsonDrum_DT' :
@@ -310,13 +328,13 @@ static function float GetCostScaling(KFPlayerReplicationInfo KFPRI, class<Pickup
 		Multiplier *= LerpStat(KFPRI, 0.9f, 0.4f);
 		break;
 	case class'W_AK47_Pickup' :
-		Multiplier *= LerpStat(KFPRI, 0.9f, 0.35f);
-		break;
-	case class'W_MKb42_Pickup':
 		Multiplier *= LerpStat(KFPRI, 0.9f, 0.341f);
 		break;
+	case class'W_MKb42_Pickup':
+		Multiplier *= LerpStat(KFPRI, 0.9f, 0.35f);
+		break;
 	case class'W_ThompsonDrum_Pickup':
-		Multiplier *= LerpStat(KFPRI, 0.9f, 0.334f);
+		Multiplier *= LerpStat(KFPRI, 0.9f, 0.33334f);
 		break;
 	case class'W_FNFAL_Pickup' :
 	case class'W_SCARMK17_Pickup' :

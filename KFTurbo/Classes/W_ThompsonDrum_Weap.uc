@@ -12,8 +12,8 @@ function AddReloadedAmmo()
 defaultproperties
 {
      MagCapacity=50
-     ReloadRate=4.210000
-     ReloadAnimRate=0.900000
+     ReloadRate=4.050000
+     ReloadAnimRate=0.938000
      Weight=6.000000
      AppID=0
      FireModeClass(0)=Class'KFTurbo.W_ThompsonDrum_Fire'

@@ -17,5 +17,7 @@ function Destroyed()
 
 defaultproperties
 {
-     InventoryType=Class'KFTurbo.W_MKb42_Weap'
+	Weight=4.000000
+	Cost=1000
+	InventoryType=Class'KFTurbo.W_MKb42_Weap'
 }
