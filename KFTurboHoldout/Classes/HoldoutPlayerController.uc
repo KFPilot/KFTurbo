@@ -25,16 +25,6 @@ simulated function SetupHoldoutInteraction()
 	HoldoutInteraction = HoldoutInteraction(Player.InteractionMaster.AddInteraction("KFTurboHoldout.HoldoutInteraction", Player));
 }
 
-simulated function ClientSetHUD(class<HUD> newHUDClass, class<Scoreboard> newScoringClass )
-{
-	if (class<HoldoutHUDKillingFloor>(newHUDClass) == None)
-	{
-		Super.ClientSetHUD(class'HoldoutHUDKillingFloor', newScoringClass);
-	}
-
-	Super.ClientSetHUD(newHUDClass, newScoringClass);
-}
-
 function AttemptMarkActor(vector Start, vector End, Actor TargetActor, class<TurboMarkerType> DataClassOverride, int DataOverride, TurboPlayerMarkReplicationInfo.EMarkColor Color)
 {
 	local HoldoutPurchaseTrigger FoundPurchaseTrigger;
@@ -57,4 +47,6 @@ function AttemptMarkActor(vector Start, vector End, Actor TargetActor, class<Tur
 defaultproperties
 {
 	PawnClass=Class'KFTurboHoldout.HoldoutHumanPawn'
+
+	HUDBaseClass=class'HoldoutHUDKillingFloor'
 }

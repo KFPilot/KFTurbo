@@ -30,6 +30,12 @@ var array< class<PerkLockTurboLocalMessage> > PerkChangeLockList;
 
 var protected array<TurboOptionObject> ExternalOptionList;
 
+//Class must be at least the specified one here. If not, it is set to be it.
+//This shouldn't be necessary but Sever Perks has a weird implementation of ClientOpenMenu (probably because TWI messed something up).
+var class<TurboHUDKillingFloor> HUDBaseClass;
+var class<UT2K4PlayerLoginMenu> LoginMenuBaseClass;
+var class<TurboLobbyMenu> LobbyMenuBaseClass;
+
 replication
 {
 	reliable if( Role == ROLE_Authority )
@@ -204,9 +210,9 @@ function ServerNotifyLoginMenuState(bool bNewLoginMenuState)
 
 simulated function ClientSetHUD(class<HUD> newHUDClass, class<Scoreboard> newScoringClass )
 {
-	if (class<TurboHUDKillingFloor>(newHUDClass) == None)
+	if (!ClassIsChildOf(newHUDClass, HUDBaseClass))
 	{
-		Super.ClientSetHUD(class'KFTurbo.TurboHUDKillingFloor', newScoringClass);
+		newHUDClass = HUDBaseClass;
 	}
 
 	Super.ClientSetHUD(newHUDClass, newScoringClass);
@@ -214,18 +220,30 @@ simulated function ClientSetHUD(class<HUD> newHUDClass, class<Scoreboard> newSco
 
 event ClientOpenMenu(string Menu, optional bool bDisconnect,optional string Msg1, optional string Msg2)
 {
-	//Attempt fix weird issue where wrong login menu is present.
-	if (Menu ~= string(class'ServerPerks.SRInvasionLoginMenu') || Menu ~= string(class'KFGui.KFInvasionLoginMenu'))
+	local class<Object> MenuClass;
+	MenuClass = class<Object>(DynamicLoadObject(Menu, class'class'));
+	if (class<UT2K4PlayerLoginMenu>(MenuClass) != None && !ClassIsChildOf(MenuClass, LoginMenuBaseClass))
 	{
-		Menu = string(class'KFTurbo.TurboInvasionLoginMenu');
+		Menu = string(LoginMenuBaseClass);
 	}
-
-	if (Menu ~= string(class'ServerPerks.SRLobbyMenu') || Menu ~= string(class'KFGui.LobbyMenu'))
+	else if (class<LobbyMenu>(MenuClass) != None && !ClassIsChildOf(MenuClass, LobbyMenuBaseClass))
 	{
-		Menu = string(class'KFTurbo.TurboLobbyMenu');
+		Menu = string(LobbyMenuBaseClass);
 	}
 
 	Super.ClientOpenMenu(Menu, bDisconnect, Msg1, Msg2);	
+}
+
+simulated function ClientReceiveLoginMenu(string MenuClass, bool bForce)
+{
+	local class<Object> LoadedMenuClass;
+	LoadedMenuClass = class<Object>(DynamicLoadObject(MenuClass, class'class'));
+	if (class<UT2K4PlayerLoginMenu>(LoadedMenuClass) != None && !ClassIsChildOf(LoadedMenuClass, LoginMenuBaseClass))
+	{
+		MenuClass = string(LoginMenuBaseClass);
+	}
+
+	Super.ClientReceiveLoginMenu(MenuClass, bForce);
 }
 
 //Returns true if player joined in the last 10 seconds.
@@ -547,16 +565,6 @@ function ServerSetWantsTraderPath(bool bNewWantsTraderPath)
 	}
 
 	Super.ServerSetWantsTraderPath(bNewWantsTraderPath);
-}
-
-simulated function ClientReceiveLoginMenu(string MenuClass, bool bForce)
-{
-	if (MenuClass ~= "ServerPerks.SRInvasionLoginMenu" || MenuClass ~= "KFGui.KFInvasionLoginMenu")
-	{
-		MenuClass = string(class'KFTurbo.TurboInvasionLoginMenu');
-	}
-
-	Super.ClientReceiveLoginMenu(MenuClass, bForce);
 }
 
 simulated function ShowLoginMenu()
@@ -1267,4 +1275,8 @@ defaultproperties
 
 	VoteCooldownTime=0.1f
 	SpectateUseTargetCooldown=0.1f
+
+	HUDBaseClass=class'TurboHUDKillingFloor'
+	LoginMenuBaseClass=class'TurboInvasionLoginMenu'
+	LobbyMenuBaseClass=class'TurboLobbyMenu'
 }
