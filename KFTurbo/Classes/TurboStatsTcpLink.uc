@@ -33,6 +33,8 @@ var string WaveStartPayloadCache;
 var string WaveEndPayloadCache;
 var string WaveStatsPayloadCache;
 
+var const bool bVerboseLogging;
+
 static function bool ShouldBroadcastAnalytics()
 {
     return default.bBroadcastAnalytics && default.StatsDomain != "" && default.StatsPort >= 0;
@@ -218,6 +220,7 @@ Begin:
     }
 
     Sleep(0.1f);
+    log("Flush complete!", 'KFTurboStatsTcp');
     GotoState('FlushComplete');
 }
 
@@ -244,6 +247,7 @@ function SendData(string Data)
         log("WARNING: Stats data buffer has exceeded 10 entries. The tcp link is falling behind for an unknown reason.", 'KFTurboStatsTcp');
     }
 
+    if (bVerboseLogging) { log("= CACHING NEW PAYLOAD"@Data, 'TurboStatsTcpLink'); }
     DeferredDataList[DeferredDataList.Length] = Data;
 }
 
@@ -254,6 +258,7 @@ function SendNextPayload()
         return;
     }
 
+    if (bVerboseLogging) { log("= SENDING NEXT PAYLOAD"@DeferredDataList[0], 'TurboStatsTcpLink'); }
     LastDataSendTime = Level.TimeSeconds;
     SendText(DeferredDataList[0]$CRLF);
     DeferredDataList.Remove(0, 1);
@@ -309,7 +314,10 @@ result - The result of the game. Can be "won", "lost", "aborted". Aborted refers
 
 function SendGameEnd(int Result)
 {
+    if (bVerboseLogging) { log("======== SENDING GAME END"@BuildGameEndPayload(Level.Game.GetCurrentWaveNum(), GetResultName(Result)), 'TurboStatsTcpLink'); }
+
     SendData(BuildGameEndPayload(Level.Game.GetCurrentWaveNum(), GetResultName(Result)));
+
     FlushData();
 }
 
@@ -362,9 +370,16 @@ session - The session ID for this game."
 wavenum - The wave that started.
 */
 
-function SendWaveEnd()
+function SendWaveEnd(bool bWin)
 {
-    SendData(BuildWaveEndPayload(Level.Game.GetCurrentWaveNum() - 1));
+    if (bWin)
+    {
+        SendData(BuildWaveEndPayload(Level.Game.GetCurrentWaveNum() - 1));
+    }
+    else
+    {
+        SendData(BuildWaveEndPayload(Level.Game.GetCurrentWaveNum()));
+    }
 }
 
 final function string BuildWaveEndPayload(int WaveNum)
@@ -405,11 +420,13 @@ died - Whether or not the player died this wave.
 
 function SendWaveStats(TurboWavePlayerStatCollector Stats)
 {
+
     if (Stats == None)
     {
         return;
     }
 
+    if (bVerboseLogging) { log("======== SENDING WAVE STATS"@BuildWaveStatsPayload(Stats), 'TurboStatsTcpLink'); }
     SendData(BuildWaveStatsPayload(Stats));
 }
 
@@ -508,4 +525,6 @@ defaultproperties
     StatsTcpLinkClassOverride=""
 
     MaxRetryCount=10
+
+    bVerboseLogging=false
 }

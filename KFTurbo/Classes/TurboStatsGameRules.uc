@@ -358,7 +358,7 @@ Begin:
     if (TurboGameType.bWaveInProgress)
     {
         Sleep(0.1f);
-        SendWaveEnd();
+        SendLastWaveEnd(TurboGRI.EndGameType != 1);
     }
 
     Sleep(0.1f);
@@ -393,11 +393,11 @@ function ReplicateStatCollector(TurboPlayerController Controller)
     StatsCollector.ReplicateStats();
 }
 
-function SendWaveEnd()
+function SendLastWaveEnd(bool bWin)
 {
     if (Mutator != None && Mutator.StatsTcpLink != None)
     {
-        Mutator.StatsTcpLink.SendWaveEnd();
+        Mutator.StatsTcpLink.SendWaveEnd(bWin);
     }
 }
 

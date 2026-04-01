@@ -428,7 +428,7 @@ function OnWaveEnd()
 {
 	if (StatsTcpLink != None)
 	{
-		StatsTcpLink.SendWaveEnd();
+		StatsTcpLink.SendWaveEnd(true);
 	}
 }
 
