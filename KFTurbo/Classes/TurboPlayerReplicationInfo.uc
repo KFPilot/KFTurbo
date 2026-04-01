@@ -34,6 +34,8 @@ var bool bHasRegisteredOnReceiveCustomInfo;
 
 var bool bHasInitializedName;
 
+var bool bShouldReceiveRewardForHealing;
+
 delegate OnReceiveStatCollector(TurboPlayerReplicationInfo PlayerReplicationInfo, TurboPlayerStatCollectorBase Collector);
 delegate OnReceiveStatReplicator(TurboPlayerReplicationInfo PlayerReplicationInfo, TurboPlayerStatCollectorBase Replicator);
 delegate OnReceiveCustomInfo(TurboPlayerReplicationInfo PlayerReplicationInfo, TurboPlayerCustomInfo Collector);
@@ -214,6 +216,16 @@ function SetPlayerName(string NewPlayerName)
     Super.SetPlayerName(NewPlayerName);
 }
 
+function ReceiveRewardForHealing(int MedicReward, KFPawn Healee)
+{
+    if (!bShouldReceiveRewardForHealing)
+    {
+        return;
+    }
+
+    Super.ReceiveRewardForHealing(MedicReward, Healee);
+}
+
 defaultproperties
 {
     ShieldStrength=0
@@ -224,4 +236,6 @@ defaultproperties
     bVotedForTraderEnd=false
 
     LastConnectionState=Normal
+
+    bShouldReceiveRewardForHealing=true
 }
