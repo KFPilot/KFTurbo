@@ -1,5 +1,5 @@
 class KFTTPlayerController extends TurboPlayerController
-	config(User);
+	config(KFTurboTest);
 
 const MAX_DamageMessages = 50;
 const MSG_Spec = "Sorry, spectators cannot use commands.";
@@ -15,9 +15,16 @@ var int hitCount, lastDamage, dmgMsgCount, spotIndex, headCount;
 var float lastTriggerMsg, lastTeleport, lastSpawnProj, damageLifeTime;
 var bool bHitMultipleZeds, bKeepWeapons, bDrawHitboxes, bInitDestinations;
 
-var config byte numSegments;
-var config Color DmgMsgCol, HitboxCol;
-var config bool bWantsKeepWeapons, bEnableCrosshairs, bWantsDrawHitboxes;
+var globalconfig byte numSegments;
+var globalconfig Color DmgMsgCol, HitboxCol;
+var globalconfig bool bWantsKeepWeapons, bEnableCrosshairs, bWantsDrawHitboxes;
+
+struct MonsterRespawnConfig
+{
+	var bool bRespawn;
+};
+var globalconfig MonsterRespawnConfig RespawnConfig;
+var TestMonsterSpawner RespawningSpawner;
 
 replication {
 	reliable if (bNetInitial && Role == ROLE_Authority)
@@ -35,10 +42,8 @@ replication {
 	reliable if (Role == ROLE_Authority)
 		ClientShowWaveControlUI;
 	reliable if (Role < ROLE_Authority)
-		ServerApplyWaveControlSettings;
+		ServerApplyWaveControlSettings, ServerApplyMonsterRespawnSettings;
 }
-
-/* OVERRIDEN FUNCTIONS */
 
 simulated function SendSelectedVeterancyToServer(optional bool bForceChange);
 
@@ -50,28 +55,6 @@ function SelectVeterancy(class<KFVeterancyTypes> VetSkill, optional bool bForceC
 exec function TogglePathToTrader();
 function SetShowPathToTrader(bool bShouldShowPath);
 simulated function CheckForHint(int hintType);
-
-event ClientOpenMenu(string Menu, optional bool bDisconnect,optional string Msg1, optional string Msg2)
-{
-	//Attempt fix weird issue where wrong login menu is present.
-	if (Menu ~= string(class'ServerPerks.SRInvasionLoginMenu') || Menu ~= string(class'KFGui.KFInvasionLoginMenu'))
-	{
-		Menu = string(class'KFTurboTestMut.KFTTLoginMenu');
-	}
-
-	Super.ClientOpenMenu(Menu, bDisconnect, Msg1, Msg2);	
-}
-
-simulated function ClientReceiveLoginMenu(string MenuClass, bool bForce)
-{
-	if (MenuClass ~= string(class'KFTurbo.TurboInvasionLoginMenu') || MenuClass ~= string(class'ServerPerks.SRInvasionLoginMenu')
-		|| MenuClass ~= string(class'KFGui.KFInvasionLoginMenu'))
-	{
-		MenuClass = string(class'KFTurboTestMut.KFTTLoginMenu');
-	}
-	
-	Super.ClientReceiveLoginMenu(MenuClass, bForce);
-}
 
 event ClientMessage(coerce string S, optional Name Type) {
 	local string Msg, UseBinds, KeyName;
@@ -106,10 +89,13 @@ function SetPawnClass(string inClass, string inCharacter) {
 	PlayerReplicationInfo.SetCharacterName(inCharacter);
 }
 
-function AcknowledgePossession(Pawn P) {
-	if (Level.NetMode == NM_Standalone || Role < ROLE_Authority) {
+function AcknowledgePossession(Pawn P)
+{
+	if (Level.NetMode == NM_Standalone || Role != ROLE_Authority)
+	{
 		ServerSetKeepWeapons(bWantsKeepWeapons);
 		ServerSetDrawHitboxes(bWantsDrawHitboxes);
+		ServerApplyMonsterRespawnSettings(RespawnConfig);
 	}
 	
 	Super.AcknowledgePossession(P);
@@ -401,6 +387,11 @@ exec function ClearLevel() {
 }
 
 exec function ClearZeds() {
+	if (RespawningSpawner != None && RespawningSpawner.LastSpawnInstigator == Self)
+	{
+		RespawningSpawner.SetLastSpawnInstigator(None);
+	}
+
 	Mut.ClearZeds(Self);
 }
 
@@ -751,6 +742,29 @@ simulated function ServerApplyWaveControlSettings(TestLaneWaveManager Manager, i
 	Manager.SetWaveConfig(WaveNumber, PlayerCount, PlayerHealth);
 }
 
+simulated function bool IsAutoRespawnEnabled()
+{
+	return RespawnConfig.bRespawn;
+}
+
+simulated function SetRespawnSettings(MonsterRespawnConfig InRespawnConfig)
+{
+	RespawnConfig = InRespawnConfig;
+	SaveConfig();
+	
+	ServerApplyMonsterRespawnSettings(InRespawnConfig);
+}
+
+function ServerApplyMonsterRespawnSettings(MonsterRespawnConfig InRespawnConfig)
+{
+	if (Role != ROLE_Authority)
+	{
+		return;
+	}
+
+	RespawnConfig = InRespawnConfig;
+}
+
 defaultproperties
 {
 	NumSegments=10
@@ -763,4 +777,7 @@ defaultproperties
 	SteamStatsAndAchievementsClass=Class'KFTurboTestMut.KFTTSteamStatsAndAchievements'
 	PawnClass=Class'KFTurboTestMut.KFTTHumanPawn'
 	LobbyMenuClassString="KFTurbo.TurboLobbyMenu"
+	
+	HUDBaseClass=class'KFTTHUD'
+	LoginMenuBaseClass=class'KFTTLoginMenu'
 }

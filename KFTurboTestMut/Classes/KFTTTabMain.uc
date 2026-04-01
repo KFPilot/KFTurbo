@@ -8,7 +8,7 @@ var automated GUIButton b_SetPerk, b_SetHealth, b_SetSpeed, b_ClearLevel, b_Clea
 var automated moNumericEdit nu_NumPlayers;
 var automated moComboBox co_PerkName;
 var automated moFloatEdit fl_GameSpeed;
-var automated moCheckbox ch_KeepWeapons, ch_EnableCrosshairs, ch_DrawHitboxes;
+var automated moCheckbox ch_KeepWeapons, ch_EnableCrosshairs, ch_DrawHitboxes, ch_RespawnMonsters;
 
 var array<GUIButton> LColumn, RColumn;
 
@@ -39,8 +39,9 @@ function InitComponent(GUIController MyController, GUIComponent MyOwner) {
 	sb_BottomLeft.ManageComponent(l_SpeedLabel);
 	
 	sb_TopRight.ManageComponent(ch_KeepWeapons);
-	sb_TopRight.ManageComponent(ch_EnableCrosshairs);
+	sb_TopRight.ManageComponent(ch_RespawnMonsters);
 	sb_TopRight.ManageComponent(ch_DrawHitboxes);
+	sb_TopRight.ManageComponent(ch_EnableCrosshairs);
 	
 	sb_BottomRight.ManageComponent(b_ClearLevel);
 	sb_BottomRight.ManageComponent(b_Teleport);
@@ -68,6 +69,9 @@ function InternalOnLoadINI(GUIComponent Sender, string S) {
 		case ch_DrawHitboxes:
 			ch_DrawHitboxes.SetComponentValue(PC.bDrawHitboxes, true);
 			break;
+		case ch_RespawnMonsters:
+			ch_RespawnMonsters.SetComponentValue(PC.IsAutoRespawnEnabled(), true);
+			break;
 	}
 }
 
@@ -79,6 +83,7 @@ function InitValues() {
 	ch_KeepWeapons.SetComponentValue(PC.bWantsKeepWeapons, true);
 	ch_EnableCrosshairs.SetComponentValue(PC.bEnableCrosshairs, true);
 	ch_DrawHitboxes.SetComponentValue(PC.bDrawHitboxes, true);
+	ch_RespawnMonsters.SetComponentValue(PC.IsAutoRespawnEnabled(), true);
 	
 	PRI = KFPlayerReplicationInfo(PlayerOwner().PlayerReplicationInfo);
 	if (PRI != None) {
@@ -166,7 +171,17 @@ function InternalOnChange(GUIComponent Sender) {
 		case ch_DrawHitboxes:
 			PC.SetDrawHitboxes(ch_DrawHitboxes.IsChecked());
 			break;
+        case ch_RespawnMonsters:
+            UpdateRespawnConfig(ch_RespawnMonsters.IsChecked());
 	}
+}
+
+function UpdateRespawnConfig(bool bRespawn)
+{
+    local KFTTPlayerController.MonsterRespawnConfig RespawnConfig;
+    RespawnConfig = PC.RespawnConfig;
+    RespawnConfig.bRespawn = bRespawn;
+    PC.SetRespawnSettings(RespawnConfig);
 }
 
 function UpdateButtonsVisibility() {
@@ -225,9 +240,9 @@ function bool InternalOnPreDraw(Canvas C) {
 	
 	w = b_SetPerk.ActualWidth();
 	h = b_SetPerk.ActualHeight();
-	b_SetPerk.SetPosition(x, l_PerkLabel.ActualTop(), w, h, true);
-	b_SetHealth.SetPosition(x, l_HealthLabel.ActualTop(), w, h, true);
-	b_SetSpeed.SetPosition(x, l_SpeedLabel.ActualTop(), w, h, true);
+	b_SetPerk.SetPosition(x + h, l_PerkLabel.ActualTop(), w, h, true);
+	b_SetHealth.SetPosition(x + h, l_HealthLabel.ActualTop(), w, h, true);
+	b_SetSpeed.SetPosition(x + h, l_SpeedLabel.ActualTop(), w, h, true);
 	
 	x = 2 * sb_BottomRight.ActualLeft() + sb_BottomRight.ActualWidth() - LColumn[0].ActualLeft() - w;
 	for (i = 0; i < LColumn.length; i++)
@@ -446,6 +461,16 @@ defaultproperties
          OnLoadINI=KFTTTabMain.InternalOnLoadINI
      End Object
      ch_DrawHitboxes=moCheckBox'KFTurboTestMut.KFTTTabMain.DrawHitboxes'
+
+     Begin Object Class=moCheckBox Name=RespawnMonsters
+         Caption="Auto Respawn Monsters"
+         OnCreateComponent=DrawHitboxes.InternalOnCreateComponent
+         Hint="Automatically respawn spawned monsters when they are killed."
+         TabOrder=13
+         OnChange=KFTTTabMain.InternalOnChange
+         OnLoadINI=KFTTTabMain.InternalOnLoadINI
+     End Object
+     ch_RespawnMonsters=moCheckBox'KFTurboTestMut.KFTTTabMain.RespawnMonsters'
 
      OnPreDraw=KFTTTabMain.InternalOnPreDraw
 }
