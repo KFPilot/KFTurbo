@@ -5,6 +5,13 @@ class HoldoutPlayerController extends TurboPlayerController;
 
 var HoldoutInteraction HoldoutInteraction;
 
+function InitPlayerReplicationInfo()
+{
+	Super.InitPlayerReplicationInfo();
+	
+	TurboPlayerReplicationInfo(PlayerReplicationInfo).bShouldReceiveRewardForHealing = false;
+}
+
 simulated function InitInputSystem()
 {
 	Super.InitInputSystem();
