@@ -988,6 +988,90 @@ simulated function float GetJumpZModifier()
 	return Super.GetJumpZModifier() * JumpZMultiplier;
 }
 
+simulated event SetAnimAction(name NewAction)
+{
+    if (NewAction == '')
+	{
+        return;
+	}
+
+	if (bWaitForAnim)
+	{
+		return;
+	}
+	
+    if (Level.NetMode != NM_Client)
+    {
+        bResetingAnimAct = true;
+        AnimActResetTime = Level.TimeSeconds+0.45;
+    }
+
+	AnimAction = NewAction;
+
+	//Don't play animations you don't have.
+	if (!HasAnim(NewAction))
+	{
+		return;
+	}
+
+	if (InStr(AnimAction, "Frag_"))
+	{
+		AnimBlendParams(1, 1.0, 0.0, 0.2, FireRootBone);
+		PlayAnim(NewAction,, 0.0, 1);
+		bThrowingNade = true;
+	}
+	else if (InStr(AnimAction, "Reload_"))
+	{
+		AnimBlendParams(1, 1.0, 0.0, 0.2, FireRootBone);
+		PlayAnim(NewAction,, 0.1, 1);
+		FireState = FS_Ready;
+	}
+	else if (AnimAction == IdleWeaponAnim)
+	{
+		PlayAnim(AnimAction,, 0.1f);
+		AnimBlendToAlpha(1, 0.f, 0.05f);
+	}
+	else if (((Physics == PHYS_None)|| ((Level.Game != None) && Level.Game.IsInState('MatchOver'))) && (DrivenVehicle == None))
+	{
+		PlayAnim(AnimAction,,0.1);
+		AnimBlendToAlpha(1,0.0,0.05);
+	}
+	else if ((DrivenVehicle != None) || (Physics == PHYS_Falling) || ((Physics == PHYS_Walking) && (Velocity.Z != 0)))
+	{
+		if (CheckTauntValid(AnimAction))
+		{
+			if (FireState == FS_None || FireState == FS_Ready)
+			{
+				AnimBlendParams(1, 1.0, 0.0, 0.2, FireRootBone);
+				PlayAnim(NewAction,, 0.1, 1);
+				FireState = FS_Ready;
+			}
+		}
+		else if (PlayAnim(AnimAction))
+		{
+			if (Physics != PHYS_None)
+			{
+				bWaitForAnim = true;
+			}
+		}
+		else
+		{
+			AnimAction = NewAction;
+		}
+	}
+	else if (bIsIdle && !bIsCrouched && (Bot(Controller) == None)) // standing taunt
+	{
+		AnimBlendParams(1, 1.0, 0.0, 0.2, FireRootBone);
+		PlayAnim(AnimAction,,0.1,1);
+	}
+	else if (FireState == FS_None || FireState == FS_Ready)
+	{
+		AnimBlendParams(1, 1.0, 0.0, 0.2, FireRootBone);
+		PlayAnim(NewAction,, 0.1, 1);
+		FireState = FS_Ready;
+	}
+}
+
 defaultproperties
 {
 	bDebugServerBuyWeapon=false
