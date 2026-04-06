@@ -1,5 +1,5 @@
 class KFTTPlayerController extends TurboPlayerController
-	config(KFTurboTest);
+	config(User);
 
 const MAX_DamageMessages = 50;
 const MSG_Spec = "Sorry, spectators cannot use commands.";
