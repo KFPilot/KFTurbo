@@ -29,7 +29,7 @@ simulated function bool HasEnoughAmmoForExtraThrow()
 {
     local float MaxAmmo, CurrentAmmo;
     GetAmmoCount(MaxAmmo, CurrentAmmo);
-    return CurrentAmmo > GetFireMode(0).Load;
+    return CurrentAmmo >= GetFireMode(0).Load;
 }
 
 simulated event StartThrow()
