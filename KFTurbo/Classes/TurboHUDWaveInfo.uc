@@ -617,7 +617,7 @@ simulated final function DrawKillFeedEntry(Canvas C, out float DrawY, out KillFe
 	}
 	else
 	{
-		C.Font = TurboHUD.LoadBoldFont(2 + FontSizeOffset);
+		C.Font = TurboHUD.LoadFont(2 + FontSizeOffset);
 	}
 	
 	C.FontScaleX = 1.f;
