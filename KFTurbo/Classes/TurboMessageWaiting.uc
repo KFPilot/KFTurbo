@@ -7,7 +7,7 @@ static function int GetFontSize(int Switch, PlayerReplicationInfo RelatedPRI1, P
 {
 	if ( Switch == 1 ||  Switch == 2 || Switch == 3  )
 	{
-		return 5;
+		return 4;
 	}
 
 	if ( Switch == 4 || Switch == 5 )
