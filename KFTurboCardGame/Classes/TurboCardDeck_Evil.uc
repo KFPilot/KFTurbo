@@ -444,10 +444,9 @@ defaultproperties
         CardName(0)="Freeze Tag"
         CardDescriptionList(0)="During the"
         CardDescriptionList(1)="wave players"
-        CardDescriptionList(2)="cannot move"
-        CardDescriptionList(3)="unless they"
-        CardDescriptionList(4)="hold a melee"
-        CardDescriptionList(5)="weapon."
+        CardDescriptionList(2)="slow down while"
+        CardDescriptionList(3)="not holding a"
+        CardDescriptionList(4)="melee weapon."
         CardID="EVIL_FREEZETAG"
         OnActivateCard=ActivateFreezeTag
     End Object

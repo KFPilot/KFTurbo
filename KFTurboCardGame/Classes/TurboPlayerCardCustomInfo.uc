@@ -35,6 +35,11 @@ var float MinDropWeaponTime;
 
 var int StunningHitFireCounter;
 
+var float LastMeleeWeaponHoldTime;
+
+var const float FreezeTagTimeUntilSlow;
+var const float FreezeTagTimeUntilFreeze;
+
 replication
 {
     reliable if (Role == ROLE_Authority)
@@ -98,6 +103,31 @@ simulated function Tick(float DeltaTime)
 	{
 		Enable('Tick');
 	}
+}
+
+simulated function float UpdateFreezeTagMoveSpeed(KFWeapon Weapon)
+{
+	local float TimeSinceWeaponHoldTime;
+
+	if (Weapon == None || Weapon.bMeleeWeapon)
+	{
+		LastMeleeWeaponHoldTime = Level.TimeSeconds; 
+		return 1.f;
+	}
+
+	TimeSinceWeaponHoldTime = FMax(Level.TimeSeconds - LastMeleeWeaponHoldTime, 0.f);
+	if (TimeSinceWeaponHoldTime < FreezeTagTimeUntilSlow)
+	{
+		return 1.f;
+	}
+
+	TimeSinceWeaponHoldTime -= FreezeTagTimeUntilSlow;
+	if (TimeSinceWeaponHoldTime >= FreezeTagTimeUntilFreeze)
+	{
+		return 0.0001f;
+	}
+
+	return Lerp(TimeSinceWeaponHoldTime / FreezeTagTimeUntilFreeze, 1.f, 0.0001f);
 }
 
 //Doesn't use ServerTimeActor because this is only used on server.
@@ -250,6 +280,9 @@ defaultproperties
 	HealBoostBoostCooldown=10.f
 
 	MinDropWeaponTime=0.f
+
+	FreezeTagTimeUntilSlow=3.f
+	FreezeTagTimeUntilFreeze=4.f
 
 	//Replicates now that the client has to be aware of certain properties on here.
     RemoteRole=ROLE_SimulatedProxy

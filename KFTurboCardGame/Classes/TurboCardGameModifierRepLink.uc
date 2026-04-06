@@ -218,18 +218,29 @@ simulated function float GetPlayerMovementSpeedMultiplier(KFPlayerReplicationInf
 {
     local float Multiplier;
     local KFPawn Pawn;
+    local TurboPlayerCardCustomInfo CardCustomInfo;
 
     Pawn = KFPawn(Controller(KFPRI.Owner).Pawn);
-
-    if (bFreezePlayersDuringWave && KFGRI != None && KFGRI.bWaveInProgress)
-    {
-        if (KFMeleeGun(Pawn.Weapon) == None)
-        {
-            return 0.0001f;
-        }
-    }
+    CardCustomInfo = GetPlayerCustomInfo(KFPRI);
 
     Multiplier = PlayerMovementSpeedMultiplier;
+
+    if (bFreezePlayersDuringWave && CardCustomInfo != None)
+    {
+        if (KFGRI != None && KFGRI.bWaveInProgress)
+        {
+            Multiplier *= CardCustomInfo.UpdateFreezeTagMoveSpeed(KFWeapon(Pawn.Weapon));
+        }
+        else
+        {
+            Multiplier *= CardCustomInfo.UpdateFreezeTagMoveSpeed(None); //Always count as allowed to move.
+        }
+
+        if (Multiplier <= 0.0001f)
+        {
+            return Multiplier;
+        }
+    }
 
     if (bMoneySlowsPlayers)
     {
@@ -246,7 +257,7 @@ simulated function float GetPlayerMovementSpeedMultiplier(KFPlayerReplicationInf
         Multiplier *= 1.15f;
     }
     
-    return Super.GetPlayerMovementSpeedMultiplier(KFPRI, KFGRI) * Multiplier * GetCardCustomInfoSpeedMultiplier(GetPlayerCustomInfo(KFPRI));
+    return Super.GetPlayerMovementSpeedMultiplier(KFPRI, KFGRI) * Multiplier * GetCardCustomInfoSpeedMultiplier(CardCustomInfo);
 }
 
 final simulated function float GetCardCustomInfoSpeedMultiplier(TurboPlayerCardCustomInfo CardCustomInfo)
