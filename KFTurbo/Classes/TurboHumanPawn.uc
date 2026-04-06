@@ -1014,22 +1014,28 @@ simulated event SetAnimAction(name NewAction)
 		return;
 	}
 
-	if (InStr(AnimAction, "Frag_"))
+	if (AnimAction == 'Weapon_Switch')
 	{
-		AnimBlendParams(1, 1.0, 0.0, 0.2, FireRootBone);
-		PlayAnim(NewAction,, 0.0, 1);
-		bThrowingNade = true;
-	}
-	else if (InStr(AnimAction, "Reload_"))
-	{
-		AnimBlendParams(1, 1.0, 0.0, 0.2, FireRootBone);
-		PlayAnim(NewAction,, 0.1, 1);
-		FireState = FS_Ready;
+		AnimBlendParams(1, 1.f, 0.f, 0.2f, FireRootBone);
+		PlayAnim(NewAction,, 0.f, 1);
+		AnimBlendTime = GetAnimDuration(NewAction, 1.f) + 0.1f;
 	}
 	else if (AnimAction == IdleWeaponAnim)
 	{
 		PlayAnim(AnimAction,, 0.1f);
 		AnimBlendToAlpha(1, 0.f, 0.05f);
+	}
+	else if (InStr(AnimAction, "Frag_") != -1)
+	{
+		AnimBlendParams(1, 1.f, 0.f, 0.2f, FireRootBone);
+		PlayAnim(NewAction,, 0.f, 1);
+		bThrowingNade = true;
+	}
+	else if (InStr(AnimAction, "Reload_") != -1)
+	{
+		AnimBlendParams(1, 1.0, 0.f, 0.2, FireRootBone);
+		PlayAnim(NewAction,, 0.1, 1);
+		FireState = FS_Ready;
 	}
 	else if (((Physics == PHYS_None)|| ((Level.Game != None) && Level.Game.IsInState('MatchOver'))) && (DrivenVehicle == None))
 	{
