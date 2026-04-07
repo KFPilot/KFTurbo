@@ -14,7 +14,6 @@ var int NegateDamageCount;
 var float LastCriticalHitTime;
 var float PerpetualCriticalHitStartTime;
 var float PerpetualCriticalHitTime;
-var float PerpetualCriticalHitCooldown;
 
 var int NonCriticalHitCount;
 
@@ -25,7 +24,6 @@ var float GrenadeBoostTime;
 
 var float LastHealBoostTime;
 var float HealBoostBoostTime;
-var float HealBoostBoostCooldown;
 
 var int RackEmUpHeadshotCount;
 var float RackEmUpHeadshotStackExpireTime;
@@ -148,11 +146,6 @@ final function bool IsInPerpetualCriticalHitTime()
 
 final function AttemptGrantPerpetualCriticalHit()
 {
-	if (PerpetualCriticalHitStartTime > 0.f && Level.TimeSeconds < (PerpetualCriticalHitStartTime + PerpetualCriticalHitTime + PerpetualCriticalHitCooldown))
-	{
-		return;
-	}
-
 	PerpetualCriticalHitStartTime = Level.TimeSeconds;
 }
 
@@ -179,12 +172,7 @@ final simulated function bool IsInGrenadeBuffTime()
 
 final simulated function PlayerHealed()
 {
-	if (LastHealBoostTime > 0.f && ((LastHealBoostTime + HealBoostBoostTime + HealBoostBoostCooldown) > ServerTimeActor.GetServerTimeSeconds()))
-	{
-		return;
-	}
-
-	LastHealBoostTime = Level.TimeSeconds;
+	LastHealBoostTime = ServerTimeActor.GetServerTimeSeconds();
 	ForceNetUpdate();
 }
 
@@ -196,14 +184,14 @@ final simulated function bool IsInHealBoostTime()
 final simulated function PlayerScoredHeadshot()
 {
 	RackEmUpHeadshotCount++;
-	RackEmUpHeadshotStackExpireTime = Level.TimeSeconds + 5.f;
+	RackEmUpHeadshotStackExpireTime = Level.TimeSeconds + 10.f;
 	Enable('Tick');
 	ForceNetUpdate();
 }
 
 final simulated function float GetPlayerHeadshotBonus()
 {
-	return 1.f + (float(Min(RackEmUpHeadshotCount, 15)) * 0.02f);
+	return 1.f + (float(Min(RackEmUpHeadshotCount, 10)) * 0.05f);
 }
 
 final simulated function ResetPlayerHeadshot()
@@ -263,7 +251,6 @@ defaultproperties
 
 	PerpetualCriticalHitStartTime=-1.f
 	PerpetualCriticalHitTime=5.f
-	PerpetualCriticalHitCooldown=10.f
 
 	NonCriticalHitCount=0
     
@@ -277,7 +264,6 @@ defaultproperties
 
 	LastHealBoostTime=0.f
 	HealBoostBoostTime=5.f
-	HealBoostBoostCooldown=10.f
 
 	MinDropWeaponTime=0.f
 

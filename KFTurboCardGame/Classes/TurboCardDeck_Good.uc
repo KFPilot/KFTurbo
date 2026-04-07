@@ -431,6 +431,11 @@ function ActivateSpreadTheLove(TurboCardGameplayManager GameplayManager, TurboCa
     Card.UpdateModifier(GameplayManager.PlayerReciprocalHealingModifier, 1.2f, bActivate);
 }
 
+function ActivateTooMuchForZBlock(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
+{
+    Card.UpdateModifier(GameplayManager.PlayerAirControlModifier, 10000.f, bActivate);
+}
+
 defaultproperties
 {
     Begin Object Name=BonusCashKill Class=TurboCard_Good
@@ -859,4 +864,15 @@ defaultproperties
         OnActivateCard=ActivateSpreadTheLove
     End Object
     DeckCardObjectList(41)=TurboCard'SpreadTheLove'
+
+    Begin Object Name=TooMuchForZBlock Class=TurboCard_Good
+        CardName(0)="Too Much"
+        CardName(1)="For zBlock"
+        CardDescriptionList(0)="Increases player"
+        CardDescriptionList(1)="air control"
+        CardDescriptionList(2)="significantly."
+        CardID="GOOD_ZBLOCK"
+        OnActivateCard=ActivateTooMuchForZBlock
+    End Object
+    DeckCardObjectList(42)=TurboCard'TooMuchForZBlock'
 }

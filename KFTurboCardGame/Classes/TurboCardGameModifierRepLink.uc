@@ -269,7 +269,7 @@ final simulated function float GetCardCustomInfoSpeedMultiplier(TurboPlayerCardC
 
     if (CardCustomInfo.IsInHealBoostTime())
     {
-        return 2.f;
+        return 1.3f;
     }
 
     return 1.f;

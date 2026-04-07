@@ -115,7 +115,7 @@ function ActivateMovementSpeed(TurboCardGameplayManager GameplayManager, TurboCa
 {
     if (bActivate)
     {
-        GameplayManager.PlayerMovementSpeedModifier.AddModifier(1.25f, Card);
+        GameplayManager.PlayerMovementSpeedModifier.AddModifier(1.15f, Card);
     }
     else
     {
@@ -320,11 +320,6 @@ function ActivateCriticalHit(TurboCardGameplayManager GameplayManager, TurboCard
     Card.UpdateFlag(GameplayManager.CriticalShotFlag, bActivate);
 }
 
-function ActivateTooMuchForZBlock(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
-{
-    Card.UpdateModifier(GameplayManager.PlayerAirControlModifier, 10000.f, bActivate);
-}
-
 function ActivateDeEvolution(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
     Card.UpdateFlag(GameplayManager.WeakMonsterReplacementFlag, bActivate);
@@ -488,7 +483,7 @@ defaultproperties
         CardName(0)="Adrenaline"
         CardDescriptionList(0)="Increases player"
         CardDescriptionList(1)="movement speed for"
-        CardDescriptionList(2)="all players by 25%."
+        CardDescriptionList(2)="all players by 15%."
         OnActivateCard=ActivateMovementSpeed
         CardID="SUPER_ADRENALINE"
     End Object
@@ -690,17 +685,21 @@ defaultproperties
         OnActivateCard=ActivateCriticalHit
     End Object
     DeckCardObjectList(26)=TurboCard'CriticalHit'
+    
 
-    Begin Object Name=TooMuchForZBlock Class=TurboCard_Super
-        CardName(0)="Too Much"
-        CardName(1)="For zBlock"
-        CardDescriptionList(0)="Increases player"
-        CardDescriptionList(1)="air control"
-        CardDescriptionList(2)="significantly."
-        CardID="SUPER_ZBLOCK"
-        OnActivateCard=ActivateTooMuchForZBlock
+    Begin Object Name=RackEmUp Class=TurboCard_Super
+        CardName(0)="Rack'em'Up"
+        CardDescriptionList(0)="Headshots increase"
+        CardDescriptionList(1)="headshot damage by"
+        CardDescriptionList(2)="5% per headshot to"
+        CardDescriptionList(3)="a maximum of 50%."
+        CardDescriptionList(4)="Resets after 10"
+        CardDescriptionList(5)="seconds of not"
+        CardDescriptionList(6)="scoring a headshot."
+        OnActivateCard=ActivateRackEmUp
+        CardID="SUPER_RACKEMUP"
     End Object
-    DeckCardObjectList(27)=TurboCard'TooMuchForZBlock'
+    DeckCardObjectList(27)=TurboCard'RackEmUp'
 
     Begin Object Name=DeEvolution Class=TurboCard_Super
         CardName(0)="De-Evolution"
@@ -760,8 +759,6 @@ defaultproperties
         CardDescriptionList(1)="increase critical"
         CardDescriptionList(2)="hit chance by 50%"
         CardDescriptionList(3)="for 5 seconds."
-        CardDescriptionList(4)="Has a 10 second"
-        CardDescriptionList(5)="cooldown."
         OnActivateCard=ActivatePerpetuallyCritical
         CardID="SUPER_PERPCRITICAL"
     End Object
@@ -793,28 +790,13 @@ defaultproperties
         CardName(0)="Epinephrine"
         CardDescriptionList(0)="Increases player"
         CardDescriptionList(1)="movement speed by"
-        CardDescriptionList(2)="50% and reduces"
-        CardDescriptionList(3)="damage taken by 50%"
+        CardDescriptionList(2)="30% and reduces"
+        CardDescriptionList(3)="damage taken by 25%"
         CardDescriptionList(4)="for 5 seconds when"
         CardDescriptionList(5)="healed by another"
-        CardDescriptionList(6)="player. Has a 10"
-        CardDescriptionList(7)="second cooldown."
+        CardDescriptionList(6)="player."
         OnActivateCard=ActivateEpinephrine
         CardID="SUPER_EPINE"
     End Object
     DeckCardObjectList(36)=TurboCard'Epinephrine'
-
-    Begin Object Name=RackEmUp Class=TurboCard_Super
-        CardName(0)="Rack'em'Up"
-        CardDescriptionList(0)="Headshots increase"
-        CardDescriptionList(1)="headshot damage by"
-        CardDescriptionList(2)="2% per headshot to"
-        CardDescriptionList(3)="a maximum of 30%."
-        CardDescriptionList(4)="Resets after 5"
-        CardDescriptionList(5)="seconds of not"
-        CardDescriptionList(6)="scoring a headshot."
-        OnActivateCard=ActivateRackEmUp
-        CardID="SUPER_RACKEMUP"
-    End Object
-    DeckCardObjectList(37)=TurboCard'RackEmUp'
 }

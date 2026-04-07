@@ -351,7 +351,7 @@ function int NetDamage(int OriginalDamage, int Damage, Pawn Injured, Pawn Instig
 
         if (IsInHealingBoostTime(InjuredCardInfo))
         {
-            DamageMultiplier *= 0.5f;
+            DamageMultiplier *= 0.75f;
         }
         
         DamageMultiplier *= DamageTakenMultiplier;

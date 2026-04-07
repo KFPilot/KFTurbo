@@ -43,7 +43,7 @@ final function RewardHealedHealth(Pawn Instigator, Pawn Target, int HealingAmoun
         return;
     }
 
-    if (ReciprocalHealthMultiplier > 0.f)
+    if (HealingAmount > 0 && ReciprocalHealthMultiplier > 0.f)
     {
         ReciprocateHeal(Instigator, HealingAmount);
     }
