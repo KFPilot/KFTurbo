@@ -22,6 +22,7 @@ var globalconfig bool bWantsKeepWeapons, bEnableCrosshairs, bWantsDrawHitboxes;
 struct MonsterRespawnConfig
 {
 	var bool bRespawn;
+	var float RespawnDelay;
 };
 var globalconfig MonsterRespawnConfig RespawnConfig;
 var TestMonsterSpawner RespawningSpawner;
@@ -746,6 +747,10 @@ simulated function bool IsAutoRespawnEnabled()
 {
 	return RespawnConfig.bRespawn;
 }
+simulated function float GetAutoRespawnDelay()
+{
+	return RespawnConfig.RespawnDelay;
+}
 
 simulated function SetRespawnSettings(MonsterRespawnConfig InRespawnConfig)
 {
@@ -780,4 +785,6 @@ defaultproperties
 	
 	HUDBaseClass=class'KFTTHUD'
 	LoginMenuBaseClass=class'KFTTLoginMenu'
+
+	RespawnConfig=(bRespawn=false,RespawnDelay=1.f)
 }

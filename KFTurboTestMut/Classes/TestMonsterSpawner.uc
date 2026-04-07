@@ -10,6 +10,7 @@ var class<KFMonster> MonsterClass;
 var KFTTPlayerController LastSpawnInstigator;
 var KFMonster LastSpawnedMonster;
 var float NextSpawnTime;
+var float NextAutoSpawnTime;
 
 function PostBeginPlay()
 {
@@ -71,6 +72,7 @@ function SpawnMonster()
 		return;
 	}
 
+	NextAutoSpawnTime = -1.f;
 	LastSpawnedMonster = Spawn(MonsterClass, Self,, Location, Rotation);
 
 	if (LastSpawnedMonster == None || LastSpawnInstigator == None || LastSpawnInstigator.Pawn == None)
@@ -148,7 +150,14 @@ Begin:
 		
 		if (LastSpawnedMonster == None || LastSpawnedMonster.Health <= 0)
 		{
-			SpawnMonster();
+			if (NextAutoSpawnTime < 0.f)
+			{
+				NextAutoSpawnTime = Level.TimeSeconds + LastSpawnInstigator.GetAutoRespawnDelay();
+			}
+			else if (NextAutoSpawnTime <= Level.TimeSeconds)
+			{
+				SpawnMonster();
+			}
 		}
 
 		Sleep(0.1f);
@@ -164,4 +173,6 @@ defaultproperties
 	Texture=Texture'Gameplay.S_SpecialEvent'
 	CollisionRadius=0
     CollisionHeight=0
+
+	NextAutoSpawnTime=-1.f
 }

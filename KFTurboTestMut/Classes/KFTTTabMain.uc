@@ -9,6 +9,7 @@ var automated moNumericEdit nu_NumPlayers;
 var automated moComboBox co_PerkName;
 var automated moFloatEdit fl_GameSpeed;
 var automated moCheckbox ch_KeepWeapons, ch_EnableCrosshairs, ch_DrawHitboxes, ch_RespawnMonsters;
+var automated moFloatEdit fl_RespawnMonstersDelay;
 
 var array<GUIButton> LColumn, RColumn;
 
@@ -40,6 +41,7 @@ function InitComponent(GUIController MyController, GUIComponent MyOwner) {
 	
 	sb_TopRight.ManageComponent(ch_KeepWeapons);
 	sb_TopRight.ManageComponent(ch_RespawnMonsters);
+    sb_TopRight.ManageComponent(fl_RespawnMonstersDelay);
 	sb_TopRight.ManageComponent(ch_DrawHitboxes);
 	sb_TopRight.ManageComponent(ch_EnableCrosshairs);
 	
@@ -172,15 +174,18 @@ function InternalOnChange(GUIComponent Sender) {
 			PC.SetDrawHitboxes(ch_DrawHitboxes.IsChecked());
 			break;
         case ch_RespawnMonsters:
-            UpdateRespawnConfig(ch_RespawnMonsters.IsChecked());
+        case fl_RespawnMonstersDelay:
+            UpdateRespawnConfig();
+            break;
 	}
 }
 
-function UpdateRespawnConfig(bool bRespawn)
+function UpdateRespawnConfig()
 {
     local KFTTPlayerController.MonsterRespawnConfig RespawnConfig;
     RespawnConfig = PC.RespawnConfig;
-    RespawnConfig.bRespawn = bRespawn;
+    RespawnConfig.bRespawn = ch_RespawnMonsters.IsChecked();
+    RespawnConfig.RespawnDelay = fl_RespawnMonstersDelay.GetValue();
     PC.SetRespawnSettings(RespawnConfig);
 }
 
@@ -464,13 +469,24 @@ defaultproperties
 
      Begin Object Class=moCheckBox Name=RespawnMonsters
          Caption="Auto Respawn Monsters"
-         OnCreateComponent=DrawHitboxes.InternalOnCreateComponent
+         OnCreateComponent=RespawnMonsters.InternalOnCreateComponent
          Hint="Automatically respawn spawned monsters when they are killed."
          TabOrder=13
          OnChange=KFTTTabMain.InternalOnChange
          OnLoadINI=KFTTTabMain.InternalOnLoadINI
      End Object
      ch_RespawnMonsters=moCheckBox'KFTurboTestMut.KFTTTabMain.RespawnMonsters'
+
+     Begin Object Class=moFloatEdit Name=MonsterRespawnDelayFloat
+         MinValue=0.f
+         MaxValue=10.f
+         Caption="Auto Respawn Delay"
+         OnCreateComponent=fl_RespawnMonstersDelay.InternalOnCreateComponent
+         Hint="Adjust the delay for auto monster respawn."
+         TabOrder=14
+         OnChange=KFTTTabMain.InternalOnChange
+     End Object
+     fl_RespawnMonstersDelay=moFloatEdit'MonsterRespawnDelayFloat'
 
      OnPreDraw=KFTTTabMain.InternalOnPreDraw
 }
