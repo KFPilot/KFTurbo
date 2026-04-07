@@ -664,6 +664,19 @@ function RemoveActiveCard(TurboCard Card)
     }
 }
 
+function ActivateRandomGoodCard()
+{
+    local TurboCard Card;
+    if (GoodGameDeck == None)
+    {
+        return;
+    }
+
+    GoodGameDeck.OnDeckDraw(Self);
+    Card = GoodGameDeck.DrawRandomCard();
+    SelectCard(Card);
+}
+
 function ActivateRandomSuperCard()
 {
     local TurboCard Card;

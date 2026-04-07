@@ -370,6 +370,15 @@ function ActivateRackEmUp(TurboCardGameplayManager GameplayManager, TurboCard Ca
     Card.UpdateFlag(GameplayManager.PlayerHeadshotsIncreaseHeadshotDamage, bActivate);
 }
 
+function ActivateTheLittleThings(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
+{
+    GameplayManager.GrantRandomGoodCard();
+    GameplayManager.GrantRandomGoodCard();
+    GameplayManager.GrantRandomGoodCard();
+    GameplayManager.GrantRandomGoodCard();
+    GameplayManager.GrantRandomGoodCard();
+}
+
 defaultproperties
 {
     Begin Object Name=Cleanse Class=TurboCard_Super
@@ -799,4 +808,15 @@ defaultproperties
         CardID="SUPER_EPINE"
     End Object
     DeckCardObjectList(36)=TurboCard'Epinephrine'
+
+    Begin Object Name=TheLittleThings Class=TurboCard_Super
+        CardName(0)="The Little"
+        CardName(1)="Things In"
+        CardName(2)="Life Matter"
+        CardDescriptionList(0)="Draw 5 random"
+        CardDescriptionList(1)="good cards."
+        OnActivateCard=ActivateTheLittleThings
+        CardID="SUPER_THELITTLETHINGS"
+    End Object
+    DeckCardObjectList(37)=TurboCard'TheLittleThings'
 }

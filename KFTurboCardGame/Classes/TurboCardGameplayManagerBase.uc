@@ -288,6 +288,11 @@ function GrantAllPlayersArmor()
     }
 }
 
+function GrantRandomGoodCard()
+{
+    CardReplicationInfo.ActivateRandomGoodCard();
+}
+
 function GrantRandomSuperCard()
 {
     CardReplicationInfo.ActivateRandomSuperCard();
