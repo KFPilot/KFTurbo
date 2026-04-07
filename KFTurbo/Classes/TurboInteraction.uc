@@ -756,7 +756,11 @@ simulated function SetAutoAdjustNetspeed(bool bEnabled)
 
 	bAutoAdjustNetspeed = bEnabled;
 	SaveConfig();
-	ApplyNetspeedAdjustment();
+
+	if (bAutoAdjustNetspeed)
+	{
+		ApplyNetspeedAdjustment();
+	}
 }
 
 static final function bool GetAutoAdjustNetSpeed(TurboPlayerController PlayerController)

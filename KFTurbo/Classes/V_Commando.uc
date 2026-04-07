@@ -169,9 +169,9 @@ static function float GetAmmoPickupMod(KFPlayerReplicationInfo KFPRI, KFAmmuniti
 
 	Multiplier = 1.f;
 
-	if ((BullpupAmmo(Other) != None || AK47Ammo(Other) != None || SCARMK17Ammo(Other) != None || M4Ammo(Other) != None
+	if (AK47Ammo(Other) != None || SCARMK17Ammo(Other) != None || M4Ammo(Other) != None
 		|| ThompsonAmmo(Other) != None || ThompsonDrumAmmo(Other) != None || SPThompsonAmmo(Other) != None
-		|| GoldenAK47Ammo(Other) != None || CamoM4Ammo(Other) != None || NeonAK47Ammo(Other) != None))
+		|| GoldenAK47Ammo(Other) != None || CamoM4Ammo(Other) != None || NeonAK47Ammo(Other) != None)
 	{
 		Multiplier *= LerpStat(KFPRI, 1.f, 1.25f);
 	}
@@ -246,7 +246,6 @@ static function int AddDamage(KFPlayerReplicationInfo KFPRI, KFMonster Injured, 
 	case class'DamTypeBullpup' :
 	case class'DamTypeAK47AssaultRifle' :
 	case class'DamTypeSCARMK17AssaultRifle' :
-	case class'DamTypeAK47AssaultRifle' :
 
 	case class'W_MKb42_DT':
 	case class'W_M4203_DT_Bullet' :

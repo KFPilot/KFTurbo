@@ -1,4 +1,4 @@
-//Killing Floor Turbo W_V_ThompsonSMG_Foundry_Attachment
+//Killing Floor Turbo TestMonsterSpawner
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
 class TestMonsterSpawner extends Keypoint
@@ -115,7 +115,7 @@ state RespawnMonster
 	{
 		Global.SetLastSpawnInstigator(NewLastSpawnInstigator);
 
-		if (NewLastSpawnInstigator == None || !NewLastSpawnInstigator.IsAutoRespawnEnabled())
+		if (LastSpawnInstigator == None || !LastSpawnInstigator.IsAutoRespawnEnabled())
 		{
 			GotoState('');
 		}
