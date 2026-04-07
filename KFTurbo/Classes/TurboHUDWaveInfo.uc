@@ -608,7 +608,7 @@ simulated final function DrawKillFeedEntry(Canvas C, out float DrawY, out KillFe
 		return;
 	}
 
-	bIsElite = class'PawnHelper'.static.IsEliteMonster(Entry.KilledMonster);
+	bIsElite = class'PawnHelper'.static.GetMonsterTier(Entry.KilledMonster) >= Elite;
 
 	if (bIsElite)
 	{
