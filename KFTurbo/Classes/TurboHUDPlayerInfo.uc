@@ -342,7 +342,7 @@ simulated function Render(Canvas C)
 	UpdateBarLength();
 
 	//Sample indices from PlayerInfoDataDistanceOrderList instead of directly iterating so draws are depth-ordered.
-	for (Index = PlayerInfoDataDistanceOrderList.Length - 1; Index >= 0; Index--)
+	for (Index = 0; Index < PlayerInfoDataDistanceOrderList.Length; Index++)
 	{
 		PlayerInfoIndex = PlayerInfoDataDistanceOrderList[Index];
 		HumanPawn = PlayerInfoDataList[PlayerInfoIndex].HumanPawn;
