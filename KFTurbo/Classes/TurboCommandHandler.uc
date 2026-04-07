@@ -48,6 +48,11 @@ static final function BroadcastCommand(TurboPlayerController CommandInstigator, 
 	CommandInstigator.Level.Game.BroadcastLocalized(CommandInstigator.Level.GRI, class'TurboAdminLocalMessage', Data, CommandInstigator.PlayerReplicationInfo);
 }		
 
+static final function BroadcastCommandToPlayer(TurboPlayerController CommandInstigator, int Data)
+{
+	CommandInstigator.ReceiveLocalizedMessage(class'TurboAdminLocalMessage', Data, CommandInstigator.PlayerReplicationInfo);
+}		
+
 //Unrealscript has problems resolving enums that are declared externally.
 //These functions allow for a specific EAdminCommand enum to specified directly instead of having to use their byte representation.
 static final function int Encode(TurboAdminLocalMessage.EAdminCommand Type)
@@ -338,12 +343,12 @@ function ShowSettings(TurboPlayerController CommandInstigator)
 	
 	TurboGameType = KFTurboGameType(CommandInstigator.Level.Game);
     KFTurboMut = class'KFTurboMut'.static.FindMutator(TurboGameType);
-	BroadcastCommand(CommandInstigator, EncodeInt(AC_GetFakedPlayerCount, TurboGameType.GetFakedPlayerCount()));
-	BroadcastCommand(CommandInstigator, EncodeInt(AC_GetPlayerHealthCount, TurboGameType.GetForcedPlayerHealthCount()));
-	BroadcastCommand(CommandInstigator, EncodeFloat(AC_GetSpawnRateModifier, TurboGameType.AdminSpawnRateModifier));
-	BroadcastCommand(CommandInstigator, EncodeFloat(AC_GetMaxMonstersModifier, TurboGameType.AdminMaxMonstersModifier));
-	BroadcastCommand(CommandInstigator, EncodeBool(AC_GetMonsterWanderEnabled, !KFTurboMut.bSkipInitialMonsterWander));
-	BroadcastCommand(CommandInstigator, EncodeBool(AC_GetZedTimeEnabled, TurboGameType.IsZedTimeEnabled()));
+	BroadcastCommandToPlayer(CommandInstigator, EncodeInt(AC_GetFakedPlayerCount, TurboGameType.GetFakedPlayerCount()));
+	BroadcastCommandToPlayer(CommandInstigator, EncodeInt(AC_GetPlayerHealthCount, TurboGameType.GetForcedPlayerHealthCount()));
+	BroadcastCommandToPlayer(CommandInstigator, EncodeFloat(AC_GetSpawnRateModifier, TurboGameType.AdminSpawnRateModifier));
+	BroadcastCommandToPlayer(CommandInstigator, EncodeFloat(AC_GetMaxMonstersModifier, TurboGameType.AdminMaxMonstersModifier));
+	BroadcastCommandToPlayer(CommandInstigator, EncodeBool(AC_GetMonsterWanderEnabled, !KFTurboMut.bSkipInitialMonsterWander));
+	BroadcastCommandToPlayer(CommandInstigator, EncodeBool(AC_GetZedTimeEnabled, TurboGameType.IsZedTimeEnabled()));
 }
 
 defaultproperties
