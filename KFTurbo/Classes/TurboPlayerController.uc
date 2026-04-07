@@ -54,6 +54,8 @@ replication
 
 simulated function PostBeginPlay()
 {
+	bDynamicNetSpeed = false;
+	
 	//For some reason this really does not like getting set!
 	if (class<TurboPlayerReplicationInfo>(PlayerReplicationInfoClass) == None)
 	{
