@@ -320,7 +320,8 @@ function Tick(float DeltaTime)
     if (Level.NetMode != NM_DedicatedServer && !bHasInitializedTurboInteraction)
     {
         TurboPlayerController(Level.GetLocalPlayerController()).SetupTurboInteraction();
-        if (TurboPlayerController(Level.GetLocalPlayerController()).TurboInteraction != None)
+        if (TurboPlayerController(Level.GetLocalPlayerController()).TurboInteraction != None
+            && TurboPlayerController(Level.GetLocalPlayerController()).TurboChatInteraction != None)
         {
             bHasInitializedTurboInteraction = true;
 
