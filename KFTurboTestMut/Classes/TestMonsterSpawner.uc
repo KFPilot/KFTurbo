@@ -103,7 +103,7 @@ function KillSpawnedMonster()
 {
 	if (LastSpawnedMonster != None && LastSpawnedMonster.Health > 0)
 	{
-		LastSpawnedMonster.Died(None, None, LastSpawnedMonster.Location);
+		LastSpawnedMonster.Died(None, class'KFMod.DamTypeDwarfAxe', LastSpawnedMonster.Location);
 	}
 }
 
