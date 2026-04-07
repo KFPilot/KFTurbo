@@ -12,6 +12,7 @@ var automated moCheckbox UseBaseGameChatFontBox;
 var automated moComboBox FontLocaleComboBox;
 var automated moButton NeonWeaponConfigureButton;
 var automated moCheckbox AltF4EnabledBox;
+var automated moCheckbox AutoIncreaseNetSpeed;
 
 var string LocaleOptionList[5]; //5 for now (ENG/JPN/CYR/KOR/THA). KOR is now added (we are just repacking someone else's work from 2010 though...)
 
@@ -63,6 +64,8 @@ function InitComponent(GUIController MyController, GUIComponent MyOwner)
     MiddleSection.ManageComponent(NeonWeaponConfigureButton);
     MiddleSection.ManageComponent(AltF4EnabledBox);
     AltF4EnabledBox.Checked(class'TurboInteraction'.static.GetIsAltF4Enabled(PlayerController));
+    MiddleSection.ManageComponent(AutoIncreaseNetSpeed);
+    AutoIncreaseNetSpeed.Checked(class'TurboInteraction'.static.GetAutoAdjustNetSpeed(PlayerController));
     
     if (PlayerController.HasExtraOptions())
     {
@@ -218,6 +221,20 @@ function OnAltF4EnabledChange(GUIComponent Sender)
     TurboInteraction.SetAltF4Enabled(AltF4EnabledBox.IsChecked());
 }
 
+function OnAutoAdjustNetspeedChange(GUIComponent Sender)
+{
+	local TurboInteraction TurboInteraction;
+
+    TurboInteraction = TurboPlayerController(PlayerOwner()).TurboInteraction;
+
+    if (TurboInteraction == None || TurboInteraction.bAutoAdjustNetspeed == AutoIncreaseNetSpeed.IsChecked())
+    {
+        return;
+    }
+
+    TurboInteraction.SetAutoAdjustNetspeed(AutoIncreaseNetSpeed.IsChecked());
+}
+
 defaultproperties
 {
     LocaleOptionList(0)="ENG"
@@ -335,4 +352,14 @@ defaultproperties
         OnChange=OnAltF4EnabledChange
     End Object
     AltF4EnabledBox=moCheckbox'AltF4EnabledBoxButton'
+
+    Begin Object Class=TurboOptionCheckBox Name=AutoIncreaseNetSpeedButton
+        Caption="Auto Adjust Netspeed"
+        OnCreateComponent=UseBaseGameChatFont.InternalOnCreateComponent
+        Hint="Will adjust netspeed on initialization."
+        TabOrder=12
+        OnChange=OnAutoAdjustNetspeedChange
+    End Object
+    AutoIncreaseNetSpeed=moCheckbox'AutoIncreaseNetSpeedButton'
+    
 }

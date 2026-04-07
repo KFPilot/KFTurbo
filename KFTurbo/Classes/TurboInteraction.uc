@@ -43,6 +43,10 @@ var globalconfig bool bAltF4Exits;
 
 var bool bIsAltPressed;
 
+var globalconfig bool bAutoAdjustNetspeed;
+//Set to 15000 by default. This is what my bind does and I set it after reading messages in the OldUnreal discord so it should be fine...
+var globalconfig int AdjustedNetspeed;
+
 enum EDetectedLocale
 {
 	Latin,
@@ -121,6 +125,11 @@ simulated function OnInteractionCreated()
 	}
 
 	InitializeFontLocale();
+
+	if (bAutoAdjustNetspeed)
+	{
+		ApplyNetspeedAdjustment();
+	}
 }
 
 simulated function InitializeTurboInteraction()
@@ -738,6 +747,36 @@ static final function bool GetIsAltF4Enabled(TurboPlayerController PlayerControl
 	return false;
 }
 
+simulated function SetAutoAdjustNetspeed(bool bEnabled)
+{
+	if (bEnabled == bAutoAdjustNetspeed)
+	{
+		return;
+	}
+
+	bAutoAdjustNetspeed = bEnabled;
+	SaveConfig();
+	ApplyNetspeedAdjustment();
+}
+
+static final function bool GetAutoAdjustNetSpeed(TurboPlayerController PlayerController)
+{
+	if (PlayerController != None && PlayerController.TurboInteraction != None)
+	{
+		return PlayerController.TurboInteraction.bAutoAdjustNetspeed;
+	}
+
+	return false;
+}
+
+simulated function ApplyNetspeedAdjustment()
+{
+	local int UsedNetspeed;
+	UsedNetspeed = Max(Max(AdjustedNetspeed, ViewportOwner.CurrentNetspeed), ViewportOwner.ConfiguredInternetSpeed);
+	ViewportOwner.ConfiguredInternetSpeed = AdjustedNetspeed;
+	ViewportOwner.Actor.SetNetspeed(UsedNetspeed);
+}
+
 defaultproperties
 {
 	bHasInitializedInteraction=false
@@ -768,4 +807,6 @@ defaultproperties
 	
 	bIsAltPressed=false
 	bUseBaseGameFontForChat=true
+
+	AdjustedNetspeed=15000
 }
