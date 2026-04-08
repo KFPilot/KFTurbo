@@ -481,7 +481,7 @@ defaultproperties
          MinValue=0.f
          MaxValue=10.f
          Caption="Auto Respawn Delay"
-         OnCreateComponent=fl_RespawnMonstersDelay.InternalOnCreateComponent
+         OnCreateComponent=MonsterRespawnDelayFloat.InternalOnCreateComponent
          Hint="Adjust the delay for auto monster respawn."
          TabOrder=14
          OnChange=KFTTTabMain.InternalOnChange
