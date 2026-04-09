@@ -164,6 +164,7 @@ simulated function CollectAllPhysicsVolumes()
             continue;
         }
 
+        Entry.Volume = Volume;
         Entry.OriginalFogColor = Volume.DistanceFogColor;
         Entry.OriginalFogStart = Volume.DistanceFogStart;
         Entry.OriginalFogEnd = Volume.DistanceFogEnd;
