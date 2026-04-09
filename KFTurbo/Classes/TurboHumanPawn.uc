@@ -650,6 +650,7 @@ function bool ServerBuyAmmo(Class<Ammunition> AClass, bool bOnlyClip)
 	local int c;
 	local float UsedMagCapacity;
 	local Boomstick DBShotty;
+	local KFPlayerReplicationInfo KFPRI;
 
 	if (!CanBuyNow() || AClass == None)
 	{
@@ -676,12 +677,13 @@ function bool ServerBuyAmmo(Class<Ammunition> AClass, bool bOnlyClip)
 	}
 
 	DBShotty = Boomstick(KW);
+	KFPRI = KFPlayerReplicationInfo(PlayerReplicationInfo);
 
 	AM.MaxAmmo = AM.default.MaxAmmo;
 
-	if (KFPlayerReplicationInfo(PlayerReplicationInfo) != none && KFPlayerReplicationInfo(PlayerReplicationInfo).ClientVeteranSkill != none)
+	if (KFPRI != none && KFPRI.ClientVeteranSkill != none)
 	{
-		AM.MaxAmmo = int(float(AM.MaxAmmo) * KFPlayerReplicationInfo(PlayerReplicationInfo).ClientVeteranSkill.static.AddExtraAmmoFor(KFPlayerReplicationInfo(PlayerReplicationInfo), AClass));
+		AM.MaxAmmo = int(float(AM.MaxAmmo) * KFPRI.ClientVeteranSkill.static.AddExtraAmmoFor(KFPRI, AClass));
 	}
 
 	if (AM.AmmoAmount >= AM.MaxAmmo)
@@ -690,7 +692,12 @@ function bool ServerBuyAmmo(Class<Ammunition> AClass, bool bOnlyClip)
 		return false;
 	}
 
-	Price = class<KFWeaponPickup>(KW.PickupClass).default.AmmoCost * KFPlayerReplicationInfo(PlayerReplicationInfo).ClientVeteranSkill.static.GetAmmoCostScaling(KFPlayerReplicationInfo(PlayerReplicationInfo), GetCorrectedWeaponPickup(KW.PickupClass)); // Clip price.
+
+	Price = class<KFWeaponPickup>(KW.PickupClass).default.AmmoCost;
+	if (KFPRI != none && KFPRI.ClientVeteranSkill != none)
+	{
+		Price *= KFPRI.ClientVeteranSkill.static.GetAmmoCostScaling(KFPRI, GetCorrectedWeaponPickup(KW.PickupClass)); // Clip price.
+	}
 
 	if (KW.bHasSecondaryAmmo && AClass == KW.FireModeClass[1].default.AmmoClass)
 	{
@@ -708,15 +715,15 @@ function bool ServerBuyAmmo(Class<Ammunition> AClass, bool bOnlyClip)
 
 	if (bOnlyClip)
 	{
-		if (KFPlayerReplicationInfo(PlayerReplicationInfo) != none && KFPlayerReplicationInfo(PlayerReplicationInfo).ClientVeteranSkill != none)
+		if (KFPRI != none && KFPRI.ClientVeteranSkill != none)
 		{
 			if ( class<W_Huskgun_Pickup>(KW.PickupClass) != None )
 			{
-				c = UsedMagCapacity * KFPlayerReplicationInfo(PlayerReplicationInfo).ClientVeteranSkill.static.AddExtraAmmoFor(KFPlayerReplicationInfo(PlayerReplicationInfo), AM.Class);
+				c = UsedMagCapacity * KFPRI.ClientVeteranSkill.static.AddExtraAmmoFor(KFPRI, AM.Class);
 			}
 			else
 			{
-				c = UsedMagCapacity * KFPlayerReplicationInfo(PlayerReplicationInfo).ClientVeteranSkill.static.GetMagCapacityMod(KFPlayerReplicationInfo(PlayerReplicationInfo), KW);
+				c = UsedMagCapacity * KFPRI.ClientVeteranSkill.static.GetMagCapacityMod(KFPRI, KW);
 			}
 		}
 		else
