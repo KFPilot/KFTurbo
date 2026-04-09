@@ -302,7 +302,7 @@ function KillRandomMonster()
 
     MonsterTier = class'PawnHelper'.static.GetMonsterTier(SelectedMonster.Class);
     
-    if (MonsterTier != Trash || MonsterTier != Special)
+    if (MonsterTier <= Special)
     {
         return;
     }
