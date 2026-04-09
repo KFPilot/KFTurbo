@@ -165,7 +165,7 @@ simulated function bool ProcessVoteKeyPressEvent(Interactions.EInputKey Key)
         Offset = IK_0;
         KeyVoteIndex = int(Key) - int(Offset);
 
-        if (class'TurboCardReplicationInfo'.static.ResolveCard(TurboCardReplicationInfo.SelectableCardList[KeyVoteIndex - 1]) == None)
+        if (KeyVoteIndex < 0 || KeyVoteIndex > 9 || class'TurboCardReplicationInfo'.static.ResolveCard(TurboCardReplicationInfo.SelectableCardList[KeyVoteIndex - 1]) == None)
         {
             KeyVoteIndex = 0;
         }
