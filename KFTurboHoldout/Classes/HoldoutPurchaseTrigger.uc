@@ -81,7 +81,7 @@ simulated function string GetMarkerName()
 
 simulated event TriggerEvent(Name EventName, Actor Other, Pawn EventInstigator)
 {
-	if (Role != ROLE_Authority || EventInstigator.Role != ROLE_Authority || EventInstigator == None || EventInstigator.Role != ROLE_Authority)
+	if (Role != ROLE_Authority || EventInstigator == None || EventInstigator.Role != ROLE_Authority || EventInstigator.Role != ROLE_Authority)
 	{
 		return;
 	}
