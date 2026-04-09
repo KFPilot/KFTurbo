@@ -97,6 +97,11 @@ function RelayMessage(PlayerController Sender, string Message)
 {
     local RelayEntry Entry;
 
+    if (Sender == None || Sender.PlayerReplicationInfo == None)
+    {
+        return;
+    }
+
     Entry.SteamID = Sender.GetPlayerIDHash();
     Entry.PlayerName = Sender.PlayerReplicationInfo.PlayerName;
     Entry.Message = Message;
