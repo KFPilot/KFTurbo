@@ -76,6 +76,11 @@ function SubmitMapVote(int MapIndex, int GameData, Actor Voter)
 	local int VoteCount;
 	local int GameIndex, DifficultyIndex;
 
+	if (PlayerController(Voter) == None)
+	{
+		return;
+	}
+
 	if (bLevelSwitchPending)
 	{
 		return;
