@@ -530,7 +530,7 @@ function EvaluateVote(Name Reason)
     UpdateVoteCounts();
 
     //If even the total vote number is not over the VotePercent threshold, don't bother checking.
-    if (Reason != 'Expired' && AdminOverrideVote == EVote.Unset && ((float(TotalVoteCount) / float(TotalVoterCount)) < VotePercent))
+    if (Reason != 'Expired' && AdminOverrideVote == EVote.Unset && (TotalVoterCount == 0 || ((float(TotalVoteCount) / float(TotalVoterCount)) < VotePercent)))
     {
         return;
     }
