@@ -22,6 +22,11 @@ final function string ApplyGradientToString(String BaseString)
 	local int StringIndex;
 	local int GradientIndex;
 
+	if (BlueGradientSteps == 0)
+	{
+		return BaseString;
+	}
+
 	GradientString = "";
 	GradientIndex = 0;
 
@@ -93,7 +98,7 @@ function PerformUpdate()
 
 		ServerState 		= FullCachedServerState;
 		CacheRefreshTime 	= Level.TimeSeconds + 9.f; //Reduced interval
-		bInitialStateCached = false;
+		bInitialStateCached = true;
 	}
 	else if (Level.Game.GetNumPlayers() != CachePlayerCount)
 	{
@@ -143,7 +148,7 @@ function ApplyServerFlags(out GameInfo.ServerResponseLine ServerState)
 		ServerState.Flags = ServerState.Flags | 16;
 	}
 
-	if (Level.Game.AccessControl.RequiresPassword())
+	if (Level.Game.AccessControl != None && Level.Game.AccessControl.RequiresPassword())
 	{
 		ServerState.Flags = ServerState.Flags | 1;
 	}
