@@ -9,6 +9,7 @@ var KFGameType KFGT;
 
 enum ELoadoutType
 {
+	LT_None,
 	LT_FleshpoundLoadout,
 	LT_ScrakeLoadout,
 	LT_EarlyWave,
@@ -133,6 +134,7 @@ function Timer()
 	if (KFGT.bWaitingToStartMatch)
 	{
 		SetTimer(0.5f, false);
+		return;
 	}
 
 	if (KFTurboGameType(Level.Game) != None)
@@ -197,28 +199,29 @@ Begin:
 		GotoState('AwaitingWaveCompletion');
 	}
 
+SetupLoadoutTypesSubState:
 	Sleep(0.1f);
 
 	if (!SetupLoadoutTypes())
 	{
 		log ("Failed SetupLoadoutTypes!", 'KFTurboRandomizer');
-		GotoState('AwaitingWaveCompletion');
+		Goto('SetupLoadoutTypesSubState');
 		Stop;
 	}
 
+SelectLoadoutsSubState:
 	Sleep(0.1f);
 
 	if (!SelectLoadouts())
 	{
 		log ("Failed SetupLoadoutTypes!", 'KFTurboRandomizer');
-		GotoState('AwaitingWaveCompletion');
+		Goto('SelectLoadoutsSubState');
 		Stop;
 	}
 
 	Sleep(0.1f);
 	Level.Game.BroadcastLocalizedMessage(class'TurboRandomizerLocalMessage', -1);
 	GotoState('ApplyingLoadouts');
-
 }
 
 state ApplyingLoadouts
@@ -226,14 +229,11 @@ state ApplyingLoadouts
 Begin:
 	if (PlayerLoadoutList.Length != 0)
 	{
-		Sleep(0.33f);
-
 		while (PlayerLoadoutList.Length > 0)
 		{
+			Sleep(0.1f);
 			ApplyLoadout(PlayerLoadoutList[PlayerLoadoutList.Length - 1]);
 			PlayerLoadoutList.Length = PlayerLoadoutList.Length - 1;
-			
-			Sleep(0.33f);
 		}
 	}
  
@@ -327,7 +327,7 @@ function bool SetupWaveLoadoutTypes(int PlayerCount, int TotalPlayerCount, out a
 		{
 			PlayerTypeCount--;
 			PlayerCount--;
-			RandomPlayerIndex = Rand(PendingPlayerLoadoutList.Length - 1);
+			RandomPlayerIndex = Rand(PendingPlayerLoadoutList.Length);
 			PendingPlayerLoadoutList[RandomPlayerIndex].LoadoutType = LT_FleshpoundLoadout;
 
 			PlayerLoadoutList[PlayerLoadoutList.Length] = PendingPlayerLoadoutList[RandomPlayerIndex];
@@ -423,13 +423,9 @@ function bool SetupBossLoadoutTypes(int PlayerCount, int TotalPlayerCount, out a
 		RandomPlayerIndex = Rand(PendingPlayerLoadoutList.Length - 1);
 		PendingPlayerLoadoutList[RandomPlayerIndex].LoadoutType = LT_PatriarchTypeB;
 
-		if (FRand() > 0.1f)
+		if (FRand() < 0.1f)
 		{
 			PendingPlayerLoadoutList[RandomPlayerIndex].LoadoutType = LT_PatriarchTypeB;
-		}
-		else
-		{
-			PendingPlayerLoadoutList[RandomPlayerIndex].LoadoutType = LT_PatriarchFunny;
 		}
 
 		PlayerLoadoutList[PlayerLoadoutList.Length] = PendingPlayerLoadoutList[RandomPlayerIndex];
@@ -447,6 +443,11 @@ function bool SelectLoadouts()
 	
 	for (PlayerIndex = 0; PlayerIndex < PlayerLoadoutList.Length; PlayerIndex++)
 	{
+		if (PlayerLoadoutList[PlayerIndex].Loadout != None)
+		{
+			continue;
+		}
+
 		switch (PlayerLoadoutList[PlayerIndex].LoadoutType)
 		{
 			case LT_FleshpoundLoadout:
@@ -483,7 +484,7 @@ function bool SelectLoadouts()
 				break;
 		}
 
-		bAssignedLoadout = PlayerLoadoutList[PlayerIndex].Loadout != None;
+		bAssignedLoadout = PlayerLoadoutList[PlayerIndex].Loadout != None && bAssignedLoadout;
 	}
 
 	return bAssignedLoadout;
@@ -495,6 +496,11 @@ static function KFWeapon CreateWeapon(KFHumanPawn HumanPawn, class<KFWeapon> Wea
 
 	Weapon = HumanPawn.Spawn(WeaponClass,,,HumanPawn.Location);
 	
+	if (Weapon == None)
+	{
+		Warn("KFTurboRandomizer attempted to create weapon class"@WeaponClass@"but failed.");
+		return None;
+	}
 	Weapon.GiveTo(HumanPawn);
 	Weapon.bCanThrow = false;
 	Weapon.MaxOutAmmo();
