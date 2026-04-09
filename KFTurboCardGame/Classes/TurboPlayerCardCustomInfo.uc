@@ -136,7 +136,7 @@ final function bool IsInCheatDeathGracePeriod()
 
 final function bool IsInPerpetualCriticalHitTime()
 {
-	if (PerpetualCriticalHitStartTime <= 0.f)
+	if (ServerTimeActor == None || PerpetualCriticalHitStartTime <= 0.f)
 	{
 		return false;
 	}
@@ -167,7 +167,7 @@ final simulated function PlayerThrewGrenade()
 
 final simulated function bool IsInGrenadeBuffTime()
 {
-	return LastGrenadeThrowTime > 0.f && (LastGrenadeThrowTime + GrenadeBoostTime > ServerTimeActor.GetServerTimeSeconds());
+	return ServerTimeActor != None && LastGrenadeThrowTime > 0.f && (LastGrenadeThrowTime + GrenadeBoostTime > ServerTimeActor.GetServerTimeSeconds());
 }
 
 final simulated function PlayerHealed()
@@ -178,7 +178,7 @@ final simulated function PlayerHealed()
 
 final simulated function bool IsInHealBoostTime()
 {
-	return LastHealBoostTime > 0.f && (LastHealBoostTime + HealBoostBoostTime > ServerTimeActor.GetServerTimeSeconds());
+	return ServerTimeActor != None && LastHealBoostTime > 0.f && (LastHealBoostTime + HealBoostBoostTime > ServerTimeActor.GetServerTimeSeconds());
 }
 
 final simulated function PlayerScoredHeadshot()
