@@ -243,13 +243,19 @@ function AddHitbox(KFMonster Zed) {
 	}
 }
 
-function RemoveHitbox(KFTTHeadHitbox Hitbox) {
-	local byte i;
-	
-	for (i = HeadHitboxes.Length - 1; i >= 0; i--) {
-		if (HeadHitboxes[i] == Hitbox) {
-			HeadHitboxes.Remove(i, 1);
-			break;
+function RemoveHitbox(KFTTHeadHitbox Hitbox)
+{
+	local int i;
+
+	if (HeadHitboxes.Length != 0)
+	{
+		for (i = HeadHitboxes.Length - 1; i >= 0; i--)
+		{
+			if (HeadHitboxes[i] == Hitbox)
+			{
+				HeadHitboxes.Remove(i, 1);
+				break;
+			}
 		}
 	}
 	
