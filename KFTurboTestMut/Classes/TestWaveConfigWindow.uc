@@ -10,7 +10,8 @@ function Update(TestLaneWaveManager NewManager)
 {
     Manager = NewManager;
     WaveNumber.SetIndex(Manager.WaveNumber);
-    PlayerCount.SetIndex(Manager.PlayerCount - 1);
+    PlayerCount.SetIndex(Manager.PlayerCount);
+    PlayerHealth.SetIndex(Manager.PlayerHealth);
 }
 
 function InitComponent(GUIController MyController, GUIComponent MyOwner)
