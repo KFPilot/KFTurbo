@@ -87,6 +87,7 @@ function bool PurchaseRoom(Pawn EventInstigator)
 		return false;
 	}
 
+	bIsPurchased = true;
 	EventInstigator.PlayerReplicationInfo.Score -= PurchasePrice;
 	
 	for (Index = 0; Index < PurchaseTriggerList.Length; Index++)
