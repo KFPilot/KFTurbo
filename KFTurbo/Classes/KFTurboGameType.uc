@@ -616,6 +616,12 @@ function ClearEndGame(){}
 function ShowPathTo(PlayerController P, int TeamNum)
 {
     local ShopVolume CurrentShop;
+
+    if (P == None || P.Pawn == None)
+    {
+        return;
+    }
+
     CurrentShop = KFGameReplicationInfo(GameReplicationInfo).CurrentShop;
 
     if (CurrentShop == None)
