@@ -13,7 +13,7 @@ static final function string IntToHex(int Number)
     local string Result;
     local int HexDigit;
 
-    if (Number == 0)
+    if (Number <= 0)
     {
         return "0";
     }
