@@ -31,7 +31,7 @@ final function SetFlag(TurboCard Card)
 
     for (Index = IDList.Length - 1; Index >= 0; Index--)
     {
-        if (IDList[Index] == Card.CardID)
+        if (IDList[Index] == ID)
         {
             return;
         }
@@ -44,10 +44,21 @@ final function SetFlag(TurboCard Card)
 
 final function ClearFlag(TurboCard Card)
 {
+    local string ID;
     local int Index;
+
+    if (Card != None && Card.CardID != "")
+    {
+        ID = Card.CardID;
+    }
+    else
+    {
+        ID = "NONE";
+    }
+
     for (Index = IDList.Length - 1; Index >= 0; Index--)
     {
-        if (IDList[Index] == Card.CardID)
+        if (IDList[Index] == ID)
         {
             IDList.Remove(Index, 1);
             bFlagSet = IDList.Length != 0;
