@@ -224,7 +224,7 @@ function PrepareSequence()
      while(BeatSize > 0 && BeatSquadList.Length != 0)
      {
           CurrentBeat[CurrentBeat.Length] = GetBeatSquad();
-          DebugLog ("- Added"@CurrentSequence[CurrentSequence.Length - 1]);
+          DebugLog ("- Added"@CurrentBeat[CurrentBeat.Length - 1]);
           BeatSize--;
      }
 }
