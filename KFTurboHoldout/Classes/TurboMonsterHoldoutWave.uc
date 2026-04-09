@@ -127,7 +127,7 @@ function InitializeForWave(int Wave)
      {
           BeatSize++;
 
-          MixInSquad[BeatInsertIndex++] = SquadList[ESquadIndex.Wave15Squad];
+          BeatSquad[BeatInsertIndex++] = SquadList[ESquadIndex.Wave15Squad];
 
           MaxMonsters++;
      }
@@ -144,7 +144,7 @@ function InitializeForWave(int Wave)
      {
           BeatSize++;
 
-          MixInSquad[BeatInsertIndex++] = SquadList[ESquadIndex.Wave15Squad];
+          BeatSquad[BeatInsertIndex++] = SquadList[ESquadIndex.Wave15Squad];
 
           MaxMonsters++;
      }
@@ -161,7 +161,7 @@ function InitializeForWave(int Wave)
      {
           BeatSize++;
 
-          MixInSquad[BeatInsertIndex++] = SquadList[ESquadIndex.Wave15Squad];
+          BeatSquad[BeatInsertIndex++] = SquadList[ESquadIndex.Wave15Squad];
 
           MaxMonsters++;
      }
