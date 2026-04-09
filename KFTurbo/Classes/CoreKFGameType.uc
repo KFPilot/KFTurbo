@@ -114,7 +114,7 @@ state MatchInProgress
 {
 	function float CalcNextSquadSpawnTime()
 	{
-		return Super.CalcNextSquadSpawnTime() / (GameWaveSpawnRateModifier * MapWaveSpawnRateModifier * AdminSpawnRateModifier);
+		return Super.CalcNextSquadSpawnTime() / FMax(GameWaveSpawnRateModifier * MapWaveSpawnRateModifier * AdminSpawnRateModifier, 0.0001f);
 	}
 
 	function DoWaveEnd()
