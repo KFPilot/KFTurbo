@@ -15,6 +15,16 @@ function PostBeginPlay()
 	
 	AssociatedActor = AssociatedSpawners[0];
 
+	if (AssociatedSpawners[0] == None)
+	{
+		Warn(Self@"failed to find actor with associated spawn tag at index 0.");
+	}
+	
+	if (AssociatedSpawners[1] == None)
+	{
+		Warn(Self@"failed to find actor with associated spawn tag at index 1.");
+	}
+
 	Super.PostBeginPlay();
 }
 
