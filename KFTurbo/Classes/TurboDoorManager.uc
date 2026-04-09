@@ -97,6 +97,7 @@ final function CheckUseTrigger(KFUseTrigger UseTrigger)
             Door.bSealed = false;
             Door.DoClose();
             Door.bSealed = bWasSealed;
+            Follower = Door.Follower;
 
             while (Follower != None)
             {
