@@ -121,6 +121,12 @@ function Timer()
     GameType = KFTurboGameType(Level.Game);
     GameReplicationInfo = TurboGameReplicationInfo(Level.GRI);
 
+    if (class'KFTurboMut'.static.FindMutator(Level.Game) == None)
+    {
+        SetTimer(0.1f + (FRand() * 0.15f), false);
+        return;
+    }
+
     BuildGameStateData();
     GotoState('AttemptResolve');
 }
