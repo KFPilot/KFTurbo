@@ -261,7 +261,7 @@ function bool PreventDeath(Pawn Killed, Controller Killer, class<DamageType> Dam
     if (bCheatDeathEnabled && Killed != None && Killed.PlayerReplicationInfo != None && PlayerController(Killed.Controller) != None)
     {
         PlayerCardInfo = FindCustomInfo(TurboPlayerReplicationInfo(Killed.PlayerReplicationInfo));
-        if (PlayerCardInfo != None && IsInCheatDeathGracePeriod(PlayerCardInfo) || AttemptCheatDeath(PlayerCardInfo, Killed, DamageType))
+        if (PlayerCardInfo != None && (IsInCheatDeathGracePeriod(PlayerCardInfo) || AttemptCheatDeath(PlayerCardInfo, Killed, DamageType)))
         {
             return true;
         }
@@ -816,6 +816,7 @@ function AddMassDetonationEntry(KFMonster KilledMonster, PlayerController Killer
     MassDetonationList[0].Controller = Killer;
 }
 
+//Only process one detonation per tick.
 function ProcessMassDetonationList()
 {
     local int Index;
