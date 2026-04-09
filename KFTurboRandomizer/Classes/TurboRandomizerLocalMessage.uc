@@ -7,6 +7,7 @@ var localized string LoadoutString;
 var localized string AnonymousUserString;
 
 var localized string ProvidingLoadoutString;
+var localized string ProvidingUnknownLoadoutString;
 
 static function string GetString(optional int Switch, optional PlayerReplicationInfo RelatedPRI_1, optional PlayerReplicationInfo RelatedPRI_2, optional Object OptionalObject)
 {
@@ -21,6 +22,12 @@ static function string GetString(optional int Switch, optional PlayerReplication
     }
 
     RandomizerLoadoutCollectionClass = class<KFTurboRandomizerLoadoutCollection>(OptionalObject);
+
+    if (RandomizerLoadoutCollectionClass == None)
+    {
+        return FormatString(Repl(default.ProvidingUnknownLoadoutString, "%p", Eval(RelatedPRI_1 != None, RelatedPRI_1.PlayerName, default.AnonymousUserString)));
+    }
+
     Loadout = RandomizerLoadoutCollectionClass.default.LoadoutList[Switch];
     InventoryString = "";
 
@@ -50,6 +57,7 @@ static final function string FormatVoteString(string Input, optional string Play
 defaultproperties
 {
     LoadoutString="%k%p%d: (%k%v%d) %k%w"
+    ProvidingUnknownLoadoutString="%k%p%d: failed to resolved loadout"
     AnonymousUserString="Someone"
     ProvidingLoadoutString="Providing %knew loadouts%d to players..."
 
