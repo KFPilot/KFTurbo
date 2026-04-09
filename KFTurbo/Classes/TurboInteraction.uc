@@ -292,15 +292,15 @@ simulated function CheckForVoiceCommandMark(Name Type, int Index)
 		return;
 	}
 
+	if (ViewportOwner.Actor == None || ViewportOwner.Actor.Pawn == None)
+	{
+		return;
+	}
+
 	//Mark the pawn with this data.
 	if (!class'TurboMarkerType_VoiceCommand'.static.WantsToMarkLookTarget(VoiceCommandMarkData))
 	{
 		TurboPlayerController(ViewportOwner.Actor).AttemptMarkActor(ViewportOwner.Actor.Pawn.Location, ViewportOwner.Actor.Pawn.Location, ViewportOwner.Actor.Pawn, class'TurboMarkerType_VoiceCommand', VoiceCommandMarkData, MarkColor);
-		return;
-	}
-
-	if (ViewportOwner.Actor == None || ViewportOwner.Actor.Pawn == None)
-	{
 		return;
 	}
 
