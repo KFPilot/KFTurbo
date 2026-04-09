@@ -45,9 +45,13 @@ function PostBeginPlay()
 
 function Tick(float DeltaTime)
 {
-	class'KFTurboMut'.static.FindMutator(Level.Game).SetGameType(Self, "turbocardgame");
-
-	Disable('Tick');
+	local KFTurboMut Mutator;
+	Mutator = class'KFTurboMut'.static.FindMutator(Level.Game);
+	if (Mutator != None)
+	{
+		Mutator.SetGameType(Self, "turbocardgame");
+		Disable('Tick');
+	}
 }
 
 function AddDeckOverridesToPackageMap()
@@ -134,7 +138,7 @@ final function AddUnique(string String, out array<string> StringList)
 //Make game 14 waves long, with first few waves being very small.
 function AttemptModifyGameLength()
 {
-	if (KFGameType(Level.Game) == None)
+	if (KFTurboGameType(Level.Game) == None)
 	{
 		return;
 	}
