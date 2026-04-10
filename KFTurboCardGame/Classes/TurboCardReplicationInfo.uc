@@ -674,43 +674,46 @@ function RemoveActiveCard(TurboCard Card)
     }
 }
 
-function ActivateRandomGoodCard()
+function TurboCard ActivateRandomGoodCard()
 {
     local TurboCard Card;
     if (GoodGameDeck == None)
     {
-        return;
+        return None;
     }
 
     GoodGameDeck.OnDeckDraw(Self);
     Card = GoodGameDeck.DrawRandomCard();
     SelectCard(Card);
+    return Card;
 }
 
-function ActivateRandomSuperCard()
+function TurboCard ActivateRandomSuperCard()
 {
     local TurboCard Card;
     if (SuperGameDeck == None)
     {
-        return;
+        return None;
     }
 
     SuperGameDeck.OnDeckDraw(Self);
     Card = SuperGameDeck.DrawRandomCard();
     SelectCard(Card);
+    return Card;
 }
 
-function ActivateRandomEvilCard()
+function TurboCard ActivateRandomEvilCard()
 {
     local TurboCard Card;
     if (EvilGameDeck == None)
     {
-        return;
+        return None;
     }
 
     EvilGameDeck.OnDeckDraw(Self);
     Card = EvilGameDeck.DrawRandomCard();
     SelectCard(Card);
+    return Card;
 }
 
 function ActivateRandomCard()
@@ -795,7 +798,7 @@ function ResetDecksAndReRollCards(optional TurboCard TopCard)
     {
         if (AuthActiveCardList[Index] == None)
         {
-            break;
+            continue;
         }
 
         //Would be nice if we had a better way to do this.
@@ -868,6 +871,23 @@ function ResetDecksAndReRollCards(optional TurboCard TopCard)
     }
     
     bIsPerformingReRoll = false;
+}
+
+function RemoveAllCards()
+{
+    local int Index;
+    local CardReference EmptyReference;
+    for (Index = 0; Index < ArrayCount(AuthActiveCardList); Index++)
+    {
+        if (AuthActiveCardList[Index] == None)
+        {
+            continue;
+        }
+        
+        AuthActiveCardList[Index].OnActivateCard(OwnerMutator.TurboCardGameplayManagerInfo, AuthActiveCardList[Index], false);
+        AuthActiveCardList[Index] = None;
+        ActiveCardList[Index] = EmptyReference;
+    }
 }
 
 function DeactivateAllGoodCards()

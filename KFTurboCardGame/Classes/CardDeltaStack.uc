@@ -22,38 +22,51 @@ function float GetDelta()
     return CachedDelta;
 }
 
+final function float GetDefaultDelta()
+{
+    return default.CachedDelta;
+}
+
 final function bool HasDeltaChanges()
 {
     return DeltaList.Length != 0;
 }
 
-final function AddDelta(int Delta, TurboCard Card)
+final function bool IsDefaultValue()
+{
+    return CachedDelta == default.CachedDelta;
+}
+
+final function string Describe()
 {
     local int Index;
+    local string Result;
+
+    if (DeltaList.Length == 0)
+    {
+        return "";
+    }
+
+    Result = DeltaList[0].ID@":"@DeltaList[0].Delta;
+    for (Index = 1; Index < DeltaList.Length; Index++)
+    {
+        Result $= ","@DeltaList[Index].ID@":"@DeltaList[Index].Delta;
+    }
+
+    return Result;
+}
+
+final function AddDelta(int Delta, TurboCard Card)
+{
     local string ID;
 
-    ID = "";
+    ID = "NONE";
     if (Card != None)
     {
         ID = Card.CardID;
     }
 
-    log(DeltaStackID$": Applying delta"@Delta@"from"@Eval(ID != "", ID, "(NO ID)")@".", 'KFTurboCardGame');
-
-    if (ID != "")
-    {
-        for (Index = DeltaList.Length - 1; Index >= 0; Index--)
-        {
-            if (DeltaList[Index].ID == Card.CardID)
-            {
-                log("-"$DeltaStackID$": Found existing entry with matching ID. Replacing value.", 'KFTurboCardGame');
-                DeltaList[Index].Delta = Delta;
-                UpdateDeltaChange();
-                return;
-            }
-        }
-    }
-
+    log(DeltaStackID$": Adding delta"@Delta@"applied by"@Card.CardID@".", 'KFTurboCardGame');
     DeltaList.Length = DeltaList.Length + 1;
     DeltaList[DeltaList.Length - 1].ID = Card.CardID;
     DeltaList[DeltaList.Length - 1].Delta = Delta;

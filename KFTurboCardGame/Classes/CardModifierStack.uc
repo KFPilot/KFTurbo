@@ -22,22 +22,51 @@ function float GetModifier()
     return CachedModifier;
 }
 
+final function float GetDefaultModifier()
+{
+    return default.CachedModifier;
+}
+
 final function bool HasModifiers()
 {
     return ModifierList.Length != 0;
+}
+
+final function bool IsDefaultValue()
+{
+    return CachedModifier == default.CachedModifier;
+}
+
+final function string Describe()
+{
+    local int Index;
+    local string Result;
+
+    if (ModifierList.Length == 0)
+    {
+        return "";
+    }
+
+    Result = ModifierList[0].ID@":"@ModifierList[0].Modifier;
+    for (Index = 1; Index < ModifierList.Length; Index++)
+    {
+        Result $= ","@ModifierList[Index].ID@":"@ModifierList[Index].Modifier;
+    }
+
+    return Result;
 }
 
 final function AddModifier(float Modifier, TurboCard Card)
 {
     local string ID;
 
-    ID = "";
+    ID = "NONE";
     if (Card != None)
     {
         ID = Card.CardID;
     }
 
-    log(ModifierStackID$": Applying modifier"@Modifier@"from"@Eval(ID != "", ID, "(NO ID)")@".", 'KFTurboCardGame');
+    log(ModifierStackID$": Applying modifier"@Modifier@"from"@ID$".", 'KFTurboCardGame');
     ModifierList.Length = ModifierList.Length + 1;
     ModifierList[ModifierList.Length - 1].ID = ID;
     ModifierList[ModifierList.Length - 1].Modifier = Modifier;

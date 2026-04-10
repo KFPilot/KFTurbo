@@ -88,7 +88,13 @@ function TurboCard DrawRandomCard()
         CurrentDeckCardObjectList[CurrentDeckCardObjectList.Length - 1] = OptionalCardList[Index].Card;
     }
 
+    if (CurrentDeckCardObjectList.Length == 0)
+    {
+        return None;
+    }
+
     Index = Rand(CurrentDeckCardObjectList.Length);
+
     Card = CurrentDeckCardObjectList[Index];
 
     if (Index < DeckCardObjectList.Length)
@@ -165,6 +171,8 @@ function SetOptionalCardEnabled(int OriginalOptionalIndex, bool bEnabled)
 {
     local TurboCard Card;
     local int Index;
+
+    bEnabled = bEnabled || class'KFTurboCardGameMut'.default.bPerformValidation; //Always add optional cards when performing validation.
 
     Card = OriginalOptionalCardList[OriginalOptionalIndex].Card;
 

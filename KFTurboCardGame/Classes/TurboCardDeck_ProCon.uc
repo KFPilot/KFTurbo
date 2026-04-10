@@ -11,6 +11,13 @@ enum ProConOptional
 
 var array<TurboCard> SomethingCardList;
 
+struct DealWithTheDevilResult
+{
+    var TurboCard EvilCard;
+    var TurboCard SuperCard;
+};
+var array<DealWithTheDevilResult> DealWithTheDevilList;
+
 function OnDeckDraw(TurboCardReplicationInfo TCRI)
 {
     local int GoodCardCount, SuperCardCount, ProConCardCount, EvilCardCount;
@@ -287,8 +294,20 @@ function ActivateDealWithDevil(TurboCardGameplayManager GameplayManager, TurboCa
 {
     if (bActivate)
     {
-        GameplayManager.GrantRandomSuperCard();
-        GameplayManager.GrantRandomEvilCard();
+        DealWithTheDevilList.Length = DealWithTheDevilList.Length + 1;
+        DealWithTheDevilList[DealWithTheDevilList.Length - 1].SuperCard = GameplayManager.GrantRandomSuperCard();
+        DealWithTheDevilList[DealWithTheDevilList.Length - 1].EvilCard = GameplayManager.GrantRandomEvilCard();
+    }
+    else
+    {
+        if (DealWithTheDevilList.Length == 0)
+        {
+            return;
+        }
+
+        GameplayManager.RemoveActiveCard(DealWithTheDevilList[0].SuperCard);
+        GameplayManager.RemoveActiveCard(DealWithTheDevilList[0].EvilCard);
+        DealWithTheDevilList.Remove(0, 1);
     }
 }
 
@@ -518,7 +537,7 @@ function ActivateSomething(TurboCardGameplayManager GameplayManager, TurboCard C
 
     if (bActivate)
     {
-        RandomCard = OriginalDeckCardObjectList[Rand(OriginalDeckCardObjectList.Length)];
+        RandomCard = DrawRandomCard();
 
         if (RandomCard == None || RandomCard.CardID == "PROCON_SOMETHING")
         {
@@ -527,7 +546,7 @@ function ActivateSomething(TurboCardGameplayManager GameplayManager, TurboCard C
         }
 
         log("- Card with ID"@RandomCard.CardID@"was selected. Activating card now.", 'KFTurboCardGame');
-        SomethingCardList[SomethingCardList.Length] = OriginalDeckCardObjectList[Rand(OriginalDeckCardObjectList.Length)];
+        SomethingCardList[SomethingCardList.Length] = RandomCard;
         RandomCard.OnActivateCard(GameplayManager, RandomCard, true);
     }
     else
@@ -542,7 +561,7 @@ function ActivateSomething(TurboCardGameplayManager GameplayManager, TurboCard C
             return;
         }
 
-        log("- Removing activated card"@RandomCard.CardID@"was selected. Activating card now.", 'KFTurboCardGame');
+        log("- Removing activated card"@RandomCard.CardID@"was selected. Deactivating card now.", 'KFTurboCardGame');
         RandomCard = SomethingCardList[SomethingCardList.Length - 1];
         SomethingCardList.Length = SomethingCardList.Length - 1;
         RandomCard.OnActivateCard(GameplayManager, RandomCard, false);

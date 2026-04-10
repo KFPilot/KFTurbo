@@ -8,6 +8,8 @@ enum SuperOptional
     Cleanse
 };
 
+var array<TurboCard> TheLittleThingsCardList;
+
 function OnDeckDraw(TurboCardReplicationInfo TCRI)
 {
     local int GoodCardCount, SuperCardCount, ProConCardCount, EvilCardCount;
@@ -372,11 +374,26 @@ function ActivateRackEmUp(TurboCardGameplayManager GameplayManager, TurboCard Ca
 
 function ActivateTheLittleThings(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
-    GameplayManager.GrantRandomGoodCard();
-    GameplayManager.GrantRandomGoodCard();
-    GameplayManager.GrantRandomGoodCard();
-    GameplayManager.GrantRandomGoodCard();
-    GameplayManager.GrantRandomGoodCard();
+    local int Index;
+    Index = 0;
+
+    if (bActivate)
+    {
+        while (Index < 5)
+        {
+            TheLittleThingsCardList[TheLittleThingsCardList.Length] = GameplayManager.GrantRandomGoodCard();
+            Index++;
+        }
+    }
+    else
+    {
+        while (Index < 5 && TheLittleThingsCardList.Length != 0)
+        {
+            GameplayManager.CardReplicationInfo.RemoveActiveCard(TheLittleThingsCardList[0]);
+            TheLittleThingsCardList.Remove(0, 1);
+            Index++;
+        }
+    }
 }
 
 defaultproperties

@@ -288,19 +288,19 @@ function GrantAllPlayersArmor()
     }
 }
 
-function GrantRandomGoodCard()
+function TurboCard GrantRandomGoodCard()
 {
-    CardReplicationInfo.ActivateRandomGoodCard();
+    return CardReplicationInfo.ActivateRandomGoodCard();
 }
 
-function GrantRandomSuperCard()
+function TurboCard GrantRandomSuperCard()
 {
-    CardReplicationInfo.ActivateRandomSuperCard();
+    return CardReplicationInfo.ActivateRandomSuperCard();
 }
 
-function GrantRandomEvilCard()
+function TurboCard GrantRandomEvilCard()
 {
-    CardReplicationInfo.ActivateRandomEvilCard();
+    return CardReplicationInfo.ActivateRandomEvilCard();
 }
 
 function GrantRandomCard()
@@ -318,6 +318,11 @@ function RemoveRandomEvilCard()
     CardReplicationInfo.DeactivateRandomEvilCard();
 }
 
+function RemoveAllCards()
+{
+    CardReplicationInfo.RemoveAllCards();
+}
+
 function ResetDecksAndReRollCards(optional TurboCard TopCard)
 {
     CardReplicationInfo.ResetDecksAndReRollCards(TopCard);
@@ -326,6 +331,11 @@ function ResetDecksAndReRollCards(optional TurboCard TopCard)
 function DeactivateAllGoodCards()
 {
     CardReplicationInfo.DeactivateAllGoodCards();
+}
+
+function RemoveActiveCard(TurboCard Card)
+{
+    CardReplicationInfo.RemoveActiveCard(Card);
 }
 
 function MultiplyPlayerCash(float Multiplier)

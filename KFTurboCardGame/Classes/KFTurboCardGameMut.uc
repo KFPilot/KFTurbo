@@ -17,6 +17,8 @@ var TurboCardStatsTcpLink TurboCardStatsTcpLink;
 
 var array<TurboPlayerReplicationInfo> PendingPlayerReplicationInfoList;
 
+var const bool bPerformValidation;
+
 var globalconfig string TurboGoodDeckClassOverrideString;
 var globalconfig string TurboSuperDeckClassOverrideString;
 var globalconfig string TurboProConDeckClassOverrideString;
@@ -265,6 +267,18 @@ function AddTurboCardGameModifier(TurboGameReplicationInfo TGRI)
 	TurboCardGameModifier.ForceNetUpdate();
 	TurboCardClientModifier.ForceNetUpdate();
 	TurboCardGameplayManagerInfo = CreateCardGameplayManager();
+
+	if (bPerformValidation)
+	{
+		SpawnCardGameValidator();
+	}
+}
+
+function SpawnCardGameValidator()
+{
+	local CardGameValidatorActor Validator;
+	Validator = Spawn(class'CardGameValidatorActor', Self);
+	Validator.Mutator = Self;
 }
 
 //Should only be spawned after all the other actors are spun up.
@@ -374,6 +388,7 @@ simulated function String GetHumanReadableName()
 
 defaultproperties
 {
+	bPerformValidation=false
 	bAddToServerPackages=True
 	GroupName="KF-KFTurboMode"
 	FriendlyName="Killing Floor Turbo Card Game"

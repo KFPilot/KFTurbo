@@ -15,10 +15,38 @@ final function bool IsFlagSet()
     return bFlagSet;
 }
 
+final function bool IsFlagSetDefault()
+{
+    return default.bFlagSet;
+}
+
+final function bool IsFlagSetToDefault()
+{
+    return bFlagSet == default.bFlagSet;
+}
+
+final function string Describe()
+{
+    local int Index;
+    local string Result;
+
+    if (IDList.Length == 0)
+    {
+        return "";
+    }
+
+    Result = IDList[0];
+    for (Index = 1; Index < IDList.Length; Index++)
+    {
+        Result $= ","@IDList[Index];
+    }
+
+    return Result;
+}
+
 final function SetFlag(TurboCard Card)
 {
     local string ID;
-    local int Index;
 
     if (Card != None && Card.CardID != "")
     {
@@ -27,14 +55,6 @@ final function SetFlag(TurboCard Card)
     else
     {
         ID = "NONE";
-    }
-
-    for (Index = IDList.Length - 1; Index >= 0; Index--)
-    {
-        if (IDList[Index] == ID)
-        {
-            return;
-        }
     }
 
     IDList[IDList.Length] = ID;
@@ -66,7 +86,6 @@ final function ClearFlag(TurboCard Card)
             return;
         }
     }
-
 }
 
 final function UpdateFlagSetChange()
