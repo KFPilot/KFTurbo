@@ -348,7 +348,7 @@ function bool SetupWaveLoadoutTypes(int PlayerCount, int TotalPlayerCount, out a
 			PlayerTypeCount--;
 			PlayerCount--;
 
-			RandomPlayerIndex = Rand(PendingPlayerLoadoutList.Length - 1);
+			RandomPlayerIndex = Rand(PendingPlayerLoadoutList.Length);
 			PendingPlayerLoadoutList[RandomPlayerIndex].LoadoutType = LT_ScrakeLoadout;
 
 			PlayerLoadoutList[PlayerLoadoutList.Length] = PendingPlayerLoadoutList[RandomPlayerIndex];
@@ -364,7 +364,7 @@ function bool SetupWaveLoadoutTypes(int PlayerCount, int TotalPlayerCount, out a
 			PlayerTypeCount--;
 			PlayerCount--;
 
-			RandomPlayerIndex = Rand(PendingPlayerLoadoutList.Length - 1);
+			RandomPlayerIndex = Rand(PendingPlayerLoadoutList.Length);
 			PendingPlayerLoadoutList[RandomPlayerIndex].LoadoutType = LT_EarlyWave;
 
 			PlayerLoadoutList[PlayerLoadoutList.Length] = PendingPlayerLoadoutList[RandomPlayerIndex];
@@ -375,7 +375,7 @@ function bool SetupWaveLoadoutTypes(int PlayerCount, int TotalPlayerCount, out a
 	while (PlayerCount > 0)
 	{
 		PlayerCount--;
-		RandomPlayerIndex = Rand(PendingPlayerLoadoutList.Length - 1);
+		RandomPlayerIndex = Rand(PendingPlayerLoadoutList.Length);
 
 		if (FRand() > 0.1f)
 		{
@@ -404,7 +404,7 @@ function bool SetupBossLoadoutTypes(int PlayerCount, int TotalPlayerCount, out a
 	{
 		PlayerTypeCount--;
 		PlayerCount--;
-		RandomPlayerIndex = Rand(PendingPlayerLoadoutList.Length - 1);
+		RandomPlayerIndex = Rand(PendingPlayerLoadoutList.Length);
 		PendingPlayerLoadoutList[RandomPlayerIndex].LoadoutType = LT_PatriarchTypeA;
 
 		PlayerLoadoutList[PlayerLoadoutList.Length] = PendingPlayerLoadoutList[RandomPlayerIndex];
@@ -420,12 +420,12 @@ function bool SetupBossLoadoutTypes(int PlayerCount, int TotalPlayerCount, out a
 	{
 		PlayerCount--;
 
-		RandomPlayerIndex = Rand(PendingPlayerLoadoutList.Length - 1);
+		RandomPlayerIndex = Rand(PendingPlayerLoadoutList.Length);
 		PendingPlayerLoadoutList[RandomPlayerIndex].LoadoutType = LT_PatriarchTypeB;
 
 		if (FRand() < 0.1f)
 		{
-			PendingPlayerLoadoutList[RandomPlayerIndex].LoadoutType = LT_PatriarchTypeB;
+			PendingPlayerLoadoutList[RandomPlayerIndex].LoadoutType = LT_PatriarchFunny;
 		}
 
 		PlayerLoadoutList[PlayerLoadoutList.Length] = PendingPlayerLoadoutList[RandomPlayerIndex];
@@ -722,15 +722,20 @@ Begin:
 function bool ValidateInitialization()
 {
 	local bool bSuccess;
+	bSuccess = true;
 	bSuccess = ValidateCollection(RandomizerSettings.FleshpoundLoadout) && bSuccess;
 	bSuccess = ValidateCollection(RandomizerSettings.ScrakeLoadout) && bSuccess;
 	bSuccess = ValidateCollection(RandomizerSettings.EarlyWaveLoadout) && bSuccess;
 	bSuccess = ValidateCollection(RandomizerSettings.MiscLoadout) && bSuccess;
 	bSuccess = ValidateCollection(RandomizerSettings.FunnyLoadout) && bSuccess;
 
-	if (!bSuccess)
+	if (bSuccess)
 	{
-		log("Failed to validate initialized collections.");
+		log("Successfully validated loadouts.", 'KFTurboRandomizer');
+	}
+	else
+	{
+		log("Failed to validate collections. ", 'KFTurboRandomizer');
 	}
 
 	return bSuccess;
