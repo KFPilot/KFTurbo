@@ -557,9 +557,14 @@ function array<TurboCard_Super> GetActiveSuperCardList(optional bool bCheckCanDe
 
     for (Index = 0; Index < ArrayCount(AuthActiveCardList); Index++)
     {
-        if (AuthActiveCardList[Index] == None || (bCheckCanDeactivate && AuthActiveCardList[Index].bCanBeDeactivated))
+        if (AuthActiveCardList[Index] == None)
         {
             break;
+        }
+
+        if (bCheckCanDeactivate && AuthActiveCardList[Index].bCanBeDeactivated)
+        {
+            continue;
         }
 
         if (TurboCard_Super(AuthActiveCardList[Index]) == None)
@@ -586,9 +591,14 @@ function array<TurboCard_Evil> GetActiveEvilCardList(optional bool bCheckCanDeac
 
     for (Index = 0; Index < ArrayCount(AuthActiveCardList); Index++)
     {
-        if (AuthActiveCardList[Index] == None || (bCheckCanDeactivate && !AuthActiveCardList[Index].bCanBeDeactivated))
+        if (AuthActiveCardList[Index] == None)
         {
             break;
+        }
+
+        if (bCheckCanDeactivate && !AuthActiveCardList[Index].bCanBeDeactivated)
+        {
+            continue;
         }
 
         if (TurboCard_Evil(AuthActiveCardList[Index]) == None)
