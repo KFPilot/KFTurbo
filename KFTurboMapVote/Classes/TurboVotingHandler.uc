@@ -42,7 +42,7 @@ function PostBeginPlay()
 		{
 			if (DifficultyConfig[Index] == Difficulty)
 			{
-				CurrentDifficultyConfig = Difficulty;
+				CurrentDifficultyConfig = Index;
 				break;
 			}
 		}
