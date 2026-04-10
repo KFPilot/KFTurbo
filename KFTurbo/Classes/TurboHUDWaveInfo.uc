@@ -937,7 +937,7 @@ simulated function InitializeBossData(P_ZombieBoss BossMonster)
 	BossData.PlayInRatio = 0.f;
 	BossData.PlayOutRatio = 0.f;
 	
-	BossData.CurrentHealth = float(BossMonster.Health) / BossMonster.BossHealthMax;
+	BossData.CurrentHealth = float(BossMonster.Health) / FMax(BossMonster.BossHealthMax, 1.f);
 	BossData.LastCheckedHealth = BossData.CurrentHealth;
 	BossData.PreviousHealth = BossData.CurrentHealth;
 	BossData.LastLowestRecordedHealth = 1.f;
