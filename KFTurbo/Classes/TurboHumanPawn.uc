@@ -713,6 +713,8 @@ function bool ServerBuyAmmo(Class<Ammunition> AClass, bool bOnlyClip)
 		UsedMagCapacity = class<W_Huskgun_Pickup>(KW.PickupClass).default.BuyClipSize;
 	}
 
+	UsedMagCapacity = FMax(UsedMagCapacity, 1.f);
+	
 	if (bOnlyClip)
 	{
 		if (KFPRI != none && KFPRI.ClientVeteranSkill != none)
