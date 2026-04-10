@@ -278,7 +278,7 @@ function int TickedReplication_BatchMapList(int Index, int Last, bool bDedicated
 		for (BatchIndex = 0; BatchIndex < MapInfoList.Length; BatchIndex++)
 		{
 			MapList[MapList.Length] = MapInfoList[BatchIndex];
-			InitRepStr(MapList.Length - 1, TurboVotingHandler.RepArray[Index]);
+			InitRepStr(MapList.Length - 1, TurboVotingHandler.RepArray[Index + BatchIndex]);
 		}
 	}
 
