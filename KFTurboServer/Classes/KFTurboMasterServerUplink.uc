@@ -165,6 +165,7 @@ function AppendMutators(out GameInfo.ServerResponseLine ServerState)
 
 	for (Mutator = Level.Game.BaseMutator.NextMutator; Mutator != None; Mutator = Mutator.NextMutator)
 	{
+		bFound = false;
 		MutatorName = Mutator.GetHumanReadableName();
 
 		//Make these more readable. :)
@@ -177,7 +178,7 @@ function AppendMutators(out GameInfo.ServerResponseLine ServerState)
 			MutatorName = "Server Achievements";
 		}
 
-		for ( Index=0; Index<ServerState.ServerInfo.Length; Index++ )
+		for (Index = 0; Index < ServerState.ServerInfo.Length; Index++)
 		{
 			if ( (ServerState.ServerInfo[Index].Value ~= MutatorName) && (ServerState.ServerInfo[Index].Key ~= "Mutator") )
 			{
@@ -186,7 +187,7 @@ function AppendMutators(out GameInfo.ServerResponseLine ServerState)
 			}
 		}
 
-		if ( !bFound )
+		if ( !bFound)
 		{
 			ListLength = ServerState.ServerInfo.Length;
 			ServerState.ServerInfo.Length = ListLength + 1;
