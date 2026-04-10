@@ -194,12 +194,11 @@ final function InitializeAllDefault()
 
     while (Index >= 0)
     {
-        if (AchievementList[Index].IsReady())
+        if (!AchievementList[Index].IsReady())
         {
-            continue;
+            AchievementList[Index].InitializeDefault();
         }
-
-        AchievementList[Index].InitializeDefault();
+        
         Index--;
     }
 }

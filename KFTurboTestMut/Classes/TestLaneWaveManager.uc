@@ -333,7 +333,7 @@ function DumpDebugSpawnResults()
 
 static final function string GetPerSecondAsString(int Count, float Time)
 {
-	return (float(Count)/Time)$"/s";
+	return (float(Count)/FMax(Time, 0.1f))$"/s";
 }
 
 defaultproperties
