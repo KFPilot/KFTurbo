@@ -52,7 +52,7 @@ static final function bool PerformMeleeSwing(KFWeapon Weapon, KFMeleeFire MeleeF
 			HitActor = HitActor.Base;
 		}
 
-		if ((HitActor.IsA('KFMonster') || HitActor.IsA('KFHumanPawn')) && KFMeleeGun(Weapon).BloodyMaterial != None)
+		if ((HitActor.IsA('KFMonster') || HitActor.IsA('KFHumanPawn')) && KFMeleeGun(Weapon) != None && KFMeleeGun(Weapon).BloodyMaterial != None)
 		{
 			Weapon.Skins[KFMeleeGun(Weapon).BloodSkinSwitchArray] = KFMeleeGun(Weapon).BloodyMaterial;
 			Weapon.Texture = Weapon.default.Texture;
