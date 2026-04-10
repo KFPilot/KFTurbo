@@ -175,9 +175,7 @@ simulated function UpdateWeaponEquipSpeed()
         return;
     }
     
-    Inv = Pawn.Inventory;
-
-    for (Inv = Inventory; Inv != None; Inv = Inv.Inventory)
+    for (Inv = Pawn.Inventory; Inv != None; Inv = Inv.Inventory)
     {
         ApplyEquipSpeedModifier(KFWeapon(Inv));
     }    
