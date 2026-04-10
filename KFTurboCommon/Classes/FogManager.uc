@@ -90,7 +90,7 @@ auto state Initialize
 
     simulated function SetFog(Color InFogColor, optional float InFogStart, optional float InFogEnd, optional float InFadeRate)
     {
-        if (FadeRate > 0.f)
+        if (InFadeRate > 0.f)
         {
             FadeRate = InFadeRate;
         }
@@ -174,7 +174,7 @@ simulated function CollectAllPhysicsVolumes()
 
 simulated function SetFog(Color InFogColor, float InFogStart, float InFogEnd, optional float InFadeRate)
 {
-    if (FadeRate > 0.f)
+    if (InFadeRate > 0.f)
     {
         FadeRate = InFadeRate;
     }
