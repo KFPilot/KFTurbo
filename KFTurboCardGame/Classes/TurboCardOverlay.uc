@@ -331,17 +331,23 @@ simulated function bool ReceivedKeyEvent(Interactions.EInputKey Key, Interaction
 		return false;
 	}
 
+	if (ActiveCardRenderActorList.Length == 0)
+	{
+		CardIndexToDisplay = -1;
+		return false;
+	}
+
 	switch(Key)
 	{
 		case IK_MouseWheelUp:
 			CardIndexToDisplay = (CardIndexToDisplay - 1) % ActiveCardRenderActorList.Length;
-			break;
+			return true;
 		case IK_MouseWheelDown:
 			CardIndexToDisplay = (CardIndexToDisplay + 1) % ActiveCardRenderActorList.Length;
-			break;
+			return true;
 	}
 
-	return true;
+	return false;
 }
 
 simulated function OnSelectableCardsUpdated(TurboCardReplicationInfo CGRI)
