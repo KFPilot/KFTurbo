@@ -175,7 +175,7 @@ simulated function AddTickEntry(float DeltaTime)
 
 	if (FrameTimeAverage * 2.f < FrameTime)
 	{
-		if (HitchFrameTime > FrameTime && LastHitchTime > Level.TimeSeconds + 5.f)
+		if (HitchFrameTime > FrameTime && LastHitchTime < Level.TimeSeconds + 2.f)
 		{
 			return;
 		}
