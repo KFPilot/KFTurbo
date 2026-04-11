@@ -349,13 +349,46 @@ simulated function UpdateMovementStep()
     LastMovementStepTime = Level.TimeSeconds;
 }
 
+static final function Quat QLerp(Quat A, Quat B, float Alpha)
+{
+    local Quat Result;
+    local float CosAngle;
+
+    CosAngle = A.X * B.X + A.Y * B.Y + A.Z * B.Z + A.W * B.W;
+
+    if (CosAngle < 0.f)
+    {
+        B.X = -B.X;
+        B.Y = -B.Y;
+        B.Z = -B.Z;
+        B.W = -B.W;
+    }
+
+    Result.X = Lerp(Alpha, A.X, B.X);
+    Result.Y = Lerp(Alpha, A.Y, B.Y);
+    Result.Z = Lerp(Alpha, A.Z, B.Z);
+    Result.W = Lerp(Alpha, A.W, B.W);
+    
+    CosAngle = Sqrt(Result.X * Result.X + Result.Y * Result.Y + Result.Z * Result.Z + Result.W * Result.W);
+
+    if (CosAngle > 0.0001f)
+    {
+        Result.X /= CosAngle;
+        Result.Y /= CosAngle;
+        Result.Z /= CosAngle;
+        Result.W /= CosAngle;
+    }
+
+    return Result;
+}
+
 simulated function TickMovementBuffer(float DeltaTime)
 {
     local int Index;
     local MovementStepData NextStep;
     local Vector StartingLocation, Displacement;
-
-    local Quat CurrentQuat, TemporaryQuat;
+    local Rotator TargetRotation;
+    local Quat CurrentQuat, TargetQuat;
     local Vector X, Y, Z;
 
     if (MovementBuffer.Length == 0)
@@ -385,22 +418,21 @@ simulated function TickMovementBuffer(float DeltaTime)
 
     if (IsLocalPlayerSpectator())
     {
-        GetAxes(NextStep.Rotation, X, Y, Z);
-        CurrentQuat = QuatFromRotator(OwningController.Rotation);
-        TemporaryQuat = QuatFromAxisAngle(Z, -90.f);
-        CurrentQuat = QuatProduct(CurrentQuat, TemporaryQuat);
-        SetRotation(RLerp(CurrentRotation, QuatToRotator(CurrentQuat), DeltaTime * InterpolationRate * 0.25f));
+        TargetRotation = Rotator(Vector(OwningController.Rotation));
     }
     else
     {
-        GetAxes(NextStep.Rotation, X, Y, Z);
-        CurrentQuat = QuatFromRotator(NextStep.Rotation);
-        TemporaryQuat = QuatFromAxisAngle(Z, -90.f);
-        CurrentQuat = QuatProduct(CurrentQuat, TemporaryQuat);
-        SetRotation(RLerp(CurrentRotation, QuatToRotator(CurrentQuat), DeltaTime * InterpolationRate * 0.25f));
+        TargetRotation = Rotator(Vector(NextStep.Rotation));
     }
 
+    CurrentQuat = QuatFromRotator(Rotation);
+
+    GetAxes(TargetRotation, X, Y, Z);
+    TargetQuat = QuatProduct(QuatFromRotator(TargetRotation), QuatFromAxisAngle(Z, -90.f));
+    
+    SetRotation(QuatToRotator(QLerp(CurrentQuat, TargetQuat, DeltaTime * InterpolationRate * 0.25f)));
     CurrentRotation = Rotation;
+
     if (NextStep.AttachParent != None)
     {
         SetRelativeLocation(NextStep.RelativeLocation);
