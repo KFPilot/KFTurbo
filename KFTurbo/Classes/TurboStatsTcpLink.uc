@@ -285,7 +285,7 @@ Data payload for a game starting looks like the following;
     "version": "5.2.2",
     "session": "<session ID>",
     "gametype" : "turbo",
-    "diff" : "7"
+    "difficulty" : "7"
 }
 
 type - refers to the type of payload this is.
@@ -294,12 +294,12 @@ time - The MYSQL time the game started.
 version - The KFTurbo version currently running.
 session - The session ID for this game.
 gametype - The type of game being played. Can be "turbo", "turbocardgame", "turborandomizer", "turboplus".
-diff - The game difficulty. Uses KF difficulty values (7 for Hell on Earth, 5 for Suicidal, etc.).
+difficulty - The game difficulty. Uses KF difficulty values (7 for Hell on Earth, 5 for Suicidal, etc.).
 */
 
 final function string BuildGameStartPayload()
 {
-    return GameStartPayloadCache $ StringToJSON("gametype", Mutator.GetGameType()) $ "," $ StringToJSON("diff", int(Round(GameType.GetDifficulty()))) $ "}";
+    return GameStartPayloadCache $ StringToJSON("gametype", Mutator.GetGameType()) $ "," $ StringToJSON("difficulty", int(Round(GameType.GetDifficulty()))) $ "}";
 }
 
 /*
