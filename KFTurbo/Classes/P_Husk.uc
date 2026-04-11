@@ -6,6 +6,10 @@ class P_Husk extends ZombieHusk DependsOn(PawnHelper);
 var float ProjectileMaxRange;
 var float ProjectileIntervalVariance;
 var bool bOnlyProjectileAttackWhenGrounded;
+var bool bTriggerGetOutOfTheWayOfShot;
+
+var float NextAimHitTime;
+var const float AimHitTimeDurtation;
 
 var PawnHelper.AfflictionData AfflictionData;
 
@@ -22,6 +26,7 @@ simulated function PostBeginPlay()
     {
         ProjectileMaxRange = FMin(ProjectileMaxRange, 640.f);
         bOnlyProjectileAttackWhenGrounded = true;
+        bTriggerGetOutOfTheWayOfShot = false;
     }
 }
 
@@ -37,6 +42,11 @@ function TakeDamage(int Damage, Pawn InstigatedBy, Vector HitLocation, Vector Mo
     if (Role == ROLE_Authority)
     {
         class'PawnHelper'.static.PostTakeDamage(Self, Damage, InstigatedBy, HitLocation, Momentum, DamageType, HitIndex, AfflictionData);
+
+        if (Damage > 70)
+        {
+            NextAimHitTime = Level.TimeSeconds + AimHitTimeDurtation;
+        }
     }
 }
 
@@ -178,6 +188,73 @@ function RangedAttack(Actor A)
     NextFireProjectileTime = Level.TimeSeconds + ProjectileFireInterval + (FRand() * ProjectileIntervalVariance);
 }
 
+final function bool CanPerformAdvancedAim()
+{
+    if (Controller != None && Controller.Target != None && Controller.Target.Physics == PHYS_Falling)
+    {
+        return false;
+    }
+
+    return Level.TimeSeconds > NextAimHitTime;
+}
+
+function SpawnTwoShots()
+{
+	local vector X, Y, Z, FireStart;
+	local rotator FireRotation;
+    local KFMonster NearbyMonster;
+
+	if (Controller != None && KFDoorMover(Controller.Target) != None)
+	{
+		Controller.Target.TakeDamage(22, Self, Location, vect(0,0,0), class'DamTypeVomit');
+		return;
+	}
+
+	GetAxes(Rotation, X, Y, Z);
+	FireStart = GetBoneCoords('Barrel').Origin;
+	HuskFireProjClass = Class'HuskFireProjectile';
+
+	if (!SavedFireProperties.bInitialized || CanPerformAdvancedAim() != SavedFireProperties.bTrySplash)
+	{
+		SavedFireProperties.AmmoClass = Class'SkaarjAmmo';
+		SavedFireProperties.ProjectileClass = HuskFireProjClass;
+		SavedFireProperties.WarnTargetPct = 1;
+		SavedFireProperties.MaxRange = 65535;
+		SavedFireProperties.bTossed = false;
+		SavedFireProperties.bInstantHit = false;
+		SavedFireProperties.bInitialized = true;
+        
+        //These can now be made worse by shooting the husk right before it fires.
+		SavedFireProperties.bTrySplash = CanPerformAdvancedAim();
+		SavedFireProperties.bLeadTarget = SavedFireProperties.bTrySplash;
+	}
+
+    ToggleAuxCollision(false);
+
+	FireRotation = Controller.AdjustAim(SavedFireProperties, FireStart, 600);
+
+    if (bTriggerGetOutOfTheWayOfShot)
+    {
+        foreach CollidingActors(class'KFMonster', NearbyMonster, 640.f)
+        {
+            if (NearbyMonster == Self || NearbyMonster.Health <= 0 || KFMonsterController(NearbyMonster.Controller) == None)
+            {
+                continue;
+            }
+
+            if (PointDistToLine(NearbyMonster.Location, Vector(FireRotation), FireStart) < 75)
+            {
+                KFMonsterController(NearbyMonster.Controller).GetOutOfTheWayOfShot(Vector(FireRotation), FireStart);
+            }
+        }
+    }
+
+    Spawn(HuskFireProjClass,,, FireStart, FireRotation);
+
+	// Turn extra collision back on
+	ToggleAuxCollision(true);
+}
+
 simulated function PlayDying(class<DamageType> DamageType, vector HitLoc)
 {
     class'PawnHelper'.static.MonsterDied(Self, AfflictionData);
@@ -208,6 +285,9 @@ defaultproperties
     ProjectileIntervalVariance=2.f
     ProjectileMaxRange=65535.f
     bOnlyProjectileAttackWhenGrounded=false
+    bTriggerGetOutOfTheWayOfShot=true
+
+    AimHitTimeDurtation=1.f
 
     Begin Object Class=AfflictionZap Name=ZapAffliction
         ZapDischargeRate=0.5f
