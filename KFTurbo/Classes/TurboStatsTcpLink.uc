@@ -11,6 +11,7 @@ var globalconfig int StatsPort;
 var globalconfig string StatsTcpLinkClassOverride;
 
 var KFTurboMut Mutator;
+var KFTurboGameType GameType;
 var IpAddr StatsAddress;
 
 
@@ -67,6 +68,7 @@ function PostBeginPlay()
 {
     log("KFTurbo has created a stats TCP link!", 'KFTurboStatsTcp');
     Mutator = KFTurboMut(Owner);
+    GameType = KFTurboGameType(Level.Game);
 
 	CRLF = Chr(13) $ Chr(10);
 
@@ -84,7 +86,11 @@ function Timer()
     //Precache the static parts of the payloads.
     VersionIDJson = StringToJSON("version", Mutator.GetTurboVersionID());
     SessionIDJson = StringToJSON("session", Mutator.GetSessionID());
-    GameStartPayloadCache = "{" $ StringToJSON("type", "gamebegin") $ "," $ SessionIDJson $ "," $ VersionIDJson $ "," $ StringToJSON("map", Left(string(Level), InStr(string(Level), "."))) $ "," $ StringToJSON("time", Mutator.GetSessionStartTime()) $ ",";
+
+    GameStartPayloadCache = "{" $ StringToJSON("type", "gamebegin") $ ","$ SessionIDJson $ "," $ VersionIDJson
+        $ "," $ StringToJSON("map", Left(string(Level), InStr(string(Level), ".")))
+        $ "," $ StringToJSON("time", Mutator.GetSessionStartTime()) $ ",";
+
     GameEndPayloadCache = "{" $ StringToJSON("type", "gameend") $ "," $ SessionIDJson $ ",";
     WaveStartPayloadCache = "{" $ StringToJSON("type", "wavestart") $ "," $ SessionIDJson $ ",";
     WaveEndPayloadCache = "{" $ StringToJSON("type", "waveend") $ "," $ SessionIDJson $ ",";
@@ -275,23 +281,25 @@ Data payload for a game starting looks like the following;
 {
     "type": "gamebegin",
     "map" : "<.rom file>",
-    "time" : "<Date/Time in MYSQL format>"
+    "time" : "<Date/Time in MYSQL format>",
     "version": "5.2.2",
     "session": "<session ID>",
-    "gametype" : "turbo"
+    "gametype" : "turbo",
+    "diff" : "7"
 }
 
 type - refers to the type of payload this is.
-version - The KFTurbo version currently running.
-session - The session ID for this game.
 map - The rom file that is being played.
 time - The MYSQL time the game started.
+version - The KFTurbo version currently running.
+session - The session ID for this game.
 gametype - The type of game being played. Can be "turbo", "turbocardgame", "turborandomizer", "turboplus".
+diff - The game difficulty. Uses KF difficulty values (7 for Hell on Earth, 5 for Suicidal, etc.).
 */
 
 final function string BuildGameStartPayload()
 {
-    return GameStartPayloadCache $ StringToJSON("gametype", Mutator.GetGameType()) $ "}";
+    return GameStartPayloadCache $ StringToJSON("gametype", Mutator.GetGameType()) $ "," $ StringToJSON("diff", int(Round(GameType.GetDifficulty()))) $ "}";
 }
 
 /*
