@@ -110,7 +110,6 @@ defaultproperties
 	RegularSquad(6)=TurboMonsterSquad'EarlySquad6'
 
 	Begin Object Class=TurboMonsterSquad Name=EarlySquad7
-		Squad(0)=(Monster=Husk,Count=1)
 		Squad(1)=(Monster=Stalker,Count=2)
 	End Object
 	RegularSquad(7)=TurboMonsterSquad'EarlySquad7'
@@ -147,7 +146,7 @@ defaultproperties
 
 	Begin Object Class=TurboMonsterSquad Name=EarlyMixInSquad2
 		Squad(0)=(Monster=Scrake,Count=1)
-		Squad(1)=(Monster=Husk,Count=1)
+		Squad(1)=(Monster=Stalker,Count=2)
 	End Object
 	MixInSquad(2)=TurboMonsterSquad'EarlyMixInSquad2'
 
