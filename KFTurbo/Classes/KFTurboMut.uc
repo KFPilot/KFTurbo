@@ -367,7 +367,12 @@ function String GetSessionStartTime()
 {
 	if (SessionStartTime == "")
 	{
-		SessionStartTime = Level.Year$"-"$Level.Month$"-"$Level.Day$" "$Level.Hour$":"$Level.Minute$":"$Level.Second;
+		SessionStartTime = Level.Year
+			$"-"$Eval(Level.Month >= 10, Level.Month, "0"$Level.Month)
+			$"-"$Eval(Level.Day >= 10, Level.Day, "0"$Level.Day)
+			$" "$Eval(Level.Hour >= 10, Level.Hour, "0"$Level.Hour)
+			$":"$Eval(Level.Minute >= 10, Level.Minute, "0"$Level.Minute)
+			$":"$Eval(Level.Second >= 10, Level.Second, "0"$Level.Second);
 	}
 
 	return SessionStartTime;
