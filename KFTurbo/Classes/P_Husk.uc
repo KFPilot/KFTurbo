@@ -3,6 +3,10 @@
 //For more information see https://github.com/KFPilot/KFTurbo.
 class P_Husk extends ZombieHusk DependsOn(PawnHelper);
 
+var float ProjectileMaxRange;
+var float ProjectileIntervalVariance;
+var bool bOnlyProjectileAttackWhenGrounded;
+
 var PawnHelper.AfflictionData AfflictionData;
 
 var bool bUnstunTimeReady;
@@ -13,6 +17,12 @@ simulated function PostBeginPlay()
     Super.PostBeginPlay();
 
     class'PawnHelper'.static.InitializePawnHelper(self, AfflictionData);
+
+    if (class'KFTurboGameType'.static.StaticIsHighDifficulty(Self))
+    {
+        ProjectileMaxRange = FMin(ProjectileMaxRange, 640.f);
+        bOnlyProjectileAttackWhenGrounded = true;
+    }
 }
 
 function TakeDamage(int Damage, Pawn InstigatedBy, Vector HitLocation, Vector Momentum, class<DamageType> DamageType, optional int HitIndex)
@@ -116,19 +126,21 @@ simulated function Timer()
 
 function RangedAttack(Actor A)
 {
-	if ( bShotAnim )
+    local float TargetDistance;
+
+	if (bShotAnim)
     {
 		return;
     }
 
-	if ( Physics == PHYS_Swimming )
+	if (Physics == PHYS_Swimming)
 	{
 		SetAnimAction('Claw');
 		bShotAnim = true;
         return;
 	}
 
-	if ( VSize(A.Location - Location) < MeleeRange + CollisionRadius + A.CollisionRadius )
+	if (VSize(A.Location - Location) < MeleeRange + CollisionRadius + A.CollisionRadius)
 	{
 		bShotAnim = true;
 		SetAnimAction('Claw');
@@ -138,19 +150,32 @@ function RangedAttack(Actor A)
         return;
 	}
 
+    if (bDecapitated || bZapped || bHarpoonStunned)
+    {
+        return;
+    }
 
-	if ( (KFDoorMover(A) != none || (!Region.Zone.bDistanceFog && VSize(A.Location-Location) <= 65535) ||
-        (Region.Zone.bDistanceFog && VSizeSquared(A.Location-Location) < (Square(Region.Zone.DistanceFogEnd) * 0.8)))  // Make him come out of the fog a bit
-        && !bDecapitated && !bZapped && !bHarpoonStunned)
-	{
-        bShotAnim = true;
-		SetAnimAction('ShootBurns');
+    if (KFDoorMover(A) == None)
+    {
+        if (bOnlyProjectileAttackWhenGrounded && Physics != PHYS_Walking)
+        {
+            return;
+        }
 
-		Controller.bPreparingMove = true;
-		Acceleration = vect(0,0,0);
+        TargetDistance = VSize(A.Location - Location);
+        if (TargetDistance >= ProjectileMaxRange || (!Region.Zone.bDistanceFog && TargetDistance >= Region.Zone.DistanceFogEnd * 0.8f))
+        {
+            return;
+        }
+    }
 
-		NextFireProjectileTime = Level.TimeSeconds + ProjectileFireInterval + (FRand() * 2.0);
-	}
+    bShotAnim = true;
+    SetAnimAction('ShootBurns');
+
+    Controller.bPreparingMove = true;
+    Acceleration = vect(0,0,0);
+
+    NextFireProjectileTime = Level.TimeSeconds + ProjectileFireInterval + (FRand() * ProjectileIntervalVariance);
 }
 
 simulated function PlayDying(class<DamageType> DamageType, vector HitLoc)
@@ -180,6 +205,10 @@ simulated event SetHeadScale(float NewScale)
 
 defaultproperties
 {
+    ProjectileIntervalVariance=2.f
+    ProjectileMaxRange=65535.f
+    bOnlyProjectileAttackWhenGrounded=false
+
     Begin Object Class=AfflictionZap Name=ZapAffliction
         ZapDischargeRate=0.5f
     End Object
