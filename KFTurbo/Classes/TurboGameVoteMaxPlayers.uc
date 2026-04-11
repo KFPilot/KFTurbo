@@ -44,10 +44,10 @@ defaultproperties
     VotePercent=0.51f
     bCanSpectatorsVote=false
 
-    VoteInitiatedString="%k%p%d started a vote to %kset max players%d to %k%ix%d. Type %kvote yes%d or %kvote no%d in %kconsole%d to vote."
-    VoteSucceededVoteString="%kVote%d to %kset max players%d to %k%ix%d has %pksucceeded%d."
-    VoteFailedVoteString="%kVote%d to %kset max players%d to %k%ix%d has %nkfailed%d."
-    VoteExpiredVoteString="%kVote%d to %kset max players%d to %k%ix%d has %akexpired%d."
+    VoteInitiatedString="%k%p%d started a vote to %kset max players%d to %k%i%d. Type %kvote yes%d or %kvote no%d in %kconsole%d to vote."
+    VoteSucceededVoteString="%kVote%d to %kset max players%d to %k%i%d has %pksucceeded%d."
+    VoteFailedVoteString="%kVote%d to %kset max players%d to %k%i%d has %nkfailed%d."
+    VoteExpiredVoteString="%kVote%d to %kset max players%d to %k%i%d has %akexpired%d."
 
     VoteTitleString="%ix Max Players"
     VoteDescriptionString="Accepting this vote will change max players for the rest of the game."
