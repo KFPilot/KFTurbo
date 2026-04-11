@@ -75,6 +75,11 @@ function PerformUpdate()
 			}
 		}
 
+		if (Right(FullCachedServerState.MapName, 2) ~= "-S")
+		{
+			FullCachedServerState.MapName = Left(FullCachedServerState.MapName, Len(FullCachedServerState.MapName) - 2);
+		}
+
 		FullCachedServerState.MapName = ApplyGradientToString(FullCachedServerState.MapName);
 
 		class'GameInfo'.static.AddServerDetail( FullCachedServerState, "Server Mode", Eval(Level.NetMode == NM_ListenServer, "non-dedicated", "dedicated") );
