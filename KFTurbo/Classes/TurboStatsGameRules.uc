@@ -72,6 +72,8 @@ function PostBeginPlay()
 
 function int NetDamage(int OriginalDamage, int Damage, Pawn Injured, Pawn InstigatedBy, vector HitLocation, out vector Momentum, class<DamageType> DamageType)
 {
+    local KFMonster Monster;
+
     Damage = Super.NetDamage(OriginalDamage, Damage, Injured, InstigatedBy, HitLocation, Momentum, DamageType);
 
     if (Damage == 0)
@@ -79,14 +81,15 @@ function int NetDamage(int OriginalDamage, int Damage, Pawn Injured, Pawn Instig
         return 0;
     }
 
-    if (InstigatedBy != None && KFMonster(Injured) != None)
+    Monster = KFMonster(Injured);
+    if (InstigatedBy != None && Monster != None)
     {
-        class'TurboPlayerEventHandler'.static.BroadcastPlayerDamagedMonster(InstigatedBy.Controller, KFMonster(Injured), Damage, DamageType);
+        class'TurboPlayerEventHandler'.static.BroadcastPlayerDamagedMonster(InstigatedBy.Controller, Monster, Damage, DamageType);
     }
 
     if (Injured != None && Injured.Controller != None && Injured.Controller.bIsPlayer)
     {
-        class'TurboPlayerEventHandler'.static.BroadcastPlayerReceivedDamage(Injured.Controller, KFMonster(InstigatedBy), Damage, DamageType);
+        class'TurboPlayerEventHandler'.static.BroadcastPlayerReceivedDamage(Injured.Controller, Monster, Damage, DamageType);
     }
 
     return Damage;

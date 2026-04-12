@@ -74,6 +74,9 @@ function InternalOnLoadINI(GUIComponent Sender, string S) {
 		case ch_RespawnMonsters:
 			ch_RespawnMonsters.SetComponentValue(PC.IsAutoRespawnEnabled(), true);
 			break;
+		case fl_RespawnMonstersDelay:
+			fl_RespawnMonstersDelay.SetComponentValue(PC.GetAutoRespawnDelay(), true);
+			break;
 	}
 }
 
@@ -86,6 +89,7 @@ function InitValues() {
 	ch_EnableCrosshairs.SetComponentValue(PC.bEnableCrosshairs, true);
 	ch_DrawHitboxes.SetComponentValue(PC.bDrawHitboxes, true);
 	ch_RespawnMonsters.SetComponentValue(PC.IsAutoRespawnEnabled(), true);
+	fl_RespawnMonstersDelay.SetComponentValue(PC.GetAutoRespawnDelay(), true);
 	
 	PRI = KFPlayerReplicationInfo(PlayerOwner().PlayerReplicationInfo);
 	if (PRI != None) {

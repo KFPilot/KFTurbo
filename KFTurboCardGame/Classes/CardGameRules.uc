@@ -307,11 +307,9 @@ function int NetDamage(int OriginalDamage, int Damage, Pawn Injured, Pawn Instig
     local TurboHumanPawn InjuredHumanPawn, InstigatorHumanPawn;
     local KFMonster InjuredMonster, InstigatorMonster;
 
-    Damage = Super.NetDamage(OriginalDamage, Damage, Injured, InstigatedBy, HitLocation, Momentum, DamageType);
-
     if (Damage <= 0)
     {
-        return Damage;
+        return Super.NetDamage(OriginalDamage, Damage, Injured, InstigatedBy, HitLocation, Momentum, DamageType);
     }
 
     DamageMultiplier = 1.f;
@@ -469,23 +467,20 @@ function int NetDamage(int OriginalDamage, int Damage, Pawn Injured, Pawn Instig
             DamageMultiplier *= FallDamageTakenMultiplier;
         }
     }
-
-    //Apply damage multipliers all at once.
-    Damage = float(Damage) * DamageMultiplier;
-
-    if (Damage <= 0.f)
-    {
-        return 0.f;
-    }
-
     
-    if (InstigatorCardInfo != None && InjuredMonster != None)
+    if (DamageMultiplier > 0.f && InstigatorCardInfo != None && InjuredMonster != None)
     {
         AttemptCriticalHit(DamageMultiplier, InstigatedBy, InstigatorCardInfo, HitLocation);
-
         MonsterNetDamage(DamageMultiplier, InjuredMonster, InstigatedBy, InstigatorCardInfo, HitLocation, Momentum, WeaponDamageType);
     }
 
+    //Apply damage multipliers all at once.
+    Damage = float(Damage) * FMax(DamageMultiplier, 0.f);
+
+    if (Damage <= 0)
+    {
+        return Super.NetDamage(OriginalDamage, Damage, Injured, InstigatedBy, HitLocation, Momentum, DamageType);
+    }
 
     if (InstigatorMonster != None && InjuredHumanPawn != None)
     {
@@ -517,7 +512,7 @@ function int NetDamage(int OriginalDamage, int Damage, Pawn Injured, Pawn Instig
         PlayerDropWeapon(InjuredHumanPawn, InjuredCardInfo);
     }
 
-	return Damage;
+    return Super.NetDamage(OriginalDamage, Damage, Injured, InstigatedBy, HitLocation, Momentum, DamageType);
 }
 
 final function bool IsInHealingBoostTime(TurboPlayerCardCustomInfo PlayerCardInfo)
@@ -603,7 +598,7 @@ function MonsterNetDamage(out float DamageMultiplier, KFMonster Injured, Pawn In
     }
 }
 
-function AttemptCriticalHit(out float Damage, Pawn InstigatedBy, TurboPlayerCardCustomInfo PlayerCardInfo, vector HitLocation)
+function AttemptCriticalHit(out float DamageMultiplier, Pawn InstigatedBy, TurboPlayerCardCustomInfo PlayerCardInfo, vector HitLocation)
 {
     local float CurrentCriticalHitChance;
     local int NumCriticalHits;
@@ -660,7 +655,7 @@ function AttemptCriticalHit(out float Damage, Pawn InstigatedBy, TurboPlayerCard
         PlayerCardInfo.SendClientCriticalHit(HitLocation, NumCriticalHits);
     }
     
-    Damage *= CriticalHitDamageMultiplier * float(NumCriticalHits);
+    DamageMultiplier *= CriticalHitDamageMultiplier * float(NumCriticalHits);
 }
 
 function ApplyThornsDamage(int DamageTaken, KFHumanPawn Injured, KFMonster InstigatedBy)

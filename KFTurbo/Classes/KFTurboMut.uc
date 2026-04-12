@@ -132,12 +132,10 @@ function SetupBroadcaster()
 function TurboStatsGameRules SetupTurboStatsGameRules()
 {
 	local TurboStatsGameRules TSGR;
-	local GameRules GameRules;
 	TSGR = Spawn(class'TurboStatsGameRules', Self);
 
-	GameRules = Level.Game.GameRulesModifiers;
+	TSGR.NextGameRules = Level.Game.GameRulesModifiers;
 	Level.Game.GameRulesModifiers = TSGR;
-	TSGR.NextGameRules = GameRules;
 	return TSGR;
 }
 
@@ -468,7 +466,7 @@ defaultproperties
 	bDebugClientPerkRepLink=false
 
 	bCheckLatestTurboVersion=true
-	TurboVersion="6.8.3"
+	TurboVersion="6.8.5"
 	bHasVersionUpdate=false
 
 	bRequireAdminForDifficultyCommands=true
