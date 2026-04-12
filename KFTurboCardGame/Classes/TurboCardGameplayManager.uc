@@ -293,7 +293,7 @@ function OnNextSpawnSquadGenerated(out array < class<KFMonster> > NextSpawnSquad
     
     for (SquadIndex = 0; SquadIndex < NextSpawnSquad.Length; SquadIndex++)
     {
-        if (MonsterUpgradeFlag.IsFlagSet() && FRand() < 0.07f)
+        if (MonsterUpgradeFlag.IsFlagSet() && FRand() < 0.03f)
         {
             AttemptUpgradeMonster(NextSpawnSquad[SquadIndex]);
         }
