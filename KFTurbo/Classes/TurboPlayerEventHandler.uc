@@ -297,6 +297,8 @@ static final function BroadcastPlayerDamagedMonster(Controller Player, KFMonster
         Damage = Min(Damage, Target.Health);
     }
 
+    Damage = Max(Damage, 0);
+
     for (Index = TurboPlayerController.PlayerEventHandlerList.Length - 1; Index >= 0; Index--)
     {
         TurboPlayerController.PlayerEventHandlerList[Index].OnPlayerDamagedMonster(TurboPlayerController, Target, Damage, DamageType);

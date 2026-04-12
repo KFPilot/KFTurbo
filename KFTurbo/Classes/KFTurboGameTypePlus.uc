@@ -15,6 +15,7 @@ const MIN_SPAWN_TIME = 0.01f;
 const WAVE_COUNTDOWN = 60;
 
 var KFTurboPlusArmorRegen ArmorRegenActor;
+var KFTurboPlusResupply ResupplyActor;
 
 // Function called before the game begins
 function PreBeginPlay()
@@ -73,6 +74,11 @@ function SpawnTurboPlusActors()
     if (class'KFTurboPlusArmorRegen'.static.ShouldPerformArmorRegen())
     {
         ArmorRegenActor = KFTurboPlusArmorRegen(class'KFTurboPlusArmorRegen'.static.GetArmorRegenActorClass().static.CreateHandler(Self));
+    }
+
+    if (class'KFTurboPlusResupply'.static.ShouldPerformResupply())
+    {
+        ResupplyActor = KFTurboPlusResupply(class'KFTurboPlusResupply'.static.GetResupplyActorClass().static.CreateHandler(Self));
     }
 }
 
