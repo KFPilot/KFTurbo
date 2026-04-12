@@ -24,7 +24,6 @@ simulated function PostBeginPlay()
 
     if (class'KFTurboGameType'.static.StaticIsHighDifficulty(Self))
     {
-        ProjectileMaxRange = FMin(ProjectileMaxRange, 640.f);
         bOnlyProjectileAttackWhenGrounded = true;
         bTriggerGetOutOfTheWayOfShot = false;
     }
