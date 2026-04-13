@@ -71,7 +71,7 @@ const KoreanSyllableLowerBound = 0xAC00;
 const KoreanSyllableUpperBound = 0xD7A3;
 
 const ThaiLowerBound = 0x0E00;
-const ThaiUpperBound = 0xE7F;
+const ThaiUpperBound = 0x0E7F;
 
 simulated function bool KeyEvent(out EInputKey Key, out EInputAction Action, FLOAT Delta)
 {
