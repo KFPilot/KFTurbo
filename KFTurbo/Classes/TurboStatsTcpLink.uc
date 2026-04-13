@@ -443,7 +443,7 @@ final function string BuildWaveStatsPayload(TurboWavePlayerStatCollector Stats)
     return WaveStatsPayloadCache
         $ StringToJSON("wavenum", Stats.Wave) $ ","
         $ StringToJSON("player", Stats.PlayerID) $ ","
-        $ StringToJSON("playername", Sanitize(Stats.GetPlayerName())) $ ","
+        $ StringToJSON("playername", Base64Encode(Stats.GetPlayerName())) $ ","
         $ StringToJSON("perk", GetPerkID(Stats.PlayerTPRI)) $ ","
         $ DataToJSON("stats", BuildStatsMap(Stats)) $ ","
         $ DataToJSON("died", Eval(Stats.Deaths > 0, "true", "false")) $ "}";
