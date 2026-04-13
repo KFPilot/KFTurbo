@@ -38,6 +38,8 @@ var protected string GameType;
 var globalconfig bool bRequireAdminForDifficultyCommands;
 var globalconfig bool bPreventImmediateCashRegrab; //Prevents annoyance where player's tossed cash can accidentally be picked up by tosser immediately.
 
+var globalconfig bool bFixPlayerNameEncoding;
+
 var bool bSkipInitialMonsterWander;
 
 delegate SetPerkSwitchEnabled(bool bEnable);
@@ -476,4 +478,5 @@ defaultproperties
 	bSkipInitialMonsterWander=false
 
 	bPreventImmediateCashRegrab=false
+	bFixPlayerNameEncoding=false
 }
