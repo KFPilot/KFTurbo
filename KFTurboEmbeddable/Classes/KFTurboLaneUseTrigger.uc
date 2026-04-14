@@ -86,6 +86,11 @@ simulated function Touch(Actor Other)
 	}
 
 	SetNextMessageTime(Level.TimeSeconds + MessageCooldown);
+	
+	if (KFGameReplicationInfo(Level.GRI) != None && KFGameReplicationInfo(Level.GRI).bWaveInProgress)
+	{
+		return;
+	}
 
 	PlayerController.ReceiveLocalizedMessage(class'KFTurboLaneTriggerMessage');
 }
