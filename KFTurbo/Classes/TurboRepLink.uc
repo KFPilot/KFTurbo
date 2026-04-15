@@ -73,7 +73,7 @@ simulated function PreBeginPlay()
 {
     Super.PreBeginPlay();
 
-    if (Role == ROLE_Authority)
+    if (Level.NetMode == NM_DedicatedServer)
     {
         return;
     }
@@ -83,7 +83,7 @@ simulated function PreBeginPlay()
         OwningController = KFPlayerController(Level.GetLocalPlayerController());
     }
 
-    if (OwningReplicationInfo == None)
+    if (OwningController != None && OwningReplicationInfo == None)
     {
         OwningReplicationInfo = KFPlayerReplicationInfo(OwningController.PlayerReplicationInfo);
     }
@@ -99,17 +99,32 @@ simulated function PostBeginPlay()
 function IncrementFailureCounter()
 {
     FailureCount++;
-    if (FailureCount % 30 == 0)
+    if (FailureCount % 30 != 0)
     {
-        log("WARNING FAILURE LIMIT AT " $ FailureCount $ " TIMES ON " $ string(Self) $ "WAITING FOR CPRL.", 'KFTurbo');
-        if (FailureCount > 60)
-        {
-            bAwaitingDestroy = true;
-            Enable('Tick');
-        }
+        return;
+    }
+    
+    if (OwningController == None)
+    {
+        log("OWNING CONTROLLER DESTROYED AFTER" $ FailureCount $ " TIMES ON " $ string(Self) $ "WAITING FOR CPRL.", 'KFTurbo');
+        CleanupRepLinkFix();
+        return;
+    }
+
+    log("WARNING FAILURE LIMIT AT " $ FailureCount $ " TIMES ON " $ string(Self) $ "WAITING FOR CPRL.", 'KFTurbo');
+    if (FailureCount > 60)
+    {
+        CleanupRepLinkFix();
+        return;
     }
 }
 
+function CleanupRepLinkFix()
+{
+    GotoState('');
+    bAwaitingDestroy = true;
+    LifeSpan = 0.1f;
+}
 
 state RepSetup
 {
@@ -119,6 +134,7 @@ Begin:
         Stop;
     }
 
+    Sleep(0.1f);
     FailureCount = 0;
     while (!IsClientPerkRepLinkReady())
     {
