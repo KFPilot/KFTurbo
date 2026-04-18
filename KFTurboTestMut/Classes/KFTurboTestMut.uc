@@ -1,5 +1,7 @@
 class KFTurboTestMut extends Mutator;
 
+#exec obj load file="..\StaticMeshes\KFTurboTest.usx" package=KFTurboTestMut
+
 var const byte MAX_HeadHitboxes;
 var const float TIME_ClearDelay;
 
@@ -164,8 +166,20 @@ function bool CheckReplacement(Actor Other, out byte bSuperRelevant) {
 			}
 		}
 	}
+	else if (TurboGameReplicationInfo(Other) != None)
+	{
+		AddTurboTestGameModifier(TurboGameReplicationInfo(Other));
+	}
 	
 	return Super.CheckReplacement(Other, bSuperRelevant);
+}
+
+function AddTurboTestGameModifier(TurboGameReplicationInfo TGRI)
+{
+	local TurboClientModifierReplicationLink CRL;
+	CRL = TGRI.CustomTurboClientModifier;
+	TGRI.CustomTurboClientModifier = Spawn(class'TestClientModifierReplicationLink', TGRI);
+	TGRI.CustomTurboClientModifier.NextClientModifierLink = CRL;
 }
 
 function ModifyPlayer(Pawn Other) {
