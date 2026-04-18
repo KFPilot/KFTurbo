@@ -228,7 +228,7 @@ function PerformAftershock()
 	local float DamageScale, Distance;
 	local vector Direction;
 
-    if( bDecapitated || bZapped || bHarpoonStunned )
+    if (bDecapitated || bZapped || bHarpoonStunned)
     {
         return;
     }
