@@ -39,7 +39,7 @@ defaultproperties
 {
     VoteID="MAXPLAYERS"
     MinVoteIntValue=1
-    MaxVoteIntValue=6
+    MaxVoteIntValue=12
 
     VotePercent=0.51f
     bCanSpectatorsVote=false
