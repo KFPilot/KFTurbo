@@ -425,7 +425,7 @@ simulated function TickMovementBuffer(float DeltaTime)
         TargetRotation = Rotator(Vector(NextStep.Rotation));
     }
 
-    CurrentQuat = QuatFromRotator(Rotation);
+    CurrentQuat = QuatFromRotator(CurrentRotation);
 
     GetAxes(TargetRotation, X, Y, Z);
     TargetQuat = QuatProduct(QuatFromRotator(TargetRotation), QuatFromAxisAngle(Z, -90.f));
