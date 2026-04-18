@@ -4,13 +4,14 @@
 class W_Flamethrower_Fire extends FlameBurstFire;
 
 var int FireEffectCount;
+var bool bReportHit;
 var int ProjectileCounter;
 var class<Projectile> LowProjectileClass;
 var class<Projectile> MinProjectileClass;
 
 function DoFireEffect()
 {
-     if (++FireEffectCount >= 10) { class'WeaponHelper'.static.OnWeaponFire(self); FireEffectCount = 0; }
+     if (++FireEffectCount >= 10) { class'WeaponHelper'.static.OnWeaponFire(self); FireEffectCount = 0; bReportHit = true; }
      Super.DoFireEffect();
 }
 
@@ -23,6 +24,17 @@ function Projectile SpawnProjectile(Vector Start, Rotator Dir)
 function Projectile ForceSpawnProjectile(Vector Start, Rotator Dir)
 {
      return class'WeaponHelper'.static.ForceSpawnProjectile(Self, Start, Dir);
+}
+
+final function bool ShouldReportHit()
+{
+     if (bReportHit)
+     {
+          bReportHit = false;
+          return true;
+     }
+
+     return false;
 }
 
 function class<Projectile> GetDesiredProjectileClass()
@@ -42,6 +54,7 @@ function class<Projectile> GetDesiredProjectileClass()
 
 defaultproperties
 {
+     bReportHit=true
      ProjectileClass=class'KFTurbo.W_FlameThrower_Proj'
      LowProjectileClass=class'KFTurbo.W_FlameThrower_Proj_Low'
      MinProjectileClass=class'KFTurbo.W_FlameThrower_Proj_Min'

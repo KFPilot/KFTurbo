@@ -9,9 +9,12 @@ var int PenetrationCount;
 
 var float NextExplodeEffectTime;
 
+var bool bHasReportedHit;
+
 simulated function PreBeginPlay()
 {
 	NextExplodeEffectTime = Level.TimeSeconds + 0.25f + (FRand() * 0.25f);
+
 	Super.PreBeginPlay();
 }
 
@@ -79,6 +82,25 @@ final function bool HasAlreadyHitPawn(Actor Other)
 	return false;
 }
 
+simulated function bool ShouldReportHit()
+{
+	local W_FlameThrower_Fire FlamethrowerFire;
+	
+	if (Weapon(Owner) == None)
+	{
+		return false;
+	}
+
+	FlamethrowerFire = W_FlameThrower_Fire(Weapon(Owner).GetFireMode(0));
+
+	if (FlamethrowerFire == None)
+	{
+		return false;
+	}
+
+	return FlamethrowerFire.ShouldReportHit();
+}
+
 simulated function ProcessTouch(Actor Other, vector HitLocation)
 {
 	local TurboPlayerEventHandler.MonsterHitData HitData;
@@ -115,12 +137,17 @@ simulated function ProcessTouch(Actor Other, vector HitLocation)
 
 	//Ignore all projectiles.
 	ProjectileOwner = Owner;
-	class'TurboPlayerEventHandler'.static.CollectMonsterHitData(Other, HitLocation, Normal(Velocity), HitData);
+	bHasReportedHit = bHasReportedHit && KFMonster(Other) != None && ShouldReportHit();
+	if (!bHasReportedHit)
+	{
+		class'TurboPlayerEventHandler'.static.CollectMonsterHitData(Other, HitLocation, Normal(Velocity), HitData);
+	}
 
 	HurtRadius(Damage, DamageRadius, MyDamageType, MomentumTransfer, HitLocation);
 
-	if (HitData.DamageDealt > 0 && Weapon(ProjectileOwner) != None && ProjectileOwner.Instigator != None)
+	if (!bHasReportedHit && HitData.Monster != None && Weapon(ProjectileOwner) != None && ProjectileOwner.Instigator != None)
 	{
+		bHasReportedHit = true;
 		class'TurboPlayerEventHandler'.static.BroadcastPlayerFireHit(ProjectileOwner.Instigator.Controller, Weapon(ProjectileOwner).GetFireMode(0), HitData);	
 	}
 
@@ -149,7 +176,7 @@ simulated function Explode(vector HitLocation,vector HitNormal)
 	Destroy();
 }
 
-simulated function HurtRadius( float DamageAmount, float DamageRadius, class<DamageType> DamageType, float Momentum, vector HitLocation )
+simulated function HurtRadius(float DamageAmount, float DamageRadius, class<DamageType> DamageType, float Momentum, vector HitLocation)
 {
 	local Pawn Pawn;
 	local float DamageScale, Distance;
