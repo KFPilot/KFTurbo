@@ -71,9 +71,17 @@ function TakeDamage( int Damage, Pawn InstigatedBy, Vector Hitlocation, Vector M
     if (WeaponDamageType == None || !WeaponDamageType.default.bIsExplosive)
     {
         HeadShotCheckScale = 1.0;
-        if( class<DamTypeMelee>(damageType) != none )
+
+        if (WeaponDamageType != None)
         {
-            HeadShotCheckScale *= 1.25;
+            if (class<DamTypeMelee>(DamageType) != None)
+            {
+                HeadShotCheckScale *= 1.25f;
+            }
+            else if (class<DamTypeHuskGunProjectileImpact>(DamageType) != None)
+            {
+                HeadShotCheckScale *= 1.75f;
+            }
         }
 
         bIsHeadShot = IsHeadShot(Hitlocation, normal(Momentum), HeadShotCheckScale);
@@ -367,6 +375,10 @@ simulated event SetHeadScale(float NewScale)
 
 defaultproperties
 {
+    ColOffset=(Z=52.000000)
+    ColRadius=36.000000
+    ColHeight=35.000000
+
     Begin Object Class=AfflictionBurn Name=BurnAffliction
         BurnDurationModifier=1.f
     End Object

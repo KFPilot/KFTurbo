@@ -4,9 +4,38 @@
 class W_HuskGun_Proj_Medium extends KFMod.HuskGunProjectile
     dependson(TurboPlayerEventHandler);
 
-function TakeDamage( int Damage, Pawn InstigatedBy, vector Hitlocation, vector Momentum, class<DamageType> damageType, optional int HitIndex)
+function TakeDamage(int Damage, Pawn InstigatedBy, vector Hitlocation, vector Momentum, class<DamageType> damageType, optional int HitIndex)
 {
     class'WeaponHelper'.static.HuskGunProjTakeDamage(self, Damage, InstigatedBy, Hitlocation, Momentum, DamageType, HitIndex);
+}
+
+simulated final function bool CanDamage(Actor Other)
+{
+    local Pawn Pawn;
+
+	if (Other == None || Other == Instigator || Other == Instigator)
+    {
+		return false;
+    }
+
+    Pawn = Pawn(Other);
+    if (Pawn != None)
+    {
+        if (Pawn.Health <= 0)
+        {
+            return false;
+        }
+
+        if (Instigator != None)
+        {
+            if (Instigator.PlayerReplicationInfo != None && Pawn.PlayerReplicationInfo != None && Pawn.PlayerReplicationInfo.Team.TeamIndex == Instigator.PlayerReplicationInfo.Team.TeamIndex)
+            {
+                return false;
+            }
+        }
+    }
+
+    return true;
 }
 
 simulated function ProcessTouch(Actor Other, vector HitLocation)
@@ -19,18 +48,22 @@ simulated function ProcessTouch(Actor Other, vector HitLocation)
 
 	local TurboPlayerEventHandler.MonsterHitData HitData;
 
-	if (Other == none || Other == Instigator || Other.Base == Instigator || KFBulletWhipAttachment(Other) != None)
-    {
-		return;
-    }
-
-    OtherLocation = Other.Location;
-
-    if (KFHumanPawn(Other) != None && Instigator != None && KFHumanPawn(Other).PlayerReplicationInfo.Team.TeamIndex == Instigator.PlayerReplicationInfo.Team.TeamIndex)
+    if (ROBulletWhipAttachment(Other) != None)
     {
         return;
     }
 
+    if (Pawn(Other.Base) != None)
+    {
+        Other = Other.Base;
+    }
+
+    if (!CanDamage(Other))
+    {
+        return;
+    }
+    
+    OtherLocation = Other.Location;
 	if (Instigator != None)
 	{
 		OrigLoc = Instigator.Location;
@@ -48,38 +81,29 @@ simulated function ProcessTouch(Actor Other, vector HitLocation)
         return;
     }
 
-    if( ROBulletWhipAttachment(Other) != none )
+    if (Other.bDeleteMe)
     {
-        if(!Other.Base.bDeleteMe)
+        return;
+    }
+
+    HitPawn = KFPawn(Other);
+    if (HitPawn != None)
+    {
+        Other = Instigator.HitPointTrace(TempHitLocation, HitNormal, HitLocation + (200 * X), HitPoints, HitLocation,, 1);
+
+        if (Other == None || HitPoints.Length == 0)
         {
-            Other = Instigator.HitPointTrace(TempHitLocation, HitNormal, HitLocation + (200 * X), HitPoints, HitLocation,, 1);
-
-            if (Other == None || HitPoints.Length == 0)
-            {
-                return;
-            }
-
-            HitPawn = KFPawn(Other);
-
-            if (Role == ROLE_Authority && HitPawn != None && !HitPawn.bDeleteMe)
-            {
-                HitPawn.ProcessLocationalDamage(ImpactDamage, Instigator, TempHitLocation, MomentumTransfer * Normal(Velocity), ImpactDamageType,HitPoints);
-            }
+            return;
         }
+        
+        HitPawn.ProcessLocationalDamage(ImpactDamage, Instigator, TempHitLocation, MomentumTransfer * Normal(Velocity), ImpactDamageType,HitPoints);
     }
     else
     {
         class'TurboPlayerEventHandler'.static.CollectMonsterHitData(Other, HitLocation, Normal(Velocity), HitData);
 
-        if (Pawn(Other) != None && Pawn(Other).IsHeadShot(HitLocation, X, 1.0))
-        {
-            Pawn(Other).TakeDamage(ImpactDamage * HeadShotDamageMult, Instigator, HitLocation, MomentumTransfer * Normal(Velocity), ImpactDamageType);
-        }
-        else
-        {
-            Other.TakeDamage(ImpactDamage, Instigator, HitLocation, MomentumTransfer * Normal(Velocity), ImpactDamageType);
-        }
-
+        Other.TakeDamage(ImpactDamage, Instigator, HitLocation, MomentumTransfer * Normal(Velocity), ImpactDamageType);
+        
         if (HitData.DamageDealt > 0 && Weapon(Owner) != None && Owner.Instigator != None)
         {
             class'TurboPlayerEventHandler'.static.BroadcastPlayerFireHit(Owner.Instigator.Controller, Weapon(Owner).GetFireMode(0), HitData);
@@ -94,5 +118,5 @@ simulated function ProcessTouch(Actor Other, vector HitLocation)
 
 defaultproperties
 {
-
+    HeadShotDamageMult=1.f
 }
