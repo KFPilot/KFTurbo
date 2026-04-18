@@ -40,7 +40,6 @@
 /Animations/**
 !Animations/KFTurboContent.ukx
 !Animations/KFTurboExtra.ukx
-
 #Texture packages.
 !Textures
 /Textures/**
@@ -51,6 +50,11 @@
 !Textures/TurboHoldout.utx
 !Textures/KFTurboCharacters.utx
 !Textures/KFTurboWeaponSkins.utx
+
+#Static Mesh packages.
+!StaticMeshes
+/StaticMeshes/**
+!StaticMeshes/KFTurboTest.usx
 
 #Relevant maps.
 !Maps
