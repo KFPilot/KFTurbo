@@ -850,6 +850,11 @@ static final function Projectile ForceSpawnProjectile(BaseProjectileFire Project
 
 static final function GrenadeTakeDamage(Nade Projectile, int Damage, Pawn InstigatedBy, Vector Hitlocation, Vector Momentum, class<DamageType> DamageType, optional int HitIndex)
 {
+	if (Projectile.bDisintegrated || Projectile.bHasExploded)
+	{
+		return;
+	}
+
 	if (Monster(InstigatedBy) != none || InstigatedBy == Projectile.Instigator)
 	{
         if(class<SirenScreamDamage>(DamageType) != None)
@@ -865,6 +870,11 @@ static final function GrenadeTakeDamage(Nade Projectile, int Damage, Pawn Instig
 
 static final function M79GrenadeTakeDamage(M79GrenadeProjectile Projectile, int Damage, Pawn InstigatedBy, Vector Hitlocation, Vector Momentum, class<DamageType> DamageType, optional int HitIndex)
 {
+	if (Projectile.bDisintegrated || Projectile.bHasExploded)
+	{
+		return;
+	}
+
 	if (Monster(InstigatedBy) != none || InstigatedBy == Projectile.Instigator)
 	{
         if(class<SirenScreamDamage>(DamageType) != None)
@@ -880,6 +890,11 @@ static final function M79GrenadeTakeDamage(M79GrenadeProjectile Projectile, int 
 
 static final function LawProjTakeDamage(LawProj Projectile, int Damage, Pawn InstigatedBy, Vector Hitlocation, Vector Momentum, class<DamageType> DamageType, optional int HitIndex)
 {
+	if (Projectile.bDisintegrated || Projectile.bHasExploded)
+	{
+		return;
+	}
+
 	if (Monster(InstigatedBy) != none || InstigatedBy == Projectile.Instigator)
 	{
         if(class<SirenScreamDamage>(DamageType) == None && !Projectile.bDud)
@@ -891,6 +906,11 @@ static final function LawProjTakeDamage(LawProj Projectile, int Damage, Pawn Ins
 
 static final function SealSquealProjTakeDamage(SealSquealProjectile Projectile, int Damage, Pawn InstigatedBy, Vector Hitlocation, Vector Momentum, class<DamageType> DamageType, optional int HitIndex)
 {
+	if (Projectile.bDisintegrated || Projectile.bHasExploded)
+	{
+		return;
+	}
+	
 	if (Monster(InstigatedBy) != none || InstigatedBy == Projectile.Instigator)
 	{
         if(class<SirenScreamDamage>(DamageType) != None)
@@ -906,6 +926,11 @@ static final function SealSquealProjTakeDamage(SealSquealProjectile Projectile, 
 
 static final function SeekerSixProjTakeDamage(SeekerSixRocketProjectile Projectile, int Damage, Pawn InstigatedBy, Vector Hitlocation, Vector Momentum, class<DamageType> DamageType, optional int HitIndex)
 {
+	if (Projectile.bDisintegrated || Projectile.bHasExploded)
+	{
+		return;
+	}
+
 	if(class<SirenScreamDamage>(DamageType) != None)
 	{
 		Projectile.Disintegrate(HitLocation, vect(0,0,1));
@@ -914,6 +939,11 @@ static final function SeekerSixProjTakeDamage(SeekerSixRocketProjectile Projecti
 
 static final function HuskGunProjTakeDamage(HuskGunProjectile Projectile, int Damage, Pawn InstigatedBy, Vector Hitlocation, Vector Momentum, class<DamageType> DamageType, optional int HitIndex)
 {
+	if (Projectile.bDisintegrated || Projectile.bHasExploded)
+	{
+		return;
+	}
+
 	if(!Projectile.bDud)
 	{
 		Projectile.Explode(HitLocation, vect(0,0,0));
@@ -922,6 +952,11 @@ static final function HuskGunProjTakeDamage(HuskGunProjectile Projectile, int Da
 
 static final function FlareRevolverProjTakeDamage(FlareRevolverProjectile Projectile, int Damage, Pawn InstigatedBy, Vector Hitlocation, Vector Momentum, class<DamageType> DamageType, optional int HitIndex)
 {
+	if (Projectile.bDisintegrated || Projectile.bHasExploded)
+	{
+		return;
+	}
+
 	if(class<SirenScreamDamage>(DamageType) != None)
 	{
 		Projectile.Disintegrate(HitLocation, vect(0,0,1));
@@ -937,6 +972,11 @@ static final function FlareRevolverProjTakeDamage(FlareRevolverProjectile Projec
 
 static final function SPGrenadeProjTakeDamage(SPGrenadeProjectile Projectile, int Damage, Pawn InstigatedBy, Vector Hitlocation, Vector Momentum, class<DamageType> DamageType, optional int HitIndex)
 {
+	if (Projectile.bDisintegrated || Projectile.bHasExploded)
+	{
+		return;
+	}
+
 	if(class<SirenScreamDamage>(DamageType) != None)
 	{
 		Projectile.Disintegrate(HitLocation, vect(0,0,1));
