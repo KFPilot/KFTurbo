@@ -14,6 +14,13 @@ replication
         NextClientModifierLink, OwnerGRI;
 }
 
+simulated function PreBeginPlay()
+{
+    Super.PreBeginPlay();
+
+    OwnerGRI = TurboGameReplicationInfo(Owner);
+}
+
 simulated function ModifyMonster(KFMonster Monster) { if (NextClientModifierLink != None) { NextClientModifierLink.ModifyMonster(Monster); } }
 
 //Called right before a PendingWeapon becomes the equipped weapon.
