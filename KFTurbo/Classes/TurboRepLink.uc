@@ -121,6 +121,11 @@ function IncrementFailureCounter()
 
 function CleanupRepLinkFix()
 {
+    if (bAwaitingDestroy)
+    {
+        return;
+    }
+
     GotoState('');
     bAwaitingDestroy = true;
     LifeSpan = 0.1f;
