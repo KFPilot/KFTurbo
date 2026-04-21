@@ -39,6 +39,7 @@ var globalconfig bool bRequireAdminForDifficultyCommands;
 var globalconfig bool bPreventImmediateCashRegrab; //Prevents annoyance where player's tossed cash can accidentally be picked up by tosser immediately.
 
 var globalconfig bool bFixPlayerNameEncoding;
+var globalconfig int MaxPlayersOverride;
 
 var bool bSkipInitialMonsterWander;
 
@@ -112,6 +113,19 @@ simulated function PostBeginPlay()
 	}
 	
 	class'TurboHealRewardEventHandler'.static.CreateHandler(Self);
+}
+
+function Tick(float DeltaTime)
+{
+	Disable('Tick');
+
+	if (MaxPlayersOverride <= 0)
+	{
+		return;
+	}
+
+ 	Level.Game.MaxPlayers = MaxPlayersOverride;
+    Level.Game.default.MaxPlayers = MaxPlayersOverride;
 }
 
 function SetupBroadcaster()
@@ -479,4 +493,6 @@ defaultproperties
 
 	bPreventImmediateCashRegrab=false
 	bFixPlayerNameEncoding=false
+	
+	MaxPlayersOverride=0
 }

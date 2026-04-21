@@ -230,18 +230,18 @@ function SetMaxPlayers(TurboPlayerController CommandInstigator, int PlayerCount)
 		return;
 	}
 
-	PlayerCount = Max(1, PlayerCount);
-	PlayerCount = Min(12, PlayerCount);
+	PlayerCount = Clamp(PlayerCount, 1, 16);
 
 	TurboGameType = KFTurboGameType(CommandInstigator.Level.Game);
 
-	if (TurboGameType == None || TurboGameType.bWaveInProgress)
+	if (TurboGameType == None)
 	{
 		return;
 	}
 
  	TurboGameType.MaxPlayers = PlayerCount;
     TurboGameType.default.MaxPlayers = PlayerCount;
+	TurboGameType.ConsoleCommand("set KFTurboMut MaxPlayersOverride"$PlayerCount);
 	
 	BroadcastCommand(CommandInstigator, EncodeInt(AC_SetMaxPlayers, PlayerCount));
 }
