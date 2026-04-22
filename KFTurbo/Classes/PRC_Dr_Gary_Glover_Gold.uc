@@ -7,7 +7,7 @@ defaultproperties
 {
     Species=class'KFTurbo.PRC_Dr_Gary_Glover_Gold_Species'
     MeshName="KF_Soldier_Trip.Hazmat_Soldier1"
-    BodySkinName="KFTurbo.Uniforms.Hazmat_I_FB"
+    BodySkinName="KF_Soldier2_Trip_T.Uniforms.Hazmat_I_cmb"
     FaceSkinName="KFTurbo.Uniforms.Hazmat_I_FB"
     TextName="Golden Dr Gary Glover"
 
