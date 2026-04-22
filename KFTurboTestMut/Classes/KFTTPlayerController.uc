@@ -17,7 +17,7 @@ var bool bHitMultipleZeds, bKeepWeapons, bDrawHitboxes, bInitDestinations;
 
 var globalconfig byte numSegments;
 var globalconfig Color DmgMsgCol, HitboxCol;
-var globalconfig bool bWantsKeepWeapons, bEnableCrosshairs, bWantsDrawHitboxes;
+var globalconfig bool bWantsKeepWeapons, bEnableCrosshairs, bWantsDrawHitboxes, bWantsDrawCollision;
 
 struct MonsterRespawnConfig
 {
@@ -38,10 +38,14 @@ replication {
 		ClientClearLevel, AddDamageMessage, SetDamageLifeTime, ClearDamageMessages;
 	
 	reliable if (Role < ROLE_Authority)
-		ServerSetPerk, SetHealth, SetGameSpeed, ClearLevel, ClearZeds, ServerSetKeepWeapons, ServerSetDrawHitboxes, Whoosh, GodMode, ViewZeds, ViewSelf, ForceRadial, Poof, BaiBai;
+		ServerSetPerk, SetHealth, SetGameSpeed, ClearLevel, ClearZeds, ServerSetKeepWeapons, Whoosh, GodMode, ViewZeds, ViewSelf, ForceRadial, Poof, BaiBai;
 
 	reliable if (Role == ROLE_Authority)
 		ClientShowWaveControlUI;
+
+	reliable if (Role < ROLE_Authority)
+		ServerSetDrawHitboxes;
+
 	reliable if (Role < ROLE_Authority)
 		ServerApplyWaveControlSettings, ServerApplyMonsterRespawnSettings;
 }
@@ -97,6 +101,7 @@ function AcknowledgePossession(Pawn P)
 		ServerSetKeepWeapons(bWantsKeepWeapons);
 		ServerSetDrawHitboxes(bWantsDrawHitboxes);
 		ServerApplyMonsterRespawnSettings(RespawnConfig);
+		UpdateDrawCollision();
 	}
 	
 	Super.AcknowledgePossession(P);
@@ -768,6 +773,24 @@ function ServerApplyMonsterRespawnSettings(MonsterRespawnConfig InRespawnConfig)
 	}
 
 	RespawnConfig = InRespawnConfig;
+}
+
+function SetShowCollision(bool bNewShowCollision)
+{
+	if (bWantsDrawCollision == bNewShowCollision)
+	{
+		return;
+	}
+
+	bWantsDrawCollision = bNewShowCollision;
+	SaveConfig();
+
+	UpdateDrawCollision();
+}
+
+function UpdateDrawCollision()
+{
+	TestClientModifierReplicationLink(class'TestClientModifierReplicationLink'.static.GetClientModifier(Self)).SetDisplayCollision(bWantsDrawCollision);
 }
 
 defaultproperties

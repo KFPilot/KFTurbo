@@ -21,6 +21,34 @@ simulated function PreBeginPlay()
     OwnerGRI = TurboGameReplicationInfo(Owner);
 }
 
+//Used to find a modifier of a specific class. Meant to be called as a static via the class that's being searched for.
+simulated static final function TurboClientModifierReplicationLink GetClientModifier(Actor Actor)
+{
+    local TurboClientModifierReplicationLink CMRL;
+    if (Actor != None)
+    {
+        return None;
+    }
+
+    if (TurboGameReplicationInfo(Actor.Level.GRI) != None)
+    {
+        return None;
+    }
+
+    CMRL = TurboGameReplicationInfo(Actor.Level.GRI).CustomTurboClientModifier;
+    while (CMRL != None)
+    {
+        if (ClassIsChildOf(CMRL.Class, default.Class))
+        {
+            return CMRL;
+        }
+
+        CMRL = CMRL.NextClientModifierLink;
+    }
+    
+    return None;
+}
+
 simulated function ModifyMonster(KFMonster Monster) { if (NextClientModifierLink != None) { NextClientModifierLink.ModifyMonster(Monster); } }
 
 //Called right before a PendingWeapon becomes the equipped weapon.

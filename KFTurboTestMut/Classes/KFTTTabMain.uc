@@ -8,7 +8,7 @@ var automated GUIButton b_SetPerk, b_SetHealth, b_SetSpeed, b_ClearLevel, b_Clea
 var automated moNumericEdit nu_NumPlayers;
 var automated moComboBox co_PerkName;
 var automated moFloatEdit fl_GameSpeed;
-var automated moCheckbox ch_KeepWeapons, ch_EnableCrosshairs, ch_DrawHitboxes, ch_RespawnMonsters;
+var automated moCheckbox ch_KeepWeapons, ch_EnableCrosshairs, ch_DrawHitboxes, ch_DrawCollision, ch_RespawnMonsters;
 var automated moFloatEdit fl_RespawnMonstersDelay;
 
 var array<GUIButton> LColumn, RColumn;
@@ -43,6 +43,7 @@ function InitComponent(GUIController MyController, GUIComponent MyOwner) {
 	sb_TopRight.ManageComponent(ch_RespawnMonsters);
     sb_TopRight.ManageComponent(fl_RespawnMonstersDelay);
 	sb_TopRight.ManageComponent(ch_DrawHitboxes);
+    sb_TopRight.ManageComponent(ch_DrawCollision);
 	sb_TopRight.ManageComponent(ch_EnableCrosshairs);
 	
 	sb_BottomRight.ManageComponent(b_ClearLevel);
@@ -71,6 +72,9 @@ function InternalOnLoadINI(GUIComponent Sender, string S) {
 		case ch_DrawHitboxes:
 			ch_DrawHitboxes.SetComponentValue(PC.bDrawHitboxes, true);
 			break;
+        case ch_DrawCollision:
+            ch_DrawCollision.SetComponentValue(PC.bDrawHitboxes, true);
+            break;
 		case ch_RespawnMonsters:
 			ch_RespawnMonsters.SetComponentValue(PC.IsAutoRespawnEnabled(), true);
 			break;
@@ -88,6 +92,7 @@ function InitValues() {
 	ch_KeepWeapons.SetComponentValue(PC.bWantsKeepWeapons, true);
 	ch_EnableCrosshairs.SetComponentValue(PC.bEnableCrosshairs, true);
 	ch_DrawHitboxes.SetComponentValue(PC.bDrawHitboxes, true);
+    ch_DrawCollision.SetComponentValue(PC.bDrawHitboxes, true);
 	ch_RespawnMonsters.SetComponentValue(PC.IsAutoRespawnEnabled(), true);
 	fl_RespawnMonstersDelay.SetComponentValue(PC.GetAutoRespawnDelay(), true);
 	
@@ -177,6 +182,9 @@ function InternalOnChange(GUIComponent Sender) {
 		case ch_DrawHitboxes:
 			PC.SetDrawHitboxes(ch_DrawHitboxes.IsChecked());
 			break;
+        case ch_DrawCollision:
+            PC.SetShowCollision(ch_DrawCollision.IsChecked());
+            break;
         case ch_RespawnMonsters:
         case fl_RespawnMonstersDelay:
             UpdateRespawnConfig();
@@ -471,11 +479,21 @@ defaultproperties
      End Object
      ch_DrawHitboxes=moCheckBox'KFTurboTestMut.KFTTTabMain.DrawHitboxes'
 
+    Begin Object Class=moCheckBox Name=DrawCollision
+        Caption="Draw collision"
+        OnCreateComponent=DrawCollision.InternalOnCreateComponent
+        Hint="Draw collision zeds. White is the primary actor collision, pink is extended collision (projectiles and traces only)."
+        TabOrder=13
+        OnChange=KFTTTabMain.InternalOnChange
+        OnLoadINI=KFTTTabMain.InternalOnLoadINI
+    End Object
+    ch_DrawCollision=moCheckBox'DrawCollision'
+
      Begin Object Class=moCheckBox Name=RespawnMonsters
          Caption="Auto Respawn Monsters"
          OnCreateComponent=RespawnMonsters.InternalOnCreateComponent
          Hint="Automatically respawn spawned monsters when they are killed."
-         TabOrder=13
+         TabOrder=14
          OnChange=KFTTTabMain.InternalOnChange
          OnLoadINI=KFTTTabMain.InternalOnLoadINI
      End Object
@@ -487,7 +505,7 @@ defaultproperties
          Caption="Auto Respawn Delay"
          OnCreateComponent=MonsterRespawnDelayFloat.InternalOnCreateComponent
          Hint="Adjust the delay for auto monster respawn."
-         TabOrder=14
+         TabOrder=15
          OnChange=KFTTTabMain.InternalOnChange
      End Object
      fl_RespawnMonstersDelay=moFloatEdit'MonsterRespawnDelayFloat'
