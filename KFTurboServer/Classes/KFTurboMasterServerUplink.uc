@@ -5,45 +5,82 @@ class KFTurboMasterServerUplink extends IpDrv.MasterServerUplink
 	config(KFTurboServer);
 
 var config string ServerColorString;
-var config int BlueGradientSteps;
-var config array<string> BlueStringGradient;
-var config bool bApplyVersionNumberToServerName;
+var string ServerNameString;
+var config array<Color> ColorLookup;
+var array<string> ColorLookupStringList;
+
+var string MapNameString;
+var config int MapGradientSteps;
+var config array<Color> MapGradient;
+var array<string> MapGradientStringList;
 
 function PostBeginPlay()
 {
 	Super.PostBeginPlay();
 
+	BuildServerName();
+	BuildMapName();
+	bInitialStateCached = false;
+
 	SetTimer(5.f, true);
 }
 
-final function string ApplyGradientToString(String BaseString)
+function BuildServerName()
 {
-	local string GradientString;
-	local int StringIndex;
-	local int GradientIndex;
-
-	if (BlueGradientSteps == 0)
+	local int Index;
+	ColorLookupStringList.Length = ColorLookup.Length;
+	for (Index = ColorLookupStringList.Length - 1; Index >= 0; Index--)
 	{
-		return BaseString;
+		ColorLookupStringList[Index] = class'GUIComponent'.static.MakeColorCode(ColorLookup[Index]);
 	}
 
-	GradientString = "";
-	GradientIndex = 0;
-
-	for (StringIndex = 0; StringIndex < Len(BaseString); StringIndex += BlueGradientSteps)
+	ServerNameString = Repl(ServerColorString, "%v", class'KFTurboMut'.static.GetTurboVersionID());
+	for (Index = ColorLookupStringList.Length - 1; Index >= 0; Index--)
 	{
-		if (GradientIndex >= BlueStringGradient.Length)
+		ServerNameString = Repl(ServerNameString, "%c"$string(Index), ColorLookupStringList[Index]);
+	}
+}
+
+function BuildMapName()
+{
+	local int Index, GradientIndex;
+	local string MapName, GradientMapName;
+
+	MapName = Left(string(Level), InStr(string(Level), "."));
+
+	//Remove Turbo Super map variants.
+	if (Right(MapName, 2) ~= "-S")
+	{
+		MapName = Left(MapName, Len(MapName) - 2);
+	}
+
+	MapGradientStringList.Length = MapGradient.Length;
+	for (Index = MapGradientStringList.Length - 1; Index >= 0; Index--)
+	{
+		MapGradientStringList[Index] = class'GUIComponent'.static.MakeColorCode(MapGradient[Index]);
+	}
+	
+	MapNameString = ApplyGradientToString(MapName);
+}
+
+final function string ApplyGradientToString(string InString)
+{
+	local int Index, GradientIndex;
+	local string GradientString;
+
+	GradientString = "";
+	for (Index = 0; Index < Len(InString); Index += MapGradientSteps)
+	{
+		if (GradientIndex >= MapGradientStringList.Length)
 		{
 			break;
 		}
 
-		GradientString = GradientString $ BlueStringGradient[GradientIndex] $ Mid(BaseString, StringIndex, BlueGradientSteps);
+		GradientString = GradientString $ MapGradientStringList[GradientIndex] $ Mid(InString, Index, MapGradientSteps);
 		GradientIndex++;
 	}
 
-	GradientString = GradientString $ Mid(BaseString, StringIndex);
-
-	return GradientString;
+	return GradientString $ Mid(InString, Index);
 }
 
 //When this gets called seems arbitrary and infrequent from the non-native side...
@@ -64,23 +101,8 @@ function PerformUpdate()
 	if ( (!bInitialStateCached) || ( Level.TimeSeconds > CacheRefreshTime )  )
 	{
 		Level.Game.GetServerInfo(FullCachedServerState);
-		
-		if (ServerColorString != "")
-		{
-			FullCachedServerState.ServerName = ServerColorString;
-
-			if (bApplyVersionNumberToServerName)
-			{
-				FullCachedServerState.ServerName = Repl(FullCachedServerState.ServerName, "%v", class'KFTurboMut'.static.GetTurboVersionID());
-			}
-		}
-
-		if (Right(FullCachedServerState.MapName, 2) ~= "-S")
-		{
-			FullCachedServerState.MapName = Left(FullCachedServerState.MapName, Len(FullCachedServerState.MapName) - 2);
-		}
-
-		FullCachedServerState.MapName = ApplyGradientToString(FullCachedServerState.MapName);
+		FullCachedServerState.ServerName = ServerNameString;
+		FullCachedServerState.MapName = MapNameString;
 
 		class'GameInfo'.static.AddServerDetail( FullCachedServerState, "Server Mode", Eval(Level.NetMode == NM_ListenServer, "non-dedicated", "dedicated") );
     	class'GameInfo'.static.AddServerDetail( FullCachedServerState, "Server Version", Level.ROVersion );
@@ -109,7 +131,8 @@ function PerformUpdate()
 	{
 		CachedServerState.MaxPlayers = Level.Game.MaxPlayers;
 		ServerState = CachedServerState;
-
+    	ServerState.ServerInfo.Length = 0;
+		
 		Level.Game.GetServerPlayers(ServerState);
 
 		FullCachedServerState = ServerState;
@@ -192,7 +215,7 @@ function AppendMutators(out GameInfo.ServerResponseLine ServerState)
 			}
 		}
 
-		if ( !bFound)
+		if (!bFound)
 		{
 			ListLength = ServerState.ServerInfo.Length;
 			ServerState.ServerInfo.Length = ListLength + 1;
