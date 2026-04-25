@@ -229,7 +229,9 @@ event ModeDoFire()
 defaultproperties
 {
     FireRate=0.500000
-    MaxChargeTime=2.000000
+    MaxVerticalRecoilAngle=900
+    MaxHorizontalRecoilAngle=60
+    MaxChargeTime=1.250000
     Spread=0.000000
     AmmoClass=Class'KFTurbo.W_HuskGun_Ammo'
     MaxDamageMultiplier=7.5
