@@ -1106,7 +1106,7 @@ defaultproperties
     DeckCardObjectList(40)=TurboCard'Nothing'
 
     Begin Object Name=Something Class=TurboCard_ProConStrange_Something
-        CardName(0)=""
+        CardName(0)="Something"
         CardDescriptionList(0)=""
         CardID="PROCON_SOMETHING"
         OnActivateCard=ActivateSomething
