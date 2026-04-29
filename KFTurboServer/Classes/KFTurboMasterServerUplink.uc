@@ -14,37 +14,76 @@ var config int MapGradientSteps;
 var config array<Color> MapGradient;
 var array<string> MapGradientStringList;
 
+var string GameTypeString;
+var string TurboVersionTitle, TurboVersionString;
+
 function PostBeginPlay()
 {
 	Super.PostBeginPlay();
 
-	BuildServerName();
-	BuildMapName();
-	bInitialStateCached = false;
+	SetTimer(2.f, false);
+}
 
-	SetTimer(5.f, true);
+function Timer()
+{
+	GotoState('SetupUplinkInfo');
+}
+
+function Refresh() {}
+
+state SetupUplinkInfo
+{
+	function BeginState()
+	{
+		local int Index;
+		ColorLookupStringList.Length = ColorLookup.Length;
+		for (Index = ColorLookupStringList.Length - 1; Index >= 0; Index--)
+		{
+			ColorLookupStringList[Index] = class'GUIComponent'.static.MakeColorCode(ColorLookup[Index]);
+		}
+		
+		MapGradientStringList.Length = MapGradient.Length;
+		for (Index = MapGradientStringList.Length - 1; Index >= 0; Index--)
+		{
+			MapGradientStringList[Index] = class'GUIComponent'.static.MakeColorCode(MapGradient[Index]);
+		}
+
+		BuildServerName();
+		BuildMapName();
+		BuildGameModeName();
+		BuildVersionName();
+
+		SetTimer(0.1f, false);
+	}
+
+	function Timer()
+	{
+		GotoState('UplinkReady');
+	}
 }
 
 function BuildServerName()
 {
+	ServerNameString = Repl(ServerColorString, "%v", class'KFTurboMut'.static.GetTurboVersionID());
+
+	ServerNameString = ApplyServerNameGradientToString(ServerNameString);
+}
+
+final function string ApplyServerNameGradientToString(string InString)
+{
 	local int Index;
-	ColorLookupStringList.Length = ColorLookup.Length;
+
 	for (Index = ColorLookupStringList.Length - 1; Index >= 0; Index--)
 	{
-		ColorLookupStringList[Index] = class'GUIComponent'.static.MakeColorCode(ColorLookup[Index]);
+		InString = Repl(InString, "%c"$string(Index), ColorLookupStringList[Index]);
 	}
 
-	ServerNameString = Repl(ServerColorString, "%v", class'KFTurboMut'.static.GetTurboVersionID());
-	for (Index = ColorLookupStringList.Length - 1; Index >= 0; Index--)
-	{
-		ServerNameString = Repl(ServerNameString, "%c"$string(Index), ColorLookupStringList[Index]);
-	}
+	return InString;
 }
 
 function BuildMapName()
 {
-	local int Index, GradientIndex;
-	local string MapName, GradientMapName;
+	local string MapName;
 
 	MapName = Left(string(Level), InStr(string(Level), "."));
 
@@ -53,17 +92,22 @@ function BuildMapName()
 	{
 		MapName = Left(MapName, Len(MapName) - 2);
 	}
-
-	MapGradientStringList.Length = MapGradient.Length;
-	for (Index = MapGradientStringList.Length - 1; Index >= 0; Index--)
-	{
-		MapGradientStringList[Index] = class'GUIComponent'.static.MakeColorCode(MapGradient[Index]);
-	}
 	
-	MapNameString = ApplyGradientToString(MapName);
+	MapNameString = ApplyMapGradientToString(MapName);
 }
 
-final function string ApplyGradientToString(string InString)
+function BuildGameModeName()
+{
+	GameTypeString = ApplyMapGradientToString(GetGameTypeString());
+}
+
+
+function BuildVersionName()
+{
+	TurboVersionTitle = ApplyServerNameGradientToString("%c6T%c7u%c8r%c9bo %c6V%c7er%c8si%c9on");
+}
+
+final function string ApplyMapGradientToString(string InString)
 {
 	local int Index, GradientIndex;
 	local string GradientString;
@@ -83,55 +127,62 @@ final function string ApplyGradientToString(string InString)
 	return GradientString $ Mid(InString, Index);
 }
 
-//When this gets called seems arbitrary and infrequent from the non-native side...
-//Will still do updates here but now also have a timer do it.
-event Refresh()
+state UplinkReady
 {
-	PerformUpdate();
-}
+	function BeginState()
+	{
+		bInitialStateCached = false;
+		SetTimer(5.f, true);
+	}
 
-function Timer()
-{
-	PerformUpdate();
+	function Refresh()
+	{
+		PerformUpdate();
+	}
+
+	function Timer()
+	{
+		PerformUpdate();
+	}
 }
 
 //Slim down the info the server provides to relevant data.
 function PerformUpdate()
 {
-	if ( (!bInitialStateCached) || ( Level.TimeSeconds > CacheRefreshTime )  )
+	if ((!bInitialStateCached) || (Level.TimeSeconds > CacheRefreshTime))
 	{
 		Level.Game.GetServerInfo(FullCachedServerState);
 		FullCachedServerState.ServerName = ServerNameString;
 		FullCachedServerState.MapName = MapNameString;
 
-		class'GameInfo'.static.AddServerDetail( FullCachedServerState, "Server Mode", Eval(Level.NetMode == NM_ListenServer, "non-dedicated", "dedicated") );
-    	class'GameInfo'.static.AddServerDetail( FullCachedServerState, "Server Version", Level.ROVersion );
-    	class'GameInfo'.static.AddServerDetail( FullCachedServerState, "Turbo Version", ApplyGradientToString(class'KFTurboMut'.static.GetTurboVersionID()));
-   		class'GameInfo'.static.AddServerDetail( FullCachedServerState, "VAC Secured", Eval(Level.Game.IsVACSecured(), "Enabled", "Disabled"));
-		class'GameInfo'.static.AddServerDetail( FullCachedServerState, "Max Spectators", Level.Game.MaxSpectators );
+		class'GameInfo'.static.AddServerDetail(FullCachedServerState, "Server Mode", Eval(Level.NetMode == NM_ListenServer, "non-dedicated", "dedicated") );
+    	class'GameInfo'.static.AddServerDetail(FullCachedServerState, "Server Version", Level.ROVersion);
+    	class'GameInfo'.static.AddServerDetail(FullCachedServerState, TurboVersionTitle, ApplyMapGradientToString(class'KFTurboMut'.static.GetTurboVersionID()));
+   		class'GameInfo'.static.AddServerDetail(FullCachedServerState, "VAC Secured", Eval(Level.Game.IsVACSecured(), "Enabled", "Disabled"));
+		class'GameInfo'.static.AddServerDetail(FullCachedServerState, "Max Spectators", Level.Game.MaxSpectators);
 
-		if ( Level.Game.AccessControl != None && Level.Game.AccessControl.RequiresPassword() )
+		if (Level.Game.AccessControl != None && Level.Game.AccessControl.RequiresPassword())
 		{
-			class'GameInfo'.static.AddServerDetail( FullCachedServerState, "Passworded", "True" );
+			class'GameInfo'.static.AddServerDetail(FullCachedServerState, "Passworded", "True");
 		}
 
 		ApplyServerFlags(FullCachedServerState);
 		AppendMutators(FullCachedServerState);
-		AppendGameModeInfo(FullCachedServerState);
+		class'GameInfo'.static.AddServerDetail(ServerState, "Game Mode", GameTypeString);
 
 		CachedServerState = FullCachedServerState;
 
 		Level.Game.GetServerPlayers(FullCachedServerState);
 
 		ServerState 		= FullCachedServerState;
-		CacheRefreshTime 	= Level.TimeSeconds + 9.f; //Reduced interval
+		CacheRefreshTime 	= Level.TimeSeconds + 240.f; //Slowed interval.
 		bInitialStateCached = true;
 	}
-	else if (Level.Game.GetNumPlayers() != CachePlayerCount)
+	else if (Level.Game.GetNumPlayers() != CachePlayerCount || Level.Game.MaxPlayers != CachedServerState.MaxPlayers)
 	{
 		CachedServerState.MaxPlayers = Level.Game.MaxPlayers;
 		ServerState = CachedServerState;
-    	ServerState.ServerInfo.Length = 0;
+    	ServerState.PlayerInfo.Length = 0;
 		
 		Level.Game.GetServerPlayers(ServerState);
 
@@ -188,7 +239,7 @@ function AppendMutators(out GameInfo.ServerResponseLine ServerState)
 {
 	local Mutator Mutator;
 	local String MutatorName;
-	local int Index, ListLength;
+	local int ListLength;
 	local bool bFound;
 
 	for (Mutator = Level.Game.BaseMutator.NextMutator; Mutator != None; Mutator = Mutator.NextMutator)
@@ -206,104 +257,40 @@ function AppendMutators(out GameInfo.ServerResponseLine ServerState)
 			MutatorName = "Server Achievements";
 		}
 
-		for (Index = 0; Index < ServerState.ServerInfo.Length; Index++)
-		{
-			if ( (ServerState.ServerInfo[Index].Value ~= MutatorName) && (ServerState.ServerInfo[Index].Key ~= "Mutator") )
-			{
-				bFound = true;
-				break;
-			}
-		}
-
-		if (!bFound)
-		{
-			ListLength = ServerState.ServerInfo.Length;
-			ServerState.ServerInfo.Length = ListLength + 1;
-			ServerState.ServerInfo[ListLength].Key = "Mutator";
-			ServerState.ServerInfo[ListLength].Value = ApplyGradientToString(MutatorName);
-		}
+		ListLength = ServerState.ServerInfo.Length;
+		ServerState.ServerInfo.Length = ListLength + 1;
+		ServerState.ServerInfo[ListLength].Key = "Mutator";
+		ServerState.ServerInfo[ListLength].Value = ApplyMapGradientToString(MutatorName);
 	}
 }
 
-function AppendGameModeInfo(out GameInfo.ServerResponseLine ServerState)
-{
-	local string GameTypeString;
-	local KFTurboGameType GameType;
-
-	GameType = KFTurboGameType(Level.Game);
-	
-	if (GameType == None)
-	{
-		return;
-	}
-
-	if (GameType.IsTestGameType())
-	{
-		GameTypeString = "Turbo Test Mode";
-	}
-	else if (GameType.IsHighDifficulty())
-	{
-		GameTypeString = "Turbo+ Game Mode";
-	}
-	else
-	{
-		if (IsPlayingCardGame())
-		{
-			GameTypeString = "Turbo Card Game Mode";
-		}
-		else if (IsPlayingRandomizer())
-		{
-			GameTypeString = "Turbo Randomizer Game Mode";
-		}
-		else if (IsPlayingHoldout())
-		{
-			GameTypeString = "Turbo Holdout Game Mode";
-		}
-		else
-		{
-			GameTypeString = "Turbo Game Mode";
-		}
-	}
-	
-	class'GameInfo'.static.AddServerDetail(ServerState, "Game Mode", ApplyGradientToString(GameTypeString));
-}
-
-function bool IsPlayingCardGame()
-{
-    return HasMutatorFromGroup("KF-CardGame");
-}
-
-function bool IsPlayingRandomizer()
-{
-    return HasMutatorFromGroup("KF-Randomizer");
-}
-
-function bool IsPlayingHoldout()
-{
-    return HasMutatorFromGroup("KF-Holdout");
-}
-
-function bool HasMutatorFromGroup(string GroupName)
+function string GetGameTypeString()
 {
     local Mutator Mutator;
 
 	if (Level.Game == None)
 	{
-		return false;
+		return "Turbo Game Mode";
 	}
 
     for (Mutator = Level.Game.BaseMutator; Mutator != None; Mutator = Mutator.NextMutator)
     {
-        if (Mutator.GroupName == GroupName)
-        {
-            return true;
-        }
+		switch(Mutator.GroupName)
+		{
+			case "KF-CardGame":
+				return "Turbo Card Game Mode";
+			case "KF-Randomizer":
+				return "Turbo Randomizer Game Mode";
+			case "KF-Holdout":
+				return "Turbo Holdout Game Mode";
+		}
     }
 
-    return false;
+	return "Turbo Game Mode";
 }
 
 defaultproperties
 {
-
+	bInitialStateCached=false
+	CacheRefreshTime=0.f
 }
