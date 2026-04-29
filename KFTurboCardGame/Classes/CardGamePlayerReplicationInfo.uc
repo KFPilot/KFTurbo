@@ -75,6 +75,18 @@ simulated state ValidateCardGameLRI
     simulated final function RepairLRI()
     {
         local LinkedReplicationInfo NextLRI;
+
+        NextLRI = OwningReplicationInfo.CustomReplicationInfo;
+        while (NextLRI != None)
+        {
+            if (NextLRI == Self)
+            {
+                return;
+            }
+
+		    NextLRI = NextLRI.NextReplicationInfo;
+        }
+
         NextLRI = OwningReplicationInfo.CustomReplicationInfo;
         OwningReplicationInfo.CustomReplicationInfo = Self;
         NextReplicationInfo = NextLRI;
