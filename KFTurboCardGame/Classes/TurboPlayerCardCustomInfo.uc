@@ -267,7 +267,7 @@ defaultproperties
 
 	MinDropWeaponTime=0.f
 
-	FreezeTagTimeUntilSlow=3.f
+	FreezeTagTimeUntilSlow=9.f
 	FreezeTagTimeUntilFreeze=4.f
 
 	//Replicates now that the client has to be aware of certain properties on here.

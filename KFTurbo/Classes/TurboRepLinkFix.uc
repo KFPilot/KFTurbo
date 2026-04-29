@@ -77,6 +77,18 @@ static final function bool HasLRI(PlayerController PlayerController, LinkedRepli
 static final function ForceEmplaceLRI(PlayerReplicationInfo PRI, LinkedReplicationInfo LRI)
 {
 	local LinkedReplicationInfo NextLRI;
+
+	NextLRI = PRI.CustomReplicationInfo;
+	while (NextLRI != None)
+	{
+		if (NextLRI == LRI)
+		{
+			return;
+		}
+
+		NextLRI = NextLRI.NextReplicationInfo;
+	}
+
 	NextLRI = PRI.CustomReplicationInfo;
 	PRI.CustomReplicationInfo = LRI;
 	LRI.NextReplicationInfo = NextLRI;
