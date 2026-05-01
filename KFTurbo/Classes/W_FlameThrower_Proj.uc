@@ -137,7 +137,7 @@ simulated function ProcessTouch(Actor Other, vector HitLocation)
 
 	//Ignore all projectiles.
 	ProjectileOwner = Owner;
-	bHasReportedHit = !bHasReportedHit && KFMonster(Other) != None && ShouldReportHit();
+	
 	if (!bHasReportedHit)
 	{
 		class'TurboPlayerEventHandler'.static.CollectMonsterHitData(Other, HitLocation, Normal(Velocity), HitData);
@@ -148,7 +148,11 @@ simulated function ProcessTouch(Actor Other, vector HitLocation)
 	if (!bHasReportedHit && HitData.Monster != None && Weapon(ProjectileOwner) != None && ProjectileOwner.Instigator != None)
 	{
 		bHasReportedHit = true;
-		class'TurboPlayerEventHandler'.static.BroadcastPlayerFireHit(ProjectileOwner.Instigator.Controller, Weapon(ProjectileOwner).GetFireMode(0), HitData);	
+
+		if (ShouldReportHit())
+		{
+			class'TurboPlayerEventHandler'.static.BroadcastPlayerFireHit(ProjectileOwner.Instigator.Controller, Weapon(ProjectileOwner).GetFireMode(0), HitData);
+		}	
 	}
 
 	PenetrationCount++;
