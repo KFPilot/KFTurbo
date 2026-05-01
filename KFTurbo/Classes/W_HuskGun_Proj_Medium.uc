@@ -13,7 +13,7 @@ simulated final function bool CanDamage(Actor Other)
 {
     local Pawn Pawn;
 
-	if (Other == None || Other == Instigator || Other == Instigator)
+	if (Other == None || Other == Instigator)
     {
 		return false;
     }
