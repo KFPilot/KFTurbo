@@ -30,7 +30,7 @@ simulated static final function TurboClientModifierReplicationLink GetClientModi
         return None;
     }
 
-    if (TurboGameReplicationInfo(Actor.Level.GRI) != None)
+    if (TurboGameReplicationInfo(Actor.Level.GRI) == None)
     {
         return None;
     }
