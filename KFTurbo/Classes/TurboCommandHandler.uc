@@ -241,7 +241,7 @@ function SetMaxPlayers(TurboPlayerController CommandInstigator, int PlayerCount)
 
  	TurboGameType.MaxPlayers = PlayerCount;
     TurboGameType.default.MaxPlayers = PlayerCount;
-	TurboGameType.ConsoleCommand("set KFTurboMut MaxPlayersOverride"$PlayerCount);
+	TurboGameType.ConsoleCommand("set KFTurboMut MaxPlayersOverride"@PlayerCount);
 	
 	BroadcastCommand(CommandInstigator, EncodeInt(AC_SetMaxPlayers, PlayerCount));
 }
