@@ -124,8 +124,8 @@ function Tick(float DeltaTime)
 		return;
 	}
 
- 	Level.Game.MaxPlayers = MaxPlayersOverride;
-    Level.Game.default.MaxPlayers = MaxPlayersOverride;
+	Level.Game.MaxPlayers = MaxPlayersOverride;
+	Level.Game.default.MaxPlayers = MaxPlayersOverride;
 }
 
 function SetupBroadcaster()
