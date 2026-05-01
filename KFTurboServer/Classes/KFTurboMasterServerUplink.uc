@@ -105,6 +105,7 @@ function BuildGameModeName()
 function BuildVersionName()
 {
 	TurboVersionTitle = ApplyServerNameGradientToString("%c6T%c7u%c8r%c9bo %c6V%c7er%c8si%c9on");
+	TurboVersionString = ApplyMapGradientToString(class'KFTurboMut'.static.GetTurboVersionID());
 }
 
 final function string ApplyMapGradientToString(string InString)
@@ -157,7 +158,7 @@ function PerformUpdate()
 
 		class'GameInfo'.static.AddServerDetail(FullCachedServerState, "Server Mode", Eval(Level.NetMode == NM_ListenServer, "non-dedicated", "dedicated") );
     	class'GameInfo'.static.AddServerDetail(FullCachedServerState, "Server Version", Level.ROVersion);
-    	class'GameInfo'.static.AddServerDetail(FullCachedServerState, TurboVersionTitle, ApplyMapGradientToString(class'KFTurboMut'.static.GetTurboVersionID()));
+    	class'GameInfo'.static.AddServerDetail(FullCachedServerState, TurboVersionTitle, TurboVersionString);
    		class'GameInfo'.static.AddServerDetail(FullCachedServerState, "VAC Secured", Eval(Level.Game.IsVACSecured(), "Enabled", "Disabled"));
 		class'GameInfo'.static.AddServerDetail(FullCachedServerState, "Max Spectators", Level.Game.MaxSpectators);
 
@@ -168,7 +169,7 @@ function PerformUpdate()
 
 		ApplyServerFlags(FullCachedServerState);
 		AppendMutators(FullCachedServerState);
-		class'GameInfo'.static.AddServerDetail(ServerState, "Game Mode", GameTypeString);
+		class'GameInfo'.static.AddServerDetail(FullCachedServerState, "Game Mode", GameTypeString);
 
 		CachedServerState = FullCachedServerState;
 
