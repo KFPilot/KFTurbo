@@ -73,7 +73,7 @@ function InternalOnLoadINI(GUIComponent Sender, string S) {
 			ch_DrawHitboxes.SetComponentValue(PC.bDrawHitboxes, true);
 			break;
         case ch_DrawCollision:
-            ch_DrawCollision.SetComponentValue(PC.bDrawHitboxes, true);
+            ch_DrawCollision.SetComponentValue(PC.bWantsDrawCollision, true);
             break;
 		case ch_RespawnMonsters:
 			ch_RespawnMonsters.SetComponentValue(PC.IsAutoRespawnEnabled(), true);
@@ -92,7 +92,7 @@ function InitValues() {
 	ch_KeepWeapons.SetComponentValue(PC.bWantsKeepWeapons, true);
 	ch_EnableCrosshairs.SetComponentValue(PC.bEnableCrosshairs, true);
 	ch_DrawHitboxes.SetComponentValue(PC.bDrawHitboxes, true);
-    ch_DrawCollision.SetComponentValue(PC.bDrawHitboxes, true);
+    ch_DrawCollision.SetComponentValue(PC.bWantsDrawCollision, true);
 	ch_RespawnMonsters.SetComponentValue(PC.IsAutoRespawnEnabled(), true);
 	fl_RespawnMonstersDelay.SetComponentValue(PC.GetAutoRespawnDelay(), true);
 	
