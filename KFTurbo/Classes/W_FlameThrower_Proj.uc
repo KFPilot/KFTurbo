@@ -137,7 +137,7 @@ simulated function ProcessTouch(Actor Other, vector HitLocation)
 
 	//Ignore all projectiles.
 	ProjectileOwner = Owner;
-	bHasReportedHit = bHasReportedHit && KFMonster(Other) != None && ShouldReportHit();
+	bHasReportedHit = !bHasReportedHit && KFMonster(Other) != None && ShouldReportHit();
 	if (!bHasReportedHit)
 	{
 		class'TurboPlayerEventHandler'.static.CollectMonsterHitData(Other, HitLocation, Normal(Velocity), HitData);
