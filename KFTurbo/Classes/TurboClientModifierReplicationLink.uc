@@ -25,7 +25,8 @@ simulated function PreBeginPlay()
 simulated static final function TurboClientModifierReplicationLink GetClientModifier(Actor Actor)
 {
     local TurboClientModifierReplicationLink CMRL;
-    if (Actor != None)
+    
+    if (Actor == None)
     {
         return None;
     }
