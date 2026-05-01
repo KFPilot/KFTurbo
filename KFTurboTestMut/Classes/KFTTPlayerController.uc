@@ -788,7 +788,7 @@ function SetShowCollision(bool bNewShowCollision)
 	UpdateDrawCollision();
 }
 
-function UpdateDrawCollision()
+simulated function UpdateDrawCollision()
 {
 	TestClientModifierReplicationLink(class'TestClientModifierReplicationLink'.static.GetClientModifier(Self)).SetDisplayCollision(bWantsDrawCollision);
 }

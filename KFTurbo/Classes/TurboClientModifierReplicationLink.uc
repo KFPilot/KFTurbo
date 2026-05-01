@@ -46,8 +46,25 @@ simulated static final function TurboClientModifierReplicationLink GetClientModi
 
         CMRL = CMRL.NextClientModifierLink;
     }
+
+    if (CMRL == None)
+    {
+        foreach Actor.DynamicActors(class'TurboClientModifierReplicationLink', CMRL)
+        {
+            if (ClassIsChildOf(CMRL.Class, default.Class))
+            {
+                CMRL.NotifyReplicationLinkBroken();
+                return CMRL;
+            }
+        }
+    }
     
     return None;
+}
+
+simulated function NotifyReplicationLinkBroken()
+{
+    
 }
 
 simulated function ModifyMonster(KFMonster Monster) { if (NextClientModifierLink != None) { NextClientModifierLink.ModifyMonster(Monster); } }
