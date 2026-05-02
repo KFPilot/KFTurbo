@@ -21,7 +21,30 @@ function PostBeginPlay()
 {
 	Super.PostBeginPlay();
 
-	SetTimer(2.f, false);
+	Initialize();
+	SetTimer(1.f, false);
+}
+
+function Initialize()
+{
+	local int Index;
+	ColorLookupStringList.Length = ColorLookup.Length;
+	for (Index = ColorLookupStringList.Length - 1; Index >= 0; Index--)
+	{
+		ColorLookupStringList[Index] = class'GUIComponent'.static.MakeColorCode(ColorLookup[Index]);
+	}
+	
+	MapGradientStringList.Length = MapGradient.Length;
+	for (Index = MapGradientStringList.Length - 1; Index >= 0; Index--)
+	{
+		MapGradientStringList[Index] = class'GUIComponent'.static.MakeColorCode(MapGradient[Index]);
+	}
+
+	BuildServerName();
+	BuildMapName();
+
+	ServerState.ServerName = ServerNameString;
+	ServerState.MapName = MapNameString;
 }
 
 function Timer()
@@ -35,21 +58,6 @@ state SetupUplinkInfo
 {
 	function BeginState()
 	{
-		local int Index;
-		ColorLookupStringList.Length = ColorLookup.Length;
-		for (Index = ColorLookupStringList.Length - 1; Index >= 0; Index--)
-		{
-			ColorLookupStringList[Index] = class'GUIComponent'.static.MakeColorCode(ColorLookup[Index]);
-		}
-		
-		MapGradientStringList.Length = MapGradient.Length;
-		for (Index = MapGradientStringList.Length - 1; Index >= 0; Index--)
-		{
-			MapGradientStringList[Index] = class'GUIComponent'.static.MakeColorCode(MapGradient[Index]);
-		}
-
-		BuildServerName();
-		BuildMapName();
 		BuildGameModeName();
 		BuildVersionName();
 
