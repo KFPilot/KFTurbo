@@ -5,6 +5,7 @@
 class TurboRepLinkFix extends Info;
 
 var int FailureCount;
+var bool bHasAttemptedFix;
 var const int MaxFailureCount;
 
 var PlayerController OwningPlayer;
@@ -24,7 +25,7 @@ state ValidateLRI
 {
 	simulated function BeginState()
 	{
-		FailureCount = 0;
+		
 	}
 
 	simulated function bool AttemptValidate() { return false; }
@@ -37,6 +38,8 @@ Begin:
 		Sleep(1.f);
 		if (AttemptValidate())
 		{
+			bHasAttemptedFix = false;
+			FailureCount = 0;
 			OnValidate();
 			break;
 		}
@@ -98,8 +101,6 @@ state ValidateClientPerkRepLink extends ValidateLRI
 {
 	simulated function BeginState()
 	{
-		Global.BeginState();
-
 		if (bDebug)
 		{
 			log("Starting ValidateClientPerkRepLink");
@@ -123,12 +124,15 @@ state ValidateClientPerkRepLink extends ValidateLRI
 			return true;
 		}
 
-		if (FailureCount == (MaxFailureCount / 2))
+		if (!bHasAttemptedFix && FailureCount > (MaxFailureCount / 2))
 		{
+			bHasAttemptedFix = true;
+
 			if (bDebug)
 			{
 				log("Starting ValidateClientPerkRepLink Hit failure limit. Attempting emplace.");
 			}
+
 			ForceEmplaceLRI(OwningPlayer.PlayerReplicationInfo, CPRL);
 		}
 
@@ -141,6 +145,7 @@ state ValidateClientPerkRepLink extends ValidateLRI
 		{
 			log("ValidateClientPerkRepLink Validated CPRL.");
 		}
+		
 		GotoState('ValidateTurboRepLink');
 	}
 }
@@ -149,7 +154,6 @@ state ValidateTurboRepLink extends ValidateLRI
 {
 	simulated function BeginState()
 	{
-		Global.BeginState();
 
 		if (bDebug)
 		{
@@ -174,8 +178,10 @@ state ValidateTurboRepLink extends ValidateLRI
 			return true;
 		}
 
-		if (FailureCount == (MaxFailureCount / 2))
+		if (!bHasAttemptedFix && FailureCount > (MaxFailureCount / 2))
 		{
+			bHasAttemptedFix = true;
+
 			if (bDebug)
 			{
 				log("Starting ValidateTurboRepLink Hit failure limit. Attempting emplace.");
