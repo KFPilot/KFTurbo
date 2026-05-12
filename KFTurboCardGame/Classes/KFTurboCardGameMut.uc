@@ -323,7 +323,7 @@ function AddCardGamePlayerReplicationInfo(KFPlayerReplicationInfo PlayerReplicat
 		LastLRI = LastLRI.NextReplicationInfo;
 	}
 
-	CardGamePRI = Spawn(class'CardGamePlayerReplicationInfo', PlayerReplicationInfo.Owner);
+	CardGamePRI = Spawn(class'CardGamePlayerReplicationInfo', PlayerReplicationInfo);
 	CardGamePRI.OwningReplicationInfo = PlayerReplicationInfo;
 	CardGamePRI.TurboCardReplicationInfo = TurboCardReplicationInfo;
 

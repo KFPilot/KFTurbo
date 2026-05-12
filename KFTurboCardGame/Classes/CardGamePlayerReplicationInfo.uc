@@ -18,9 +18,9 @@ replication
 {
 	reliable if (bNetDirty && Role == ROLE_Authority)
 		OwningReplicationInfo, TurboCardReplicationInfo, VoteIndex;
-	reliable if ( Role < ROLE_Authority )
+	reliable if (bNetOwner && Role < ROLE_Authority )
         SetVoteIndex;
-	reliable if ( Role < ROLE_Authority )
+	reliable if (bNetOwner && Role < ROLE_Authority)
         ServerDebugActivateCard, ServerDebugDeactivateCard;
 }
 
@@ -34,6 +34,7 @@ simulated function PostBeginPlay()
         {
             log(" - Setting up Card Game ValidateCardGameLRI initial state.");
         }
+
         InitialState = 'ValidateCardGameLRI';
         GotoState(InitialState);
     }
@@ -130,7 +131,10 @@ Begin:
             continue;
         }
 
-        log(" - Performing repair.");
+        if (bDebug)
+        {
+            log(" - Performing repair.");
+        }
         RepairLRI();
         break;
     }
@@ -238,7 +242,10 @@ function ServerDebugDeactivateCard(string CardID)
 defaultproperties
 {
     VoteIndex = 0
-    NetUpdateFrequency=0.1
 
     bDebug=false
+
+    NetUpdateFrequency=0.1
+    bOnlyDirtyReplication=true
+    bSkipActorPropertyReplication=false
 }
