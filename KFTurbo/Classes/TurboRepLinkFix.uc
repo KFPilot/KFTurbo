@@ -215,7 +215,7 @@ state ValidationComplete
  
 defaultproperties
 {
-	MaxFailureCount=20
+	MaxFailureCount=30
 
 	bDebug=false
 }
