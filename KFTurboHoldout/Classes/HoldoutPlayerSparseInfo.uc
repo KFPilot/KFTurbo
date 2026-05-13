@@ -11,7 +11,7 @@ replication
 {
 	reliable if (bNetDirty && Role == ROLE_Authority)
 		bReady;
-	reliable if (Role < ROLE_Authority)
+	reliable if (bNetOwner && Role < ROLE_Authority)
 		ServerReadyUp;
 }
 
@@ -59,6 +59,7 @@ defaultproperties
 {
 	RemoteRole=ROLE_SimulatedProxy
 	bAlwaysRelevant=true
+    bSkipActorPropertyReplication=false
 
 	bReady=true
 	ReadyUpAttemptTime=-10.f
