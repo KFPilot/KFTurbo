@@ -43,8 +43,7 @@ function Initialize()
 	BuildServerName();
 	BuildMapName();
 
-	ServerState.ServerName = ServerNameString;
-	ServerState.MapName = MapNameString;
+	InitializeServerState();
 }
 
 function Timer()
@@ -155,6 +154,20 @@ state UplinkReady
 	}
 }
 
+function InitializeServerState()
+{
+	Level.Game.GetServerInfo(FullCachedServerState);
+	ServerState.ServerName = ServerNameString;
+	ServerState.MapName = MapNameString;
+
+	class'GameInfo'.static.AddServerDetail(FullCachedServerState, "Server Mode", Eval(Level.NetMode == NM_ListenServer, "non-dedicated", "dedicated"));
+	class'GameInfo'.static.AddServerDetail(FullCachedServerState, "Server Version", Level.ROVersion);
+	class'GameInfo'.static.AddServerDetail(FullCachedServerState, "VAC Secured", Eval(Level.Game.IsVACSecured(), "Enabled", "Disabled"));
+	class'GameInfo'.static.AddServerDetail(FullCachedServerState, "Max Spectators", Level.Game.MaxSpectators);
+
+	ServerState = FullCachedServerState;
+}
+
 //Slim down the info the server provides to relevant data.
 function PerformUpdate()
 {
@@ -164,7 +177,7 @@ function PerformUpdate()
 		FullCachedServerState.ServerName = ServerNameString;
 		FullCachedServerState.MapName = MapNameString;
 
-		class'GameInfo'.static.AddServerDetail(FullCachedServerState, "Server Mode", Eval(Level.NetMode == NM_ListenServer, "non-dedicated", "dedicated") );
+		class'GameInfo'.static.AddServerDetail(FullCachedServerState, "Server Mode", Eval(Level.NetMode == NM_ListenServer, "non-dedicated", "dedicated"));
     	class'GameInfo'.static.AddServerDetail(FullCachedServerState, "Server Version", Level.ROVersion);
     	class'GameInfo'.static.AddServerDetail(FullCachedServerState, TurboVersionTitle, TurboVersionString);
    		class'GameInfo'.static.AddServerDetail(FullCachedServerState, "VAC Secured", Eval(Level.Game.IsVACSecured(), "Enabled", "Disabled"));
