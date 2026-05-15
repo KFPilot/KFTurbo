@@ -150,7 +150,7 @@ exec simulated function ServerDebugActivateCard(string CardID)
     }
 
 	CGPRI = FindCGPRI(ViewportOwner.Actor);
-	CGPRI.ServerDebugActivateCard(CardID);
+	CGPRI.ServerDebugActivateCard(CardID, ViewportOwner.Actor);
 }
 
 exec simulated function ServerDebugDeactivateCard(string CardID)
@@ -163,7 +163,7 @@ exec simulated function ServerDebugDeactivateCard(string CardID)
     }
 
 	CGPRI = FindCGPRI(ViewportOwner.Actor);
-	CGPRI.ServerDebugDeactivateCard(CardID);
+	CGPRI.ServerDebugDeactivateCard(CardID, ViewportOwner.Actor);
 }
 
 defaultproperties

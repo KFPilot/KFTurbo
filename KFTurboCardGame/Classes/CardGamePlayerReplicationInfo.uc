@@ -16,11 +16,11 @@ var const bool bDebug;
 
 replication
 {
-	reliable if (bNetDirty && Role == ROLE_Authority)
+	reliable if (Role == ROLE_Authority)
 		OwningReplicationInfo, TurboCardReplicationInfo, VoteIndex;
-	reliable if (bNetOwner && Role < ROLE_Authority )
+	reliable if (Role < ROLE_Authority)
         SetVoteIndex;
-	reliable if (bNetOwner && Role < ROLE_Authority)
+	reliable if (Role < ROLE_Authority)
         ServerDebugActivateCard, ServerDebugDeactivateCard;
 }
 
@@ -38,6 +38,10 @@ simulated function PostBeginPlay()
         InitialState = 'ValidateCardGameLRI';
         GotoState(InitialState);
     }
+    else
+    {
+        ForceNetUpdate();
+    }
 }
 
 //Attempts to make sure this CardGamePlayerReplicationInfo is in the LRI list.
@@ -45,6 +49,11 @@ simulated state ValidateCardGameLRI
 {
     simulated final function bool IsValidLRI()
     {
+        if (bDebug)
+        {
+            log(" - IsValidLRI owner is"@Owner@OwningReplicationInfo);
+        }
+
         return GetCardGameLRI(OwningReplicationInfo) == Self;
     }
 
@@ -102,6 +111,16 @@ Begin:
     {
         Sleep(1.f);
 
+        //Need to wait for the other LRIs to be working.
+        if (!IsReadyToEmplaceLRI())
+        {   
+            if (bDebug)
+            {
+                log(" - Card Game LRI repair waiting for CPRL and TRL to be ready.");
+            }
+            continue;
+        }
+
         if (IsValidLRI())
         {
             if (bDebug)
@@ -118,16 +137,6 @@ Begin:
                 log(" - Failed Card Game LRI validation."@ValidationFailureCount);
             }
             ValidationFailureCount++;
-            continue;
-        }
-
-        //Need to wait for the other LRIs to be working.
-        if (!IsReadyToEmplaceLRI())
-        {   
-            if (bDebug)
-            {
-                log(" - Card Game LRI repair waiting for CPRL and TRL to be ready.");
-            }
             continue;
         }
 
@@ -158,13 +167,13 @@ static simulated final function CardGamePlayerReplicationInfo GetCardGameLRI(Pla
             return CardGamePlayerReplicationInfo(LRI);
         }
     }
-    
+
     return None;
 }
 
 simulated function bool ProcessVoteKeyPressEvent(Interactions.EInputKey Key)
 {
-    local float KeyVoteIndex;
+    local int KeyVoteIndex;
     local Interactions.EInputKey Offset;
 
 	if (TurboCardReplicationInfo == None || !TurboCardReplicationInfo.bCurrentlyVoting)
@@ -187,12 +196,22 @@ simulated function bool ProcessVoteKeyPressEvent(Interactions.EInputKey Key)
         }
     }
 
-    SetVoteIndex(KeyVoteIndex);
+    SetVoteIndex(KeyVoteIndex, Controller(OwningReplicationInfo.Owner));
     return true;
 }
 
-function SetVoteIndex(int Index)
+function SetVoteIndex(int Index, Controller Voter)
 {
+    if (bDebug)
+    {
+        log(" - CardGamePlayerReplicationInfo::SetVoteIndex called with"@Index@"by"@Voter$".");
+    }
+
+    if (Voter == None || OwningReplicationInfo == None || Voter != OwningReplicationInfo.Owner)
+    {
+        return;
+    }
+
 	if (!TurboCardReplicationInfo.bCurrentlyVoting)
     {
         return;
@@ -216,11 +235,16 @@ function ResetVote()
 //Make NetUpdateTime want to update now.
 simulated function ForceNetUpdate()
 {
-    NetUpdateTime = Max(Level.TimeSeconds - ((1.f / NetUpdateFrequency) + 1.f), 0.1f);
+    NetUpdateTime = Level.TimeSeconds - 1.f;
 }
 
-function ServerDebugActivateCard(string CardID)
+function ServerDebugActivateCard(string CardID, Controller Voter)
 {
+    if (Voter == None || OwningReplicationInfo == None || Voter != OwningReplicationInfo.Owner)
+    {
+        return;
+    }
+
     if (OwningReplicationInfo == None || TurboPlayerController(OwningReplicationInfo.Owner) == None || !TurboPlayerController(OwningReplicationInfo.Owner).HasAdminPermission())
     {
         return;
@@ -229,8 +253,13 @@ function ServerDebugActivateCard(string CardID)
     TurboCardReplicationInfo.DebugActivateCard(CardID);
 }
 
-function ServerDebugDeactivateCard(string CardID)
+function ServerDebugDeactivateCard(string CardID, Controller Voter)
 {
+    if (Voter == None || OwningReplicationInfo == None || Voter != OwningReplicationInfo.Owner)
+    {
+        return;
+    }
+
     if (OwningReplicationInfo == None || TurboPlayerController(OwningReplicationInfo.Owner) == None || !TurboPlayerController(OwningReplicationInfo.Owner).HasAdminPermission())
     {
         return;
@@ -245,7 +274,7 @@ defaultproperties
 
     bDebug=false
 
-    NetUpdateFrequency=0.1
+    NetUpdateFrequency=0.5
     bOnlyDirtyReplication=true
-    bSkipActorPropertyReplication=false
+    bSkipActorPropertyReplication=true
 }

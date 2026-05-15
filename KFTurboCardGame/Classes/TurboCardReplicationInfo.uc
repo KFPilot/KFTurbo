@@ -420,6 +420,7 @@ function SelectCard(TurboCard SelectedCard, optional bool bFromVote)
     log("Executing OnActivateCard delegate for"@SelectedCard.CardID, 'KFTurboCardGame');
     SelectedCard.OnActivateCard(OwnerMutator.TurboCardGameplayManagerInfo, SelectedCard, true);
     
+    ForceNetUpdate();
     CheckForActiveCardUpdates();
 }
 
@@ -544,6 +545,7 @@ function StartSelection(int WaveNumber)
     
     SelectionUpdateCounter++;
     CheckForSelectableCardUpdates();
+    ForceNetUpdate();
 }
 
 function array<TurboCard_Super> GetActiveSuperCardList(optional bool bCheckCanDeactivate)
@@ -652,6 +654,8 @@ function RemoveActiveCard(TurboCard Card)
     {
         return;
     }
+
+    ForceNetUpdate();
 
     //If there are no cards after the one we removed, return.
     if (Index >= (ArrayCount(AuthActiveCardList) - 1) || AuthActiveCardList[Index + 1] == None)
@@ -1139,11 +1143,18 @@ function DebugDeactivateCard(string CardID)
     }
 }
 
+simulated function ForceNetUpdate()
+{
+    NetUpdateTime = Level.TimeSeconds - 1.f;
+}
+
 defaultproperties
 {
     bAlwaysRelevant=true
     bNetNotify=true
-    SelectionCount = 3
-    GoodSelectionDelta = 0
-    ProConSelectionDelta = 0
+    
+    NetUpdateFrequency=0.25
+    SelectionCount=3
+    GoodSelectionDelta=0
+    ProConSelectionDelta=0
 }
