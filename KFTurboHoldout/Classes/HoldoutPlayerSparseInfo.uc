@@ -11,7 +11,7 @@ replication
 {
 	reliable if (bNetDirty && Role == ROLE_Authority)
 		bReady;
-	reliable if (bNetOwner && Role < ROLE_Authority)
+	reliable if (Role < ROLE_Authority)
 		ServerReadyUp;
 }
 
@@ -25,17 +25,22 @@ simulated function bool IsReady()
 //Sets ReadyUpAttemptTime to de-bounce the state of "I sent the RPC to ready up but my local state of bReady is not updated".
 simulated function ReadyUp()
 {
-	if (IsReady())
+	if (OwningPRI == None || IsReady())
 	{
 		return;
 	}
 
 	ReadyUpAttemptTime = Level.TimeSeconds;
-	ServerReadyUp();
+	ServerReadyUp(Controller(OwningPRI.Owner));
 }
 
-function ServerReadyUp()
+function ServerReadyUp(Controller Sender)
 {
+	if (Sender == None || OwningPRI == None || OwningPRI.Owner != Sender)
+	{
+		return;
+	}	
+
 	SetReady(true);
 }
 

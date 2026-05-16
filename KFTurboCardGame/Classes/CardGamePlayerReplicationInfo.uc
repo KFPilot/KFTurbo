@@ -270,7 +270,7 @@ function ServerDebugDeactivateCard(string CardID, Controller Voter)
 
 defaultproperties
 {
-    VoteIndex = 0
+    VoteIndex=0
 
     bDebug=false
 
