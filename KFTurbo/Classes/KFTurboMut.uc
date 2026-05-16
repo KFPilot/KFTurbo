@@ -482,7 +482,7 @@ defaultproperties
 	bDebugClientPerkRepLink=false
 
 	bCheckLatestTurboVersion=true
-	TurboVersion="6.9.1"
+	TurboVersion="6.9.2"
 	bHasVersionUpdate=false
 
 	bRequireAdminForDifficultyCommands=true
