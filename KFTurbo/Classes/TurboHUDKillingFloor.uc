@@ -695,6 +695,8 @@ simulated function DrawSpectatingHud(Canvas C)
 	{
 		ScoreBoard.DrawScoreboard(C);
 	}
+	
+	ResetCanvas(C);
 
 	ReduceModulation(C, 0.5f);
 	if ( bShowPortrait && Portrait != None )

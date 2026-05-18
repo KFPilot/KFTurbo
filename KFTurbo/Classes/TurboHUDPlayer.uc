@@ -212,6 +212,7 @@ simulated function Tick(float DeltaTime)
 		OutOfAmmoFade = 0.f;
 		CurrentPlayerCash = -1.f;
 		CurrentHealingRatio = 0.f;
+		CurrentPulseRatio = 0.f;
 		return;
 	}
 
@@ -232,7 +233,7 @@ simulated function Tick(float DeltaTime)
 	}
 
 	CurrentPulseRate = FClamp(Lerp(float(CurrentPawn.Health) / (CurrentPawn.HealthMax * 0.5f), 16.f, 2.f), 2.f, 16.f);
-	CurrentPulseRatio = FClamp(Lerp(float(CurrentPawn.Health + 10) / (CurrentPawn.HealthMax * 0.5f), 1.f, 0.f), 0.f, 1.f);
+	CurrentPulseRatio = FClamp(Lerp(float(CurrentPawn.Health) / (CurrentPawn.HealthMax * 0.6f), 1.f, 0.f), 0.f, 1.f);
 	CurrentPulseAmount += CurrentPulseRate * DeltaTime;
 
 	CurrentArmor = Lerp(ArmorInterpRate * DeltaTime, CurrentArmor, CurrentPawn.ShieldStrength);
@@ -717,6 +718,11 @@ simulated function Render(Canvas C)
 		return;
 	}
 
+	if (CurrentPulseRatio > 0.f)
+	{
+		DrawLowHealthWarning(C);
+	}
+
 	DrawBackplates(C, BackplateACenter, BackplateBCenter, LeftAnchor, RightAnchor);
 	DrawHealthText(C, BackplateACenter);
 	DrawAmmoText(C, BackplateBCenter);
@@ -728,6 +734,18 @@ simulated function Render(Canvas C)
 	DrawPerk(C);
 
 	class'TurboHUDKillingFloor'.static.ResetCanvas(C);
+}
+
+simulated function DrawLowHealthWarning(Canvas C)
+{
+	local float Opacity;
+	Opacity = FMin(CurrentPulseRatio * 1.5f, 1.f) * ((Sin(CurrentPulseAmount * 0.5f) * 0.25f) + 0.75f) * 0.5f;
+
+	C.DrawColor = class'HUD'.default.RedColor;
+	C.DrawColor.A = Clamp(Opacity * 255, 0, 255);
+	C.SetPos(0, -float(C.SizeY) * 0.5f);
+	C.DrawTileScaled(Texture'KFTurbo.HUD.ScreenFade_D', float(C.SizeX) / float(Texture'KFTurbo.HUD.ScreenFade_D'.MaterialUSize()), (float(C.SizeY) * 2.f) / float(Texture'KFTurbo.HUD.ScreenFade_D'.MaterialVSize()));
+	C.DrawColor = class'HUD'.default.WhiteColor;
 }
 
 simulated final function DrawBackplates(Canvas C, out Vector2D BackplateACenter, out Vector2D BackplateBCenter, out Vector2D LeftAnchor, out Vector2D RightAnchor)
