@@ -48,8 +48,20 @@ var bool bReduceCardVisibility;
 
 var float FadeInAndUpRatio;
 var float FadeInAndUpRate;
+
+var bool bHasPlayedFadeInAndUpSound;
+var string FadeInAndUpSoundString;
+var Sound FadeInAndUpSound;
+
 var float FanOutRatio;
 var float FanOutRate;
+
+var bool bHasPlayedFanOutSound;
+var string FanOutSoundString;
+var Sound FanOutSound;
+
+var string CardSelectSoundString;
+var Sound CardSelectSound;
 
 var float RackEmUpRatio; 
 var float RackEmUpFadeInRate;
@@ -257,9 +269,57 @@ simulated function Tick(float DeltaTime)
 	}
 }
 
+simulated function PlayFadeInAndUpSound()
+{
+	bHasPlayedFadeInAndUpSound = true;
+
+	if (FadeInAndUpSound == None)
+	{
+		FadeInAndUpSound = Sound(DynamicLoadObject(FadeInAndUpSoundString, class'Sound'));
+	}
+
+	if (FadeInAndUpSound != None)
+	{
+		TurboHUD.PlayerOwner.PlaySound(FadeInAndUpSound, SLOT_None, 0.6f,,, 0.9f + (FRand() * 0.2f));
+	}
+}
+
+simulated function PlayFanOutSound()
+{
+	bHasPlayedFanOutSound = true;
+
+	if (FanOutSound == None)
+	{
+		FanOutSound = Sound(DynamicLoadObject(FanOutSoundString, class'Sound'));
+	}
+
+	if (FanOutSound != None)
+	{
+		TurboHUD.PlayerOwner.PlaySound(FanOutSound, SLOT_None, 0.4f,,, 0.9f + (FRand() * 0.2f));
+	}
+}
+
+simulated function PlayCardSelectSound()
+{
+	if (CardSelectSound == None)
+	{
+		CardSelectSound = Sound(DynamicLoadObject(CardSelectSoundString, class'Sound'));
+	}
+
+	if (CardSelectSound != None)
+	{
+		TurboHUD.PlayerOwner.PlaySound(CardSelectSound, SLOT_None, 0.3f + (FRand() * 0.1f),,, 0.9f + (FRand() * 0.2f));
+	}
+}
+
 simulated function TickSelectableCards(float DeltaTime)
 {
 	local int Index;
+
+	if (!bHasPlayedFadeInAndUpSound)
+	{
+		PlayFadeInAndUpSound();
+	}
 
 	if (FadeInAndUpRatio < 1.f)
 	{
@@ -273,6 +333,11 @@ simulated function TickSelectableCards(float DeltaTime)
 		{
 			return;
 		}
+	}
+
+	if (!bHasPlayedFanOutSound)
+	{
+		PlayFanOutSound();
 	}
 
 	if (FanOutRatio < 1.f)
@@ -396,6 +461,9 @@ simulated function OnSelectableCardsUpdated(TurboCardReplicationInfo CGRI)
 
 	FadeInAndUpRatio = 0.f;
 	FanOutRatio = 0.f;
+
+	bHasPlayedFadeInAndUpSound = false;
+	bHasPlayedFanOutSound = false;
 }
 
 simulated function Render(Canvas C)
@@ -1132,4 +1200,8 @@ defaultproperties
 	RackEmUpPulseFadeRate=6.f
 	RackEmUpTimeStart=-1.f
 	RackEmUpTimeEnd=-1.f
+
+	FadeInAndUpSoundString="KFTurboCardGame.Card.CardDraw"
+	FanOutSoundString="KFTurboCardGame.Card.CardSplit"
+	CardSelectSoundString="KFTurboCardGame.Card.CardSelectGroup"
 }

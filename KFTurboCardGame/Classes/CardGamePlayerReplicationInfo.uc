@@ -6,7 +6,7 @@ class CardGamePlayerReplicationInfo extends Engine.LinkedReplicationInfo
 
 var KFPlayerReplicationInfo OwningReplicationInfo;
 var TurboCardReplicationInfo TurboCardReplicationInfo;
-var int VoteIndex;
+var int VoteIndex, LastKnownVoteIndex;
 
 var array< class<TurboCard> > SelectedCardList;
 
@@ -42,6 +42,32 @@ simulated function PostBeginPlay()
     {
         ForceNetUpdate();
     }
+}
+
+simulated function PostNetReceive()
+{
+    local TurboCardOverlay CardOverlay;
+    
+    if (LastKnownVoteIndex == VoteIndex)
+    {
+        return;
+    }
+
+    LastKnownVoteIndex = VoteIndex;
+
+    if (Level.NetMode == NM_DedicatedServer)
+    {
+        return;
+    }
+
+    CardOverlay = class'TurboCardOverlay'.static.FindCardOverlay(PlayerController(OwningReplicationInfo.Owner));
+
+    if (CardOverlay == None)
+    {
+        return;
+    }
+
+    CardOverlay.PlayCardSelectSound();
 }
 
 //Attempts to make sure this CardGamePlayerReplicationInfo is in the LRI list.
@@ -212,6 +238,11 @@ function SetVoteIndex(int Index, Controller Voter)
         return;
     }
 
+    if (LastKnownVoteIndex == Index)
+    {
+        return;
+    }
+
 	if (!TurboCardReplicationInfo.bCurrentlyVoting)
     {
         return;
@@ -224,6 +255,8 @@ function SetVoteIndex(int Index, Controller Voter)
 
     VoteIndex = Index;
     ForceNetUpdate();
+
+    PostNetReceive();
 }
 
 function ResetVote()
@@ -277,4 +310,5 @@ defaultproperties
     NetUpdateFrequency=0.5
     bOnlyDirtyReplication=true
     bSkipActorPropertyReplication=true
+    bNetNotify=true
 }
