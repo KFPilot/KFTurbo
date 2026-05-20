@@ -55,19 +55,16 @@ simulated function PostNetReceive()
 
     LastKnownVoteIndex = VoteIndex;
 
-    if (Level.NetMode == NM_DedicatedServer)
+    if (Level.NetMode != NM_DedicatedServer && VoteIndex != 0)
     {
-        return;
+        //Will return none if not a local player.
+        CardOverlay = class'TurboCardOverlay'.static.FindCardOverlay(PlayerController(OwningReplicationInfo.Owner));
+
+        if (CardOverlay != None)
+        {
+            CardOverlay.PlayCardSelectSound();
+        }
     }
-
-    CardOverlay = class'TurboCardOverlay'.static.FindCardOverlay(PlayerController(OwningReplicationInfo.Owner));
-
-    if (CardOverlay == None)
-    {
-        return;
-    }
-
-    CardOverlay.PlayCardSelectSound();
 }
 
 //Attempts to make sure this CardGamePlayerReplicationInfo is in the LRI list.

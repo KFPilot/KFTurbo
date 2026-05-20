@@ -10,4 +10,6 @@ defaultproperties
 	CardNameColor=(R=255,G=255,B=255,A=255)
 	CardDescriptionColor=(R=255,G=255,B=255,A=255)
 	bCanEverRepeat=false
+	
+	CardGlowColor=(R=174,G=70,B=239,A=240)
 }

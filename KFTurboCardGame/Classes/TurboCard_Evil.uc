@@ -11,4 +11,7 @@ defaultproperties
 	CardTextShadowColor=(R=200,G=0,B=0,A=160)
 	bCanEverRepeat=false
 	bCardNameAllCaps=true
+	
+	CardGlowMaterial=FinalBlend'KFTurboCardGame.CardAura_Fast_FB'
+	CardGlowColor=(R=154,G=31,B=30,A=255)
 }

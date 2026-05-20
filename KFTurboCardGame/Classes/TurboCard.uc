@@ -24,6 +24,9 @@ var Color CardNameColor;
 var Color CardDescriptionColor;
 var Color CardTextShadowColor;
 
+var Material CardGlowMaterial;
+var Color CardGlowColor;
+
 //Text modification
 var bool bCardNameAllCaps;
 var bool bCardDescriptionAllCaps;
@@ -268,4 +271,7 @@ defaultproperties
 	CardNameColor=(R=0,G=0,B=0,A=255)
 	CardDescriptionColor=(R=0,G=0,B=0,A=255)
 	CardIDColor=(R=0,G=0,B=0,A=100)
+
+	CardGlowMaterial=FinalBlend'KFTurboCardGame.CardAura_FB'
+	CardGlowColor=(R=255,G=255,B=255,A=255)
 }

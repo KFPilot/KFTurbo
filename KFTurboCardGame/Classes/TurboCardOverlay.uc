@@ -36,6 +36,7 @@ var float HowToScrollFade;
 
 var Color BackplateColor;
 var Texture RoundedContainer;
+var Material CardGlowMaterial;
 
 var PlayerBorrowedTimeActor BorrowedTimeActor;
 var bool bHasPlayedMinuteWarning, bHasPlayedThirtySecondsWarning;
@@ -85,6 +86,12 @@ static final function TurboCardOverlay FindCardOverlay(PlayerController PlayerCo
 {
 	local int Index;
 	local TurboHUDKillingFloor TurboHUD;
+
+	if (PlayerController == None)
+	{
+		return None;
+	}
+
 	TurboHUD = TurboHUDKillingFloor(PlayerController.myHUD);
 
 	if (TurboHUD == None)
@@ -564,6 +571,18 @@ simulated function DrawVoter(Canvas C, PlayerReplicationInfo PRI, float X, float
 	C.DrawText(PlayerName);
 }
 
+simulated final function DrawCardAura(Canvas C, SelectableCardEntry Card, float TempX, float TempY, float CardSize)
+{
+	local float GlowMaterialSizeX, GlowMaterialSizeY;
+	GlowMaterialSizeX = CardGlowMaterial.MaterialUSize();
+	GlowMaterialSizeY = CardGlowMaterial.MaterialVSize();
+	C.DrawColor = Card.CardActor.Card.CardGlowColor;
+	C.DrawColor.A = Lerp(Card.Ratio, 0.f, C.DrawColor.A);
+	
+	C.SetPos(TempX - (CardSize * 0.125f), TempY - (CardSize * 0.25f));
+	C.DrawTileScaled(CardGlowMaterial, (CardSize / GlowMaterialSizeX) * 1.25f, (CardSize * 2.5f) / GlowMaterialSizeY);
+}
+
 simulated function DrawSelectableCardList(Canvas C)
 {
 	local int Index;
@@ -602,10 +621,16 @@ simulated function DrawSelectableCardList(Canvas C)
 		}
 
 		CardSelectionScale = Lerp(CardRenderActorList[Index].Ratio, 1.f, 1.15f);
+		CardScale = CardSize / float(CardRenderActorList[Index].CardActor.CardScriptedTexture.USize);
 
 		CardRenderActorList[Index].CardActor.RenderOverlays(C);
+
+		if (CardRenderActorList[Index].Ratio > 0.f)
+		{
+			DrawCardAura(C, CardRenderActorList[Index], TempX, TempY - ((CardSelectionScale - 1.f) * CardSize), CardSelectionScale * CardSize);
+			C.DrawColor = WhiteColor;
+		}
 		
-		CardScale = CardSize / float(CardRenderActorList[Index].CardActor.CardScriptedTexture.USize);
 		C.SetPos(TempX + (CardOffset * 0.5f) - (CardSize * CardSelectionScale * 0.5f), TempY - ((CardSelectionScale - 1.f) * CardSize));
 		C.DrawTileScaled(CardRenderActorList[Index].CardActor.CardShader, CardScale * CardSelectionScale, CardScale * CardSelectionScale);
 		TempX += CardOffset;
@@ -615,7 +640,12 @@ simulated function DrawSelectableCardList(Canvas C)
 	{
 		CardSelectionScale = Lerp(CardRenderActorList[VotedCardIndex].Ratio, 1.f, 1.15f);
 		CardScale = CardSize / float(CardRenderActorList[VotedCardIndex].CardActor.CardScriptedTexture.USize);
-		C.SetPos(VotedCardX + (CardOffset * 0.5f) - (CardSize * CardSelectionScale * 0.5f), TempY - ((CardSelectionScale - 1.f) * CardSize));
+		TempX = VotedCardX + (CardOffset * 0.5f) - (CardSize * CardSelectionScale * 0.5f);
+
+		DrawCardAura(C, CardRenderActorList[VotedCardIndex], TempX, TempY - ((CardSelectionScale - 1.f) * CardSize), CardSelectionScale * CardSize);
+		C.DrawColor = WhiteColor;
+
+		C.SetPos(TempX, TempY - ((CardSelectionScale - 1.f) * CardSize));
 		C.DrawTileScaled(CardRenderActorList[VotedCardIndex].CardActor.CardShader, CardScale * CardSelectionScale, CardScale * CardSelectionScale);
 	}
 
@@ -1182,6 +1212,7 @@ defaultproperties
 	
 	BackplateColor=(R=0,G=0,B=0,A=140)	
 	RoundedContainer=Texture'KFTurbo.HUD.ContainerRounded_D'
+	CardGlowMaterial=FinalBlend'KFTurboCardGame.CardAura_FB'
 
 	bHasPlayedMinuteWarning=false
 	bHasPlayedThirtySecondsWarning=false
