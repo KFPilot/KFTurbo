@@ -3,6 +3,62 @@
 //For more information see https://github.com/KFPilot/KFTurbo.
 class TurboCardDeck_Evil extends TurboCardDeck;
 
+enum EvilOptional
+{
+    Doorless,
+    MixedSignals
+};
+
+var bool bLevelHasDoors;
+var bool bLevelHasMultipleTraders;
+
+function InitializeDeck(TurboCardReplicationInfo TCRI)
+{
+    local KFUseTrigger UseTrigger;
+    local ShopVolume ShopVolume;
+    local int Count;
+
+    Super.InitializeDeck(TCRI);
+
+    //Check if level has enough doors.
+    Count = 0;
+    foreach TCRI.AllActors(class'KFUseTrigger', UseTrigger)
+    {
+        if (UseTrigger.DoorOwners.Length == 0)
+        {
+            continue;
+        }
+
+        Count++;
+
+        if (Count > 2)
+        {
+            bLevelHasDoors = true;
+            break;
+        }
+    }
+
+    //Check if level has enough traders.
+    Count = 0;
+    foreach TCRI.AllActors(class'ShopVolume', ShopVolume)
+    {
+        if (ShopVolume.bAlwaysClosed)
+        {
+            continue;
+        }
+
+        Count++;
+        if (Count > 1)
+        {
+            bLevelHasMultipleTraders = true;
+            break;
+        }
+    }
+    
+    SetOptionalCardEnabled(int(EvilOptional.Doorless), bLevelHasDoors);
+    SetOptionalCardEnabled(int(EvilOptional.MixedSignals), bLevelHasMultipleTraders);
+}
+
 function ActivateHyperbloats(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
     if (bActivate)
@@ -335,6 +391,26 @@ function ActivateButterFingers(TurboCardGameplayManager GameplayManager, TurboCa
 
 defaultproperties
 {
+    Begin Object Name=Doorless Class=TurboCard_Evil
+        CardName(0)="Doorless"
+        CardDescriptionList(0)="Removes all"
+        CardDescriptionList(1)="doors."
+        CardID="EVIL_DOORLESS"
+        OnActivateCard=ActivateDoorless
+    End Object
+    OptionalCardList(0)=(Card=TurboCard'Doorless')
+
+    Begin Object Name=MixedSignals Class=TurboCard_Evil
+        CardName(0)="Mixed Signals"
+        CardDescriptionList(0)="Next trader"
+        CardDescriptionList(1)="location randomly"
+        CardDescriptionList(2)="changes throughout"
+        CardDescriptionList(3)="the wave."
+        CardID="EVIL_MIXEDSIGNALS"
+        OnActivateCard=ActivateMixedSignals
+    End Object
+    OptionalCardList(1)=(Card=TurboCard'MixedSignals')
+
     Begin Object Name=Hyperbloats Class=TurboCard_Evil
         CardName(0)="Hyperbloats"
         CardDescriptionList(0)="Increases Bloat"
@@ -532,15 +608,18 @@ defaultproperties
     End Object
     DeckCardObjectList(17)=TurboCard'HandCramps'
     
-    Begin Object Name=Doorless Class=TurboCard_Evil
-        CardName(0)="Doorless"
-        CardDescriptionList(0)="Removes all"
-        CardDescriptionList(1)="doors."
-        CardID="EVIL_DOORLESS"
-        OnActivateCard=ActivateDoorless
+    Begin Object Name=ButterFingers Class=TurboCard_Evil
+        CardName(0)="Butter"
+        CardName(1)="Fingers"
+        CardDescriptionList(0)="Player receive"
+        CardDescriptionList(1)="a 5% chance to"
+        CardDescriptionList(2)="drop their weapon"
+        CardDescriptionList(3)="when hit by a zed."
+        CardID="EVIL_BUTTERFING"
+        OnActivateCard=ActivateButterFingers
     End Object
-    DeckCardObjectList(18)=TurboCard'Doorless'
-    
+    DeckCardObjectList(18)=TurboCard'ButterFingers'
+
     Begin Object Name=SmallerBlind Class=TurboCard_Evil
         CardName(0)="Smaller Blind"
         CardDescriptionList(0)="Reduces card"
@@ -646,17 +725,18 @@ defaultproperties
     End Object
     DeckCardObjectList(28)=TurboCard'OopsAllScrakes'
     
-    Begin Object Name=MixedSignals Class=TurboCard_Evil
-        CardName(0)="Mixed Signals"
-        CardDescriptionList(0)="Next trader"
-        CardDescriptionList(1)="location randomly"
-        CardDescriptionList(2)="changes throughout"
-        CardDescriptionList(3)="the wave."
-        CardID="EVIL_MIXEDSIGNALS"
-        OnActivateCard=ActivateMixedSignals
+    Begin Object Name=UnusualMutation Class=TurboCard_Evil
+        CardName(0)="Unusual"
+        CardName(1)="Mutation"
+        CardDescriptionList(0)="Increases chance"
+        CardDescriptionList(1)="for zeds to be"
+        CardDescriptionList(2)="replaced with"
+        CardDescriptionList(3)="a variant by 400%."
+        CardID="EVIL_UNUSUALMUT"
+        OnActivateCard=ActivateUnusualMutation
     End Object
-    DeckCardObjectList(29)=TurboCard'MixedSignals'
-    
+    DeckCardObjectList(29)=TurboCard'UnusualMutation'
+
     Begin Object Name=HighThroughput Class=TurboCard_Evil
         CardName(0)="High"
         CardName(1)="Throughput"
@@ -746,28 +826,4 @@ defaultproperties
         OnActivateCard=ActivateBlackout
     End Object
     DeckCardObjectList(37)=TurboCard'Blackout'
-    
-    Begin Object Name=UnusualMutation Class=TurboCard_Evil
-        CardName(0)="Unusual"
-        CardName(1)="Mutation"
-        CardDescriptionList(0)="Increases chance"
-        CardDescriptionList(1)="for zeds to be"
-        CardDescriptionList(2)="replaced with"
-        CardDescriptionList(3)="a variant by 400%."
-        CardID="EVIL_UNUSUALMUT"
-        OnActivateCard=ActivateUnusualMutation
-    End Object
-    DeckCardObjectList(38)=TurboCard'UnusualMutation'
-    
-    Begin Object Name=ButterFingers Class=TurboCard_Evil
-        CardName(0)="Butter"
-        CardName(1)="Fingers"
-        CardDescriptionList(0)="Player receive"
-        CardDescriptionList(1)="a 5% chance to"
-        CardDescriptionList(2)="drop their weapon"
-        CardDescriptionList(3)="when hit by a zed."
-        CardID="EVIL_BUTTERFING"
-        OnActivateCard=ActivateButterFingers
-    End Object
-    DeckCardObjectList(39)=TurboCard'ButterFingers'
 }
