@@ -329,6 +329,11 @@ static final function bool ShouldPlayHit(KFMonster KFM, AfflictionData AD)
 
 static final function float GetOriginalGroundSpeed(KFMonster KFM, AfflictionData AD)
 {
+	if (KFM == None)
+	{
+		return class'KFMonster'.default.GroundSpeed;
+	}
+
 	return KFM.OriginalGroundSpeed * GetSpeedMultiplier(AD);
 }
 
