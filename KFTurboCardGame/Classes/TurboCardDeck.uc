@@ -14,7 +14,7 @@ var array< TurboCard > OriginalDeckCardObjectList;
 var array< OptionalCardData > OptionalCardList;
 var array< OptionalCardData > OriginalOptionalCardList;
 
-function InitializeDeck()
+function InitializeDeck(TurboCardReplicationInfo TCRI)
 {
     local int Index;
 

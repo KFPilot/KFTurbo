@@ -319,10 +319,10 @@ function InitializeCardDecks()
     ProConGameDeck = Spawn(ProConTurboDeckClass, self);
     EvilGameDeck = Spawn(EvilTurboDeckClass, self);
 
-    GoodGameDeck.InitializeDeck();
-    SuperGameDeck.InitializeDeck();
-    ProConGameDeck.InitializeDeck();
-    EvilGameDeck.InitializeDeck();
+    GoodGameDeck.InitializeDeck(self);
+    SuperGameDeck.InitializeDeck(self);
+    ProConGameDeck.InitializeDeck(self);
+    EvilGameDeck.InitializeDeck(self);
 }
 
 final function array<TurboCard> GetActiveCardList()

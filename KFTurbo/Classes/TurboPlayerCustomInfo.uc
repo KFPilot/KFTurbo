@@ -7,11 +7,17 @@ class TurboPlayerCustomInfo extends ReplicationInfo;
 var TurboPlayerReplicationInfo PlayerTPRI;
 var bool bRegistered;
 var float ResolveTimeout;
+var bool bDisableTickOnRegister;
 
 replication
 {
 	reliable if (Role == ROLE_Authority)
 		PlayerTPRI;
+}
+
+simulated final function bool IsLocallyOwned()
+{
+	return PlayerTPRI != None && PlayerController(PlayerTPRI.Owner) != None && Viewport(PlayerController(PlayerTPRI.Owner).Player) != None;
 }
 
 static final function TurboPlayerCustomInfo FindCustomInfo(TurboPlayerReplicationInfo TPRI)
@@ -103,7 +109,11 @@ simulated function Tick(float DeltaTime)
 
 	bRegistered = true;
 	Register();
-	Disable('Tick');
+
+	if (bDisableTickOnRegister)
+	{
+		Disable('Tick');
+	}
 }
 
 simulated function TornOff()
@@ -134,6 +144,7 @@ simulated function Unregister()
 defaultproperties
 {
 	bRegistered=false
+	bDisableTickOnRegister=true
 
 	RemoteRole=ROLE_None
     NetUpdateFrequency=1.0

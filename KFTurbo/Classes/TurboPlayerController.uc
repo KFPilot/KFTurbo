@@ -966,6 +966,7 @@ exec function AdminShowSettings()
 }
 
 exec function FreeCamera(bool bFreeCamera) {}
+exec function ToggleBehindView() {}
 
 exec simulated function EndTrader()
 {

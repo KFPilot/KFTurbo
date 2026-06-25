@@ -278,13 +278,12 @@ final function bool AttemptCheatDeath(TurboPlayerCardCustomInfo PlayerCardInfo, 
         return false;
     }
 
-    if (PlayerCardInfo == None || (PlayerCardInfo.CheatDeathWave > 0 && PlayerCardInfo.CheatDeathWave < (Level.Game.GetCurrentWaveNum() + 2)))
+    if (PlayerCardInfo == None || !PlayerCardInfo.CanCheatDeath())
     {
         return false;
     }
 
-    PlayerCardInfo.CheatDeathWave = Level.Game.GetCurrentWaveNum();
-    PlayerCardInfo.CheatDeathTime = Level.TimeSeconds + 3.f;
+    PlayerCardInfo.SetCheatDeathWave(Level.Game.GetCurrentWaveNum());
 
     KilledPawn.Health = KilledPawn.HealthMax;
     Level.BroadcastLocalizedMessage(class'CheatDeathLocalMessage', 0, PlayerCardInfo.PlayerTPRI);
