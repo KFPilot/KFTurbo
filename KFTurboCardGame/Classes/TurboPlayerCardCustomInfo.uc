@@ -384,7 +384,7 @@ simulated function DrawCardInfo(Canvas C, float DrawX, float DrawY, float DrawHe
 	if (CheatDeathRatio > 0.003f)
 	{
 		SetupOffset(DrawX, DrawY, DrawHeight, OffsetX, OffsetY, Index);
-		DrawCardInfoNumberProgress(C, CheatDeathIcon, -1.f, CheatDeathWave, OffsetX, OffsetY, DrawHeight, CheatDeathRatio);
+		DrawCardInfoNumberProgress(C, CheatDeathIcon, -1.f, GetWavesUntilCheatDeath(), OffsetX, OffsetY, DrawHeight, CheatDeathRatio);
 	}
 	
 	if (RackEmUpRatio > 0.003f)
@@ -433,26 +433,14 @@ simulated function DrawCardInfoProgress(Canvas C, Material Icon, float Progress,
 {
 	DrawCardInfoIcon(C, Icon, DrawX, DrawY, DrawHeight, Ratio);
 
-	//Special signal to not draw bar at all.
-	if (Progress <= -1.f)
-	{
-		return;
-	}
-
-	Progress = FClamp(Progress, 0.f, 1.f);
-
-	C.SetPos(DrawX, DrawY + (DrawHeight * 0.75));
-	C.DrawColor = class'TurboHUDOverlay'.static.MakeColor(0, 0, 0, 120.f * Ratio);
-	DrawBox(C, class'TurboHUDKillingFloor'.default.WhiteMaterial, DrawHeight, DrawHeight * 0.2f);
-	
 	if (Progress <= 0.001f)
 	{
 		return;
 	}
 
-	C.SetPos(DrawX, DrawY + (DrawHeight * 0.75));
+	C.SetPos(DrawX, DrawY + (DrawHeight * 0.9));
 	C.DrawColor = class'TurboHUDOverlay'.static.MakeColor(255, 0, 0, 180.f * Ratio);
-	DrawBox(C, class'TurboHUDKillingFloor'.default.WhiteMaterial, DrawHeight * Progress, DrawHeight * 0.2f);
+	DrawBox(C, class'TurboHUDKillingFloor'.default.WhiteMaterial, DrawHeight * Progress, DrawHeight * 0.1f);
 }
 
 simulated function DrawCardInfoNumberProgress(Canvas C, Material Icon, float Progress, coerce string String, float DrawX, float DrawY, float DrawHeight, float Ratio)
@@ -467,7 +455,7 @@ simulated function DrawCardInfoNumberProgress(Canvas C, Material Icon, float Pro
 
 	C.TextSize(String, TextSizeX, TextSizeY);
 	DrawX = ((DrawX + DrawHeight) - TextSizeX) + (DrawHeight * 0.15f);
-	DrawY = DrawY - (DrawHeight * 0.05f);
+	DrawY = DrawY - (DrawHeight * 0.075f);
 
 	C.DrawColor = class'TurboHUDOverlay'.static.MakeColor(0, 0, 0, 120.f * Ratio);
 	C.SetPos(DrawX + (TextSizeY * 0.025f), DrawY + (TextSizeY * 0.025f));
@@ -475,6 +463,16 @@ simulated function DrawCardInfoNumberProgress(Canvas C, Material Icon, float Pro
 	C.DrawColor = class'TurboHUDOverlay'.static.MakeColor(255.f, 0, 0, 240.f * Ratio);
 	C.SetPos(DrawX, DrawY);
 	C.DrawText(String);
+}
+
+final simulated function int GetWavesUntilCheatDeath()
+{
+	if (KFGameReplicationInfo(Level.GRI) == None)
+	{
+		return 1;
+	}
+
+	return Max(KFGameReplicationInfo(Level.GRI).WaveNumber - (CheatDeathWave + CheatDeathWaveCooldown), 1);
 }
 
 final simulated function float GetRackEmUpStackPercentDuration()
