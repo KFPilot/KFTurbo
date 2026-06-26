@@ -300,6 +300,8 @@ static function float GetFireSpeedMod(KFPlayerReplicationInfo KFPRI, Weapon Othe
 		Multiplier *= LerpStat(KFPRI, 1.05f, 1.35f);
 	}
 
+	ApplyAdjustedFireRate(KFPRI, Other, Multiplier);
+	
 	return Multiplier;
 }
 

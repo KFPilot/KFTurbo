@@ -15,7 +15,7 @@ var float CheatDeathRatio;
 var int NegateDamageCount;
 
 var float CriticalHitTime, LastKnownCriticalHitTime;
-var float PerpetualCriticalHitStartTime;
+var float PerpetualCriticalHitStartTime, LastKnownPerpetualCriticalHitStartTime;
 var const float PerpetualCriticalHitTime;
 var float PerpetualCriticalHitRatio;
 
@@ -43,6 +43,8 @@ var float MinDropWeaponTime;
 var int StunningHitFireCounter;
 
 var float MeleeWeaponHoldTime, LastKnownMeleeWeaponHoldTime;
+var float FreezeTagRatio;
+var float LastFreezeTagEvaluation;
 
 var const float FreezeTagTimeUntilSlow;
 var const float FreezeTagTimeUntilFreeze;
@@ -52,12 +54,13 @@ var Material CritBoostIcon;
 var Material HealBoostIcon;
 var Material NadeBoostIcon;
 var Material RackEmUpIcon;
+var Material FreezeTagIcon;
 
 replication
 {
-    reliable if (Role == ROLE_Authority && bNetOwner)
+    reliable if (Role == ROLE_Authority)
         GrenadeThrowTime, HealBoostTime, RackEmUpHeadshotCount, RackEmUpHeadshotStackExpireTime, CheatDeathWave,
-		MeleeWeaponHoldTime, CriticalHitTime;
+		CriticalHitTime;
 
 	reliable if (Role == ROLE_Authority)
         ClientCriticalHit;
@@ -133,6 +136,9 @@ simulated function float UpdateFreezeTagMoveSpeed(KFWeapon Weapon)
 {
 	local float TimeSinceWeaponHoldTime;
 
+	FreezeTagRatio = 1.f;
+	LastFreezeTagEvaluation = Level.TimeSeconds;
+
 	if (Weapon == None || Weapon.bMeleeWeapon)
 	{
 		MeleeWeaponHoldTime = Level.TimeSeconds;
@@ -157,7 +163,7 @@ simulated function float UpdateFreezeTagMoveSpeed(KFWeapon Weapon)
 
 final simulated function bool CanCheatDeath()
 {
-	return CheatDeathWave == 0 || (CheatDeathWave + CheatDeathWaveCooldown <= Level.Game.GetCurrentWaveNum());
+	return CheatDeathWave == -1 || (CheatDeathWave + CheatDeathWaveCooldown <= InvasionGameReplicationInfo(Level.GRI).WaveNumber);
 }
 
 //Doesn't use ServerTimeActor because this is only used on server.
@@ -295,26 +301,31 @@ simulated function PostNetReceive()
 	if (CheatDeathWave > LastKnownCheatDeathWave)
 	{
 		CheatDeathRatio = 1.f;
+		LastKnownCheatDeathWave = CheatDeathWave;
 	}
 
-	if (CriticalHitTime > LastKnownCriticalHitTime)
+	if (PerpetualCriticalHitStartTime > LastKnownPerpetualCriticalHitStartTime)
 	{
 		PerpetualCriticalHitRatio = 1.f;
+		LastKnownPerpetualCriticalHitStartTime = PerpetualCriticalHitStartTime;
 	}
 
 	if (GrenadeThrowTime > LastKnownGrenadeThrowTime)
 	{
 		GrenadeBoostRatio = 1.f;
+		LastKnownGrenadeThrowTime = GrenadeThrowTime;
 	}
 
 	if (HealBoostTime > LastKnownHealBoostTime)
 	{
 		HealBoostRatio = 1.f;
+		LastKnownHealBoostTime = HealBoostTime;
 	}
 
-	if (RackEmUpHeadshotCount > LastKnownRackEmUpHeadshotCount)
+	if (RackEmUpHeadshotCount != LastKnownRackEmUpHeadshotCount)
 	{
 		RackEmUpRatio = 1.f;
+		LastKnownRackEmUpHeadshotCount = RackEmUpHeadshotCount;
 	}
 }
 
@@ -325,40 +336,45 @@ simulated function TickDraw(float DeltaTime)
 		return;
 	}
 
-	DeltaTime *= 0.5f;
+	DeltaTime *= 2.f;
 
 	if (PerpetualCriticalHitRatio > 0.0001f && ServerTimeActor.GetServerTimeSeconds() > (PerpetualCriticalHitStartTime + PerpetualCriticalHitTime))
 	{
-		PerpetualCriticalHitRatio = Lerp(DeltaTime, PerpetualCriticalHitRatio, 0.f);
+		PerpetualCriticalHitRatio -= DeltaTime;
 	}
 
 	if (GrenadeBoostRatio > 0.0001f && ServerTimeActor.GetServerTimeSeconds() > (GrenadeThrowTime + GrenadeBoostTime))
 	{
-		GrenadeBoostRatio = Lerp(DeltaTime, GrenadeBoostRatio, 0.f);
+		GrenadeBoostRatio -= DeltaTime;
 	}
 
 	if (HealBoostRatio > 0.0001f && ServerTimeActor.GetServerTimeSeconds() > (HealBoostTime + HealBoostBoostTime))
 	{
-		HealBoostRatio = Lerp(DeltaTime, HealBoostRatio, 0.f);
+		HealBoostRatio -= DeltaTime;
 	}
 
 	if (RackEmUpRatio > 0.0001f && ServerTimeActor.GetServerTimeSeconds() > RackEmUpHeadshotStackExpireTime)
 	{
-		RackEmUpRatio = Lerp(DeltaTime, RackEmUpRatio, 0.f);
+		RackEmUpRatio -= DeltaTime;
 	}
-	
-	DeltaTime *= 0.25f;
+
+	DeltaTime *= 0.5f;
+
+	if (FreezeTagRatio > 0.0001f && (LastFreezeTagEvaluation + 1.f) < Level.TimeSeconds)
+	{
+		FreezeTagRatio -= DeltaTime;
+	}
 
 	if (CheatDeathRatio > 0.0001f && CanCheatDeath())
 	{
-		CheatDeathRatio = Lerp(DeltaTime, CheatDeathRatio, 0.f);
+		CheatDeathRatio -= DeltaTime;
 	}
 }
 
 static final function SetupOffset(float DrawX, float DrawY, float IconX, out float OffsetX, out float OffsetY, out int Index)
 {
-	OffsetX = DrawX - ((IconX * 1.1f) * (Index % 5)); 
-	OffsetY = DrawY - (float(Index / 6) * (IconX * 1.1f));
+	OffsetX = DrawX - ((IconX * 2.f) * (Index % 5)); 
+	OffsetY = DrawY - (float(Index / 6) * (IconX * 2.f));
 	Index++;
 }
 
@@ -381,10 +397,16 @@ simulated function DrawCardInfo(Canvas C, float DrawX, float DrawY, float DrawHe
 	C.FontScaleX = (DrawHeight * 0.75f) / TextSizeY;
 	C.FontScaleY = C.FontScaleX;
 
+	if (FreezeTagRatio > 0.003f)
+	{
+		SetupOffset(DrawX, DrawY, DrawHeight, OffsetX, OffsetY, Index);
+		DrawCardInfoProgress(C, FreezeTagIcon, GetTimePercentUntilFreeze(), OffsetX, OffsetY, DrawHeight, FreezeTagRatio);
+	}
+
 	if (CheatDeathRatio > 0.003f)
 	{
 		SetupOffset(DrawX, DrawY, DrawHeight, OffsetX, OffsetY, Index);
-		DrawCardInfoNumberProgress(C, CheatDeathIcon, -1.f, GetWavesUntilCheatDeath(), OffsetX, OffsetY, DrawHeight, CheatDeathRatio);
+		DrawCardInfoNumberProgress(C, CheatDeathIcon, 0.f, GetWavesUntilCheatDeath(), OffsetX, OffsetY, DrawHeight, CheatDeathRatio);
 	}
 	
 	if (RackEmUpRatio > 0.003f)
@@ -438,9 +460,9 @@ simulated function DrawCardInfoProgress(Canvas C, Material Icon, float Progress,
 		return;
 	}
 
-	C.SetPos(DrawX, DrawY + (DrawHeight * 0.9));
+	C.SetPos(DrawX, DrawY + (DrawHeight * 0.8));
 	C.DrawColor = class'TurboHUDOverlay'.static.MakeColor(255, 0, 0, 180.f * Ratio);
-	DrawBox(C, class'TurboHUDKillingFloor'.default.WhiteMaterial, DrawHeight * Progress, DrawHeight * 0.1f);
+	DrawBox(C, class'TurboHUDKillingFloor'.default.WhiteMaterial, DrawHeight * Progress, DrawHeight * 0.2f);
 }
 
 simulated function DrawCardInfoNumberProgress(Canvas C, Material Icon, float Progress, coerce string String, float DrawX, float DrawY, float DrawHeight, float Ratio)
@@ -454,8 +476,8 @@ simulated function DrawCardInfoNumberProgress(Canvas C, Material Icon, float Pro
 	}
 
 	C.TextSize(String, TextSizeX, TextSizeY);
-	DrawX = ((DrawX + DrawHeight) - TextSizeX) + (DrawHeight * 0.15f);
-	DrawY = DrawY - (DrawHeight * 0.075f);
+	DrawX = ((DrawX + DrawHeight) - TextSizeX) + (DrawHeight * 0.1f);
+	DrawY = DrawY - (DrawHeight * 0.2f);
 
 	C.DrawColor = class'TurboHUDOverlay'.static.MakeColor(0, 0, 0, 120.f * Ratio);
 	C.SetPos(DrawX + (TextSizeY * 0.025f), DrawY + (TextSizeY * 0.025f));
@@ -467,12 +489,12 @@ simulated function DrawCardInfoNumberProgress(Canvas C, Material Icon, float Pro
 
 final simulated function int GetWavesUntilCheatDeath()
 {
-	if (KFGameReplicationInfo(Level.GRI) == None)
+	if (InvasionGameReplicationInfo(Level.GRI) == None)
 	{
 		return 1;
 	}
 
-	return Max(KFGameReplicationInfo(Level.GRI).WaveNumber - (CheatDeathWave + CheatDeathWaveCooldown), 1);
+	return Max((CheatDeathWave + CheatDeathWaveCooldown) - InvasionGameReplicationInfo(Level.GRI).WaveNumber, 1);
 }
 
 final simulated function float GetRackEmUpStackPercentDuration()
@@ -492,7 +514,7 @@ final simulated function float GetHealBoostPercentDuration()
 		return 0.f;
 	}
 
-	return FClamp((ServerTimeActor.GetServerTimeSeconds() - HealBoostTime) / HealBoostBoostTime, 1.f, 0.f); 
+	return Lerp(FClamp((ServerTimeActor.GetServerTimeSeconds() - HealBoostTime) / HealBoostBoostTime, 0.f, 1.f), 1.f, 0.f);
 }
 
 final simulated function float GetGrenadeThrowPercentDuration()
@@ -502,7 +524,7 @@ final simulated function float GetGrenadeThrowPercentDuration()
 		return 0.f;
 	}
 
-	return FClamp((ServerTimeActor.GetServerTimeSeconds() - GrenadeThrowTime) / GrenadeBoostTime, 1.f, 0.f); 
+	return Lerp(FClamp((ServerTimeActor.GetServerTimeSeconds() - GrenadeThrowTime) / GrenadeBoostTime, 0.f, 1.f), 1.f, 0.f); 
 }
 
 final simulated function float GetPerpetualCriticalPercentDuration()
@@ -512,7 +534,12 @@ final simulated function float GetPerpetualCriticalPercentDuration()
 		return 0.f;
 	}
 
-	return FClamp((ServerTimeActor.GetServerTimeSeconds() - PerpetualCriticalHitStartTime) / PerpetualCriticalHitTime, 1.f, 0.f); 
+	return Lerp(FClamp((ServerTimeActor.GetServerTimeSeconds() - PerpetualCriticalHitStartTime) / PerpetualCriticalHitTime, 0.f, 1.f), 1.f, 0.f); 
+}
+
+final simulated function float GetTimePercentUntilFreeze()
+{
+	return FClamp((Level.TimeSeconds - MeleeWeaponHoldTime) / FreezeTagTimeUntilSlow, 0.f, 1.f);
 }
 
 defaultproperties
@@ -520,7 +547,7 @@ defaultproperties
 	CheatDeathWave=-1
 	CheatDeathTime=-1.f
 	CheatDeathGracePeriod=5.f
-	CheatDeathWaveCooldown=3
+	CheatDeathWaveCooldown=2
 
 	NegateDamageCount=0
 
@@ -539,6 +566,7 @@ defaultproperties
 	HealBoostIcon=Texture'KFTurboCardGame.UI.HealBoostIcon_D'
 	NadeBoostIcon=Texture'KFTurboCardGame.UI.NadeBoostIcon_D'
 	RackEmUpIcon=Texture'KFTurboCardGame.UI.RackEmUpIcon_D'
+	FreezeTagIcon=Texture'KFTurboCardGame.UI.FreezeTagIcon_D'
 
 	GrenadeThrowTime=0.f
 	GrenadeBoostTime=5.f
