@@ -14,7 +14,7 @@ var bool bLevelHasMultipleTraders;
 
 function InitializeDeck(TurboCardReplicationInfo TCRI)
 {
-    local KFUseTrigger UseTrigger;
+    local KFDoorMover DoorMover;
     local ShopVolume ShopVolume;
     local int Count;
 
@@ -22,16 +22,16 @@ function InitializeDeck(TurboCardReplicationInfo TCRI)
 
     //Check if level has enough doors.
     Count = 0;
-    foreach TCRI.AllActors(class'KFUseTrigger', UseTrigger)
+    foreach TCRI.AllActors(class'KFDoorMover', DoorMover)
     {
-        if (UseTrigger.DoorOwners.Length == 0)
+        if (DoorMover.bDisallowWeld)
         {
             continue;
         }
 
         Count++;
 
-        if (Count > 2)
+        if (Count > 5)
         {
             bLevelHasDoors = true;
             break;
