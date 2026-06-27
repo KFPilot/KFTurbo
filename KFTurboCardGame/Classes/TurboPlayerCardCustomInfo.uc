@@ -36,6 +36,7 @@ var int RackEmUpHeadshotCount, LastKnownRackEmUpHeadshotCount;
 var const float RackEmUpStackDuration;
 var float RackEmUpHeadshotStackExpireTime;
 var float RackEmUpRatio;
+var float RackEmUpPopRatio;
 
 var float LastDropWeaponTime;
 var float MinDropWeaponTime;
@@ -325,6 +326,7 @@ simulated function PostNetReceive()
 	if (RackEmUpHeadshotCount != LastKnownRackEmUpHeadshotCount)
 	{
 		RackEmUpRatio = 1.f;
+		RackEmUpPopRatio = 1.5f;
 		LastKnownRackEmUpHeadshotCount = RackEmUpHeadshotCount;
 	}
 }
@@ -353,9 +355,13 @@ simulated function TickDraw(float DeltaTime)
 		HealBoostRatio -= DeltaTime;
 	}
 
-	if (RackEmUpRatio > 0.0001f && ServerTimeActor.GetServerTimeSeconds() > RackEmUpHeadshotStackExpireTime)
+	if (RackEmUpRatio > 0.0001f)
 	{
-		RackEmUpRatio -= DeltaTime;
+		RackEmUpPopRatio = Lerp(DeltaTime * 2.f, RackEmUpPopRatio, 1.f);
+		if (ServerTimeActor.GetServerTimeSeconds() > RackEmUpHeadshotStackExpireTime)
+		{
+			RackEmUpRatio -= DeltaTime;
+		}
 	}
 
 	DeltaTime *= 0.5f;
@@ -373,8 +379,8 @@ simulated function TickDraw(float DeltaTime)
 
 static final function SetupOffset(float DrawX, float DrawY, float IconX, out float OffsetX, out float OffsetY, out int Index)
 {
-	OffsetX = DrawX - ((IconX * 2.f) * (Index % 5)); 
-	OffsetY = DrawY - (float(Index / 6) * (IconX * 2.f));
+	OffsetX = DrawX - ((IconX * 1.2f) * (Index % 5)); 
+	OffsetY = DrawY - (float(Index / 6) * (IconX * 1.2f));
 	Index++;
 }
 
@@ -406,13 +412,13 @@ simulated function DrawCardInfo(Canvas C, float DrawX, float DrawY, float DrawHe
 	if (CheatDeathRatio > 0.003f)
 	{
 		SetupOffset(DrawX, DrawY, DrawHeight, OffsetX, OffsetY, Index);
-		DrawCardInfoNumberProgress(C, CheatDeathIcon, 0.f, GetWavesUntilCheatDeath(), OffsetX, OffsetY, DrawHeight, CheatDeathRatio);
+		DrawCardInfoNumberProgress(C, CheatDeathIcon, 0.f, GetWavesUntilCheatDeath(), OffsetX, OffsetY, DrawHeight, CheatDeathRatio, 1.f);
 	}
 	
 	if (RackEmUpRatio > 0.003f)
 	{
 		SetupOffset(DrawX, DrawY, DrawHeight, OffsetX, OffsetY, Index);
-		DrawCardInfoNumberProgress(C, RackEmUpIcon, GetRackEmUpStackPercentDuration(), RackEmUpHeadshotCount, OffsetX, OffsetY, DrawHeight, RackEmUpRatio);
+		DrawCardInfoNumberProgress(C, RackEmUpIcon, GetRackEmUpStackPercentDuration(), RackEmUpHeadshotCount, OffsetX, OffsetY, DrawHeight, RackEmUpRatio, RackEmUpPopRatio);
 	}
 	
 	if (HealBoostRatio > 0.003f)
@@ -465,9 +471,11 @@ simulated function DrawCardInfoProgress(Canvas C, Material Icon, float Progress,
 	DrawBox(C, class'TurboHUDKillingFloor'.default.WhiteMaterial, DrawHeight * Progress, DrawHeight * 0.2f);
 }
 
-simulated function DrawCardInfoNumberProgress(Canvas C, Material Icon, float Progress, coerce string String, float DrawX, float DrawY, float DrawHeight, float Ratio)
+simulated function DrawCardInfoNumberProgress(Canvas C, Material Icon, float Progress, coerce string String, float DrawX, float DrawY, float DrawHeight, float Ratio, float TextScale)
 {
 	local float TextSizeX, TextSizeY;
+	local float OriginalTextScale;
+
 	DrawCardInfoProgress(C, Icon, Progress, DrawX, DrawY, DrawHeight, Ratio);
 
 	if (String == "")
@@ -475,6 +483,9 @@ simulated function DrawCardInfoNumberProgress(Canvas C, Material Icon, float Pro
 		return;
 	}
 
+	OriginalTextScale = C.FontScaleX;
+	C.FontScaleX *= TextScale;
+	C.FontScaleY = C.FontScaleX;
 	C.TextSize(String, TextSizeX, TextSizeY);
 	DrawX = ((DrawX + DrawHeight) - TextSizeX) + (DrawHeight * 0.1f);
 	DrawY = DrawY - (DrawHeight * 0.2f);
@@ -485,6 +496,9 @@ simulated function DrawCardInfoNumberProgress(Canvas C, Material Icon, float Pro
 	C.DrawColor = class'TurboHUDOverlay'.static.MakeColor(255.f, 0, 0, 240.f * Ratio);
 	C.SetPos(DrawX, DrawY);
 	C.DrawText(String);
+
+	C.FontScaleX = OriginalTextScale;
+	C.FontScaleY = OriginalTextScale;
 }
 
 final simulated function int GetWavesUntilCheatDeath()
