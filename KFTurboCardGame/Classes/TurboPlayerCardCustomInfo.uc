@@ -32,7 +32,7 @@ var float HealBoostTime, LastKnownHealBoostTime;
 var const float HealBoostBoostTime;
 var float HealBoostRatio;
 
-var int RackEmUpHeadshotCount, LastKnownRackEmUpHeadshotCount;
+var int RackEmUpHeadshotCount, LastKnownRackEmUpHeadshotCount, CurrentRackEmUpHeadshotCount;
 var const float RackEmUpStackDuration;
 var float RackEmUpHeadshotStackExpireTime;
 var float RackEmUpRatio;
@@ -326,8 +326,19 @@ simulated function PostNetReceive()
 	if (RackEmUpHeadshotCount != LastKnownRackEmUpHeadshotCount)
 	{
 		RackEmUpRatio = 1.f;
-		RackEmUpPopRatio = 1.5f;
+
+		if (RackEmUpHeadshotCount > LastKnownRackEmUpHeadshotCount)
+		{
+			RackEmUpPopRatio = 1.66f;
+		}
+
 		LastKnownRackEmUpHeadshotCount = RackEmUpHeadshotCount;
+
+		//If the rack em up expires, it shouldn't immediately show 0 on the icon.
+		if (RackEmUpHeadshotCount != 0)
+		{
+			CurrentRackEmUpHeadshotCount = RackEmUpHeadshotCount;
+		}
 	}
 }
 
@@ -418,7 +429,7 @@ simulated function DrawCardInfo(Canvas C, float DrawX, float DrawY, float DrawHe
 	if (RackEmUpRatio > 0.003f)
 	{
 		SetupOffset(DrawX, DrawY, DrawHeight, OffsetX, OffsetY, Index);
-		DrawCardInfoNumberProgress(C, RackEmUpIcon, GetRackEmUpStackPercentDuration(), RackEmUpHeadshotCount, OffsetX, OffsetY, DrawHeight, RackEmUpRatio, RackEmUpPopRatio);
+		DrawCardInfoNumberProgress(C, RackEmUpIcon, GetRackEmUpStackPercentDuration(), CurrentRackEmUpHeadshotCount, OffsetX, OffsetY, DrawHeight, RackEmUpRatio, RackEmUpPopRatio);
 	}
 	
 	if (HealBoostRatio > 0.003f)
