@@ -6,62 +6,50 @@ class TurboPlayerCardCustomInfo extends TurboPlayerCustomInfo;
 var ServerTimeActor ServerTimeActor;
 var int FireCounter;
 
-var int CheatDeathWave, LastKnownCheatDeathWave;
+var int CheatDeathWave;
 var float CheatDeathTime;
 var const float CheatDeathGracePeriod;
 var const int CheatDeathWaveCooldown;
-var float CheatDeathRatio;
 
-var int NegateDamageCount;
+var int SubstituteDamageCount;
+var const int SubstituteDamageCountBase;
 
-var float CriticalHitTime, LastKnownCriticalHitTime;
-var float PerpetualCriticalHitStartTime, LastKnownPerpetualCriticalHitStartTime;
+var float CriticalHitTime;
+var float PerpetualCriticalHitStartTime;
 var const float PerpetualCriticalHitTime;
-var float PerpetualCriticalHitRatio;
 
-var int NonCriticalHitCount, LastKnownNonCriticalHitCount;
-var float NonCriticalHitRatio;
+var int NonCriticalHitCount;
 
 var class<CriticalHitEffect> HitEffectList[4];
 
-var float GrenadeThrowTime, LastKnownGrenadeThrowTime;
+var float GrenadeThrowTime;
 var const float GrenadeBoostTime;
-var float GrenadeBoostRatio;
 
-var float HealBoostTime, LastKnownHealBoostTime;
+var float HealBoostTime;
 var const float HealBoostBoostTime;
-var float HealBoostRatio;
 
-var int RackEmUpHeadshotCount, LastKnownRackEmUpHeadshotCount, CurrentRackEmUpHeadshotCount;
+var int RackEmUpHeadshotCount;
 var const float RackEmUpStackDuration;
 var float RackEmUpHeadshotStackExpireTime;
-var float RackEmUpRatio;
-var float RackEmUpPopRatio;
 
 var float LastDropWeaponTime;
 var float MinDropWeaponTime;
 
 var int StunningHitFireCounter;
 
-var float MeleeWeaponHoldTime, LastKnownMeleeWeaponHoldTime;
-var float FreezeTagRatio;
+var float MeleeWeaponHoldTime;
 var float LastFreezeTagEvaluation;
-
 var const float FreezeTagTimeUntilSlow;
 var const float FreezeTagTimeUntilFreeze;
 
-var Material CheatDeathIcon;
-var Material CritBoostIcon;
-var Material HealBoostIcon;
-var Material NadeBoostIcon;
-var Material RackEmUpIcon;
-var Material FreezeTagIcon;
+
+var private TurboCardOverlay CachedTurboCardOverlay;
 
 replication
 {
     reliable if (Role == ROLE_Authority)
         GrenadeThrowTime, HealBoostTime, RackEmUpHeadshotCount, RackEmUpHeadshotStackExpireTime, CheatDeathWave,
-		CriticalHitTime;
+		CriticalHitTime, SubstituteDamageCount;
 
 	reliable if (Role == ROLE_Authority)
         ClientCriticalHit;
@@ -72,6 +60,21 @@ simulated function PostBeginPlay()
 	Super.PostBeginPlay();
 
 	SetTimer(0.1f, false);
+}
+
+simulated final function TurboCardOverlay GetTurboCardOverlay()
+{
+	if (PlayerTPRI == None)
+	{
+		return None;
+	}
+
+	if (CachedTurboCardOverlay == None)
+	{
+		CachedTurboCardOverlay = class'TurboCardOverlay'.static.FindCardOverlay(PlayerController(PlayerTPRI.Owner));
+	}
+
+	return CachedTurboCardOverlay;
 }
 
 simulated function Timer()
@@ -103,8 +106,6 @@ simulated function Tick(float DeltaTime)
 
 	if (Level.NetMode != NM_DedicatedServer)
 	{
-		TickDraw(DeltaTime);
-
 		if (Role != ROLE_Authority)
 		{
 			return;
@@ -137,7 +138,6 @@ simulated function float UpdateFreezeTagMoveSpeed(KFWeapon Weapon)
 {
 	local float TimeSinceWeaponHoldTime;
 
-	FreezeTagRatio = 1.f;
 	LastFreezeTagEvaluation = Level.TimeSeconds;
 
 	if (Weapon == None || Weapon.bMeleeWeapon)
@@ -180,6 +180,23 @@ final function SetCheatDeathWave(int Wave)
 	ForceNetUpdate();
 }
 
+final function bool AttemptSubstituteDamage()
+{
+	if (SubstituteDamageCount == 0)
+	{
+		return false;
+	}
+
+	SubstituteDamageCount--;
+	ForceNetUpdate();
+	return true;
+}
+
+final function ResetSubstituteDamage()
+{
+	SubstituteDamageCount = SubstituteDamageCountBase;
+}
+
 final function bool IsInPerpetualCriticalHitTime()
 {
 	if (ServerTimeActor == None || PerpetualCriticalHitStartTime <= 0.f)
@@ -217,7 +234,7 @@ final simulated function bool IsInGrenadeBuffTime()
 	return ServerTimeActor != None && GrenadeThrowTime > 0.f && (GrenadeThrowTime + GrenadeBoostTime > ServerTimeActor.GetServerTimeSeconds());
 }
 
-final function PlayerHealed()
+final function ApplyHealingBoost()
 {
 	HealBoostTime = Level.TimeSeconds;
 	ForceNetUpdate();
@@ -294,98 +311,12 @@ simulated function PostNetReceive()
 {
 	Super.PostNetReceive();
 
-	if (!IsLocallyOwned())
-	{
-		return;
-	}
-	
-	if (CheatDeathWave > LastKnownCheatDeathWave)
-	{
-		CheatDeathRatio = 1.f;
-		LastKnownCheatDeathWave = CheatDeathWave;
-	}
-
-	if (PerpetualCriticalHitStartTime > LastKnownPerpetualCriticalHitStartTime)
-	{
-		PerpetualCriticalHitRatio = 1.f;
-		LastKnownPerpetualCriticalHitStartTime = PerpetualCriticalHitStartTime;
-	}
-
-	if (GrenadeThrowTime > LastKnownGrenadeThrowTime)
-	{
-		GrenadeBoostRatio = 1.f;
-		LastKnownGrenadeThrowTime = GrenadeThrowTime;
-	}
-
-	if (HealBoostTime > LastKnownHealBoostTime)
-	{
-		HealBoostRatio = 1.f;
-		LastKnownHealBoostTime = HealBoostTime;
-	}
-
-	if (RackEmUpHeadshotCount != LastKnownRackEmUpHeadshotCount)
-	{
-		RackEmUpRatio = 1.f;
-
-		if (RackEmUpHeadshotCount > LastKnownRackEmUpHeadshotCount)
-		{
-			RackEmUpPopRatio = 1.66f;
-		}
-
-		LastKnownRackEmUpHeadshotCount = RackEmUpHeadshotCount;
-
-		//If the rack em up expires, it shouldn't immediately show 0 on the icon.
-		if (RackEmUpHeadshotCount != 0)
-		{
-			CurrentRackEmUpHeadshotCount = RackEmUpHeadshotCount;
-		}
-	}
-}
-
-simulated function TickDraw(float DeltaTime)
-{
-	if (!IsLocallyOwned() || ServerTimeActor == None)
+	if (!IsLocallyOwned() && GetTurboCardOverlay() != None)
 	{
 		return;
 	}
 
-	DeltaTime *= 2.f;
-
-	if (PerpetualCriticalHitRatio > 0.0001f && ServerTimeActor.GetServerTimeSeconds() > (PerpetualCriticalHitStartTime + PerpetualCriticalHitTime))
-	{
-		PerpetualCriticalHitRatio -= DeltaTime;
-	}
-
-	if (GrenadeBoostRatio > 0.0001f && ServerTimeActor.GetServerTimeSeconds() > (GrenadeThrowTime + GrenadeBoostTime))
-	{
-		GrenadeBoostRatio -= DeltaTime;
-	}
-
-	if (HealBoostRatio > 0.0001f && ServerTimeActor.GetServerTimeSeconds() > (HealBoostTime + HealBoostBoostTime))
-	{
-		HealBoostRatio -= DeltaTime;
-	}
-
-	if (RackEmUpRatio > 0.0001f)
-	{
-		RackEmUpPopRatio = Lerp(DeltaTime * 2.f, RackEmUpPopRatio, 1.f);
-		if (ServerTimeActor.GetServerTimeSeconds() > RackEmUpHeadshotStackExpireTime)
-		{
-			RackEmUpRatio -= DeltaTime;
-		}
-	}
-
-	DeltaTime *= 0.5f;
-
-	if (FreezeTagRatio > 0.0001f && (LastFreezeTagEvaluation + 1.f) < Level.TimeSeconds)
-	{
-		FreezeTagRatio -= DeltaTime;
-	}
-
-	if (CheatDeathRatio > 0.0001f && CanCheatDeath())
-	{
-		CheatDeathRatio -= DeltaTime;
-	}
+	GetTurboCardOverlay().OnPlayerCardInfoUpdate();
 }
 
 static final function SetupOffset(float DrawX, float DrawY, float IconX, out float OffsetX, out float OffsetY, out int Index)
@@ -393,62 +324,6 @@ static final function SetupOffset(float DrawX, float DrawY, float IconX, out flo
 	OffsetX = DrawX - ((IconX * 1.2f) * (Index % 5)); 
 	OffsetY = DrawY - (float(Index / 6) * (IconX * 1.2f));
 	Index++;
-}
-
-//DrawX and DrawY are the bottom right of the draw area.
-//This is a pretty lame way to do this but I'd rather not implement a dynamic icon system.
-simulated function DrawCardInfo(Canvas C, float DrawX, float DrawY, float DrawHeight, int BaseFontSize)
-{
-	local float OffsetX, OffsetY;
-	local float TextSizeX, TextSizeY;
-	local int Index;
-
-	DrawHeight = FMin(DrawHeight, RackEmUpIcon.MaterialVSize());
-
-	DrawX -= DrawHeight;
-	DrawY -= DrawHeight;
-	
-	//Prepare text drawing in advance.
-	C.Font = class'TurboHUDKillingFloor'.static.LoadBoldFontStatic(BaseFontSize - 2);
-	C.TextSize("00", TextSizeX, TextSizeY);
-	C.FontScaleX = (DrawHeight * 0.75f) / TextSizeY;
-	C.FontScaleY = C.FontScaleX;
-
-	if (FreezeTagRatio > 0.003f)
-	{
-		SetupOffset(DrawX, DrawY, DrawHeight, OffsetX, OffsetY, Index);
-		DrawCardInfoProgress(C, FreezeTagIcon, GetTimePercentUntilFreeze(), OffsetX, OffsetY, DrawHeight, FreezeTagRatio);
-	}
-
-	if (CheatDeathRatio > 0.003f)
-	{
-		SetupOffset(DrawX, DrawY, DrawHeight, OffsetX, OffsetY, Index);
-		DrawCardInfoNumberProgress(C, CheatDeathIcon, 0.f, GetWavesUntilCheatDeath(), OffsetX, OffsetY, DrawHeight, CheatDeathRatio, 1.f);
-	}
-	
-	if (RackEmUpRatio > 0.003f)
-	{
-		SetupOffset(DrawX, DrawY, DrawHeight, OffsetX, OffsetY, Index);
-		DrawCardInfoNumberProgress(C, RackEmUpIcon, GetRackEmUpStackPercentDuration(), CurrentRackEmUpHeadshotCount, OffsetX, OffsetY, DrawHeight, RackEmUpRatio, RackEmUpPopRatio);
-	}
-	
-	if (HealBoostRatio > 0.003f)
-	{
-		SetupOffset(DrawX, DrawY, DrawHeight, OffsetX, OffsetY, Index);
-		DrawCardInfoProgress(C, HealBoostIcon, GetHealBoostPercentDuration(), OffsetX, OffsetY, DrawHeight, HealBoostRatio);
-	}
-
-	if (GrenadeBoostRatio > 0.003f)
-	{
-		SetupOffset(DrawX, DrawY, DrawHeight, OffsetX, OffsetY, Index);
-		DrawCardInfoProgress(C, NadeBoostIcon, GetGrenadeThrowPercentDuration(), OffsetX, OffsetY, DrawHeight, GrenadeBoostRatio);
-	}
-
-	if (PerpetualCriticalHitRatio > 0.003f)
-	{
-		SetupOffset(DrawX, DrawY, DrawHeight, OffsetX, OffsetY, Index);
-		DrawCardInfoProgress(C, CritBoostIcon, GetPerpetualCriticalPercentDuration(), OffsetX, OffsetY, DrawHeight, PerpetualCriticalHitRatio);
-	}
 }
 
 simulated final function DrawBox(Canvas C, Material Material, float SizeX, float SizeY)
@@ -574,7 +449,8 @@ defaultproperties
 	CheatDeathGracePeriod=5.f
 	CheatDeathWaveCooldown=2
 
-	NegateDamageCount=0
+	SubstituteDamageCount=0
+	SubstituteDamageCountBase=10
 
 	PerpetualCriticalHitStartTime=-1.f
 	PerpetualCriticalHitTime=5.f
@@ -585,13 +461,6 @@ defaultproperties
     HitEffectList(1)=class'CriticalHitEffectDouble'
     HitEffectList(2)=class'CriticalHitEffectTriple'
     HitEffectList(3)=class'CriticalHitEffectMax'
-
-	CheatDeathIcon=Texture'KFTurboCardGame.UI.CheatedDeathIcon_D'
-	CritBoostIcon=Texture'KFTurboCardGame.UI.CritBoostIcon_D'
-	HealBoostIcon=Texture'KFTurboCardGame.UI.HealBoostIcon_D'
-	NadeBoostIcon=Texture'KFTurboCardGame.UI.NadeBoostIcon_D'
-	RackEmUpIcon=Texture'KFTurboCardGame.UI.RackEmUpIcon_D'
-	FreezeTagIcon=Texture'KFTurboCardGame.UI.FreezeTagIcon_D'
 
 	GrenadeThrowTime=0.f
 	GrenadeBoostTime=5.f

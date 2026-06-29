@@ -10,6 +10,11 @@ var TurboCardDeck SuperGameDeck;
 var TurboCardDeck ProConGameDeck;
 var TurboCardDeck EvilGameDeck;
 
+var const string TurboGoodDeckClassOverrideString;
+var const string TurboSuperDeckClassOverrideString;
+var const string TurboProConDeckClassOverrideString;
+var const string TurboEvilDeckClassOverrideString;
+
 var int SelectionCount;
 var int GoodSelectionDelta;
 var int ProConSelectionDelta;
@@ -26,7 +31,7 @@ var TurboCard AuthSelectableCardList[MAX_SELECTABLE_CARDS]; //Needed to call act
 var CardReference SelectableCardList[MAX_SELECTABLE_CARDS];
 //List of active cards. Game can have a maximum of 30 active cards.
 const MAX_ACTIVE_CARDS = 30;
-var TurboCard AuthActiveCardList[MAX_ACTIVE_CARDS];
+var TurboCard ActiveCardInstanceList[MAX_ACTIVE_CARDS]; //Server and client manage this independently. Client populates it via UpdateCardInstanceList.
 var CardReference ActiveCardList[MAX_ACTIVE_CARDS];
 //Counter that is incremented whenever some action is done to the two above replicated arrays.
 var byte SelectionUpdateCounter;
@@ -54,7 +59,7 @@ replication
 //Resolves a card object from a deck CDO. DO NOT CALL INSTANCE FUNCTIONS ON THESE.
 static final function TurboCard ResolveCard(CardReference Reference)
 {
-    if (Reference.Deck == None)
+    if (Reference.CardIndex < 0 || Reference.Deck == None)
     {
         return None;
     }
@@ -62,10 +67,42 @@ static final function TurboCard ResolveCard(CardReference Reference)
     return Reference.Deck.static.GetCardFromReference(Reference);
 }
 
+//Client can use this to resolve a CardReference to an actual card instance.
+simulated final function TurboCard ResolveCardInstance(CardReference Reference)
+{
+    if (Reference.CardIndex < 0 || Reference.Deck == None)
+    {
+        return None;
+    }
+
+    if (GoodGameDeck != None && GoodGameDeck.Class == Reference.Deck)
+    {
+        return GoodGameDeck.GetCardInstanceFromReference(Reference);
+    }
+
+    if (SuperGameDeck != None && SuperGameDeck.Class == Reference.Deck)
+    {
+        return SuperGameDeck.GetCardInstanceFromReference(Reference);
+    }
+
+    if (ProConGameDeck != None && ProConGameDeck.Class == Reference.Deck)
+    {
+        return ProConGameDeck.GetCardInstanceFromReference(Reference);
+    }
+
+    if (EvilGameDeck != None && EvilGameDeck.Class == Reference.Deck)
+    {
+        return EvilGameDeck.GetCardInstanceFromReference(Reference);
+    }
+
+    Error("TurboCardReplicationInfo attempted to resolve a card instance for a reference that wasn't in a deck.");
+    return None;
+}
+
 static final function CardReference GetCardReference(TurboCard Card)
 {
     local CardReference Reference;
-    if (Card.DeckClass == None)
+    if (Card == None || Card.DeckClass == None)
     {
         Reference.Deck = None;
         Reference.CardIndex = -1;
@@ -107,6 +144,7 @@ simulated function PostNetBeginPlay()
 
     if (Role != ROLE_Authority)
     {
+        InitializeCardDecks();
         CheckForSelectableCardUpdates();
         CheckForActiveCardUpdates();
     }
@@ -214,7 +252,27 @@ simulated function CheckForActiveCardUpdates()
         return;
     }
 
+    if (Role != ROLE_Authority)
+    {
+        UpdateCardInstanceList();
+    }
+
     OnActiveCardsUpdated(Self);
+}
+
+simulated function UpdateCardInstanceList()
+{
+    local int CardIndex;
+    local CardReference InstanceCardReference;
+
+    for (CardIndex = 0; CardIndex < ArrayCount(ActiveCardList); CardIndex++)
+    {
+        InstanceCardReference = GetCardReference(ActiveCardInstanceList[CardIndex]);
+        if (InstanceCardReference.CardIndex != ActiveCardList[CardIndex].CardIndex || InstanceCardReference.Deck != ActiveCardList[CardIndex].Deck)
+        {
+            ActiveCardInstanceList[CardIndex] = ResolveCardInstance(ActiveCardList[CardIndex]);
+        }
+    }
 }
 
 simulated function CheckForSelectableCardUpdates()
@@ -238,7 +296,7 @@ function Initialize(KFTurboCardGameMut Mutator)
 }
 
 //Sets up card deck. Can called after initial setup to "reset" all decks.
-function InitializeCardDecks()
+simulated function InitializeCardDecks()
 {
     local class<TurboCardDeck> GoodTurboDeckClass;
     local class<TurboCardDeck> SuperTurboDeckClass;
@@ -251,9 +309,9 @@ function InitializeCardDecks()
     }
 
     GoodTurboDeckClass = class'TurboCardDeck_Good';
-	if (OwnerMutator.TurboGoodDeckClassOverrideString != "")
+	if (TurboGoodDeckClassOverrideString != "")
 	{
-		GoodTurboDeckClass = class<TurboCardDeck>(DynamicLoadObject(OwnerMutator.TurboGoodDeckClassOverrideString, class'Class'));
+		GoodTurboDeckClass = class<TurboCardDeck>(DynamicLoadObject(TurboGoodDeckClassOverrideString, class'Class'));
 
         if (GoodTurboDeckClass == None)
         {
@@ -262,9 +320,9 @@ function InitializeCardDecks()
 	}
 
     SuperTurboDeckClass = class'TurboCardDeck_Super';
-	if (OwnerMutator.TurboSuperDeckClassOverrideString != "")
+	if (TurboSuperDeckClassOverrideString != "")
 	{
-		SuperTurboDeckClass = class<TurboCardDeck>(DynamicLoadObject(OwnerMutator.TurboSuperDeckClassOverrideString, class'Class'));
+		SuperTurboDeckClass = class<TurboCardDeck>(DynamicLoadObject(TurboSuperDeckClassOverrideString, class'Class'));
 
         if (SuperTurboDeckClass == None)
         {
@@ -273,9 +331,9 @@ function InitializeCardDecks()
 	}
 
     ProConTurboDeckClass = class'TurboCardDeck_ProCon';
-	if (OwnerMutator.TurboProConDeckClassOverrideString != "")
+	if (TurboProConDeckClassOverrideString != "")
 	{
-		ProConTurboDeckClass = class<TurboCardDeck>(DynamicLoadObject(OwnerMutator.TurboProConDeckClassOverrideString, class'Class'));
+		ProConTurboDeckClass = class<TurboCardDeck>(DynamicLoadObject(TurboProConDeckClassOverrideString, class'Class'));
 
         if (ProConTurboDeckClass == None)
         {
@@ -284,9 +342,9 @@ function InitializeCardDecks()
 	}
 
     EvilTurboDeckClass = class'TurboCardDeck_Evil';
-	if (OwnerMutator.TurboEvilDeckClassOverrideString != "")
+	if (TurboEvilDeckClassOverrideString != "")
 	{
-		EvilTurboDeckClass = class<TurboCardDeck>(DynamicLoadObject(OwnerMutator.TurboEvilDeckClassOverrideString, class'Class'));
+		EvilTurboDeckClass = class<TurboCardDeck>(DynamicLoadObject(TurboEvilDeckClassOverrideString, class'Class'));
 
         if (EvilTurboDeckClass == None)
         {
@@ -330,16 +388,16 @@ final function array<TurboCard> GetActiveCardList()
     local int Index;
     local array<TurboCard> CardList;
 
-    CardList.Length = ArrayCount(AuthActiveCardList);
+    CardList.Length = ArrayCount(ActiveCardInstanceList);
 
-    for (Index = 0; Index < ArrayCount(AuthActiveCardList); Index++)
+    for (Index = 0; Index < ArrayCount(ActiveCardInstanceList); Index++)
     {
-        if (AuthActiveCardList[Index] == None)
+        if (ActiveCardInstanceList[Index] == None)
         {
             break;
         }
 
-        CardList[Index] = AuthActiveCardList[Index];
+        CardList[Index] = ActiveCardInstanceList[Index];
     }
 
     CardList.Length = Index;
@@ -410,7 +468,7 @@ function SelectCard(TurboCard SelectedCard, optional bool bFromVote)
         }
 
         ActiveCardList[Index] = GetCardReference(SelectedCard);
-        AuthActiveCardList[Index] = SelectedCard;
+        ActiveCardInstanceList[Index] = SelectedCard;
         break;
     }
 
@@ -554,27 +612,27 @@ function array<TurboCard_Super> GetActiveSuperCardList(optional bool bCheckCanDe
     local int SuperCount;
     local array<TurboCard_Super> ActiveSuperCardList;
 
-    ActiveSuperCardList.Length = ArrayCount(AuthActiveCardList);
+    ActiveSuperCardList.Length = ArrayCount(ActiveCardInstanceList);
     SuperCount = 0;
 
-    for (Index = 0; Index < ArrayCount(AuthActiveCardList); Index++)
+    for (Index = 0; Index < ArrayCount(ActiveCardInstanceList); Index++)
     {
-        if (AuthActiveCardList[Index] == None)
+        if (ActiveCardInstanceList[Index] == None)
         {
             break;
         }
 
-        if (bCheckCanDeactivate && AuthActiveCardList[Index].bCanBeDeactivated)
+        if (bCheckCanDeactivate && ActiveCardInstanceList[Index].bCanBeDeactivated)
         {
             continue;
         }
 
-        if (TurboCard_Super(AuthActiveCardList[Index]) == None)
+        if (TurboCard_Super(ActiveCardInstanceList[Index]) == None)
         {
             continue;
         }
 
-        ActiveSuperCardList[SuperCount] = TurboCard_Super(AuthActiveCardList[Index]);
+        ActiveSuperCardList[SuperCount] = TurboCard_Super(ActiveCardInstanceList[Index]);
         SuperCount++;
     }
 
@@ -588,27 +646,27 @@ function array<TurboCard_Evil> GetActiveEvilCardList(optional bool bCheckCanDeac
     local int EvilCount;
     local array<TurboCard_Evil> ActiveEvilCardList;
 
-    ActiveEvilCardList.Length = ArrayCount(AuthActiveCardList);
+    ActiveEvilCardList.Length = ArrayCount(ActiveCardInstanceList);
     EvilCount = 0;
 
-    for (Index = 0; Index < ArrayCount(AuthActiveCardList); Index++)
+    for (Index = 0; Index < ArrayCount(ActiveCardInstanceList); Index++)
     {
-        if (AuthActiveCardList[Index] == None)
+        if (ActiveCardInstanceList[Index] == None)
         {
             break;
         }
 
-        if (bCheckCanDeactivate && !AuthActiveCardList[Index].bCanBeDeactivated)
+        if (bCheckCanDeactivate && !ActiveCardInstanceList[Index].bCanBeDeactivated)
         {
             continue;
         }
 
-        if (TurboCard_Evil(AuthActiveCardList[Index]) == None)
+        if (TurboCard_Evil(ActiveCardInstanceList[Index]) == None)
         {
             continue;
         }
 
-        ActiveEvilCardList[EvilCount] = TurboCard_Evil(AuthActiveCardList[Index]);
+        ActiveEvilCardList[EvilCount] = TurboCard_Evil(ActiveCardInstanceList[Index]);
         EvilCount++;
     }
 
@@ -635,17 +693,17 @@ function RemoveActiveCard(TurboCard Card)
 
     bRemovedCard = false;
 
-    for (Index = 0; Index < ArrayCount(AuthActiveCardList); Index++)
+    for (Index = 0; Index < ArrayCount(ActiveCardInstanceList); Index++)
     {
-        if (AuthActiveCardList[Index] != Card)
+        if (ActiveCardInstanceList[Index] != Card)
         {
             continue;
         }
 
         bRemovedCard = true;
         log("- Found card. Deactivating...", 'KFTurboCardGame');
-        AuthActiveCardList[Index].OnActivateCard(OwnerMutator.TurboCardGameplayManagerInfo, AuthActiveCardList[Index], false);
-        AuthActiveCardList[Index] = None;
+        ActiveCardInstanceList[Index].OnActivateCard(OwnerMutator.TurboCardGameplayManagerInfo, ActiveCardInstanceList[Index], false);
+        ActiveCardInstanceList[Index] = None;
         ActiveCardList[Index] = EmptyReference;
         break;
     }
@@ -658,22 +716,22 @@ function RemoveActiveCard(TurboCard Card)
     ForceNetUpdate();
 
     //If there are no cards after the one we removed, return.
-    if (Index >= (ArrayCount(AuthActiveCardList) - 1) || AuthActiveCardList[Index + 1] == None)
+    if (Index >= (ArrayCount(ActiveCardInstanceList) - 1) || ActiveCardInstanceList[Index + 1] == None)
     {
         return;    
     }
 
     log("- Shifting cards down one index.", 'KFTurboCardGame');
-    for (Index = Index; (Index + 1) < ArrayCount(AuthActiveCardList); Index++)
+    for (Index = Index; (Index + 1) < ArrayCount(ActiveCardInstanceList); Index++)
     {
-        if (AuthActiveCardList[Index + 1] == None)
+        if (ActiveCardInstanceList[Index + 1] == None)
         {
             break;
         }
 
-        AuthActiveCardList[Index] = AuthActiveCardList[Index + 1];
+        ActiveCardInstanceList[Index] = ActiveCardInstanceList[Index + 1];
         ActiveCardList[Index] = ActiveCardList[Index + 1];
-        AuthActiveCardList[Index + 1] = None;
+        ActiveCardInstanceList[Index + 1] = None;
         ActiveCardList[Index + 1] = EmptyReference;
     }
 }
@@ -798,34 +856,34 @@ function ResetDecksAndReRollCards(optional TurboCard TopCard)
 
     bIsPerformingReRoll = true;
 
-    for (Index = 0; Index < ArrayCount(AuthActiveCardList); Index++)
+    for (Index = 0; Index < ArrayCount(ActiveCardInstanceList); Index++)
     {
-        if (AuthActiveCardList[Index] == None)
+        if (ActiveCardInstanceList[Index] == None)
         {
             continue;
         }
 
         //Would be nice if we had a better way to do this.
-        if (TurboCard_Super(AuthActiveCardList[Index]) != None)
+        if (TurboCard_Super(ActiveCardInstanceList[Index]) != None)
         {
             NumSuper++;
         }
-        else if (TurboCard_Evil(AuthActiveCardList[Index]) != None)
+        else if (TurboCard_Evil(ActiveCardInstanceList[Index]) != None)
         {
             NumEvil++;
         }
-        else if (TurboCard_Good(AuthActiveCardList[Index]) != None)
+        else if (TurboCard_Good(ActiveCardInstanceList[Index]) != None)
         {
             NumGood++;
         }
-        else if (TurboCard_ProCon(AuthActiveCardList[Index]) != None)
+        else if (TurboCard_ProCon(ActiveCardInstanceList[Index]) != None)
         {
             NumProCon++;
         }
 
-        log("Attempting card deactivation of"@AuthActiveCardList[Index].CardID$".", 'KFTurboCardGame');
-        AuthActiveCardList[Index].OnActivateCard(OwnerMutator.TurboCardGameplayManagerInfo, AuthActiveCardList[Index], false);
-        AuthActiveCardList[Index] = None;
+        log("Attempting card deactivation of"@ActiveCardInstanceList[Index].CardID$".", 'KFTurboCardGame');
+        ActiveCardInstanceList[Index].OnActivateCard(OwnerMutator.TurboCardGameplayManagerInfo, ActiveCardInstanceList[Index], false);
+        ActiveCardInstanceList[Index] = None;
         ActiveCardList[Index] = EmptyReference;
     }
 
@@ -834,7 +892,7 @@ function ResetDecksAndReRollCards(optional TurboCard TopCard)
     if (TopCard != None)
     {
         log("Placing top card..."@TopCard.CardID$".", 'KFTurboCardGame');
-        AuthActiveCardList[0] = TopCard;
+        ActiveCardInstanceList[0] = TopCard;
         ActiveCardList[0] = GetCardReference(TopCard);
 
         SuperGameDeck.RemoveCardFromDeck(TopCard);
@@ -881,15 +939,15 @@ function RemoveAllCards()
 {
     local int Index;
     local CardReference EmptyReference;
-    for (Index = 0; Index < ArrayCount(AuthActiveCardList); Index++)
+    for (Index = 0; Index < ArrayCount(ActiveCardInstanceList); Index++)
     {
-        if (AuthActiveCardList[Index] == None)
+        if (ActiveCardInstanceList[Index] == None)
         {
             continue;
         }
         
-        AuthActiveCardList[Index].OnActivateCard(OwnerMutator.TurboCardGameplayManagerInfo, AuthActiveCardList[Index], false);
-        AuthActiveCardList[Index] = None;
+        ActiveCardInstanceList[Index].OnActivateCard(OwnerMutator.TurboCardGameplayManagerInfo, ActiveCardInstanceList[Index], false);
+        ActiveCardInstanceList[Index] = None;
         ActiveCardList[Index] = EmptyReference;
     }
 }
@@ -897,16 +955,16 @@ function RemoveAllCards()
 function DeactivateAllGoodCards()
 {
     local int Index;
-    for (Index = ArrayCount(AuthActiveCardList) - 1; Index >= 0; Index--)
+    for (Index = ArrayCount(ActiveCardInstanceList) - 1; Index >= 0; Index--)
     {
-        if (AuthActiveCardList[Index] == None)
+        if (ActiveCardInstanceList[Index] == None)
         {
             continue;
         }
 
-        if (TurboCard_Good(AuthActiveCardList[Index]) != None)
+        if (TurboCard_Good(ActiveCardInstanceList[Index]) != None)
         {
-            RemoveActiveCard(AuthActiveCardList[Index]);
+            RemoveActiveCard(ActiveCardInstanceList[Index]);
         }
     }
 }
@@ -1067,26 +1125,26 @@ function GetActiveCardCounts(out int GoodCardCount, out int SuperCardCount, out 
     ProConCardCount = 0;
     EvilCardCount = 0;
 
-    for (Index = 0; Index < ArrayCount(AuthActiveCardList); Index++)
+    for (Index = 0; Index < ArrayCount(ActiveCardInstanceList); Index++)
     {
-        if (AuthActiveCardList[Index] == None)
+        if (ActiveCardInstanceList[Index] == None)
         {
             return;
         }
 
-        if (TurboCard_Good(AuthActiveCardList[Index]) != None)
+        if (TurboCard_Good(ActiveCardInstanceList[Index]) != None)
         {
             GoodCardCount++;
         }
-        else if (TurboCard_Super(AuthActiveCardList[Index]) != None)
+        else if (TurboCard_Super(ActiveCardInstanceList[Index]) != None)
         {
             SuperCardCount++;
         }
-        else if (TurboCard_ProCon(AuthActiveCardList[Index]) != None)
+        else if (TurboCard_ProCon(ActiveCardInstanceList[Index]) != None)
         {
             ProConCardCount++;
         }
-        else if (TurboCard_Evil(AuthActiveCardList[Index]) != None)
+        else if (TurboCard_Evil(ActiveCardInstanceList[Index]) != None)
         {
             EvilCardCount++;
         }
@@ -1126,19 +1184,19 @@ function DebugDeactivateCard(string CardID)
 {
     local int Index;
 
-    for (Index = 0; Index < ArrayCount(AuthActiveCardList); Index++)
+    for (Index = 0; Index < ArrayCount(ActiveCardInstanceList); Index++)
     {
-        if (AuthActiveCardList[Index] == None)
+        if (ActiveCardInstanceList[Index] == None)
         {
             break;
         }
 
-        if (!(AuthActiveCardList[Index].CardID ~= CardID))
+        if (!(ActiveCardInstanceList[Index].CardID ~= CardID))
         {
             continue;
         }
 
-        RemoveActiveCard(AuthActiveCardList[Index]);
+        RemoveActiveCard(ActiveCardInstanceList[Index]);
         break;
     }
 }

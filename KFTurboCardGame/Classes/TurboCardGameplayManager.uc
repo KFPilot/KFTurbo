@@ -1180,6 +1180,8 @@ function PlayerHealBoostBuffFlagChanged(CardFlag Flag, bool bIsEnabled)
     {
         HealCardEventHandler.bNotifyCardCustomInfo = true;
     }
+    
+    HealCardEventHandler.bHealingBoost = bIsEnabled;
 }
 
 function PlayerHeadshotsIncreaseHeadshotDamageFlagChanged(CardFlag Flag, bool bIsEnabled)

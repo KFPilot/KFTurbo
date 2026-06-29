@@ -1156,19 +1156,18 @@ final function ResetNegateDamageList()
             continue;
         }
 
-        PlayerCardInfo.NegateDamageCount = 10;
+        PlayerCardInfo.ResetSubstituteDamage();
     }
 }
 
 final function bool AttemptNegateDamage(TurboPlayerCardCustomInfo PlayerCardInfo)
 {
-    if (PlayerCardInfo == None || PlayerCardInfo.NegateDamageCount <= 0)
+    if (PlayerCardInfo == None)
     {
         return false;
     }
-
-    PlayerCardInfo.NegateDamageCount--;
-    return true;
+    
+    return PlayerCardInfo.AttemptSubstituteDamage();
 }
 
 final function ForceFlipOver(KFMonster Monster)

@@ -389,6 +389,26 @@ function ActivateButterFingers(TurboCardGameplayManager GameplayManager, TurboCa
     Card.UpdateFlag(GameplayManager.ButterFingersFlag, bActivate);
 }
 
+static final function DrawFreezeTagStatus(TurboCardOverlay CardOverlay, TurboPlayerCardCustomInfo PlayerCustomInfo, Canvas Canvas, TurboCard Card, float DrawX, float DrawY, float DrawHeight)
+{
+    if (CardOverlay.FreezeTagStatus.Ratio > 0.003f)
+    {
+        DrawCardInfoProgress(Canvas, Texture'KFTurboCardGame.UI.FreezeTagIcon_D', PlayerCustomInfo.GetTimePercentUntilFreeze(), DrawX, DrawY, DrawHeight, CardOverlay.FreezeTagStatus.Ratio);
+    }
+}
+
+static final function TickFreezeTagStatus(TurboCardOverlay CardOverlay, TurboPlayerCardCustomInfo PlayerCustomInfo, TurboCard Card, float DeltaTime)
+{
+    if ((PlayerCustomInfo.LastFreezeTagEvaluation + 1.f) < CardOverlay.Level.TimeSeconds)
+    {
+        CardOverlay.FreezeTagStatus.Ratio = FMax(0.f, CardOverlay.FreezeTagStatus.Ratio - DeltaTime);
+    }
+    else
+    {
+        CardOverlay.FreezeTagStatus.Ratio = 1.f;
+    }
+}
+
 defaultproperties
 {
     Begin Object Name=Doorless Class=TurboCard_Evil
@@ -525,6 +545,9 @@ defaultproperties
         CardDescriptionList(4)="melee weapon."
         CardID="EVIL_FREEZETAG"
         OnActivateCard=ActivateFreezeTag
+        bHasStatusIcon=true
+        OnStatusIconDraw=DrawFreezeTagStatus
+        OnStatusIconTick=TickFreezeTagStatus
     End Object
     DeckCardObjectList(10)=TurboCard'FreezeTag'
     

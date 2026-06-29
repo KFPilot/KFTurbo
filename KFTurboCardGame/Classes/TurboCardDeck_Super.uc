@@ -396,6 +396,200 @@ function ActivateTheLittleThings(TurboCardGameplayManager GameplayManager, Turbo
     }
 }
 
+//========================
+//Cheat Death Status
+
+static final function UpdateCheatDeath(TurboCardOverlay CardOverlay, TurboPlayerCardCustomInfo PlayerCustomInfo, TurboCard Card)
+{
+	if (PlayerCustomInfo.CheatDeathWave > CardOverlay.LastKnownCheatDeathWave)
+	{
+		CardOverlay.CheatDeathStatus.Ratio = 1.f;
+		CardOverlay.LastKnownCheatDeathWave = PlayerCustomInfo.CheatDeathWave;
+	}
+}
+
+static final function TickCheatDeath(TurboCardOverlay CardOverlay, TurboPlayerCardCustomInfo PlayerCustomInfo, TurboCard Card, float DeltaTime)
+{
+	if (CardOverlay.CheatDeathStatus.Ratio > 0.0001f && PlayerCustomInfo.CanCheatDeath())
+	{
+		CardOverlay.CheatDeathStatus.Ratio -= DeltaTime;
+	}
+    else
+    {
+		CardOverlay.CheatDeathStatus.Number = PlayerCustomInfo.GetWavesUntilCheatDeath();
+    }
+}
+
+static final function DrawCheatDeath(TurboCardOverlay CardOverlay, TurboPlayerCardCustomInfo PlayerCustomInfo, Canvas Canvas, TurboCard Card, float DrawX, float DrawY, float DrawHeight)
+{
+    if (CardOverlay.CheatDeathStatus.Ratio > 0.003f)
+    {
+        DrawCardInfoNumberProgress(Canvas, Texture'KFTurboCardGame.UI.CheatedDeathIcon_D', 0.f, CardOverlay.CheatDeathStatus.Number,
+            DrawX, DrawY, DrawHeight, CardOverlay.CheatDeathStatus.Ratio, 1.f);
+    }
+}
+
+//========================
+//Rack Em Up Status
+
+static final function UpdateRackEmUp(TurboCardOverlay CardOverlay, TurboPlayerCardCustomInfo PlayerCustomInfo, TurboCard Card)
+{
+	if (PlayerCustomInfo.RackEmUpHeadshotCount != CardOverlay.LastKnownRackEmUpCount)
+	{
+		CardOverlay.RackEmUpStatus.Ratio = 1.f;
+        CardOverlay.RackEmUpStatus.NumberScale = 1.66f;
+
+		CardOverlay.LastKnownRackEmUpCount = PlayerCustomInfo.RackEmUpHeadshotCount;
+
+		//If the rack em up expires, it shouldn't immediately show 0 on the icon.
+		if (PlayerCustomInfo.RackEmUpHeadshotCount != 0)
+		{
+			CardOverlay.RackEmUpStatus.Number = PlayerCustomInfo.RackEmUpHeadshotCount;
+		}
+	}
+}
+
+static final function TickRackEmUp(TurboCardOverlay CardOverlay, TurboPlayerCardCustomInfo PlayerCustomInfo, TurboCard Card, float DeltaTime)
+{
+	if (CardOverlay.RackEmUpStatus.Ratio > 0.0001f)
+	{
+		CardOverlay.RackEmUpStatus.NumberScale = Lerp(DeltaTime * 4.f, CardOverlay.RackEmUpStatus.NumberScale, 1.f);
+		if (CardOverlay.ServerTimeActor.GetServerTimeSeconds() > PlayerCustomInfo.RackEmUpHeadshotStackExpireTime)
+		{
+			CardOverlay.RackEmUpStatus.Ratio -= DeltaTime;
+		}
+	}
+}
+
+static final function DrawRackEmUp(TurboCardOverlay CardOverlay, TurboPlayerCardCustomInfo PlayerCustomInfo, Canvas Canvas, TurboCard Card, float DrawX, float DrawY, float DrawHeight)
+{
+    if (CardOverlay.RackEmUpStatus.Ratio > 0.003f)
+    {
+        DrawCardInfoNumberProgress(Canvas, Texture'KFTurboCardGame.UI.RackEmUpIcon_D', PlayerCustomInfo.GetRackEmUpStackPercentDuration(), CardOverlay.RackEmUpStatus.Number,
+            DrawX, DrawY, DrawHeight, CardOverlay.RackEmUpStatus.Ratio, CardOverlay.RackEmUpStatus.NumberScale);
+    }
+}
+
+//========================
+//Perpetually Critical
+
+static final function UpdatePerpetuallyCritcal(TurboCardOverlay CardOverlay, TurboPlayerCardCustomInfo PlayerCustomInfo, TurboCard Card)
+{
+	if (PlayerCustomInfo.PerpetualCriticalHitStartTime > CardOverlay.LastKnownPerpetualCriticalStartTime)
+	{
+		CardOverlay.PerpetualCriticalStatus.Ratio = 1.f;
+		CardOverlay.LastKnownPerpetualCriticalStartTime = PlayerCustomInfo.PerpetualCriticalHitStartTime;
+	}
+}
+
+static final function TickPerpetuallyCritcal(TurboCardOverlay CardOverlay, TurboPlayerCardCustomInfo PlayerCustomInfo, TurboCard Card, float DeltaTime)
+{
+	if (CardOverlay.PerpetualCriticalStatus.Ratio > 0.0001f && CardOverlay.ServerTimeActor.GetServerTimeSeconds() > (PlayerCustomInfo.PerpetualCriticalHitStartTime + PlayerCustomInfo.PerpetualCriticalHitTime))
+	{
+		CardOverlay.PerpetualCriticalStatus.Ratio -= DeltaTime;
+	}
+}
+
+static final function DrawPerpetuallyCritcal(TurboCardOverlay CardOverlay, TurboPlayerCardCustomInfo PlayerCustomInfo, Canvas Canvas, TurboCard Card, float DrawX, float DrawY, float DrawHeight)
+{
+    if (CardOverlay.PerpetualCriticalStatus.Ratio > 0.003f)
+    {
+        DrawCardInfoProgress(Canvas, Texture'KFTurboCardGame.UI.CritBoostIcon_D', PlayerCustomInfo.GetPerpetualCriticalPercentDuration(), DrawX, DrawY, DrawHeight, CardOverlay.PerpetualCriticalStatus.Ratio);
+    }
+}
+
+//========================
+//Frag Out
+
+static final function UpdateFragOut(TurboCardOverlay CardOverlay, TurboPlayerCardCustomInfo PlayerCustomInfo, TurboCard Card)
+{
+	if (PlayerCustomInfo.GrenadeThrowTime > CardOverlay.LastKnownGrenadeThrowTime)
+	{
+		CardOverlay.GrenadeBoostStatus.Ratio = 1.f;
+		CardOverlay.LastKnownGrenadeThrowTime = PlayerCustomInfo.GrenadeThrowTime;
+	}
+}
+
+static final function TickFragOut(TurboCardOverlay CardOverlay, TurboPlayerCardCustomInfo PlayerCustomInfo, TurboCard Card, float DeltaTime)
+{
+	if (CardOverlay.GrenadeBoostStatus.Ratio > 0.0001f && CardOverlay.ServerTimeActor.GetServerTimeSeconds() > (PlayerCustomInfo.GrenadeThrowTime + PlayerCustomInfo.GrenadeBoostTime))
+	{
+		CardOverlay.GrenadeBoostStatus.Ratio -= DeltaTime;
+	}
+}
+
+static final function DrawFragOut(TurboCardOverlay CardOverlay, TurboPlayerCardCustomInfo PlayerCustomInfo, Canvas Canvas, TurboCard Card, float DrawX, float DrawY, float DrawHeight)
+{
+    if (CardOverlay.GrenadeBoostStatus.Ratio > 0.003f)
+    {
+        DrawCardInfoProgress(Canvas, Texture'KFTurboCardGame.UI.NadeBoostIcon_D', PlayerCustomInfo.GetGrenadeThrowPercentDuration(), DrawX, DrawY, DrawHeight, CardOverlay.GrenadeBoostStatus.Ratio);
+    }
+}
+
+//========================
+//Epinephrine
+
+static final function UpdateEpinephrine(TurboCardOverlay CardOverlay, TurboPlayerCardCustomInfo PlayerCustomInfo, TurboCard Card)
+{
+	if (PlayerCustomInfo.HealBoostTime > CardOverlay.LastKnownHealBoostTime)
+	{
+		CardOverlay.HealBoostStatus.Ratio = 1.f;
+		CardOverlay.LastKnownHealBoostTime = PlayerCustomInfo.HealBoostTime;
+	}
+}
+
+static final function TickEpinephrine(TurboCardOverlay CardOverlay, TurboPlayerCardCustomInfo PlayerCustomInfo, TurboCard Card, float DeltaTime)
+{
+	if (CardOverlay.HealBoostStatus.Ratio > 0.0001f && CardOverlay.ServerTimeActor.GetServerTimeSeconds() > (PlayerCustomInfo.HealBoostTime + PlayerCustomInfo.HealBoostBoostTime))
+	{
+		CardOverlay.HealBoostStatus.Ratio -= DeltaTime;
+	}
+}
+
+static final function DrawEpinephrine(TurboCardOverlay CardOverlay, TurboPlayerCardCustomInfo PlayerCustomInfo, Canvas Canvas, TurboCard Card, float DrawX, float DrawY, float DrawHeight)
+{
+    if (CardOverlay.HealBoostStatus.Ratio > 0.003f)
+    {
+        DrawCardInfoProgress(Canvas, Texture'KFTurboCardGame.UI.HealBoostIcon_D', PlayerCustomInfo.GetGrenadeThrowPercentDuration(), DrawX, DrawY, DrawHeight, CardOverlay.HealBoostStatus.Ratio);
+    }
+}
+
+//========================
+//Substitute
+
+static final function UpdateSubstitute(TurboCardOverlay CardOverlay, TurboPlayerCardCustomInfo PlayerCustomInfo, TurboCard Card)
+{
+	if (PlayerCustomInfo.SubstituteDamageCount != CardOverlay.LastKnownSubstituteCount)
+	{
+		CardOverlay.SubstituteStatus.Ratio = 1.f;
+        CardOverlay.SubstituteStatus.NumberScale = 1.66f;
+        CardOverlay.SubstituteStatus.Number = PlayerCustomInfo.SubstituteDamageCount;
+		CardOverlay.LastKnownSubstituteCount = PlayerCustomInfo.SubstituteDamageCount;
+	}
+}
+
+static final function TickSubstitute(TurboCardOverlay CardOverlay, TurboPlayerCardCustomInfo PlayerCustomInfo, TurboCard Card, float DeltaTime)
+{
+	if (CardOverlay.SubstituteStatus.Ratio > 0.0001f)
+	{
+        if (PlayerCustomInfo.SubstituteDamageCount <= 0)
+        {
+		    CardOverlay.SubstituteStatus.Ratio -= DeltaTime;
+        }
+
+		CardOverlay.SubstituteStatus.NumberScale = Lerp(DeltaTime * 4.f, CardOverlay.SubstituteStatus.NumberScale, 1.f);
+	}
+}
+
+static final function DrawSubstitute(TurboCardOverlay CardOverlay, TurboPlayerCardCustomInfo PlayerCustomInfo, Canvas Canvas, TurboCard Card, float DrawX, float DrawY, float DrawHeight)
+{
+    if (CardOverlay.SubstituteStatus.Ratio > 0.003f)
+    {
+        DrawCardInfoNumberProgress(Canvas, Texture'KFTurboCardGame.UI.SubstituteIcon_D', 0.f, CardOverlay.SubstituteStatus.Number,
+            DrawX, DrawY, DrawHeight, CardOverlay.SubstituteStatus.Ratio, CardOverlay.SubstituteStatus.NumberScale);
+    }
+}
+
 defaultproperties
 {
     Begin Object Name=Cleanse Class=TurboCard_Super
@@ -542,6 +736,10 @@ defaultproperties
         CardDescriptionList(2)="Has a three wave"
         CardDescriptionList(3)="cooldown time."
         OnActivateCard=ActivateCheatDeath
+        bHasStatusIcon=true
+        OnStatusPostNetReceive=UpdateCheatDeath
+        OnStatusIconTick=TickCheatDeath
+        OnStatusIconDraw=DrawCheatDeath
         CardID="SUPER_CHEATDEATH"
     End Object
     DeckCardObjectList(11)=TurboCard'CheatDeath'
@@ -628,6 +826,10 @@ defaultproperties
         CardDescriptionList(2)="receives damage"
         CardDescriptionList(3)="each wave."
         OnActivateCard=ActivateSubstitute
+        bHasStatusIcon=true
+        OnStatusPostNetReceive=UpdateSubstitute
+        OnStatusIconTick=TickSubstitute
+        OnStatusIconDraw=DrawSubstitute
         CardID="SUPER_SUBSTITUTE"
     End Object
     DeckCardObjectList(19)=TurboCard'NegateDamage'
@@ -711,7 +913,6 @@ defaultproperties
         OnActivateCard=ActivateCriticalHit
     End Object
     DeckCardObjectList(26)=TurboCard'CriticalHit'
-    
 
     Begin Object Name=RackEmUp Class=TurboCard_Super
         CardName(0)="Rack'em'Up"
@@ -723,6 +924,10 @@ defaultproperties
         CardDescriptionList(5)="seconds of not"
         CardDescriptionList(6)="scoring a headshot."
         OnActivateCard=ActivateRackEmUp
+        bHasStatusIcon=true
+        OnStatusPostNetReceive=UpdateRackEmUp
+        OnStatusIconTick=TickRackEmUp
+        OnStatusIconDraw=DrawRackEmUp
         CardID="SUPER_RACKEMUP"
     End Object
     DeckCardObjectList(27)=TurboCard'RackEmUp'
@@ -786,6 +991,10 @@ defaultproperties
         CardDescriptionList(2)="hit chance by 50%"
         CardDescriptionList(3)="for 5 seconds."
         OnActivateCard=ActivatePerpetuallyCritical
+        bHasStatusIcon=true
+        OnStatusPostNetReceive=UpdatePerpetuallyCritcal
+        OnStatusIconTick=TickPerpetuallyCritcal
+        OnStatusIconDraw=DrawPerpetuallyCritcal
         CardID="SUPER_PERPCRITICAL"
     End Object
     DeckCardObjectList(33)=TurboCard'PerpetuallyCritical'
@@ -819,9 +1028,12 @@ defaultproperties
         CardDescriptionList(2)="30% and reduces"
         CardDescriptionList(3)="damage taken by 25%"
         CardDescriptionList(4)="for 5 seconds when"
-        CardDescriptionList(5)="healed by another"
-        CardDescriptionList(6)="player."
+        CardDescriptionList(5)="healed."
         OnActivateCard=ActivateEpinephrine
+        bHasStatusIcon=true
+        OnStatusPostNetReceive=UpdateEpinephrine
+        OnStatusIconTick=TickEpinephrine
+        OnStatusIconDraw=DrawEpinephrine
         CardID="SUPER_EPINE"
     End Object
     DeckCardObjectList(36)=TurboCard'Epinephrine'

@@ -73,6 +73,45 @@ enum EBorrowedTimeWarnLevel
 	OutOfTime
 };
 
+struct CardStatus
+{
+	var float Ratio;
+};
+
+struct CardStatusProgress
+{
+	var float Ratio;
+	var float Progress;
+};
+
+struct CardStatusProgressNumber
+{
+	var float Ratio;
+	var float Progress;
+	var int Number;
+	var float NumberScale;
+};
+
+var CardStatusProgress FreezeTagStatus;
+
+var CardStatusProgressNumber CheatDeathStatus;
+var int LastKnownCheatDeathWave;
+
+var CardStatusProgressNumber RackEmUpStatus;
+var int LastKnownRackEmUpCount;
+
+var CardStatusProgress HealBoostStatus;
+var float LastKnownHealBoostTime;
+
+var CardStatusProgress GrenadeBoostStatus;
+var float LastKnownGrenadeThrowTime;
+
+var CardStatusProgress PerpetualCriticalStatus;
+var float LastKnownPerpetualCriticalStartTime;
+
+var CardStatusProgressNumber SubstituteStatus;
+var int LastKnownSubstituteCount;
+
 static final function TurboCardOverlay FindCardOverlay(PlayerController PlayerController)
 {
 	local int Index;
@@ -259,6 +298,29 @@ simulated function Tick(float DeltaTime)
 		}
 
 		ActiveCardRenderActorList[Index].Ratio = FMax(Lerp(DeltaTime * 8.f, ActiveCardRenderActorList[Index].Ratio, 0.f), 0.f);
+	}
+
+	TickCardStatus(DeltaTime);
+}
+
+simulated function TickCardStatus(float DeltaTime)
+{
+	local int Index;
+	local TurboCard Card;
+	
+	for (Index = 0; Index < ArrayCount(TCRI.ActiveCardInstanceList); Index++)
+	{
+		Card = TCRI.ActiveCardInstanceList[Index];
+
+		if (Card == None)
+		{
+			break;
+		}
+
+		if (Card.bHasStatusIcon)
+		{
+			Card.OnStatusIconTick(self, PlayerCardCustomInfo, Card, DeltaTime);
+		}
 	}
 }
 
@@ -480,19 +542,58 @@ simulated function Render(Canvas C)
 	if (BorrowedTimeActor != None)
 	{
 		DrawBorrowedTime(C);
+		class'TurboHUDKillingFloor'.static.ResetCanvas(C);
 	}
 
-	if (PlayerCardCustomInfo != None)
+
+	if (TurboHUD.PawnOwner != None && TurboHUD.PawnOwner.Health > 0)
 	{
-		//Precalculate all the position data now.
-		PlayerCardCustomInfo.DrawCardInfo(C, 
-			(float(C.SizeX) * 0.5f) - (float(C.SizeY) * (class'TurboHUDPlayer'.default.HealthBackplateSize.X + (class'TurboHUDPlayer'.default.BackplateSpacing.X * 1.5f))),
-			(float(C.SizeY) - (float(C.SizeY) * ((class'TurboHUDPlayer'.default.BackplateSpacing.Y * 1.5f) + (class'TurboHUDPlayer'.default.WeightBackplateSize.Y)))),
-			(float(C.SizeY) * class'TurboHUDPlayer'.default.WeightBackplateSize.Y * 1.5f),
-			BaseFontSize);
+		DrawCardEffects(C);
+		class'TurboHUDKillingFloor'.static.ResetCanvas(C);
 	}
+}
 
-	class'TurboHUDKillingFloor'.static.ResetCanvas(C);
+static final function SetupOffset(float DrawX, float DrawY, float IconX, out float OffsetX, out float OffsetY, int Index)
+{
+	OffsetX = DrawX - ((IconX * 1.2f) * (Index % 5)); 
+	OffsetY = DrawY - (float(Index / 6) * (IconX * 1.2f));
+}
+
+simulated function DrawCardEffects(Canvas C)
+{
+	local int Index;
+	local float DrawX, DrawY, DrawHeight;
+	local float OffsetX, OffsetY, TextSizeX, TextSizeY;
+	local TurboCard Card;
+	
+	DrawX = (float(C.SizeX) * 0.5f) - (float(C.SizeY) * (class'TurboHUDPlayer'.default.HealthBackplateSize.X + (class'TurboHUDPlayer'.default.BackplateSpacing.X * 1.5f)));
+	DrawY = (float(C.SizeY) - (float(C.SizeY) * ((class'TurboHUDPlayer'.default.BackplateSpacing.Y * 1.5f) + (class'TurboHUDPlayer'.default.WeightBackplateSize.Y))));
+	DrawHeight = FMin(float(C.SizeY) * class'TurboHUDPlayer'.default.WeightBackplateSize.Y * 1.5f, 64.f);
+
+	DrawX -= DrawHeight;
+	DrawY -= DrawHeight;
+	
+	//Prepare text drawing in advance.
+	C.Font = class'TurboHUDKillingFloor'.static.LoadBoldFontStatic(BaseFontSize - 2);
+	C.TextSize("00", TextSizeX, TextSizeY);
+	C.FontScaleX = (DrawHeight * 0.75f) / TextSizeY;
+	C.FontScaleY = C.FontScaleX;
+
+	for (Index = 0; Index < ArrayCount(TCRI.ActiveCardInstanceList); Index++)
+	{
+		SetupOffset(DrawX, DrawY, DrawHeight, OffsetX, OffsetY, Index);
+		Card = TCRI.ActiveCardInstanceList[Index];
+
+		if (Card == None)
+		{
+			break;
+		}
+
+		if (Card.bHasStatusIcon)
+		{
+			Card.OnStatusIconDraw(self, PlayerCardCustomInfo, C, Card, OffsetX, OffsetY, DrawHeight);
+		}
+	}
 }
 
 simulated function DrawVoter(Canvas C, PlayerReplicationInfo PRI, float X, float Y, float XOffset, out array<int> VoteList)
@@ -735,7 +836,7 @@ simulated function DrawActiveCardList(Canvas C)
 		}
 
 		//For some reason we have a card actor but not an active card?
-		if (class'TurboCardReplicationInfo'.static.ResolveCard(TCRI.ActiveCardList[Index]) == None)
+		if (TCRI.ActiveCardInstanceList[Index] == None)
 		{
 			log("Attempted to draw a card that wasn't real.", 'KFTurboCardGame');
 			continue;
@@ -835,9 +936,9 @@ simulated function OnActiveCardsUpdated(TurboCardReplicationInfo CGRI)
 	local int Index;
 	local TurboCard TurboCard;
 	log("Active cards updated.", 'KFTurboCardGame');
-	for (Index = 0; Index < ArrayCount(CGRI.ActiveCardList); Index++)
+	for (Index = 0; Index < ArrayCount(CGRI.ActiveCardInstanceList); Index++)
 	{
-		TurboCard = class'TurboCardReplicationInfo'.static.ResolveCard(CGRI.ActiveCardList[Index]);
+		TurboCard = CGRI.ActiveCardInstanceList[Index];
 
 		if (TurboCard == None)
 		{
@@ -856,6 +957,8 @@ simulated function OnActiveCardsUpdated(TurboCardReplicationInfo CGRI)
 			break;
 		}
 
+		log("- New card:"@TurboCard.CardID);
+		
 		if (ActiveCardRenderActorList.Length > Index && ActiveCardRenderActorList[Index].CardActor != None)
 		{
 			if (ActiveCardRenderActorList[Index].CardActor.Card != TurboCard)
@@ -1062,7 +1165,6 @@ simulated function CheckSoundWarning(int TimeRemaining)
 	}
 }
 
-
 simulated function OnFontLocaleChange()
 {
 	local int Index;
@@ -1083,6 +1185,39 @@ simulated function OnFontLocaleChange()
 		{
 			ActiveCardRenderActorList[Index].CardActor.CardScriptedTexture.Revision++;
 		}
+	}
+}
+
+simulated function OnPlayerCardInfoUpdate()
+{
+	local int Index;
+	local TurboCard Card;
+
+	for (Index = 0; Index < ArrayCount(TCRI.ActiveCardInstanceList); Index++)
+	{
+		Card = TCRI.ActiveCardInstanceList[Index];
+
+		if (Card == None)
+		{
+			break;
+		}
+
+		if (Card.bHasStatusIcon)
+		{
+			Card.OnStatusPostNetReceive(self, PlayerCardCustomInfo, Card);
+		}
+	}
+	
+	if (PlayerCardCustomInfo.GrenadeThrowTime > LastKnownGrenadeThrowTime)
+	{
+		GrenadeBoostStatus.Ratio = 1.f;
+		LastKnownGrenadeThrowTime = PlayerCardCustomInfo.GrenadeThrowTime;
+	}
+	
+	if (PlayerCardCustomInfo.HealBoostTime > LastKnownHealBoostTime)
+	{
+		HealBoostStatus.Ratio = 1.f;
+		LastKnownHealBoostTime = PlayerCardCustomInfo.HealBoostTime;
 	}
 }
 

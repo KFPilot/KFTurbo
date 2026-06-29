@@ -225,20 +225,28 @@ simulated function float GetPlayerMovementSpeedMultiplier(KFPlayerReplicationInf
 
     Multiplier = PlayerMovementSpeedMultiplier;
 
-    if (bFreezePlayersDuringWave && CardCustomInfo != None)
+    if (CardCustomInfo != None)
     {
-        if (KFGRI != None && KFGRI.bWaveInProgress)
+        if (bFreezePlayersDuringWave)
         {
-            Multiplier *= CardCustomInfo.UpdateFreezeTagMoveSpeed(KFWeapon(Pawn.Weapon));
-        }
-        else
-        {
-            Multiplier *= CardCustomInfo.UpdateFreezeTagMoveSpeed(None); //Always count as allowed to move.
+            if (KFGRI != None && KFGRI.bWaveInProgress)
+            {
+                Multiplier *= CardCustomInfo.UpdateFreezeTagMoveSpeed(KFWeapon(Pawn.Weapon));
+            }
+            else
+            {
+                CardCustomInfo.MeleeWeaponHoldTime = Level.TimeSeconds; //Always report the weapon is being held.
+            }
+
+            if (Multiplier <= 0.0001f)
+            {
+                return Multiplier;
+            }
         }
 
-        if (Multiplier <= 0.0001f)
+        if (CardCustomInfo.IsInHealBoostTime())
         {
-            return Multiplier;
+            Multiplier *= 1.3f;
         }
     }
 
@@ -257,22 +265,7 @@ simulated function float GetPlayerMovementSpeedMultiplier(KFPlayerReplicationInf
         Multiplier *= 1.15f;
     }
     
-    return Super.GetPlayerMovementSpeedMultiplier(KFPRI, KFGRI) * Multiplier * GetCardCustomInfoSpeedMultiplier(CardCustomInfo);
-}
-
-final simulated function float GetCardCustomInfoSpeedMultiplier(TurboPlayerCardCustomInfo CardCustomInfo)
-{
-    if (CardCustomInfo == None)
-    {
-        return 1.f;
-    }
-
-    if (CardCustomInfo.IsInHealBoostTime())
-    {
-        return 1.3f;
-    }
-
-    return 1.f;
+    return Super.GetPlayerMovementSpeedMultiplier(KFPRI, KFGRI) * Multiplier;
 }
 
 simulated function float GetPlayerMovementAccelMultiplier(KFPlayerReplicationInfo KFPRI, KFGameReplicationInfo KFGRI)

@@ -1,4 +1,5 @@
 //Killing Floor Turbo TurboCardDeck
+//It is important to note that clients spawn their own local copy of active decks.
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
 class TurboCardDeck extends Info;
@@ -46,7 +47,7 @@ final function InitializeOptionalCard(out OptionalCardData OptionalCard, int Ind
     OptionalCard.bEnabled = false;
 }
 
-static function TurboCard GetCardFromReference(TurboCardReplicationInfo.CardReference Reference)
+static simulated function TurboCard GetCardFromReference(TurboCardReplicationInfo.CardReference Reference)
 {
     if (Reference.Deck != default.Class || Reference.CardIndex < 0)
     {
@@ -66,6 +67,28 @@ static function TurboCard GetCardFromReference(TurboCardReplicationInfo.CardRefe
     }
 
     return default.DeckCardObjectList[Reference.CardIndex];
+}
+
+simulated function TurboCard GetCardInstanceFromReference(TurboCardReplicationInfo.CardReference Reference)
+{
+    if (Reference.Deck != Class || Reference.CardIndex < 0)
+    {
+        return None;
+    }
+
+    //If out of bounds of DeckCardOriginalDeckCardObjectListObjectList, offset and check OriginalOptionalCardList.
+    if (Reference.CardIndex >= DeckCardObjectList.Length)
+    {
+        Reference.CardIndex -= DeckCardObjectList.Length;
+        if (Reference.CardIndex >= OptionalCardList.Length)
+        {
+            return None;
+        }
+
+        return OptionalCardList[Reference.CardIndex].Card;
+    }
+
+    return DeckCardObjectList[Reference.CardIndex];
 }
 
 function TurboCard DrawRandomCard()
@@ -208,6 +231,66 @@ function TurboCard FindCardByCardID(string CardID)
     }
 
     return None;
+}
+
+static final function DrawBox(Canvas C, Material Material, float SizeX, float SizeY)
+{
+	C.DrawTile(Material, SizeX, SizeY, 0.f, 0.f, Material.MaterialUSize(), Material.MaterialVSize());
+}
+
+static function DrawCardInfoIcon(Canvas C, Material Icon, float DrawX, float DrawY, float DrawHeight, float Ratio)
+{
+	C.SetPos(DrawX, DrawY);
+	C.DrawColor = class'TurboHUDOverlay'.static.MakeColor(0, 0, 0, 80.f * Ratio);
+	DrawBox(C, class'TurboHUDKillingFloor'.default.WhiteMaterial, DrawHeight, DrawHeight);
+	
+	C.SetPos(DrawX, DrawY);
+	C.DrawColor = class'TurboHUDOverlay'.static.MakeColor(255, 255, 255, 255.f * Ratio);
+	DrawBox(C, Icon, DrawHeight, DrawHeight);
+}
+
+static function DrawCardInfoProgress(Canvas C, Material Icon, float Progress, float DrawX, float DrawY, float DrawHeight, float Ratio)
+{
+	DrawCardInfoIcon(C, Icon, DrawX, DrawY, DrawHeight, Ratio);
+
+	if (Progress <= 0.001f)
+	{
+		return;
+	}
+
+	C.SetPos(DrawX, DrawY + (DrawHeight * 0.8));
+	C.DrawColor = class'TurboHUDOverlay'.static.MakeColor(255, 0, 0, 180.f * Ratio);
+	DrawBox(C, class'TurboHUDKillingFloor'.default.WhiteMaterial, DrawHeight * Progress, DrawHeight * 0.2f);
+}
+
+static function DrawCardInfoNumberProgress(Canvas C, Material Icon, float Progress, coerce string String, float DrawX, float DrawY, float DrawHeight, float Ratio, float TextScale)
+{
+	local float TextSizeX, TextSizeY;
+	local float OriginalTextScale;
+
+	DrawCardInfoProgress(C, Icon, Progress, DrawX, DrawY, DrawHeight, Ratio);
+
+	if (String == "")
+	{
+		return;
+	}
+
+	OriginalTextScale = C.FontScaleX;
+	C.FontScaleX *= TextScale;
+	C.FontScaleY = C.FontScaleX;
+	C.TextSize(String, TextSizeX, TextSizeY);
+	DrawX = ((DrawX + DrawHeight) - TextSizeX) + (DrawHeight * 0.1f);
+	DrawY = DrawY - (DrawHeight * 0.2f);
+
+	C.DrawColor = class'TurboHUDOverlay'.static.MakeColor(0, 0, 0, 120.f * Ratio);
+	C.SetPos(DrawX + (TextSizeY * 0.025f), DrawY + (TextSizeY * 0.025f));
+	C.DrawText(String);
+	C.DrawColor = class'TurboHUDOverlay'.static.MakeColor(255.f, 0, 0, 240.f * Ratio);
+	C.SetPos(DrawX, DrawY);
+	C.DrawText(String);
+
+	C.FontScaleX = OriginalTextScale;
+	C.FontScaleY = OriginalTextScale;
 }
 
 defaultproperties

@@ -19,18 +19,14 @@ var array<TurboPlayerReplicationInfo> PendingPlayerReplicationInfoList;
 
 var const bool bPerformValidation;
 
-var globalconfig string TurboGoodDeckClassOverrideString;
-var globalconfig string TurboSuperDeckClassOverrideString;
-var globalconfig string TurboProConDeckClassOverrideString;
-var globalconfig string TurboEvilDeckClassOverrideString;
-
 function PostBeginPlay()
 {
 	AddToPackageMap("KFTurbo");
 	AddToPackageMap("KFTurboCardGame");
+	
+	TurboCardReplicationInfo = CreateTurboCardReplicationInfo();
 	AddDeckOverridesToPackageMap();
 
-	TurboCardReplicationInfo = CreateTurboCardReplicationInfo();
 	CardGameRules = CreateCardGameRules();
 
 	Super.PostBeginPlay();
@@ -62,25 +58,25 @@ function AddDeckOverridesToPackageMap()
 	local string PackageName;
 	local int Index;
 
-	PackageName = GetDeckOverridePackageName(TurboGoodDeckClassOverrideString);
+	PackageName = GetDeckOverridePackageName(TurboCardReplicationInfo.TurboGoodDeckClassOverrideString);
 	if (PackageName != "")
 	{
 		AddUnique(PackageName, PackageNameList);
 	}
 	
-	PackageName = GetDeckOverridePackageName(TurboSuperDeckClassOverrideString);
+	PackageName = GetDeckOverridePackageName(TurboCardReplicationInfo.TurboSuperDeckClassOverrideString);
 	if (PackageName != "")
 	{
 		AddUnique(PackageName, PackageNameList);
 	}
 	
-	PackageName = GetDeckOverridePackageName(TurboProConDeckClassOverrideString);
+	PackageName = GetDeckOverridePackageName(TurboCardReplicationInfo.TurboProConDeckClassOverrideString);
 	if (PackageName != "")
 	{
 		AddUnique(PackageName, PackageNameList);
 	}
 	
-	PackageName = GetDeckOverridePackageName(TurboEvilDeckClassOverrideString);
+	PackageName = GetDeckOverridePackageName(TurboCardReplicationInfo.TurboEvilDeckClassOverrideString);
 	if (PackageName != "")
 	{
 		AddUnique(PackageName, PackageNameList);
