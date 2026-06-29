@@ -13,6 +13,7 @@ var const int CheatDeathWaveCooldown;
 
 var int SubstituteDamageCount;
 var const int SubstituteDamageCountBase;
+var float SubstituteDamageTime;
 
 var float CriticalHitTime;
 var float PerpetualCriticalHitStartTime;
@@ -41,7 +42,6 @@ var float MeleeWeaponHoldTime;
 var float LastFreezeTagEvaluation;
 var const float FreezeTagTimeUntilSlow;
 var const float FreezeTagTimeUntilFreeze;
-
 
 var private TurboCardOverlay CachedTurboCardOverlay;
 
@@ -182,11 +182,18 @@ final function SetCheatDeathWave(int Wave)
 
 final function bool AttemptSubstituteDamage()
 {
+	//Block all damage for the frame.
+	if (SubstituteDamageTime == Level.TimeSeconds)
+	{
+		return true;
+	}
+
 	if (SubstituteDamageCount == 0)
 	{
 		return false;
 	}
 
+	SubstituteDamageTime = Level.TimeSeconds;
 	SubstituteDamageCount--;
 	ForceNetUpdate();
 	return true;
