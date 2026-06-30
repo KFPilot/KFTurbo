@@ -11,65 +11,53 @@ struct PlayerMovementCache
 
 var array<PlayerMovementCache> PlayerMovementList;
 
+function PostBeginPlay()
+{
+    Super.PostBeginPlay();
+
+    SetTimer(0.125f, true);
+}
+
+function Timer()
+{
+    local Controller C;
+
+    for (C = Level.ControllerList; C != None; C = C.NextController)
+    {
+        if (!C.bIsPlayer || C.Pawn != None || PlayerController(C) == None)
+        {
+            continue;
+        }
+
+        AddUnique(PlayerController(C));
+    }
+}
+
+final function AddUnique(PlayerController PlayerController)
+{
+    local int Index;
+    for (Index = PlayerMovementList.Length - 1; Index >= 0; Index--)
+    {
+        if (PlayerController == PlayerMovementList[Index].Player)
+        {
+            return;
+        }
+    }
+    
+    PlayerMovementList.Length = PlayerMovementList.Length + 1;
+    PlayerMovementList[PlayerMovementList.Length - 1].Player = PlayerController;
+    ResetPlayerMovementCache(PlayerMovementList[PlayerMovementList.Length - 1]);
+}
+
 function ResetPlayerMovementCache(out PlayerMovementCache Cache)
 {
     Cache.NextDamageTime = Level.TimeSeconds + 5.f;
 }
 
-function TickPlayerMovementCache(PlayerController PlayerController)
-{
-    local int Index;
-    local bool bFoundPlayer;
-
-    for (Index = PlayerMovementList.Length - 1; Index >= 0; Index--)
-    {
-        if (PlayerMovementList[Index].Player == None)
-        {
-            PlayerMovementList.Remove(Index, 1);
-            continue;
-        }
-
-        if (PlayerController != PlayerMovementList[Index].Player)
-        {
-            continue;
-        }
-
-        bFoundPlayer = true;
-
-        if (PlayerController.Pawn == None || PlayerController.Pawn.bDeleteMe || PlayerController.Pawn.Health <= 0)
-        {
-            ResetPlayerMovementCache(PlayerMovementList[Index]);
-            break;
-        }
-
-        if (VSize(PlayerController.Pawn.Velocity) > 10.f)
-        {
-            ResetPlayerMovementCache(PlayerMovementList[Index]);
-            break;
-        }
-
-        if (PlayerMovementList[Index].NextDamageTime > Level.TimeSeconds)
-        {
-            break;
-        }
-
-        PlayerController.Pawn.TakeDamage(10, None, PlayerController.Pawn.Location, vect(0, 0, 0), class'NoRestForTheWicked_DT');
-        PlayerMovementList[Index].NextDamageTime = Level.TimeSeconds + 1.f;
-        break;
-    }
-
-    if (!bFoundPlayer)
-    {
-        PlayerMovementList.Length = PlayerMovementList.Length + 1;
-        PlayerMovementList[PlayerMovementList.Length - 1].Player = PlayerController;
-        ResetPlayerMovementCache(PlayerMovementList[PlayerMovementList.Length - 1]);
-    }
-}
-
 function Tick(float DeltaTime)
 {
-    local Controller C;
     local int Index;
+ 
     if (!KFGameType(Level.Game).bWaveInProgress)
     {
         for (Index = PlayerMovementList.Length - 1; Index >= 0; Index--)
@@ -79,14 +67,43 @@ function Tick(float DeltaTime)
         return;
     }
 
-    for (C = Level.ControllerList; C != None; C = C.NextController)
+    TickPlayerMovementCache();
+}
+
+function TickPlayerMovementCache()
+{
+    local int Index;
+    local PlayerController PlayerController;
+
+    for (Index = PlayerMovementList.Length - 1; Index >= 0; Index--)
     {
-        if (PlayerController(C) == None)
+        if (PlayerMovementList[Index].Player == None)
+        {
+            PlayerMovementList.Remove(Index, 1);
+            continue;
+        }
+
+        PlayerController = PlayerMovementList[Index].Player;
+
+        if (PlayerController.Pawn == None || PlayerController.Pawn.bDeleteMe || PlayerController.Pawn.Health <= 0)
+        {
+            ResetPlayerMovementCache(PlayerMovementList[Index]);
+            continue;
+        }
+
+        if (VSize(PlayerController.Pawn.Velocity) > 10.f)
+        {
+            ResetPlayerMovementCache(PlayerMovementList[Index]);
+            continue;
+        }
+
+        if (PlayerMovementList[Index].NextDamageTime > Level.TimeSeconds)
         {
             continue;
         }
 
-        TickPlayerMovementCache(PlayerController(C));
+        PlayerController.Pawn.TakeDamage(10, None, PlayerController.Pawn.Location, vect(0, 0, 0), class'NoRestForTheWicked_DT');
+        PlayerMovementList[Index].NextDamageTime = Level.TimeSeconds + 1.f;
     }
 }
 
