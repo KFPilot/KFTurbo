@@ -562,7 +562,7 @@ static final function bool DrawEpinephrine(TurboCardOverlay CardOverlay, TurboPl
 {
     if (CardOverlay.HealBoostStatus.Ratio > 0.003f)
     {
-        DrawCardInfoProgress(Canvas, Texture'KFTurboCardGame.UI.HealBoostIcon_D', PlayerCustomInfo.GetGrenadeThrowPercentDuration(), DrawX, DrawY, DrawHeight, CardOverlay.HealBoostStatus.Ratio);
+        DrawCardInfoProgress(Canvas, Texture'KFTurboCardGame.UI.HealBoostIcon_D', PlayerCustomInfo.GetHealBoostPercentDuration(), DrawX, DrawY, DrawHeight, CardOverlay.HealBoostStatus.Ratio);
         return true;
     }
 

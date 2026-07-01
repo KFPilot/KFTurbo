@@ -443,7 +443,7 @@ static final function bool DrawDauntless(TurboCardOverlay CardOverlay, TurboPlay
 {
     if (CardOverlay.DauntlessStatus.Ratio > 0.003f)
     {
-        DrawCardInfoIcon(Canvas, Texture'KFTurboCardGame.UI.DauntlessIcon_D', DrawX, DrawY, DrawHeight, CardOverlay.SubstituteStatus.Ratio);
+        DrawCardInfoIcon(Canvas, Texture'KFTurboCardGame.UI.DauntlessIcon_D', DrawX, DrawY, DrawHeight, CardOverlay.DauntlessStatus.Ratio);
         return true;
     }
     

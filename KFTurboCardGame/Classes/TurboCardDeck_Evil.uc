@@ -432,7 +432,7 @@ static final function UpdateClottingIssues(TurboCardOverlay CardOverlay, TurboPl
     {
         CardOverlay.BleedStatus.Number = PlayerCustomInfo.BleedCount;
         CardOverlay.LastKnownBleedCount = PlayerCustomInfo.BleedCount;
-        CardOverlay.BleedStatus.NumberScale = 0.1f;
+        CardOverlay.BleedStatus.NumberScale = 0.5f;
 
         if (PlayerCustomInfo.BleedCount > 0)
         {
@@ -446,7 +446,7 @@ static final function bool DrawClottingIssues(TurboCardOverlay CardOverlay, Turb
     if (CardOverlay.BleedStatus.Ratio > 0.003f)
     {
         DrawCardInfoNumberProgress(Canvas, Texture'KFTurboCardGame.UI.BleedIcon_D', PlayerCustomInfo.GetTimePercentUntilBleed(), CardOverlay.BleedStatus.Number,
-            DrawX, DrawY, DrawHeight, CardOverlay.BleedStatus.Ratio, 1.f);
+            DrawX, DrawY, DrawHeight, CardOverlay.BleedStatus.Ratio, CardOverlay.BleedStatus.NumberScale);
         
         return true;
     }
@@ -482,7 +482,7 @@ static final function bool DrawMarkedForDeath(TurboCardOverlay CardOverlay, Turb
 {
     if (CardOverlay.MarkedForDeathStatus.Ratio > 0.003f)
     {
-        DrawCardInfoIcon(Canvas, Texture'KFTurboCardGame.UI.MarkedForDeathIcon_D', DrawX, DrawY, DrawHeight, 1.f);
+        DrawCardInfoIcon(Canvas, Texture'KFTurboCardGame.UI.MarkedForDeathIcon_D', DrawX, DrawY, DrawHeight, CardOverlay.MarkedForDeathStatus.Ratio);
         return true;
     }
 
@@ -512,7 +512,7 @@ static final function bool DrawNoRestForTheWicked(TurboCardOverlay CardOverlay, 
 {
     if (CardOverlay.NoRestForTheWickedStatus.Ratio > 0.003f)
     {
-        DrawCardInfoIcon(Canvas, Texture'KFTurboCardGame.UI.NoRestForTheWickedIcon_D', DrawX, DrawY, DrawHeight, 1.f);
+        DrawCardInfoIcon(Canvas, Texture'KFTurboCardGame.UI.NoRestForTheWickedIcon_D', DrawX, DrawY, DrawHeight, CardOverlay.NoRestForTheWickedStatus.Ratio);
         return true;
     }
 
