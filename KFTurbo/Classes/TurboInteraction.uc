@@ -160,6 +160,7 @@ simulated function RegisterStyles(GUIController GUIController)
 	GUIController.RegisterStyle(class'TurboGUIStyleSectionLabel');
 	GUIController.RegisterStyle(class'TurboGUIStyleLabel');
 	GUIController.RegisterStyle(class'TurboGUIStyleButton');
+	GUIController.RegisterStyle(class'TurboGUIStyleNoBackground');
 }
 
 simulated function NotifyLevelChange()
