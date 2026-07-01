@@ -527,6 +527,37 @@ static final function TickNoRestForTheWicked(TurboCardOverlay CardOverlay, Turbo
     }
 }
 
+//========================
+//Greed Begets Slow Speed
+
+static final function bool DrawGreedBegetsSlowSpeed(TurboCardOverlay CardOverlay, TurboPlayerCardCustomInfo PlayerCustomInfo, Canvas Canvas, TurboCard Card, float DrawX, float DrawY, float DrawHeight)
+{
+    if (CardOverlay.GreedBegetsSlowSpeedStatus.Ratio > 0.003f)
+    {
+        DrawCardInfoProgress(Canvas, Texture'KFTurboCardGame.UI.GreedBegetsSlowSpeed_D', CardOverlay.GreedBegetsSlowSpeedStatus.Progress, DrawX, DrawY, DrawHeight, CardOverlay.GreedBegetsSlowSpeedStatus.Ratio);
+        return true;
+    }
+
+    return false;
+}
+
+static final function TickGreedBegetsSlowSpeed(TurboCardOverlay CardOverlay, TurboPlayerCardCustomInfo PlayerCustomInfo, TurboCard Card, float DeltaTime)
+{
+    CardOverlay.GreedBegetsSlowSpeedStatus.Progress = Lerp(DeltaTime * 4.f, CardOverlay.GreedBegetsSlowSpeedStatus.Progress, PlayerCustomInfo.GetGreedBegetsSlowSpeedPercent());
+    if (CardOverlay.GreedBegetsSlowSpeedStatus.Progress > 0.f)
+    {
+        if (CardOverlay.GreedBegetsSlowSpeedStatus.Ratio < 1.f)
+        {
+            CardOverlay.GreedBegetsSlowSpeedStatus.Ratio = FMin(DeltaTime + CardOverlay.GreedBegetsSlowSpeedStatus.Ratio, 1.f);
+        }
+        
+    }
+    else if (CardOverlay.GreedBegetsSlowSpeedStatus.Ratio > 0.003f)
+    {
+        CardOverlay.GreedBegetsSlowSpeedStatus.Ratio -= DeltaTime;
+    }
+}
+
 defaultproperties
 {
     Begin Object Name=Doorless Class=TurboCard_Evil
@@ -651,6 +682,9 @@ defaultproperties
         CardDescriptionList(3)="they become."
         CardID="EVIL_GREEDBEGETSLOW"
         OnActivateCard=ActivateCashSlowsPlayers
+        bHasStatusIcon=true
+        OnStatusIconDraw=DrawGreedBegetsSlowSpeed
+        OnStatusIconTick=TickGreedBegetsSlowSpeed
     End Object
     DeckCardObjectList(8)=TurboCard'CashSlowsPlayers'
     

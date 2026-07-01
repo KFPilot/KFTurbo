@@ -248,11 +248,11 @@ simulated function float GetPlayerMovementSpeedMultiplier(KFPlayerReplicationInf
         {
             Multiplier *= 1.3f;
         }
-    }
-
-    if (bMoneySlowsPlayers)
-    {
-        Multiplier *= FClamp(Lerp((KFPRI.Score - 800.f) / 5200.f, 1.f, 0.01f), 0.01f, 1.f);
+        
+        if (bMoneySlowsPlayers)
+        {
+            Multiplier *= CardCustomInfo.GetGreedBegetsSlowSpeedModifier();
+        }
     }
 
     if (bMissingHealthStronglySlows && Pawn != None && (float(Pawn.Health) / Pawn.HealthMax) < 0.75f)

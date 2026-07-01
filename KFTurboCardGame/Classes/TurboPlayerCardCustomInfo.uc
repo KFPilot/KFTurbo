@@ -46,6 +46,10 @@ var const float FreezeTagTimeUntilFreeze;
 var int BleedCount;
 var float NextBleedTime;
 
+var const float GreedBegetsSlowSpeedStartCash;
+var const float GreedBegetsSlowSpeedEndCash;
+var const float GreedBegetsSlowSpeedSpeedModifier;
+
 var private TurboCardOverlay CachedTurboCardOverlay;
 
 const MARKED_FOR_DEATH = 1;
@@ -511,6 +515,16 @@ final simulated function float GetTimePercentUntilBleed()
 	return Lerp(FClamp((NextBleedTime - ServerTimeActor.GetServerTimeSeconds()) / class'PlayerBleedActor'.default.BleedInterval, 0.f, 1.f), 1.f, 0.f);
 }
 
+final simulated function float GetGreedBegetsSlowSpeedPercent()
+{
+	return FClamp((PlayerTPRI.Score - GreedBegetsSlowSpeedStartCash) / GreedBegetsSlowSpeedEndCash, 0.f, 1.f);
+}
+
+final simulated function float GetGreedBegetsSlowSpeedModifier()
+{
+	return Lerp(GetGreedBegetsSlowSpeedPercent(), 1.f, GreedBegetsSlowSpeedSpeedModifier);
+}
+
 defaultproperties
 {
 	CheatDeathWave=-1
@@ -543,6 +557,10 @@ defaultproperties
 	FreezeTagTimeUntilFreeze=4.f
 
 	RackEmUpStackDuration=10.f
+
+	GreedBegetsSlowSpeedStartCash=800.f
+	GreedBegetsSlowSpeedEndCash=5200.f
+	GreedBegetsSlowSpeedSpeedModifier=0.01f
 
 	//Replicates now that the client has to be aware of certain properties on here.
     RemoteRole=ROLE_SimulatedProxy

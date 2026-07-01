@@ -119,6 +119,8 @@ var CardStatus MarkedForDeathStatus;
 var CardStatus DauntlessStatus;
 var CardStatus NoRestForTheWickedStatus;
 
+var CardStatusProgress GreedBegetsSlowSpeedStatus;
+
 static final function TurboCardOverlay FindCardOverlay(PlayerController PlayerController)
 {
 	local int Index;
