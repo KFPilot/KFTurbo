@@ -225,7 +225,18 @@ static function float GetAmmoCostScaling(KFPlayerReplicationInfo KFPRI, class<Pi
 static function AddDefaultInventory(KFPlayerReplicationInfo KFPRI, Pawn P)
 {
 	KFHumanPawn(P).CreateInventoryVeterancy(string(class'W_PipeBomb_Weap'), default.StartingWeaponSellPriceLevel5);
-	KFHumanPawn(P).CreateInventoryVeterancy(string(class'W_M4203_Weap'), default.StartingWeaponSellPriceLevel6);
+	
+	if (!IsHighDifficulty(KFPRI))
+	{
+		KFHumanPawn(P).CreateInventoryVeterancy(string(class'W_M4203_Weap'), default.StartingWeaponSellPriceLevel6);
+	}
+	else
+	{
+		KFHumanPawn(P).CreateInventoryVeterancy(string(class'W_M32_Weap'), default.StartingWeaponSellPriceLevel6);
+		KFHumanPawn(P).CreateInventoryVeterancy(string(class'W_M79_Weap'), default.StartingWeaponSellPriceLevel6);
+		KFHumanPawn(P).CreateInventoryVeterancy(string(class'W_MK23_Weap'), default.StartingWeaponSellPriceLevel6);
+	}
+
 	Super.AddDefaultInventory(KFPRI, P);
 }
 

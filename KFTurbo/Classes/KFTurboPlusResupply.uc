@@ -29,10 +29,21 @@ function PostBeginPlay()
 {
     Super.PostBeginPlay();
 
-    OnWaveStarted = ResupplyPlayers;
+    OnWaveEnded = DelayedResupplyPlayers;
+    OnWaveStarted = DelayedResupplyPlayers;
 }
 
-function ResupplyPlayers(KFTurboGameType GameType, int StartingWave)
+function DelayedResupplyPlayers(KFTurboGameType GameType, int StartingWave)
+{
+    SetTimer(0.5f, false);
+}
+
+function Timer()
+{
+    ResupplyPlayers();
+}
+
+function ResupplyPlayers()
 {
     local array<TurboPlayerController> PlayerList;
     local int Index;

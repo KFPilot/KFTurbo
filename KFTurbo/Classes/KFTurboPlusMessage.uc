@@ -5,10 +5,12 @@ class KFTurboPlusMessage extends TurboLocalMessage;
 
 enum ETurboPlusMessage
 {
-    TraderHint
+    TraderHint,
+    ConsoleCommandTradeHint
 };
 
 var localized string HowToTradeHint;
+var localized string ConsoleCommandTradeHint;
 
 static function string GetString(optional int Switch, optional PlayerReplicationInfo RelatedPRI_1, optional PlayerReplicationInfo RelatedPRI_2, optional Object OptionalObject)
 {
@@ -16,6 +18,8 @@ static function string GetString(optional int Switch, optional PlayerReplication
     {
         case TraderHint:
             return FormatString(default.HowToTradeHint);
+        case ConsoleCommandTradeHint:
+            return FormatString(default.ConsoleCommandTradeHint);
     }
 
     return "";
@@ -28,7 +32,7 @@ static function bool IgnoreLocalMessage(TurboPlayerController PlayerController, 
         return false;
     }
 
-    if (Switch == ETurboPlusMessage.TraderHint)
+    if (Switch == ETurboPlusMessage.TraderHint || Switch == ETurboPlusMessage.ConsoleCommandTradeHint)
     {
         return !class'TurboInteraction'.static.IsShiftTradeEnabled(PlayerController);
     }
@@ -38,7 +42,8 @@ static function bool IgnoreLocalMessage(TurboPlayerController PlayerController, 
 
 defaultproperties
 {
-    HowToTradeHint="%kPress SHIFT%d to open the %ktrader menu%d anywhere. The %kconsole command TRADE%d can also be used."
+    HowToTradeHint="%kPress SHIFT%d to open the %ktrader menu%d anywhere."
+    ConsoleCommandTradeHint="The %kconsole command TRADE%d can also be used."
 
     Lifetime=15
     bIsSpecial=false

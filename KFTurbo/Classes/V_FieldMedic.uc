@@ -222,7 +222,15 @@ static function float GetBodyArmorDamageModifier(KFPlayerReplicationInfo KFPRI)
 static function AddDefaultInventory(KFPlayerReplicationInfo KFPRI, Pawn P)
 {
 	P.ShieldStrength = 100;
-	KFHumanPawn(P).CreateInventoryVeterancy(string(class'W_MP7M_Weap'), default.StartingWeaponSellPriceLevel6);
+
+	KFHumanPawn(P).CreateInventoryVeterancy(string(class'W_MP5M_Weap'), default.StartingWeaponSellPriceLevel6);
+
+	if (IsHighDifficulty(KFPRI))
+	{
+		KFHumanPawn(P).CreateInventoryVeterancy(string(class'W_KrissM_Weap'), default.StartingWeaponSellPriceLevel6);
+		KFHumanPawn(P).CreateInventoryVeterancy(string(class'W_M7A3M_Weap'), default.StartingWeaponSellPriceLevel6);
+	}
+
 	Super.AddDefaultInventory(KFPRI, P);
 }
 

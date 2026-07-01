@@ -190,7 +190,17 @@ static function float GetCostScaling(KFPlayerReplicationInfo KFPRI, class<Pickup
 
 static function AddDefaultInventory(KFPlayerReplicationInfo KFPRI, Pawn P)
 {
-	KFHumanPawn(P).CreateInventoryVeterancy(string(class'W_Machete_Weap'), default.StartingWeaponSellPriceLevel6);
+
+	if (!IsHighDifficulty(KFPRI))
+	{
+		KFHumanPawn(P).CreateInventoryVeterancy(string(class'W_Machete_Weap'), default.StartingWeaponSellPriceLevel6);
+	}
+	else
+	{
+		KFHumanPawn(P).CreateInventoryVeterancy(string(class'W_Claymore_Weap'), default.StartingWeaponSellPriceLevel6);
+		KFHumanPawn(P).CreateInventoryVeterancy(string(class'W_Crossbuzzsaw_Weap'), default.StartingWeaponSellPriceLevel6);
+	}
+
 	Super.AddDefaultInventory(KFPRI, P);
 }
 

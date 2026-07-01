@@ -118,6 +118,7 @@ State MatchInProgress
         WaveCountDown = WAVE_COUNTDOWN;
         
         BroadcastLocalizedMessage(class'KFTurboPlusMessage', 0); //ETurboPlusMessage.TraderHint
+        BroadcastLocalizedMessage(class'KFTurboPlusMessage', 1); //ETurboPlusMessage.TraderHint
     }
 
     // Don't select shops.
@@ -174,6 +175,11 @@ State MatchInProgress
         }
 
         BroadcastLocalizedMessage(class'KFTurboPlusMessage', 0); //ETurboPlusMessage.TraderHint
+
+        if (GetCurrentWaveNum() % 3 == 0)
+        {
+            BroadcastLocalizedMessage(class'KFTurboPlusMessage', 1); //ETurboPlusMessage.TraderHint
+        }
         
         Super.OpenShops();
     }

@@ -397,7 +397,55 @@ static function AddDefaultInventory(KFPlayerReplicationInfo KFPRI, Pawn P)
 	if (IsHighDifficulty(KFPRI))
 	{
 		P.ShieldStrength = 100.f;
+		FillUpAmmo(P);
+
+		P.CreateInventory(string(class'KFTurbo.W_Frag_Weap')); //Make sure the item is made before filling grenade ammo.
+		FillUpGrenades(Frag(P.FindInventoryType(class'KFTurbo.W_Frag_Weap')), KFPRI);
 	}
+}
+
+static function FillUpGrenades(Frag Frag, KFPlayerReplicationInfo KFPRI)
+{
+	Frag.AddAmmo(5.f * KFPRI.ClientVeteranSkill.Static.AddExtraAmmoFor(KFPRI, Frag.FireModeClass[0].default.AmmoClass), 0);
+}
+
+static function FillUpAmmo(Pawn P)
+{
+	local Inventory Inv;
+	local KFWeapon Weapon;
+	local int MaxAmmo, CurAmmo;
+
+	for(Inv = P.Inventory; Inv != None; Inv = Inv.Inventory)
+	{
+		Weapon = KFWeapon(Inv);
+		
+		if(Weapon == None)
+		{
+			continue;
+		}
+
+		GetAmmoCount(Weapon, MaxAmmo, CurAmmo);
+		Weapon.AddAmmo(MaxAmmo - CurAmmo, 0);
+
+		if(!Weapon.bHasSecondaryAmmo)
+		{
+			continue;
+		}
+
+		MaxAmmo = Weapon.MaxAmmo(1);
+		CurAmmo = Weapon.AmmoAmount(1);
+		Weapon.AddAmmo(MaxAmmo - CurAmmo, 1);
+	}
+}
+
+static function GetAmmoCount(KFWeapon KFW, out int MaxAmmo, out int CurAmmo)
+{
+	local float retMax, retCur;
+	
+	KFW.GetAmmoCount(retMax, retCur);
+
+	MaxAmmo = int(retMax);
+	CurAmmo = int(retCur);
 }
 
 defaultproperties
