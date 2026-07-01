@@ -558,6 +558,32 @@ static final function TickGreedBegetsSlowSpeed(TurboCardOverlay CardOverlay, Tur
     }
 }
 
+//========================
+//Poorly Oiled Machine
+
+static final function bool DrawPoorlyOiledMachine(TurboCardOverlay CardOverlay, TurboPlayerCardCustomInfo PlayerCustomInfo, Canvas Canvas, TurboCard Card, float DrawX, float DrawY, float DrawHeight)
+{
+    if (CardOverlay.PoorlyOiledMachineStatus.Ratio > 0.003f)
+    {
+        DrawCardInfoIcon(Canvas, Texture'KFTurboCardGame.UI.PoorlyOiledMachine_a00', DrawX, DrawY, DrawHeight, CardOverlay.PoorlyOiledMachineStatus.Ratio);
+        return true;
+    }
+
+    return false;
+}
+
+static final function TickPoorlyOiledMachine(TurboCardOverlay CardOverlay, TurboPlayerCardCustomInfo PlayerCustomInfo, TurboCard Card, float DeltaTime)
+{
+    if (PlayerCustomInfo.PlayerTPRI.GetHealthPercent() < 0.75f)
+    {
+        CardOverlay.PoorlyOiledMachineStatus.Ratio = FMin(DeltaTime + CardOverlay.PoorlyOiledMachineStatus.Ratio, 1.f);        
+    }
+    else if (CardOverlay.PoorlyOiledMachineStatus.Ratio > 0.003f)
+    {
+        CardOverlay.PoorlyOiledMachineStatus.Ratio -= DeltaTime;
+    }
+}
+
 defaultproperties
 {
     Begin Object Name=Doorless Class=TurboCard_Evil
@@ -761,9 +787,12 @@ defaultproperties
         CardDescriptionList(0)="Players at"
         CardDescriptionList(1)="less than 75%"
         CardDescriptionList(2)="max health move"
-        CardDescriptionList(3)="at 75% speed."
+        CardDescriptionList(3)="at 66% speed."
         CardID="EVIL_POORLYOILED"
         OnActivateCard=ActivatePoorlyOiledMachine
+        bHasStatusIcon=true
+        OnStatusIconTick=TickPoorlyOiledMachine
+        OnStatusIconDraw=DrawPoorlyOiledMachine
     End Object
     DeckCardObjectList(14)=TurboCard'PoorlyOiledMachine'
     

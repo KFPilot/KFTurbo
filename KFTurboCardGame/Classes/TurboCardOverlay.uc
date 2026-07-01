@@ -118,6 +118,7 @@ var int LastKnownBleedCount;
 var CardStatus MarkedForDeathStatus;
 var CardStatus DauntlessStatus;
 var CardStatus NoRestForTheWickedStatus;
+var CardStatus PoorlyOiledMachineStatus;
 
 var CardStatusProgress GreedBegetsSlowSpeedStatus;
 

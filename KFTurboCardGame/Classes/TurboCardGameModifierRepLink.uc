@@ -257,7 +257,7 @@ simulated function float GetPlayerMovementSpeedMultiplier(KFPlayerReplicationInf
 
     if (bMissingHealthStronglySlows && Pawn != None && (float(Pawn.Health) / Pawn.HealthMax) < 0.75f)
     {
-        Multiplier *= 0.75f;
+        Multiplier *= 0.66f;
     }
 
     if (bBurnSpeedsUpPlayers && Pawn != None && Pawn.bBurnified)
