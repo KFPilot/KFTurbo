@@ -132,6 +132,7 @@ function UpdateMyBuyables()
 		{
 			MyBuyable.bSellable	= false;
 			FragBuyable = MyBuyable;
+			FragBuyable.ItemPerkIndex = class'V_Demolitions'.default.PerkIndex;
 		}
 		else
 		{
