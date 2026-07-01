@@ -46,7 +46,7 @@ defaultproperties
 		WinTop=0.05
 		CharDelay=0.0025
 		EOLDelay=0
-		StyleName="NoBackground"
+		StyleName="TurboNoBackground"
         bNoTeletype=true
         bNeverFocus=true
         TextAlign=TXTA_Left
