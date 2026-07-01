@@ -592,7 +592,14 @@ simulated function WeaponUpdate(float DeltaTime, KFWeapon Weapon)
 	if (bWeaponHasSecondaryAmmo)
 	{
 		Weapon.GetSecondaryAmmoCount(CurrentMaxSecondaryAmmo, CurrentSpareSecondaryAmmo);
-		bWeaponSecondaryCanFire = Weapon.ReadyToFire(1); //Ask if we can perform secondary fire.
+		if (W_M4203_Weap(Weapon) != None)
+		{
+			bWeaponSecondaryCanFire = W_M4203_Weap(Weapon).IsSecondaryFireLoaded();
+		}
+		else
+		{
+			bWeaponSecondaryCanFire = Weapon.ReadyToFire(1); //Ask if we can perform secondary fire.
+		}
 	}
 	
 	bIsMedicGun = KFMedicGun(Weapon) != None;

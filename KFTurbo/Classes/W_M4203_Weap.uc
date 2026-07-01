@@ -118,6 +118,11 @@ simulated function bool PutDown()
 	return true;
 }
 
+simulated function bool IsSecondaryFireLoaded()
+{
+	return W_M4203_Fire(FireMode[1]).IsReadyAndLoaded();
+}
+
 simulated function bool ReadyToFire(int Mode)
 {
 	if(!W_M4203_Fire(FireMode[1]).IsIdle())
