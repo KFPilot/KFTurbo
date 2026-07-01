@@ -228,12 +228,27 @@ function ReceiveRewardForHealing(int MedicReward, KFPawn Healee)
 
 final simulated function float GetHealthPercent()
 {
+    if (Controller(Owner) != None && TurboHumanPawn(Controller(Owner).Pawn) != None)
+    {
+        return GetPawnHealthPercent(TurboHumanPawn(Controller(Owner).Pawn));
+    }
+
     if (HealthMax <= 0)
     {
         return float(PlayerHealth) / 100.f;
     }
 
     return float(PlayerHealth) / float(HealthMax);
+}
+
+final private simulated function float GetPawnHealthPercent(TurboHumanPawn Pawn)
+{
+    if (Pawn.HealthMax <= 0.f)
+    {
+        return float(Pawn.Health) / 100.f;
+    }
+
+    return float(Pawn.Health) / Pawn.HealthMax;
 }
 
 defaultproperties
