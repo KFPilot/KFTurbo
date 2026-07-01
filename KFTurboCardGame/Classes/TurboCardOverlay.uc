@@ -112,6 +112,13 @@ var float LastKnownPerpetualCriticalStartTime;
 var CardStatusProgressNumber SubstituteStatus;
 var int LastKnownSubstituteCount;
 
+var CardStatusProgressNumber BleedStatus;
+var int LastKnownBleedCount;
+
+var CardStatus MarkedForDeathStatus;
+var CardStatus DauntlessStatus;
+var CardStatus NoRestForTheWickedStatus;
+
 static final function TurboCardOverlay FindCardOverlay(PlayerController PlayerController)
 {
 	local int Index;
@@ -561,7 +568,7 @@ static final function SetupOffset(float DrawX, float DrawY, float IconX, out flo
 
 simulated function DrawCardEffects(Canvas C)
 {
-	local int Index;
+	local int Index, OffsetIndex;
 	local float DrawX, DrawY, DrawHeight;
 	local float OffsetX, OffsetY, TextSizeX, TextSizeY;
 	local TurboCard Card;
@@ -581,7 +588,7 @@ simulated function DrawCardEffects(Canvas C)
 
 	for (Index = 0; Index < ArrayCount(TCRI.ActiveCardInstanceList); Index++)
 	{
-		SetupOffset(DrawX, DrawY, DrawHeight, OffsetX, OffsetY, Index);
+		SetupOffset(DrawX, DrawY, DrawHeight, OffsetX, OffsetY, OffsetIndex);
 		Card = TCRI.ActiveCardInstanceList[Index];
 
 		if (Card == None)
@@ -591,7 +598,10 @@ simulated function DrawCardEffects(Canvas C)
 
 		if (Card.bHasStatusIcon)
 		{
-			Card.OnStatusIconDraw(self, PlayerCardCustomInfo, C, Card, OffsetX, OffsetY, DrawHeight);
+			if (Card.OnStatusIconDraw(self, PlayerCardCustomInfo, C, Card, OffsetX, OffsetY, DrawHeight))
+			{
+				OffsetIndex++;
+			}
 		}
 	}
 }
@@ -675,12 +685,28 @@ simulated final function DrawCardAura(Canvas C, SelectableCardEntry Card, float 
 	C.DrawTileScaled(CardGlowMaterial, (CardSize / GlowMaterialSizeX) * 1.25f, (CardSize * 2.5f) / GlowMaterialSizeY);
 }
 
-simulated function DrawSelectableCardList(Canvas C)
+static final function AddUniqueHint(out array< class<TurboCardHint> > HintList, class<TurboCardHint> HintClass)
 {
 	local int Index;
+	for (Index = HintList.Length - 1; Index >= 0; Index--)
+	{
+		if (HintList[Index] == HintClass)
+		{
+			return;
+		}
+	}
+	
+	HintList[HintList.Length] = HintClass;	
+}
+
+simulated function DrawSelectableCardList(Canvas C)
+{
+	local int Index, HintIndex;
+	local TurboCardActor CardActor;
+	local array< class<TurboCardHint> > HintList;
 	local float CardSize, CardOffset, CardScale;
 	local float CenterIndex;
-	local float TempX, TempY, VotedCardX, CardSelectionScale;
+	local float TempX, TempY, VotedCardX, CardSelectionScale, HintX, HintY;
 	local float TextSizeX, TextSizeY;
 	local array<int> VoteList;
 	local string ColorString, StrippedString;
@@ -690,13 +716,18 @@ simulated function DrawSelectableCardList(Canvas C)
 	
 	C.DrawColor = WhiteColor;
 
-	C.Font = TurboHUD.LoadBoldFont(BaseFontSize);
-
 	CenterIndex = float(CurrentCardCount) / 2.f;
 	CardSize = FMin(C.ClipX / 10.f, (C.ClipY / 4.f)) * Lerp(VoteMenuScale, 0.5f, 1.f);
 	CardOffset = CardSize * 1.1f * Lerp(FanOutRatio, 0.1f, 1.f);
 	TempY = ((C.ClipY / 1.75f) - (CardSize * 0.5f * Lerp(VoteMenuScale, -0.5f, 1.f))) + (CardSize * 4.f *  (1.f - FadeInAndUpRatio));
 	TempX = (C.ClipX / 2.f) - (CenterIndex * CardOffset);
+
+	//Prepare hint font.
+	C.Font = TurboHUD.LoadBoldFont(BaseFontSize + 2);
+	C.FontScaleX = 1.f;
+	C.FontScaleY = 1.f;
+
+	HintY = TempY + (CardSize * 0.25f);
 
 	for (Index = 0; Index < CurrentCardCount; Index++)
 	{
@@ -707,15 +738,17 @@ simulated function DrawSelectableCardList(Canvas C)
 			continue;	
 		}
 
-		if (CardRenderActorList[Index].CardActor == None)
+		CardActor = CardRenderActorList[Index].CardActor;
+
+		if (CardActor == None)
 		{
-			continue;	
+			continue;
 		}
 
 		CardSelectionScale = Lerp(CardRenderActorList[Index].Ratio, 1.f, 1.15f);
-		CardScale = CardSize / float(CardRenderActorList[Index].CardActor.CardScriptedTexture.USize);
+		CardScale = CardSize / float(CardActor.CardScriptedTexture.USize);
 
-		CardRenderActorList[Index].CardActor.RenderOverlays(C);
+		CardActor.RenderOverlays(C);
 
 		if (CardRenderActorList[Index].Ratio > 0.f)
 		{
@@ -724,12 +757,24 @@ simulated function DrawSelectableCardList(Canvas C)
 		}
 		
 		C.SetPos(TempX + (CardOffset * 0.5f) - (CardSize * CardSelectionScale * 0.5f), TempY - ((CardSelectionScale - 1.f) * CardSize));
-		C.DrawTileScaled(CardRenderActorList[Index].CardActor.CardShader, CardScale * CardSelectionScale, CardScale * CardSelectionScale);
+		HintX = FMax(HintX, C.CurX + (CardSelectionScale * CardSize * 1.05f));
+
+		C.DrawTileScaled(CardActor.CardShader, CardScale * CardSelectionScale, CardScale * CardSelectionScale);
+
+		if (FadeInAndUpRatio > 0.99f && VoteMenuScale > 0.99f && CardActor.Card.bHasCardHints && CardActor.Card.CardHintList.Length != 0)
+		{
+			for (HintIndex = 0; HintIndex < CardActor.Card.CardHintList.Length; HintIndex++)
+			{
+				AddUniqueHint(HintList, CardActor.Card.CardHintList[HintIndex]);
+			}
+		}
+
 		TempX += CardOffset;
 	}
 
 	if (VotedCardIndex != -1)
 	{
+		CardActor = CardRenderActorList[VotedCardIndex].CardActor;
 		CardSelectionScale = Lerp(CardRenderActorList[VotedCardIndex].Ratio, 1.f, 1.15f);
 		CardScale = CardSize / float(CardRenderActorList[VotedCardIndex].CardActor.CardScriptedTexture.USize);
 		TempX = VotedCardX + (CardOffset * 0.5f) - (CardSize * CardSelectionScale * 0.5f);
@@ -738,9 +783,30 @@ simulated function DrawSelectableCardList(Canvas C)
 		C.DrawColor = WhiteColor;
 
 		C.SetPos(TempX, TempY - ((CardSelectionScale - 1.f) * CardSize));
+		HintX = FMax(HintX, C.CurX + (CardSelectionScale * CardSize * 1.05f));
+
 		C.DrawTileScaled(CardRenderActorList[VotedCardIndex].CardActor.CardShader, CardScale * CardSelectionScale, CardScale * CardSelectionScale);
+
+		if (FadeInAndUpRatio > 0.99f && VoteMenuScale > 0.99f && CardActor.Card.bHasCardHints && CardActor.Card.CardHintList.Length != 0)
+		{
+			for (HintIndex = 0; HintIndex < CardActor.Card.CardHintList.Length; HintIndex++)
+			{
+				AddUniqueHint(HintList, CardActor.Card.CardHintList[HintIndex]);
+			}
+		}
 	}
 
+	if (VoteMenuScale > 0.99f)
+	{
+		for (Index = 0; Index < HintList.Length; Index++)
+		{
+			HintList[Index].static.DrawHint(C, HintX, HintY, CardSize * 1.5f, 1.f);
+			HintY += CardSize * 0.025f;
+		}
+	}
+
+
+	C.Font = TurboHUD.LoadBoldFont(BaseFontSize);
 	C.FontScaleX = Lerp(VoteMenuScale, 0.6f, 1.f);
 	C.FontScaleY = C.FontScaleX;
 

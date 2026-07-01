@@ -420,13 +420,16 @@ static final function TickCheatDeath(TurboCardOverlay CardOverlay, TurboPlayerCa
     }
 }
 
-static final function DrawCheatDeath(TurboCardOverlay CardOverlay, TurboPlayerCardCustomInfo PlayerCustomInfo, Canvas Canvas, TurboCard Card, float DrawX, float DrawY, float DrawHeight)
+static final function bool DrawCheatDeath(TurboCardOverlay CardOverlay, TurboPlayerCardCustomInfo PlayerCustomInfo, Canvas Canvas, TurboCard Card, float DrawX, float DrawY, float DrawHeight)
 {
     if (CardOverlay.CheatDeathStatus.Ratio > 0.003f)
     {
         DrawCardInfoNumberProgress(Canvas, Texture'KFTurboCardGame.UI.CheatedDeathIcon_D', 0.f, CardOverlay.CheatDeathStatus.Number,
             DrawX, DrawY, DrawHeight, CardOverlay.CheatDeathStatus.Ratio, 1.f);
+        return true;
     }
+
+    return false;
 }
 
 //========================
@@ -461,13 +464,16 @@ static final function TickRackEmUp(TurboCardOverlay CardOverlay, TurboPlayerCard
 	}
 }
 
-static final function DrawRackEmUp(TurboCardOverlay CardOverlay, TurboPlayerCardCustomInfo PlayerCustomInfo, Canvas Canvas, TurboCard Card, float DrawX, float DrawY, float DrawHeight)
+static final function bool DrawRackEmUp(TurboCardOverlay CardOverlay, TurboPlayerCardCustomInfo PlayerCustomInfo, Canvas Canvas, TurboCard Card, float DrawX, float DrawY, float DrawHeight)
 {
     if (CardOverlay.RackEmUpStatus.Ratio > 0.003f)
     {
         DrawCardInfoNumberProgress(Canvas, Texture'KFTurboCardGame.UI.RackEmUpIcon_D', PlayerCustomInfo.GetRackEmUpStackPercentDuration(), CardOverlay.RackEmUpStatus.Number,
             DrawX, DrawY, DrawHeight, CardOverlay.RackEmUpStatus.Ratio, CardOverlay.RackEmUpStatus.NumberScale);
+        return true;
     }
+
+    return false;
 }
 
 //========================
@@ -490,12 +496,15 @@ static final function TickPerpetuallyCritcal(TurboCardOverlay CardOverlay, Turbo
 	}
 }
 
-static final function DrawPerpetuallyCritcal(TurboCardOverlay CardOverlay, TurboPlayerCardCustomInfo PlayerCustomInfo, Canvas Canvas, TurboCard Card, float DrawX, float DrawY, float DrawHeight)
+static final function bool DrawPerpetuallyCritcal(TurboCardOverlay CardOverlay, TurboPlayerCardCustomInfo PlayerCustomInfo, Canvas Canvas, TurboCard Card, float DrawX, float DrawY, float DrawHeight)
 {
     if (CardOverlay.PerpetualCriticalStatus.Ratio > 0.003f)
     {
         DrawCardInfoProgress(Canvas, Texture'KFTurboCardGame.UI.CritBoostIcon_D', PlayerCustomInfo.GetPerpetualCriticalPercentDuration(), DrawX, DrawY, DrawHeight, CardOverlay.PerpetualCriticalStatus.Ratio);
+        return true;
     }
+
+    return false;
 }
 
 //========================
@@ -518,12 +527,15 @@ static final function TickFragOut(TurboCardOverlay CardOverlay, TurboPlayerCardC
 	}
 }
 
-static final function DrawFragOut(TurboCardOverlay CardOverlay, TurboPlayerCardCustomInfo PlayerCustomInfo, Canvas Canvas, TurboCard Card, float DrawX, float DrawY, float DrawHeight)
+static final function bool DrawFragOut(TurboCardOverlay CardOverlay, TurboPlayerCardCustomInfo PlayerCustomInfo, Canvas Canvas, TurboCard Card, float DrawX, float DrawY, float DrawHeight)
 {
     if (CardOverlay.GrenadeBoostStatus.Ratio > 0.003f)
     {
         DrawCardInfoProgress(Canvas, Texture'KFTurboCardGame.UI.NadeBoostIcon_D', PlayerCustomInfo.GetGrenadeThrowPercentDuration(), DrawX, DrawY, DrawHeight, CardOverlay.GrenadeBoostStatus.Ratio);
+        return true;
     }
+
+    return false;
 }
 
 //========================
@@ -546,12 +558,15 @@ static final function TickEpinephrine(TurboCardOverlay CardOverlay, TurboPlayerC
 	}
 }
 
-static final function DrawEpinephrine(TurboCardOverlay CardOverlay, TurboPlayerCardCustomInfo PlayerCustomInfo, Canvas Canvas, TurboCard Card, float DrawX, float DrawY, float DrawHeight)
+static final function bool DrawEpinephrine(TurboCardOverlay CardOverlay, TurboPlayerCardCustomInfo PlayerCustomInfo, Canvas Canvas, TurboCard Card, float DrawX, float DrawY, float DrawHeight)
 {
     if (CardOverlay.HealBoostStatus.Ratio > 0.003f)
     {
         DrawCardInfoProgress(Canvas, Texture'KFTurboCardGame.UI.HealBoostIcon_D', PlayerCustomInfo.GetGrenadeThrowPercentDuration(), DrawX, DrawY, DrawHeight, CardOverlay.HealBoostStatus.Ratio);
+        return true;
     }
+
+    return false;
 }
 
 //========================
@@ -581,13 +596,17 @@ static final function TickSubstitute(TurboCardOverlay CardOverlay, TurboPlayerCa
 	}
 }
 
-static final function DrawSubstitute(TurboCardOverlay CardOverlay, TurboPlayerCardCustomInfo PlayerCustomInfo, Canvas Canvas, TurboCard Card, float DrawX, float DrawY, float DrawHeight)
+static final function bool DrawSubstitute(TurboCardOverlay CardOverlay, TurboPlayerCardCustomInfo PlayerCustomInfo, Canvas Canvas, TurboCard Card, float DrawX, float DrawY, float DrawHeight)
 {
     if (CardOverlay.SubstituteStatus.Ratio > 0.003f)
     {
         DrawCardInfoNumberProgress(Canvas, Texture'KFTurboCardGame.UI.SubstituteIcon_D', 0.f, CardOverlay.SubstituteStatus.Number,
             DrawX, DrawY, DrawHeight, CardOverlay.SubstituteStatus.Ratio, CardOverlay.SubstituteStatus.NumberScale);
+
+        return true;
     }
+
+    return false;
 }
 
 defaultproperties
@@ -951,6 +970,8 @@ defaultproperties
         CardDescriptionList(1)="66% more damage."
         OnActivateCard=ActivatePestExterminator
         CardID="SUPER_EXTERMINATOR"
+        bHasCardHints=true
+        CardHintList(0)=class'TurboCardHintMonsterTier'
     End Object
     DeckCardObjectList(29)=TurboCard'PestExterminator'
 
@@ -1018,6 +1039,10 @@ defaultproperties
         CardDescriptionList(4)="5 seconds."
         OnActivateCard=ActivateFragOut
         CardID="SUPER_FRAGOUT"
+        bHasStatusIcon=true
+        OnStatusPostNetReceive=UpdateFragOut
+        OnStatusIconTick=TickFragOut
+        OnStatusIconDraw=DrawFragOut
     End Object
     DeckCardObjectList(35)=TurboCard'FragOut'
 

@@ -436,6 +436,35 @@ function ActivateTooMuchForZBlock(TurboCardGameplayManager GameplayManager, Turb
     Card.UpdateModifier(GameplayManager.PlayerAirControlModifier, 10000.f, bActivate);
 }
 
+//========================
+//Dauntless
+
+static final function bool DrawDauntless(TurboCardOverlay CardOverlay, TurboPlayerCardCustomInfo PlayerCustomInfo, Canvas Canvas, TurboCard Card, float DrawX, float DrawY, float DrawHeight)
+{
+    if (CardOverlay.DauntlessStatus.Ratio > 0.003f)
+    {
+        DrawCardInfoIcon(Canvas, Texture'KFTurboCardGame.UI.DauntlessIcon_D', DrawX, DrawY, DrawHeight, CardOverlay.SubstituteStatus.Ratio);
+        return true;
+    }
+    
+    return false;
+}
+
+static final function TickDauntless(TurboCardOverlay CardOverlay, TurboPlayerCardCustomInfo PlayerCustomInfo, TurboCard Card, float DeltaTime)
+{
+    if (PlayerCustomInfo.PlayerTPRI.GetHealthPercent() > 0.75f)
+    {
+        if (CardOverlay.DauntlessStatus.Ratio > 0.003f)
+        {
+            CardOverlay.DauntlessStatus.Ratio -= DeltaTime;
+        }
+    }
+    else
+    {
+        CardOverlay.DauntlessStatus.Ratio = 1.f;
+    }
+}
+
 defaultproperties
 {
     Begin Object Name=BonusCashKill Class=TurboCard_Good
@@ -554,10 +583,13 @@ defaultproperties
     Begin Object Name=TrashHeadshotDamage Class=TurboCard_Good
         CardName(0)="Trash Heads"
         CardDescriptionList(0)="Increases headshot"
-        CardDescriptionList(1)="damage on non-elite"
-        CardDescriptionList(2)="zeds by 10%."
+        CardDescriptionList(1)="damage on trash"
+        CardDescriptionList(2)="and special"
+        CardDescriptionList(3)="zeds by 10%."
         CardID="GOOD_TRASHHEADS"
         OnActivateCard=ActivateTrashHeadshotDamage
+        bHasCardHints=true
+        CardHintList(0)=class'TurboCardHintMonsterTier'
     End Object
     DeckCardObjectList(11)=TurboCard'TrashHeadshotDamage'
 
@@ -638,6 +670,9 @@ defaultproperties
         CardDescriptionList(3)="damage."
         CardID="GOOD_DAUNTLESS"
         OnActivateCard=ActivateDauntless
+        bHasStatusIcon=true
+        OnStatusIconTick=TickDauntless
+        OnStatusIconDraw=DrawDauntless
     End Object
     DeckCardObjectList(19)=TurboCard'Dauntless'
 

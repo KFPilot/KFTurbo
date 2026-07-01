@@ -6,7 +6,8 @@ class TurboCardDeck_Evil extends TurboCardDeck;
 enum EvilOptional
 {
     Doorless,
-    MixedSignals
+    MixedSignals,
+    NoJunkies
 };
 
 var bool bLevelHasDoors;
@@ -57,6 +58,13 @@ function InitializeDeck(TurboCardReplicationInfo TCRI)
     
     SetOptionalCardEnabled(int(EvilOptional.Doorless), bLevelHasDoors);
     SetOptionalCardEnabled(int(EvilOptional.MixedSignals), bLevelHasMultipleTraders);
+}
+
+function OnDeckDraw(TurboCardReplicationInfo TCRI)
+{
+    Super.OnDeckDraw(TCRI);
+
+    SetOptionalCardEnabled(int(EvilOptional.NoJunkies), Level.Game.NumPlayers > 2);
 }
 
 function ActivateHyperbloats(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
@@ -389,12 +397,18 @@ function ActivateButterFingers(TurboCardGameplayManager GameplayManager, TurboCa
     Card.UpdateFlag(GameplayManager.ButterFingersFlag, bActivate);
 }
 
-static final function DrawFreezeTagStatus(TurboCardOverlay CardOverlay, TurboPlayerCardCustomInfo PlayerCustomInfo, Canvas Canvas, TurboCard Card, float DrawX, float DrawY, float DrawHeight)
+//========================
+//Freeze Tag
+
+static final function bool DrawFreezeTagStatus(TurboCardOverlay CardOverlay, TurboPlayerCardCustomInfo PlayerCustomInfo, Canvas Canvas, TurboCard Card, float DrawX, float DrawY, float DrawHeight)
 {
     if (CardOverlay.FreezeTagStatus.Ratio > 0.003f)
     {
         DrawCardInfoProgress(Canvas, Texture'KFTurboCardGame.UI.FreezeTagIcon_D', PlayerCustomInfo.GetTimePercentUntilFreeze(), DrawX, DrawY, DrawHeight, CardOverlay.FreezeTagStatus.Ratio);
+        return true;
     }
+
+    return false;
 }
 
 static final function TickFreezeTagStatus(TurboCardOverlay CardOverlay, TurboPlayerCardCustomInfo PlayerCustomInfo, TurboCard Card, float DeltaTime)
@@ -406,6 +420,110 @@ static final function TickFreezeTagStatus(TurboCardOverlay CardOverlay, TurboPla
     else
     {
         CardOverlay.FreezeTagStatus.Ratio = 1.f;
+    }
+}
+
+//========================
+//Clotting Issues
+
+static final function UpdateClottingIssues(TurboCardOverlay CardOverlay, TurboPlayerCardCustomInfo PlayerCustomInfo, TurboCard Card)
+{
+    if (PlayerCustomInfo.BleedCount != CardOverlay.LastKnownBleedCount)
+    {
+        CardOverlay.BleedStatus.Number = PlayerCustomInfo.BleedCount;
+        CardOverlay.LastKnownBleedCount = PlayerCustomInfo.BleedCount;
+        CardOverlay.BleedStatus.NumberScale = 0.1f;
+
+        if (PlayerCustomInfo.BleedCount > 0)
+        {
+            CardOverlay.BleedStatus.Ratio = 1.f;
+        }
+    }
+}
+
+static final function bool DrawClottingIssues(TurboCardOverlay CardOverlay, TurboPlayerCardCustomInfo PlayerCustomInfo, Canvas Canvas, TurboCard Card, float DrawX, float DrawY, float DrawHeight)
+{
+    if (CardOverlay.BleedStatus.Ratio > 0.003f)
+    {
+        DrawCardInfoNumberProgress(Canvas, Texture'KFTurboCardGame.UI.BleedIcon_D', PlayerCustomInfo.GetTimePercentUntilBleed(), CardOverlay.BleedStatus.Number,
+            DrawX, DrawY, DrawHeight, CardOverlay.BleedStatus.Ratio, 1.f);
+        
+        return true;
+    }
+
+    return false;
+}
+
+static final function TickClottingIssues(TurboCardOverlay CardOverlay, TurboPlayerCardCustomInfo PlayerCustomInfo, TurboCard Card, float DeltaTime)
+{
+    if (CardOverlay.BleedStatus.Ratio > 0.003f)
+    {
+        if (PlayerCustomInfo.BleedCount <= 0)
+        {
+            CardOverlay.BleedStatus.Ratio -= DeltaTime;
+        }
+
+        CardOverlay.BleedStatus.NumberScale = Lerp(DeltaTime * 4.f, CardOverlay.BleedStatus.NumberScale, 1.f);
+    }
+}
+
+//========================
+//Marked For Death
+
+static final function UpdateMarkedForDeath(TurboCardOverlay CardOverlay, TurboPlayerCardCustomInfo PlayerCustomInfo, TurboCard Card)
+{
+    if (PlayerCustomInfo.IsMarkedForDeath())
+    {
+        CardOverlay.MarkedForDeathStatus.Ratio = 1.f;
+    }
+}
+
+static final function bool DrawMarkedForDeath(TurboCardOverlay CardOverlay, TurboPlayerCardCustomInfo PlayerCustomInfo, Canvas Canvas, TurboCard Card, float DrawX, float DrawY, float DrawHeight)
+{
+    if (CardOverlay.MarkedForDeathStatus.Ratio > 0.003f)
+    {
+        DrawCardInfoIcon(Canvas, Texture'KFTurboCardGame.UI.MarkedForDeathIcon_D', DrawX, DrawY, DrawHeight, 1.f);
+        return true;
+    }
+
+    return false;
+}
+
+static final function TickMarkedForDeath(TurboCardOverlay CardOverlay, TurboPlayerCardCustomInfo PlayerCustomInfo, TurboCard Card, float DeltaTime)
+{
+    if (CardOverlay.MarkedForDeathStatus.Ratio > 0.003f && !PlayerCustomInfo.IsMarkedForDeath())
+    {
+        CardOverlay.MarkedForDeathStatus.Ratio -= DeltaTime;
+    }
+}
+
+//========================
+//No Rest For The Wicked
+
+static final function UpdateNoRestForTheWicked(TurboCardOverlay CardOverlay, TurboPlayerCardCustomInfo PlayerCustomInfo, TurboCard Card)
+{
+    if (PlayerCustomInfo.IsNoRestForTheWickedActive())
+    {
+        CardOverlay.NoRestForTheWickedStatus.Ratio = 1.f;
+    }
+}
+
+static final function bool DrawNoRestForTheWicked(TurboCardOverlay CardOverlay, TurboPlayerCardCustomInfo PlayerCustomInfo, Canvas Canvas, TurboCard Card, float DrawX, float DrawY, float DrawHeight)
+{
+    if (CardOverlay.NoRestForTheWickedStatus.Ratio > 0.003f)
+    {
+        DrawCardInfoIcon(Canvas, Texture'KFTurboCardGame.UI.NoRestForTheWickedIcon_D', DrawX, DrawY, DrawHeight, 1.f);
+        return true;
+    }
+
+    return false;
+}
+
+static final function TickNoRestForTheWicked(TurboCardOverlay CardOverlay, TurboPlayerCardCustomInfo PlayerCustomInfo, TurboCard Card, float DeltaTime)
+{
+    if (CardOverlay.NoRestForTheWickedStatus.Ratio > 0.003f && !PlayerCustomInfo.IsNoRestForTheWickedActive())
+    {
+        CardOverlay.NoRestForTheWickedStatus.Ratio -= DeltaTime;
     }
 }
 
@@ -430,6 +548,16 @@ defaultproperties
         OnActivateCard=ActivateMixedSignals
     End Object
     OptionalCardList(1)=(Card=TurboCard'MixedSignals')
+
+    Begin Object Name=NoJunkies Class=TurboCard_Evil
+        CardName(0)="No Junkies"
+        CardDescriptionList(0)="Syringes are"
+        CardDescriptionList(1)="removed from"
+        CardDescriptionList(2)="all players."
+        CardID="EVIL_NOJUNKIES"
+        OnActivateCard=ActivateNoJunkies
+    End Object
+    OptionalCardList(2)=(Card=TurboCard'NoJunkies')
 
     Begin Object Name=Hyperbloats Class=TurboCard_Evil
         CardName(0)="Hyperbloats"
@@ -572,6 +700,10 @@ defaultproperties
         CardDescriptionList(5)="5 seconds."
         CardID="EVIL_BLEEDING"
         OnActivateCard=ActivateBleedingPlayers
+        bHasStatusIcon=true
+        OnStatusPostNetReceive=UpdateClottingIssues
+        OnStatusIconTick=TickClottingIssues
+        OnStatusIconDraw=DrawClottingIssues
     End Object
     DeckCardObjectList(12)=TurboCard'BleedingPlayers'
     
@@ -685,6 +817,10 @@ defaultproperties
         CardDescriptionList(2)="standing still."
         CardID="EVIL_NOREST"
         OnActivateCard=ActivateNoRestForTheWicked
+        bHasStatusIcon=true
+        OnStatusPostNetReceive=UpdateNoRestForTheWicked
+        OnStatusIconTick=TickNoRestForTheWicked
+        OnStatusIconDraw=DrawNoRestForTheWicked
     End Object
     DeckCardObjectList(22)=TurboCard'NoRestForTheWicked'
     
@@ -700,19 +836,22 @@ defaultproperties
         CardDescriptionList(1)="50% more health."
         CardID="EVIL_GARBAGEDAY"
         OnActivateCard=ActivateGarbageDay
+        bHasCardHints=true
+        CardHintList(0)=class'TurboCardHintMonsterTier'
     End Object
     DeckCardObjectList(24)=TurboCard'GarbageDay'
     
-    Begin Object Name=NoJunkies Class=TurboCard_Evil
-        CardName(0)="No Junkies"
-        CardDescriptionList(0)="Syringes are"
-        CardDescriptionList(1)="removed from"
-        CardDescriptionList(2)="all players."
-        CardID="EVIL_NOJUNKIES"
-        OnActivateCard=ActivateNoJunkies
+    Begin Object Name=Blackout Class=TurboCard_Evil
+        CardName(0)="Blackout"
+        CardDescriptionList(0)="Darkens the world"
+        CardDescriptionList(1)="and reduces view"
+        CardDescriptionList(2)="distance for the"
+        CardDescriptionList(3)="rest of the game."
+        CardID="EVIL_BLACKOUT"
+        OnActivateCard=ActivateBlackout
     End Object
-    DeckCardObjectList(25)=TurboCard'NoJunkies'
-    
+    DeckCardObjectList(25)=TurboCard'Blackout'
+
     Begin Object Name=MarkedForDeath Class=TurboCard_Evil
         CardName(0)="Marked For"
         CardName(1)="Death"
@@ -723,6 +862,10 @@ defaultproperties
         CardDescriptionList(4)="for a wave."
         CardID="EVIL_MARKEDDEATH"
         OnActivateCard=ActivateMarkedForDeath
+        bHasStatusIcon=true
+        OnStatusPostNetReceive=UpdateMarkedForDeath
+        OnStatusIconTick=TickMarkedForDeath
+        OnStatusIconDraw=DrawMarkedForDeath
     End Object
     DeckCardObjectList(26)=TurboCard'MarkedForDeath'
     
@@ -757,6 +900,8 @@ defaultproperties
         CardDescriptionList(3)="a variant by 400%."
         CardID="EVIL_UNUSUALMUT"
         OnActivateCard=ActivateUnusualMutation
+        bHasCardHints=true
+        CardHintList(0)=class'TurboCardHintVariantMonster'
     End Object
     DeckCardObjectList(29)=TurboCard'UnusualMutation'
 
@@ -816,6 +961,8 @@ defaultproperties
         CardDescriptionList(7)="elite zed."
         CardID="EVIL_UNFORTUPGRADE"
         OnActivateCard=ActivateUnfortunateUpgrade
+        bHasCardHints=true
+        CardHintList(0)=class'TurboCardHintMonsterTier'
     End Object
     DeckCardObjectList(34)=TurboCard'UnfortunateUpgrade'
     
@@ -838,15 +985,4 @@ defaultproperties
         OnActivateCard=ActivateBadBlood
     End Object
     DeckCardObjectList(36)=TurboCard'BadBlood'
-    
-    Begin Object Name=Blackout Class=TurboCard_Evil
-        CardName(0)="Blackout"
-        CardDescriptionList(0)="Darkens the world"
-        CardDescriptionList(1)="and reduces view"
-        CardDescriptionList(2)="distance for the"
-        CardDescriptionList(3)="rest of the game."
-        CardID="EVIL_BLACKOUT"
-        OnActivateCard=ActivateBlackout
-    End Object
-    DeckCardObjectList(37)=TurboCard'Blackout'
 }

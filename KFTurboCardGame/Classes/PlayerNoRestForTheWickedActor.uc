@@ -6,6 +6,7 @@ class PlayerNoRestForTheWickedActor extends Engine.Info;
 struct PlayerMovementCache
 {
     var float NextDamageTime;
+    var bool bWasTakingDamage;
     var PlayerController Player;
 };
 
@@ -24,7 +25,7 @@ function Timer()
 
     for (C = Level.ControllerList; C != None; C = C.NextController)
     {
-        if (!C.bIsPlayer || C.Pawn != None || PlayerController(C) == None)
+        if (!C.bIsPlayer || C.Pawn == None || PlayerController(C) == None)
         {
             continue;
         }
@@ -52,6 +53,12 @@ final function AddUnique(PlayerController PlayerController)
 function ResetPlayerMovementCache(out PlayerMovementCache Cache)
 {
     Cache.NextDamageTime = Level.TimeSeconds + 5.f;
+
+    if (Cache.bWasTakingDamage)
+    {
+        Cache.bWasTakingDamage = false;
+        UpdatePlayer(Cache.Player, false);
+    }
 }
 
 function Tick(float DeltaTime)
@@ -102,9 +109,28 @@ function TickPlayerMovementCache()
             continue;
         }
 
+        if (!PlayerMovementList[Index].bWasTakingDamage)
+        {
+            PlayerMovementList[Index].bWasTakingDamage = true;
+            UpdatePlayer(PlayerController, true);
+        }
+
         PlayerController.Pawn.TakeDamage(10, None, PlayerController.Pawn.Location, vect(0, 0, 0), class'NoRestForTheWicked_DT');
         PlayerMovementList[Index].NextDamageTime = Level.TimeSeconds + 1.f;
     }
+}
+
+function UpdatePlayer(PlayerController Player, bool bTakingDamage)
+{
+    local TurboPlayerCardCustomInfo CardCustomInfo;
+    CardCustomInfo = TurboPlayerCardCustomInfo(class'TurboPlayerCardCustomInfo'.static.FindCustomInfo(TurboPlayerReplicationInfo(Player.PlayerReplicationInfo)));
+
+    if (CardCustomInfo == None)
+    {
+        return;
+    }
+
+    CardCustomInfo.SetNoRestForTheWickedActive(bTakingDamage);
 }
 
 defaultproperties

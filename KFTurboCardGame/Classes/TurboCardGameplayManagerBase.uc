@@ -35,6 +35,8 @@ struct UpgradeMonsterReplacement
 
 var array<UpgradeMonsterReplacement> UpgradeReplacementList;
 
+var Controller MarkedForDeathController;
+
 function PostBeginPlay()
 {
     local CardDeltaStack CardDelta;
@@ -353,8 +355,19 @@ function MultiplyPlayerCash(float Multiplier)
 
 function MarkPlayerForDeath()
 {
+    local TurboPlayerCardCustomInfo CardCustomInfo;
     local TurboHumanPawn HumanPawn;
     local array<TurboHumanPawn> HumanPawnList;
+
+    if (MarkedForDeathController != None)
+    {
+        CardCustomInfo = TurboPlayerCardCustomInfo(class'TurboPlayerCardCustomInfo'.static.FindCustomInfo(TurboPlayerReplicationInfo(MarkedForDeathController.PlayerReplicationInfo)));
+
+        if (CardCustomInfo != None)
+        {
+            CardCustomInfo.SetMarkedForDeath(false);
+        }
+    }
 
     HumanPawnList = class'TurboGameplayHelper'.static.GetPlayerPawnList(Level);
 
@@ -369,9 +382,17 @@ function MarkPlayerForDeath()
     {
         return;
     }
-
+    
+    MarkedForDeathController = HumanPawn.Controller;
     CardGameRules.MarkedForDeathPawn = HumanPawn;
     TurboGameType.Level.BroadcastLocalizedMessage(class'MarkedForDeathLocalMessage', 0, HumanPawn.PlayerReplicationInfo);
+    
+    CardCustomInfo = TurboPlayerCardCustomInfo(class'TurboPlayerCardCustomInfo'.static.FindCustomInfo(TurboPlayerReplicationInfo(MarkedForDeathController.PlayerReplicationInfo)));
+    
+    if (CardCustomInfo != None)
+    {
+        CardCustomInfo.SetMarkedForDeath(true);
+    }
 }
 
 defaultproperties

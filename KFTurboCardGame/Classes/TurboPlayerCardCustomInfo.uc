@@ -43,13 +43,20 @@ var float LastFreezeTagEvaluation;
 var const float FreezeTagTimeUntilSlow;
 var const float FreezeTagTimeUntilFreeze;
 
+var int BleedCount;
+var float NextBleedTime;
+
 var private TurboCardOverlay CachedTurboCardOverlay;
+
+const MARKED_FOR_DEATH = 1;
+const NO_REST_FOR_THE_WICKED = 2;
+var int PlayerFlags; //Pack binary states in here.
 
 replication
 {
     reliable if (Role == ROLE_Authority)
         GrenadeThrowTime, HealBoostTime, RackEmUpHeadshotCount, RackEmUpHeadshotStackExpireTime, CheatDeathWave,
-		CriticalHitTime, SubstituteDamageCount;
+		SubstituteDamageCount, BleedCount, NextBleedTime, PlayerFlags;
 
 	reliable if (Role == ROLE_Authority)
         ClientCriticalHit;
@@ -173,11 +180,49 @@ final function bool IsInCheatDeathGracePeriod()
 	return CheatDeathTime > 0.f && Level.TimeSeconds < CheatDeathTime;
 }
 
-final function SetCheatDeathWave(int Wave)
+final simulated function SetCheatDeathWave(int Wave)
 {
 	CheatDeathWave = Wave;
     CheatDeathTime = Level.TimeSeconds + CheatDeathGracePeriod;
 	ForceNetUpdate();
+}
+
+final function SetMarkedForDeath(bool bEnable)
+{
+	if (bEnable)
+	{
+		PlayerFlags = MARKED_FOR_DEATH | PlayerFlags;
+	}
+	else
+	{
+		PlayerFlags = (~MARKED_FOR_DEATH) & PlayerFlags;
+	}
+	
+	ForceNetUpdate();
+}
+
+final simulated function bool IsMarkedForDeath()
+{
+	return (MARKED_FOR_DEATH & PlayerFlags) != 0;
+}
+
+final function SetNoRestForTheWickedActive(bool bEnable)
+{
+	if (bEnable)
+	{
+		PlayerFlags = NO_REST_FOR_THE_WICKED | PlayerFlags;
+	}
+	else
+	{
+		PlayerFlags = (~NO_REST_FOR_THE_WICKED) & PlayerFlags;
+	}
+
+	ForceNetUpdate();
+}
+
+final simulated function bool IsNoRestForTheWickedActive()
+{
+	return (NO_REST_FOR_THE_WICKED & PlayerFlags) != 0;
 }
 
 final function bool AttemptSubstituteDamage()
@@ -204,7 +249,7 @@ final function ResetSubstituteDamage()
 	SubstituteDamageCount = SubstituteDamageCountBase;
 }
 
-final function bool IsInPerpetualCriticalHitTime()
+final simulated function bool IsInPerpetualCriticalHitTime()
 {
 	if (ServerTimeActor == None || PerpetualCriticalHitStartTime <= 0.f)
 	{
@@ -312,6 +357,13 @@ final function bool AttemptStunningHit()
 
 	StunningHitFireCounter = FireCounter;
 	return true;
+}
+
+final function UpdateBleedCounter(int Count, float Time)
+{
+	BleedCount = Count;
+	NextBleedTime = Time;
+	ForceNetUpdate();
 }
 
 simulated function PostNetReceive()
@@ -447,6 +499,16 @@ final simulated function float GetPerpetualCriticalPercentDuration()
 final simulated function float GetTimePercentUntilFreeze()
 {
 	return FClamp((Level.TimeSeconds - MeleeWeaponHoldTime) / FreezeTagTimeUntilSlow, 0.f, 1.f);
+}
+
+final simulated function float GetTimePercentUntilBleed()
+{
+	if (ServerTimeActor == None || NextBleedTime == 0.f)
+	{
+		return 0.f;
+	}
+
+	return Lerp(FClamp((NextBleedTime - ServerTimeActor.GetServerTimeSeconds()) / class'PlayerBleedActor'.default.BleedInterval, 0.f, 1.f), 1.f, 0.f);
 }
 
 defaultproperties

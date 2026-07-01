@@ -36,12 +36,15 @@ var bool bCanBeDeactivated; //If true, this card can undo its effect.
 
 var bool bHasStatusIcon; //If true, this card has a status icon and wants relevant events sent to it.
 
+var bool bHasCardHints;
+var array< class<TurboCardHint> > CardHintList;
+
 delegate OnActivateCard(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate);
 
 //Must be bound to static functions.
 delegate OnStatusPostNetReceive(TurboCardOverlay CardOverlay, TurboPlayerCardCustomInfo PlayerCustomInfo, TurboCard Card);
 delegate OnStatusIconTick(TurboCardOverlay CardOverlay, TurboPlayerCardCustomInfo PlayerCustomInfo, TurboCard Card, float DeltaTime);
-delegate OnStatusIconDraw(TurboCardOverlay CardOverlay, TurboPlayerCardCustomInfo PlayerCustomInfo, Canvas Canvas, TurboCard Card, float DrawX, float DrawY, float DrawHeight);
+delegate bool OnStatusIconDraw(TurboCardOverlay CardOverlay, TurboPlayerCardCustomInfo PlayerCustomInfo, Canvas Canvas, TurboCard Card, float DrawX, float DrawY, float DrawHeight);
 
 final function UpdateModifier(CardModifierStack ModifierStack, float Modifier, bool bActivate)
 {

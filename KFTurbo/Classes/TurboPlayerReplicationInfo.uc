@@ -226,6 +226,16 @@ function ReceiveRewardForHealing(int MedicReward, KFPawn Healee)
     Super.ReceiveRewardForHealing(MedicReward, Healee);
 }
 
+final simulated function float GetHealthPercent()
+{
+    if (HealthMax <= 0)
+    {
+        return float(PlayerHealth) / 100.f;
+    }
+
+    return float(PlayerHealth) / float(HealthMax);
+}
+
 defaultproperties
 {
     ShieldStrength=0
