@@ -506,7 +506,7 @@ function int NetDamage(int OriginalDamage, int Damage, Pawn Injured, Pawn Instig
         }
     }
 
-    if (bZedDamageDropsWeapon)
+    if (InjuredHumanPawn != None && InjuredCardInfo != None && bZedDamageDropsWeapon)
     {
         PlayerDropWeapon(InjuredHumanPawn, InjuredCardInfo);
     }
