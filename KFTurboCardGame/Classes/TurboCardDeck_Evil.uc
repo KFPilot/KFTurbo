@@ -710,6 +710,8 @@ defaultproperties
         bHasStatusIcon=true
         OnStatusIconDraw=DrawFreezeTagStatus
         OnStatusIconTick=TickFreezeTagStatus
+        bHasCardHints=true
+        CardHintList(0)=class'TurboCardHintFreezeTag'
     End Object
     DeckCardObjectList(10)=TurboCard'FreezeTag'
     
