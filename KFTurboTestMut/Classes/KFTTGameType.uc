@@ -106,6 +106,16 @@ State MatchInProgress {
 
 function DistributeCash(TurboPlayerController ExitingPlayer) {}
 
+function int GetCurrentWaveNum()
+{
+    return 0;
+}
+
+function int GetFinalWaveNum()
+{
+    return 0;
+}
+
 defaultproperties
 {
 	bIsTestGameType=true
