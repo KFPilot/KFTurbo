@@ -17,6 +17,12 @@ event Opened(GUIComponent Sender)
 {
 	Super.Opened(Sender);
 
+	if (class'KFTurboGameType'.static.StaticIsTestGameType(PlayerOwner()))
+	{
+		TimeLeftLabel.bVisible = false;
+		WaveLabel.bVisible = false;
+	}
+
 	NotifyPlayerOpenedTrader();
 }
 
