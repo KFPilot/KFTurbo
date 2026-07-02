@@ -132,7 +132,7 @@ function UpdateMyBuyables()
 		{
 			MyBuyable.bSellable	= false;
 			FragBuyable = MyBuyable;
-			FragBuyable.ItemPerkIndex = class'V_Demolitions'.default.PerkIndex;
+			FragBuyable.ItemPerkIndex = GetPerkIndexForGrenade(KFV);
 		}
 		else
 		{
@@ -236,6 +236,21 @@ function UpdateMyBuyables()
 
 	//Now Update the list
 	UpdateList();
+}
+
+function int GetPerkIndexForGrenade(class<KFVeterancyTypes> PerkClass)
+{
+	switch(PerkClass)
+	{
+		case class'V_Berserker':
+			return class'V_Berserker'.default.PerkIndex;
+		case class'V_FieldMedic':
+			return class'V_FieldMedic'.default.PerkIndex;
+		case class'V_Firebug':
+			return class'V_Firebug'.default.PerkIndex;
+	}
+
+	return class'V_Demolitions'.default.PerkIndex;
 }
 
 function bool InternalOnClick(GUIComponent Sender)
