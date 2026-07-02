@@ -259,6 +259,8 @@ function SetVoteIndex(int Index, Controller Voter)
 function ResetVote()
 {
     VoteIndex = 0;
+    LastKnownVoteIndex = 0;
+
     ForceNetUpdate();
 }
 
