@@ -736,7 +736,7 @@ function bool AttemptChangePerk(class<KFVeterancyTypes> VetSkill)
 	{
 		if (!PerkChangeLockList[Index].static.CanSelectPerk(TurboVeterancyClass))
 		{
-			BroadcastLocalizedMessage(PerkChangeLockList[Index],, PlayerReplicationInfo,, TurboVeterancyClass);
+			ReceiveLocalizedMessage(PerkChangeLockList[Index],, PlayerReplicationInfo,, TurboVeterancyClass);
 			return false;
 		}
 	}
