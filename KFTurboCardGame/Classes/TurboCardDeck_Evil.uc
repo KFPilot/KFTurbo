@@ -544,7 +544,7 @@ static final function bool DrawGreedBegetsSlowSpeed(TurboCardOverlay CardOverlay
 static final function TickGreedBegetsSlowSpeed(TurboCardOverlay CardOverlay, TurboPlayerCardCustomInfo PlayerCustomInfo, TurboCard Card, float DeltaTime)
 {
     CardOverlay.GreedBegetsSlowSpeedStatus.Progress = Lerp(DeltaTime * 4.f, CardOverlay.GreedBegetsSlowSpeedStatus.Progress, PlayerCustomInfo.GetGreedBegetsSlowSpeedPercent());
-    if (CardOverlay.GreedBegetsSlowSpeedStatus.Progress > 0.f)
+    if (CardOverlay.GreedBegetsSlowSpeedStatus.Progress > 0.002f)
     {
         if (CardOverlay.GreedBegetsSlowSpeedStatus.Ratio < 1.f)
         {
