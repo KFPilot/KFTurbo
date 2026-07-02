@@ -49,7 +49,7 @@ function InitializeDeck(TurboCardReplicationInfo TCRI)
         }
 
         Count++;
-        if (Count > 1)
+        if (Count > 2)
         {
             bLevelHasMultipleTraders = true;
             break;
@@ -395,6 +395,11 @@ function ActivateUnusualMutation(TurboCardGameplayManager GameplayManager, Turbo
 function ActivateButterFingers(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
     Card.UpdateFlag(GameplayManager.ButterFingersFlag, bActivate);
+}
+
+function ActivateTemporalAnomaly(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
+{
+    Card.UpdateFlag(GameplayManager.TemporalAnomalyFlag, bActivate);
 }
 
 //========================
@@ -1050,4 +1055,15 @@ defaultproperties
         OnActivateCard=ActivateBadBlood
     End Object
     DeckCardObjectList(36)=TurboCard'BadBlood'
+    
+    Begin Object Name=TemporalAnomaly Class=TurboCard_Evil
+        CardName(0)="Temporal"
+        CardName(1)="Anomaly"
+        CardDescriptionList(0)="The passage of"
+        CardDescriptionList(1)="time will randomly"
+        CardDescriptionList(2)="fluctuate."
+        CardID="EVIL_TEMPANOMALY"
+        OnActivateCard=ActivateTemporalAnomaly
+    End Object
+    DeckCardObjectList(37)=TurboCard'TemporalAnomaly'
 }

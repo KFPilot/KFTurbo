@@ -397,6 +397,7 @@ static function AddDefaultInventory(KFPlayerReplicationInfo KFPRI, Pawn P)
 	if (IsHighDifficulty(KFPRI))
 	{
 		P.ShieldStrength = 100.f;
+		P.CreateInventory(string(class'KFTurbo.W_9MM_Weap')); //Make sure the item is made before filling grenade ammo.
 		FillUpAmmo(P);
 
 		P.CreateInventory(string(class'KFTurbo.W_Frag_Weap')); //Make sure the item is made before filling grenade ammo.

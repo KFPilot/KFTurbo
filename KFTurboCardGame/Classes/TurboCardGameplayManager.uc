@@ -44,6 +44,7 @@ var CardFlag CurseOfRaFlag;
 var CurseOfRaManager CurseOfRaManager;
 var CardFlag BlackoutFlag;
 var CardFlag ButterFingersFlag;
+var CardFlag TemporalAnomalyFlag;
 
 //FRIENDLY FIRE
 var CardModifierAdditiveStack FriendlyFireModifier;
@@ -552,6 +553,28 @@ function BlackoutFlagChanged(CardFlag Flag, bool bIsEnabled)
 function ButterFingersFlagChanged(CardFlag Flag, bool bIsEnabled)
 {
     CardGameRules.bZedDamageDropsWeapon = bIsEnabled;
+}
+
+function TemporalAnomalyFlagChanged(CardFlag Flag, bool bIsEnabled)
+{
+    local TemporalAnomalyActor Actor;
+
+    if (bIsEnabled)
+    {
+        foreach DynamicActors(class'TemporalAnomalyActor', Actor)
+        {
+            return;
+        }
+
+        Spawn(class'TemporalAnomalyActor', Self);
+    }
+    else
+    {
+        foreach DynamicActors(class'TemporalAnomalyActor', Actor)
+        {
+            Actor.Destroyed();
+        }
+    }
 }
 
 //FRIENDLY FIRE
@@ -1422,7 +1445,11 @@ defaultproperties
     End Object
     ButterFingersFlag=CardFlag'ButterFingersCardFlag'
 
-    //ButterFingersFlag
+    Begin Object Name=TemporalAnomalyCardFlag Class=CardFlag
+        FlagID="TemporalAnomaly"
+        OnFlagSetChanged=TemporalAnomalyFlagChanged
+    End Object
+    TemporalAnomalyFlag=CardFlag'TemporalAnomalyCardFlag'
 
 //FRIENDLY FIRE
     Begin Object Name=FriendlyFireModifierStack Class=CardModifierAdditiveStack

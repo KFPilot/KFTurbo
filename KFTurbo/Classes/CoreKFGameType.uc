@@ -21,7 +21,8 @@ var protected int FakedPlayerCount;
 //Forced player health count. Used to scale up monster health.
 var protected int ForcedPlayerHealthCount; 
 //Allows for zed time to be disabled.
-var protected bool bZedTimeEnabled; 
+var protected bool bZedTimeEnabled;
+var protected array< Object > ZedTimeDisableRequestList;
 
 function InitGame(string Options, out string Error)
 {
@@ -243,9 +244,40 @@ function bool SetZedTimeEnabled(bool bNewZedTimeEnabled)
     return bZedTimeEnabled;
 }
 
+function RequestZedTimeDisable(Object Requester)
+{
+    local int Index;
+
+    for (Index = 0; Index < ZedTimeDisableRequestList.Length; Index++)
+    {
+        if (ZedTimeDisableRequestList[Index] == Requester)
+        {
+            return;
+        }
+    }
+
+    ZedTimeDisableRequestList[ZedTimeDisableRequestList.Length] = Requester;
+}
+
+function RevokeZedTimeDisable(Object Requester)
+{
+    local int Index;
+
+    for (Index = 0; Index < ZedTimeDisableRequestList.Length; Index++)
+    {
+        if (ZedTimeDisableRequestList[Index] != Requester)
+        {
+            continue;
+        }
+
+        ZedTimeDisableRequestList.Remove(Index, 1);
+        return;
+    }
+}
+
 final function bool IsZedTimeEnabled()
 {
-    return bZedTimeEnabled;
+    return bZedTimeEnabled && ZedTimeDisableRequestList.Length == 0;
 }
 
 function DramaticEvent(float BaseZedTimePossibility, optional float DesiredZedTimeDuration)

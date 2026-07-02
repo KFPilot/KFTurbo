@@ -25,7 +25,7 @@ function OnVoteResult(Name Outcome)
         return;
     }
 
-    KFTurboGameType(Level.Game).SetZedTimeEnabled(false);
+    KFTurboGameType(Level.Game).RequestZedTimeDisable(OwnerGRI);
 }
 
 defaultproperties
