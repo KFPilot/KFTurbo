@@ -58,7 +58,7 @@ function UpdateMyBuyables()
 
 	KFV = PRI.ClientVeteranSkill;
 	if( KFV==None )
-		KFV = Class'KFVeterancyTypes';
+		KFV = Class'TurboVeterancyTypes';
 
 	// Fill the Buyables
 	for ( CurInv = PlayerOwner().Pawn.Inventory; CurInv != none; CurInv = CurInv.Inventory )
