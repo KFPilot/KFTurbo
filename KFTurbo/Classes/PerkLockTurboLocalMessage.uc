@@ -5,7 +5,7 @@
 class PerkLockTurboLocalMessage extends TurboLocalMessage;
 
 //By default all perks are locked.
-static function bool CanSelectPerk(class<TurboVeterancyTypes> VeterancyClass)
+static function bool CanSelectPerk(TurboPlayerController PlayerController, class<TurboVeterancyTypes> VeterancyClass)
 {
     return false;
 }
