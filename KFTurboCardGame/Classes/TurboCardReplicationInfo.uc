@@ -36,6 +36,9 @@ var CardReference ActiveCardList[MAX_ACTIVE_CARDS];
 //Counter that is incremented whenever some action is done to the two above replicated arrays.
 var byte SelectionUpdateCounter;
 
+//Used to track if the remote client has initialized decks and is ready to resolve card instances.
+var bool bHasRemoteInitializedDecks;
+
 //Starts as false, represents if we were voting on a card last time PostNetReceive was called.
 var bool bCurrentlyVoting;
 //List of cards that were active last time we received a card list.
@@ -144,7 +147,7 @@ simulated function PostNetBeginPlay()
 
     if (Role != ROLE_Authority)
     {
-        InitializeCardDecks();
+        InitializeRemoteCardDecks();
         CheckForSelectableCardUpdates();
         CheckForActiveCardUpdates();
     }
@@ -218,8 +221,20 @@ simulated function PostNetReceive()
 {
     Super.PostNetReceive();
 
+    InitializeRemoteCardDecks();
     CheckForActiveCardUpdates();
     CheckForSelectableCardUpdates();
+}
+
+simulated function InitializeRemoteCardDecks()
+{
+    if (Role == ROLE_Authority || bHasRemoteInitializedDecks)
+    {
+        return;
+    }
+
+    bHasRemoteInitializedDecks = true;
+    InitializeCardDecks();
 }
 
 simulated function CheckForActiveCardUpdates()

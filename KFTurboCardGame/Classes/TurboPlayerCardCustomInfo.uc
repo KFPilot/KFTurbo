@@ -374,7 +374,7 @@ simulated function PostNetReceive()
 {
 	Super.PostNetReceive();
 
-	if (!IsLocallyOwned() && GetTurboCardOverlay() != None)
+	if (!IsLocallyOwned() || GetTurboCardOverlay() == None)
 	{
 		return;
 	}
