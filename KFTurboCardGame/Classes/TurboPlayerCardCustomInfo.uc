@@ -553,8 +553,8 @@ defaultproperties
 
 	MinDropWeaponTime=0.f
 
-	FreezeTagTimeUntilSlow=9.f
-	FreezeTagTimeUntilFreeze=4.f
+	FreezeTagTimeUntilSlow=10.f
+	FreezeTagTimeUntilFreeze=5.f
 
 	RackEmUpStackDuration=10.f
 
