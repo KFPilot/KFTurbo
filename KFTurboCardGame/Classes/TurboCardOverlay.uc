@@ -121,6 +121,7 @@ var CardStatus NoRestForTheWickedStatus;
 var CardStatus PoorlyOiledMachineStatus;
 
 var CardStatusProgress GreedBegetsSlowSpeedStatus;
+var CardStatusProgress TemporalAnomalyStatus;
 
 static final function TurboCardOverlay FindCardOverlay(PlayerController PlayerController)
 {

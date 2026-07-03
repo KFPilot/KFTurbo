@@ -12,6 +12,18 @@ var int ID;
 var int LastAppliedID;
 var float TimeUntilNextDilation;
 
+var const float MinSpeedUpVariance;
+var const float MaxSpeedUpVariance;
+
+var const float MinSpeedDownVariance;
+var const float MaxSpeedDownVariance;
+
+var const float MinAnomalyTime;
+var const float MaxAnomalyTime;
+
+var const float MinRegularTime;
+var const float MaxRegularTime;
+
 var ServerTimeActor ServerTimeActor;
 
 replication
@@ -59,12 +71,31 @@ simulated function bool InitializeServerTimeActor()
     return true;
 }
 
+final function float GetSpeedUpRate()
+{
+    return (MinSpeedUpVariance + ((MaxSpeedUpVariance - MinSpeedUpVariance) * FRand()));
+}
+
+final function float GetSpeedDownRate()
+{
+    return (MinSpeedDownVariance + ((MaxSpeedDownVariance - MinSpeedDownVariance) * FRand()));
+}
+
+final function float GetAnomalyDuration()
+{
+    return (MinAnomalyTime + ((MaxAnomalyTime - MinAnomalyTime) * FRand()));
+}
+
+final function float GetRegularTimeDuration()
+{
+    return (MinRegularTime + ((MaxRegularTime - MinRegularTime) * FRand()));
+}
+
 function SetupNextTimeDilation(float DeltaTime)
 {
     if (TimeUntilNextDilation > 0.f)
     {
         TimeUntilNextDilation -= DeltaTime / Level.TimeDilation;
-
         if (TimeUntilNextDilation > 0.f)
         {
             return;
@@ -80,22 +111,34 @@ function SetupNextTimeDilation(float DeltaTime)
     {
         if (FRand() > 0.5f)
         {
-            EndTimeDilation = 1.25f + (FRand() * 0.25f);
+            EndTimeDilation = GetSpeedUpRate();
         }
         else
         {
-            EndTimeDilation = 0.8f - (FRand() * 0.15f);
+            EndTimeDilation = GetSpeedDownRate();
         }
-
-        TimeUntilNextDilation = 20.f + (15.f * FRand());
+        
+        TimeUntilNextDilation = GetAnomalyDuration();
     }
     else
     {
         EndTimeDilation = 1.f;
-        TimeUntilNextDilation = 30.f + (30.f * FRand());
+        TimeUntilNextDilation = GetRegularTimeDuration();
     }
 
     ForceNetUpdate();
+}
+
+simulated final function SetTimeDilation(float TimeDilation)
+{
+    if (Level.Game != None)
+    {
+        Level.Game.SetGameSpeed(TimeDilation);
+    }
+    else
+    {
+        Level.TimeDilation = 1.1f * TimeDilation; //Wow base time dilations is 1.1!
+    }
 }
 
 simulated function Tick(float DeltaTime)
@@ -117,12 +160,12 @@ simulated function Tick(float DeltaTime)
 
     if (ApplyEndTime <= ServerTimeActor.GetServerTimeSeconds())
     {
-        Level.TimeDilation = EndTimeDilation;
+        SetTimeDilation(EndTimeDilation);
         LastAppliedID = ID;
         return;
     }
 
-    Level.TimeDilation = Lerp((ServerTimeActor.GetServerTimeSeconds() - ApplyStartTime) / (ApplyEndTime - ApplyStartTime), StartTimeDilation, EndTimeDilation);
+    SetTimeDilation(Lerp((ServerTimeActor.GetServerTimeSeconds() - ApplyStartTime) / (ApplyEndTime - ApplyStartTime), StartTimeDilation, EndTimeDilation));
 }
 
 simulated state Initializing
@@ -150,5 +193,17 @@ function ForceNetUpdate()
 
 defaultproperties
 {
+    MinSpeedUpVariance=1.2f
+    MaxSpeedUpVariance=1.4f
+
+    MinSpeedDownVariance=0.65f
+    MaxSpeedDownVariance=0.85f
+
+    MinAnomalyTime=20.f
+    MaxAnomalyTime=30.f
+
+    MinRegularTime=25.f
+    MaxRegularTime=40.f
+    
     NetUpdateFrequency=1.f
 }

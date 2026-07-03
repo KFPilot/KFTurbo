@@ -589,6 +589,41 @@ static final function TickPoorlyOiledMachine(TurboCardOverlay CardOverlay, Turbo
     }
 }
 
+//========================
+//Temporal Anomaly
+
+static final function bool DrawTemporalAnomaly(TurboCardOverlay CardOverlay, TurboPlayerCardCustomInfo PlayerCustomInfo, Canvas Canvas, TurboCard Card, float DrawX, float DrawY, float DrawHeight)
+{
+    if (CardOverlay.TemporalAnomalyStatus.Ratio > 0.003f)
+    {
+        if (CardOverlay.TemporalAnomalyStatus.Progress > 1.f)
+        {
+            DrawCardInfoIcon(Canvas, Texture'KFTurboCardGame.UI.TemporalAnomalyUp_D', DrawX, DrawY, DrawHeight, CardOverlay.TemporalAnomalyStatus.Ratio);
+        }
+        else
+        {
+            DrawCardInfoIcon(Canvas, Texture'KFTurboCardGame.UI.TemporalAnomalyDown_D', DrawX, DrawY, DrawHeight, CardOverlay.TemporalAnomalyStatus.Ratio);
+        }
+
+        return true;
+    }
+
+    return false;
+}
+
+static final function TickTemporalAnomaly(TurboCardOverlay CardOverlay, TurboPlayerCardCustomInfo PlayerCustomInfo, TurboCard Card, float DeltaTime)
+{
+    if (Abs(CardOverlay.Level.TimeDilation - 1.1f) > 0.1f)
+    {
+        CardOverlay.TemporalAnomalyStatus.Ratio = FMin(DeltaTime + CardOverlay.TemporalAnomalyStatus.Ratio, 1.f);
+        CardOverlay.TemporalAnomalyStatus.Progress = CardOverlay.Level.TimeDilation;
+    }
+    else
+    {
+        CardOverlay.TemporalAnomalyStatus.Ratio -= DeltaTime;
+    }
+}
+
 defaultproperties
 {
     Begin Object Name=Doorless Class=TurboCard_Evil
@@ -1064,6 +1099,9 @@ defaultproperties
         CardDescriptionList(2)="fluctuate."
         CardID="EVIL_TEMPANOMALY"
         OnActivateCard=ActivateTemporalAnomaly
+        bHasStatusIcon=true
+        OnStatusIconTick=TickTemporalAnomaly
+        OnStatusIconDraw=DrawTemporalAnomaly
     End Object
     DeckCardObjectList(37)=TurboCard'TemporalAnomaly'
 }
