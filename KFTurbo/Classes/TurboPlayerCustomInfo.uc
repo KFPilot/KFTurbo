@@ -23,6 +23,7 @@ simulated final function bool IsLocallyOwned()
 static final function TurboPlayerCustomInfo FindCustomInfo(TurboPlayerReplicationInfo TPRI)
 {
 	local int Index;
+	local TurboPlayerCustomInfo TPCI;
 
 	if (TPRI == None || TPRI.bOnlySpectator)
 	{
@@ -40,6 +41,15 @@ static final function TurboPlayerCustomInfo FindCustomInfo(TurboPlayerReplicatio
 		if (TPRI.PlayerCustomInfoList[Index].Class == default.Class)
 		{
 			return TPRI.PlayerCustomInfoList[Index];
+		}
+	}
+
+	foreach TPRI.DynamicActors(class'TurboPlayerCustomInfo', TPCI)
+	{
+		if (TPCI.PlayerTPRI == TPRI)
+		{
+			log("USED SLOWER DYNAMIC ACTOR FALLBACK WHEN GETTING TPCI!");
+			return TPCI;
 		}
 	}
 

@@ -311,7 +311,10 @@ simulated function Tick(float DeltaTime)
 		ActiveCardRenderActorList[Index].Ratio = FMax(Lerp(DeltaTime * 8.f, ActiveCardRenderActorList[Index].Ratio, 0.f), 0.f);
 	}
 
-	TickCardStatus(DeltaTime);
+	if (PlayerCardCustomInfo != None)
+	{
+		TickCardStatus(DeltaTime);
+	}
 }
 
 simulated function TickCardStatus(float DeltaTime)
@@ -556,8 +559,7 @@ simulated function Render(Canvas C)
 		class'TurboHUDKillingFloor'.static.ResetCanvas(C);
 	}
 
-
-	if (TurboHUD.PawnOwner != None && TurboHUD.PawnOwner.Health > 0)
+	if (PlayerCardCustomInfo != None && TurboHUD.PawnOwner != None && TurboHUD.PawnOwner.Health > 0)
 	{
 		DrawCardEffects(C);
 		class'TurboHUDKillingFloor'.static.ResetCanvas(C);
