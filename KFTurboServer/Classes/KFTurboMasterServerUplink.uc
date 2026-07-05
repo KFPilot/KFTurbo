@@ -194,6 +194,7 @@ function PerformUpdate()
 
 		CachedServerState = FullCachedServerState;
 
+    	FullCachedServerState.PlayerInfo.Length = 0;
 		Level.Game.GetServerPlayers(FullCachedServerState);
 
 		ServerState 		= FullCachedServerState;
