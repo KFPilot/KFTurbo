@@ -35,6 +35,13 @@ replication
 		NewHealthMax, HealthHealingTo, PlayerFlags;
 }
 
+simulated function PostNetBeginPlay()
+{
+    Super.PostNetBeginPlay();
+
+    UpdateHealth();
+}
+
 simulated function Tick(float DeltaTime)
 {
 	Super.Tick(DeltaTime);
@@ -82,6 +89,21 @@ function UpdatePlayerFlags()
 	{
 		PlayerFlags = NewPlayerFlags;
 	}
+}
+
+final simulated function float GetHealthPercent()
+{
+    if (HealthMax <= 0.f)
+    {
+        return 0.f;
+    }
+
+    return float(Health) / HealthMax;
+}
+
+simulated final function float GetArmorPercent()
+{
+    return ShieldStrength / 100.f;
 }
 
 simulated final function bool IsShopping()
@@ -263,7 +285,7 @@ simulated function SpotCloakedMonsters()
 		{
 			continue;
 		}
-		
+
 		if (P_Stalker(Monster) != None)
 		{
 			P_Stalker(Monster).SpotStalker();
@@ -287,7 +309,7 @@ function bool CanBuyNow()
 	{
 		return false;
 	}
-	
+
 	return true;
 }
 
@@ -320,7 +342,7 @@ simulated function DisplayInventoryDebug(Canvas Canvas, Weapon Weapon, out float
     Canvas.SetPos(4,YPos);
 
     T = "     STATE: "$Weapon.GetStateName()$" Timer: "$Weapon.TimerCounter$" Client State ";
-	
+
 	Switch( Weapon.ClientState )
 	{
 		case WS_None: T=T$"None"; break;
@@ -378,7 +400,7 @@ simulated function ChangedWeapon()
 		{
 			BaseMeleeIncrease += KFPRI.ClientVeteranSkill.Static.GetMeleeMovementSpeedModifier(KFPRI);
 		}
-		
+
         InventorySpeedModifier = ((default.GroundSpeed * BaseMeleeIncrease) - (CurrentWeapon.Weight * 2.f));
 	}
 	else if (KFMedicGun(CurrentWeapon) != None && class'V_FieldMedic'.static.IsFieldMedic(KFPRI))
@@ -463,7 +485,7 @@ simulated function UpdateHealth()
 	{
 		NewHealthMax = HealthMax;
 	}
-	
+
 	if (HealthToGive <= 0 || Health >= int(HealthMax))
 	{
 		if (HealthHealingTo != -1)
@@ -714,7 +736,7 @@ function bool ServerBuyAmmo(Class<Ammunition> AClass, bool bOnlyClip)
 	}
 
 	UsedMagCapacity = FMax(UsedMagCapacity, 1.f);
-	
+
 	if (bOnlyClip)
 	{
 		if (KFPRI != none && KFPRI.ClientVeteranSkill != none)
@@ -815,13 +837,13 @@ function ServerSellWeapon( Class<Weapon> WClass )
 			if (class'DualWeaponsManager'.Static.IsDualWeapon(WClass,SecType))
 			{
 				NewWep = Spawn(SecType);
-				
+
 				if(WClass != class'Dualies')
 				{
 					Price *= 0.5f;
 					NewWep.SellValue = Price;
 				}
-				
+
 				NewWep.GiveTo(self);
 			}
 
@@ -935,9 +957,9 @@ exec function TossCash(int Amount)
 	{
 		return;
 	}
-	
+
 	CashTossTimer = Level.TimeSeconds + 0.1f;
-	
+
 	Amount = Max(Amount, 50);
 	Amount = Min(Amount, int(Controller.PlayerReplicationInfo.Score));
 	if(Amount <= 0)
@@ -956,7 +978,7 @@ exec function TossCash(int Amount)
 	{
 		return;
 	}
-	
+
 	CashPickup.CashAmount = Amount;
 	CashPickup.bDroppedCash = true;
 	CashPickup.RespawnTime = 0;
@@ -983,7 +1005,7 @@ function bool DoJump( bool bUpdating )
 		MaxFallSpeed = FMax(default.MaxFallSpeed * JumpModifier, default.MaxFallSpeed);
 		JumpZ = default.JumpZ * JumpModifier;
 	}
-    
+
 	bOriginalIsWalking = bIsWalking;
 	bIsWalking = false;
 	bResult = Super(KFPawn).DoJump(bUpdating);
@@ -1008,7 +1030,7 @@ simulated event SetAnimAction(name NewAction)
 	{
 		return;
 	}
-	
+
     if (Level.NetMode != NM_Client)
     {
         bResetingAnimAct = true;
