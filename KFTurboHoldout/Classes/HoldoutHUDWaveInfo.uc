@@ -56,12 +56,12 @@ simulated function TickReadyUpOpacity(float DeltaTime)
 }
 
 simulated function bool CheckNextWave()
-{	
+{
 	if (TGRI == None || LastKnownWaveNumber == (TGRI.WaveNumber + 1))
 	{
 		return false;
 	}
-	
+
 	if (LastKnownWaveNumber == 0)
 	{
 		LastKnownWaveNumber = (TGRI.WaveNumber + 1);
@@ -103,7 +103,7 @@ state ShowReadyUp
 
 			return;
 		}
-		
+
 		if (TGRI.TimeToNextWave < 100)
 		{
 			GotoState('');
@@ -138,14 +138,14 @@ state PlayNextWave extends ShowReadyUp
 		}
 
 		NextWaveEffectProgress = 1.f;
-		
+
 		NextWaveGlowDelay -= DeltaTime;
 
 		if (NextWaveGlowDelay > 0.f)
 		{
 			return;
 		}
-		
+
 		NextWaveGlowProgress = Lerp(DeltaTime * NextWaveGlowRate, NextWaveGlowProgress, 1.f);
 
 		if (NextWaveGlowProgress < 0.99f)
@@ -172,14 +172,14 @@ state PlayNextWave extends ShowReadyUp
 }
 
 simulated function Render(Canvas C)
-{	
+{
 	Super.Render(C);
 
 	if (TGRI == None)
 	{
 		return;
 	}
-	
+
 	DrawGameData(C);
 	class'TurboHUDKillingFloor'.static.ResetCanvas(C);
 	DrawKillFeed(C);
@@ -313,7 +313,10 @@ simulated function DrawReadyUpStatus(Canvas Canvas)
 		return;
 	}
 
-	DrawReadyUpBar(Canvas);
+	if (TurboHUD != None && !TurboHUD.PlayerOwner.PlayerReplicationInfo.bOnlySpectator)
+	{
+	    DrawReadyUpBar(Canvas);
+	}
 
 	if (bShouldDrawReadyUp)
 	{
@@ -405,7 +408,7 @@ simulated function DrawReadyUpList(Canvas Canvas)
 		Canvas.DrawText(DrawString);
 		return;
 	}
-	
+
 	for (Index = 0; Index < Level.GRI.PRIArray.Length; Index++)
 	{
 		if (Level.GRI.PRIArray[Index] == None || Level.GRI.PRIArray[Index].bOnlySpectator)
@@ -456,9 +459,9 @@ defaultproperties
 	NextWaveGlowDelay=3.f
 	NextWaveGlowRate=2.f
 	NextWaveGlowProgress=1.f
-	
+
 	BackplateSize=(X=0.15f,Y=0.1f)
-	
+
 	ReadyUpBarTexture=Texture'KFTurbo.Scoreboard.ScoreboardBackplate_D'
 
 	PressShiftString="READY UP"

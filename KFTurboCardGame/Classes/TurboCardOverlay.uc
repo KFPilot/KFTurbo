@@ -18,7 +18,7 @@ var int BaseFontSize;
 
 var int CurrentCardCount;
 var int VotedCardIndex;
- 
+
 struct ActiveCardEntry
 {
 	var TurboCardActor CardActor;
@@ -321,7 +321,7 @@ simulated function TickCardStatus(float DeltaTime)
 {
 	local int Index;
 	local TurboCard Card;
-	
+
 	for (Index = 0; Index < ArrayCount(TCRI.ActiveCardInstanceList); Index++)
 	{
 		Card = TCRI.ActiveCardInstanceList[Index];
@@ -459,7 +459,7 @@ simulated function bool ReceivedKeyEvent(Interactions.EInputKey Key, Interaction
 			}
 		}
 	}
-	
+
 	if (!HUD(Owner).bShowScoreboard)
 	{
 		return false;
@@ -543,7 +543,7 @@ simulated function Render(Canvas C)
 	{
 		return;
 	}
-	
+
 	class'TurboHUDKillingFloor'.static.ResetCanvas(C);
 
 	if (TCRI.bCurrentlyVoting && CurrentCardCount > 0)
@@ -559,7 +559,7 @@ simulated function Render(Canvas C)
 		class'TurboHUDKillingFloor'.static.ResetCanvas(C);
 	}
 
-	if (PlayerCardCustomInfo != None && TurboHUD.PawnOwner != None && TurboHUD.PawnOwner.Health > 0)
+	if (TurboHUD.PawnOwner != None && TurboHUD.PawnOwner.Health > 0 && PlayerCardCustomInfo != None)
 	{
 		DrawCardEffects(C);
 		class'TurboHUDKillingFloor'.static.ResetCanvas(C);
@@ -568,7 +568,7 @@ simulated function Render(Canvas C)
 
 static final function SetupOffset(float DrawX, float DrawY, float IconX, out float OffsetX, out float OffsetY, int Index)
 {
-	OffsetX = DrawX - ((IconX * 1.2f) * (Index % 5)); 
+	OffsetX = DrawX - ((IconX * 1.2f) * (Index % 5));
 	OffsetY = DrawY - (float(Index / 6) * (IconX * 1.2f));
 }
 
@@ -578,14 +578,14 @@ simulated function DrawCardEffects(Canvas C)
 	local float DrawX, DrawY, DrawHeight;
 	local float OffsetX, OffsetY, TextSizeX, TextSizeY;
 	local TurboCard Card;
-	
+
 	DrawX = (float(C.SizeX) * 0.5f) - (float(C.SizeY) * (class'TurboHUDPlayer'.default.HealthBackplateSize.X + (class'TurboHUDPlayer'.default.BackplateSpacing.X * 1.5f)));
 	DrawY = (float(C.SizeY) - (float(C.SizeY) * ((class'TurboHUDPlayer'.default.BackplateSpacing.Y * 1.5f) + (class'TurboHUDPlayer'.default.WeightBackplateSize.Y))));
 	DrawHeight = FMin(float(C.SizeY) * class'TurboHUDPlayer'.default.WeightBackplateSize.Y * 1.5f, 64.f);
 
 	DrawX -= DrawHeight;
 	DrawY -= DrawHeight;
-	
+
 	//Prepare text drawing in advance.
 	C.Font = class'TurboHUDKillingFloor'.static.LoadBoldFontStatic(BaseFontSize - 2);
 	C.TextSize("00", TextSizeX, TextSizeY);
@@ -622,7 +622,7 @@ simulated function DrawVoter(Canvas C, PlayerReplicationInfo PRI, float X, float
 
 	PlayerName = PRI.PlayerName;
 	if (PlayerName == "")
-	{ 
+	{
 		return;
 	}
 
@@ -686,7 +686,7 @@ simulated final function DrawCardAura(Canvas C, SelectableCardEntry Card, float 
 	GlowMaterialSizeY = CardGlowMaterial.MaterialVSize();
 	C.DrawColor = Card.CardActor.Card.CardGlowColor;
 	C.DrawColor.A = Lerp(Card.Ratio, 0.f, C.DrawColor.A);
-	
+
 	C.SetPos(TempX - (CardSize * 0.125f), TempY - (CardSize * 0.25f));
 	C.DrawTileScaled(CardGlowMaterial, (CardSize / GlowMaterialSizeX) * 1.25f, (CardSize * 2.5f) / GlowMaterialSizeY);
 }
@@ -701,8 +701,8 @@ static final function AddUniqueHint(out array< class<TurboCardHint> > HintList, 
 			return;
 		}
 	}
-	
-	HintList[HintList.Length] = HintClass;	
+
+	HintList[HintList.Length] = HintClass;
 }
 
 simulated function DrawSelectableCardList(Canvas C)
@@ -719,7 +719,7 @@ simulated function DrawSelectableCardList(Canvas C)
 	local Color WhiteColor, BlackColor;
 	WhiteColor = MakeColor(255, 255, 255, 255);
 	BlackColor = MakeColor(0, 0, 0, 120);
-	
+
 	C.DrawColor = WhiteColor;
 
 	CenterIndex = float(CurrentCardCount) / 2.f;
@@ -741,7 +741,7 @@ simulated function DrawSelectableCardList(Canvas C)
 		{
 			VotedCardX = TempX;
 			TempX += CardOffset;
-			continue;	
+			continue;
 		}
 
 		CardActor = CardRenderActorList[Index].CardActor;
@@ -761,7 +761,7 @@ simulated function DrawSelectableCardList(Canvas C)
 			DrawCardAura(C, CardRenderActorList[Index], TempX, TempY - ((CardSelectionScale - 1.f) * CardSize), CardSelectionScale * CardSize);
 			C.DrawColor = WhiteColor;
 		}
-		
+
 		C.SetPos(TempX + (CardOffset * 0.5f) - (CardSize * CardSelectionScale * 0.5f), TempY - ((CardSelectionScale - 1.f) * CardSize));
 		HintX = FMax(HintX, C.CurX + (CardSelectionScale * CardSize * 1.05f));
 
@@ -885,7 +885,7 @@ simulated function DrawActiveCardList(Canvas C)
 	}
 
 	C.SetDrawColor(255, 255, 255, 255);
-	
+
 	CenterIndex = float(ActiveCardRenderActorList.Length) / 2.f;
 
 	CardSize = C.ClipY / 10.f;
@@ -917,7 +917,7 @@ simulated function DrawActiveCardList(Canvas C)
 		CardBonusScale = Lerp(ActiveCardRenderActorList[Index].Ratio, 1.f, 1.75f);
 
 		ActiveCardRenderActorList[Index].CardActor.RenderOverlays(C);
-		
+
 		CardScale = CardSize / float(ActiveCardRenderActorList[Index].CardActor.CardScriptedTexture.USize);
 
 		CardX = (TempX - (CardSize * 0.95f)) - ((CardBonusScale - 1.f) * CardSize * 0.95f);
@@ -940,7 +940,7 @@ simulated function DrawActiveCardList(Canvas C)
 		CardScale = CardSize / float(ActiveCardRenderActorList[CardIndexToDisplay].CardActor.CardScriptedTexture.USize);
 
 		CardX = (TempX - (CardSize * 0.95f)) - ((CardBonusScale - 1.f) * CardSize * 0.95f);
-		
+
 		if (bReduceCardVisibility)
 		{
 			CardX += Lerp(ActiveCardRenderActorList[CardIndexToDisplay].Ratio, 1.f, 0.f) * CardSize * 0.8f;
@@ -948,7 +948,7 @@ simulated function DrawActiveCardList(Canvas C)
 
 		C.SetPos(CardX, DisplayCardY + (CardOffset * 0.5f) - (CardSize * CardBonusScale));
 		C.DrawTileScaled(ActiveCardRenderActorList[CardIndexToDisplay].CardActor.CardShader, CardScale * CardBonusScale, CardScale * CardBonusScale);
-		
+
 		ScrollDisplayY = FMax(ScrollDisplayY, DisplayCardY + (CardSize * CardBonusScale));
 	}
 
@@ -973,7 +973,7 @@ simulated function DrawActiveCardList(Canvas C)
 	for (Index = 0; Index < HowToScrollCardsString.Length; Index++)
 	{
 		C.TextSize(HowToScrollCardsString[Index], TextSizeX, TextSizeY);
-		
+
 		C.SetDrawColor(0, 0, 0);
 		C.DrawColor.A = Lerp(HowToScrollFade, 0, 120);
 		C.SetPos((TempX - (TextSizeX * 0.5f)) + 2.f, TempY + 2.f);
@@ -1030,7 +1030,7 @@ simulated function OnActiveCardsUpdated(TurboCardReplicationInfo CGRI)
 		}
 
 		log("- New card:"@TurboCard.CardID);
-		
+
 		if (ActiveCardRenderActorList.Length > Index && ActiveCardRenderActorList[Index].CardActor != None)
 		{
 			if (ActiveCardRenderActorList[Index].CardActor.Card != TurboCard)
@@ -1142,7 +1142,7 @@ simulated function DrawBorrowedTime(Canvas C)
 	local string TimeString;
 	local bool bLessThanMinuteRemains;
 	local EBorrowedTimeWarnLevel WarnLevel;
-	
+
 	local float OffsetX, OffsetY, SizeY;
 	local float TextSizeX, TextSizeY, TextScale;
 	local float SizeX;
@@ -1157,7 +1157,7 @@ simulated function DrawBorrowedTime(Canvas C)
 	}
 
 	WarnLevel = GetWarningForTime(TimeRemaining);
-	
+
 	MinutesRemaining = int(TimeRemaining) / 60;
 	bLessThanMinuteRemains = MinutesRemaining <= 0;
 
@@ -1198,7 +1198,7 @@ simulated function DrawBorrowedTime(Canvas C)
 	{
 		C.DrawTileStretched(RoundedContainer, SizeX, SizeY);
 	}
-	
+
 	C.DrawColor = GetTextColorForWarnLevel(WarnLevel);
 	C.SetPos((OffsetX - (SizeX * 0.5f)) - (TextSizeX * 0.5f), (OffsetY + (SizeY * 0.5f)) - (TextSizeY * 0.5f));
 	DrawTextMeticulous(C, TimeString, TextSizeX);
@@ -1279,13 +1279,13 @@ simulated function OnPlayerCardInfoUpdate()
 			Card.OnStatusPostNetReceive(self, PlayerCardCustomInfo, Card);
 		}
 	}
-	
+
 	if (PlayerCardCustomInfo.GrenadeThrowTime > LastKnownGrenadeThrowTime)
 	{
 		GrenadeBoostStatus.Ratio = 1.f;
 		LastKnownGrenadeThrowTime = PlayerCardCustomInfo.GrenadeThrowTime;
 	}
-	
+
 	if (PlayerCardCustomInfo.HealBoostTime > LastKnownHealBoostTime)
 	{
 		HealBoostStatus.Ratio = 1.f;
@@ -1307,8 +1307,8 @@ defaultproperties
 	HowToScrollCardsString(0)="Scroll up and"
 	HowToScrollCardsString(1)="down to show"
 	HowToScrollCardsString(2)="other cards!"
-	
-	BackplateColor=(R=0,G=0,B=0,A=140)	
+
+	BackplateColor=(R=0,G=0,B=0,A=140)
 	RoundedContainer=Texture'KFTurbo.HUD.ContainerRounded_D'
 	CardGlowMaterial=FinalBlend'KFTurboCardGame.CardAura_FB'
 

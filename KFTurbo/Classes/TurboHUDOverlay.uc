@@ -52,14 +52,14 @@ simulated function Render(Canvas C)
 	{
 		return;
 	}
-	
+
 	if (LastKnownScreenSize.X != C.SizeX || LastKnownScreenSize.Y != C.SizeY)
 	{
 		ScreenSize.X = C.SizeX;
 		ScreenSize.Y = C.SizeY;
 
 		OnScreenSizeChange(C, ScreenSize, LastKnownScreenSize);
-		
+
 		LastKnownScreenSize = ScreenSize;
 	}
 }
@@ -138,7 +138,7 @@ static final function DrawTextSpaced(Canvas C, coerce String String, float Offse
 	while (Len(String) > 0)
 	{
 		StringToDraw = Left(String, 1);
-		
+
 		C.SetPos(TempX, TempY);
 		C.DrawText(StringToDraw);
 

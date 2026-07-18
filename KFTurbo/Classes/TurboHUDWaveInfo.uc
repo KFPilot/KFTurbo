@@ -76,14 +76,14 @@ struct BossEntry
 	var class<P_ZombieBoss> BossClass;
 	var float PlayInRatio;
 	var float PlayOutRatio;
-	
+
 	var float CurrentHealth;
 	var float LastCheckedHealth;
 	var float PreviousHealth;
 	var float LastLowestRecordedHealth;
 
 	var float HealthMax;
-	
+
 	var BossHitData LastHit;
 
 	var float CurrentHealToHealth;
@@ -135,7 +135,7 @@ static final function TurboHUDWaveInfo FindWaveInfoOverlay(PlayerController Play
 simulated function Initialize(TurboHUDKillingFloor OwnerHUD)
 {
 	local P_ZombieBoss BossMonster;
-	
+
 	Super.Initialize(OwnerHUD);
 
 	InitializeGRI(TurboGameReplicationInfo(Level.GRI));
@@ -216,14 +216,14 @@ simulated function TickGameState(float DeltaTime)
 }
 
 simulated function Render(Canvas C)
-{	
+{
 	Super.Render(C);
 
 	if (TGRI == None)
 	{
 		return;
 	}
-	
+
 	if (!bIsTestGameMode  && !bIsGameOver)
 	{
 		class'TurboHUDKillingFloor'.static.ResetCanvas(C);
@@ -234,9 +234,9 @@ simulated function Render(Canvas C)
 
 		DrawWaveData(C);
 	}
-	
+
 	DrawKillFeed(C);
-	
+
 	class'TurboHUDKillingFloor'.static.ResetCanvas(C);
 
 	if ((BossData.BossMonster != None || BossData.PlayOutRatio > 0.f) && BossData.PlayOutRatio < 1.f)
@@ -247,7 +247,7 @@ simulated function Render(Canvas C)
 	class'TurboHUDKillingFloor'.static.ResetCanvas(C);
 
 	DrawVoteInstance(C);
-	
+
 	class'TurboHUDKillingFloor'.static.ResetCanvas(C);
 }
 
@@ -292,7 +292,7 @@ simulated function DrawGameData(Canvas C)
 
 	C.SetPos(TempX, TempY);
 
-	
+
 	C.Font = TurboHUD.LoadLargeNumberFont(2 + FontSizeOffset);
 	C.FontScaleX = 1.f;
 	C.FontScaleY = 1.f;
@@ -311,7 +311,7 @@ simulated function DrawGameData(Canvas C)
 		C.SetPos(TempX, TempY);
 		C.DrawTileStretched(RoundedContainer, SizeX, SizeY);
 	}
-	
+
 	C.DrawColor = C.MakeColor(255, 255, 255, 255);
 	TestText = FillStringWithZeroes(string(Min(Min(TGRI.WaveNumber + 1, 99), TGRI.FinalWave + 1)), 2);
 	TestText = TestText $ "|";
@@ -451,7 +451,7 @@ simulated function TickActiveFadeOut(float DeltaTime)
 	}
 
 	ActiveBackplateSize.X = BackplateSize.X;
-	
+
 	GotoState('WaitingWave');
 }
 
@@ -528,7 +528,7 @@ simulated function DrawActiveWave(Canvas C)
 		C.SetPos(TempX, TempY);
 		C.DrawTileStretched(RoundedContainer, SizeX, SizeY);
 	}
-	
+
 	if (ActiveWaveFadeRatio <= 0.001f)
 	{
 		return;
@@ -619,7 +619,7 @@ simulated final function DrawKillFeedEntry(Canvas C, out float DrawY, out KillFe
 	{
 		C.Font = TurboHUD.LoadFont(1 + FontSizeOffset);
 	}
-	
+
 	C.FontScaleX = 1.f;
 	C.FontScaleY = 1.f;
 	C.TextSize(KillCountString, TextSizeX, TextSizeY);
@@ -634,7 +634,7 @@ simulated final function DrawKillFeedEntry(Canvas C, out float DrawY, out KillFe
 		C.FontScaleY = (C.ClipY * 0.035) / TextSizeY;
 		C.FontScaleX = C.FontScaleY;
 	}
-	
+
 	EntrySizeX = 8.f;
 	BaseTextScale = C.FontScaleX;
 
@@ -774,7 +774,7 @@ state WaitingWave
 		TickBossData(DeltaTime);
 		TickVoteInstance(DeltaTime);
 	}
-	
+
 	simulated function DrawWaveData(Canvas C)
 	{
 		DrawTraderWave(C);
@@ -884,16 +884,16 @@ simulated function DrawTraderWave(Canvas C)
 		MillisecondTime = MillisecondTime * 100.f;
 		TraderTime = FillStringWithZeroes(int(SecondTime), 2) $ ":" $ FillStringWithZeroes(string(Max(int(MillisecondTime), 0)), 2);
 	}
-	
+
 	C.FontScaleX = 1.f;
 	C.FontScaleY = 1.f;
 	C.Font = TurboHUD.LoadLargeNumberFont(2 + FontSizeOffset);
 	C.TextSize(GetStringOfZeroes(Len(TraderTime)), TextSizeX, TextSizeY);
-	
+
 	TextScale = (C.ClipY * BackplateSize.Y) / TextSizeY;
 	C.FontScaleX = TextScale;
 	C.FontScaleY = TextScale;
-	
+
 	C.TextSize(GetStringOfZeroes(Len(TraderTime)), TextSizeX, TextSizeY);
 
 	C.SetPos((TempX + (SizeX * 0.5f)) - (TextSizeX * 0.5f), (TempY + (SizeY * 0.5f)) - (TextSizeY * 0.5f));
@@ -936,12 +936,12 @@ simulated function InitializeBossData(P_ZombieBoss BossMonster)
 	BossData.BossClass = BossMonster.Class;
 	BossData.PlayInRatio = 0.f;
 	BossData.PlayOutRatio = 0.f;
-	
+
 	BossData.CurrentHealth = float(BossMonster.Health) / FMax(BossMonster.BossHealthMax, 1.f);
 	BossData.LastCheckedHealth = BossData.CurrentHealth;
 	BossData.PreviousHealth = BossData.CurrentHealth;
 	BossData.LastLowestRecordedHealth = 1.f;
-	
+
 	BossData.HealthMax = BossMonster.BossHealthMax;
 
 	BossData.LastHit.HitAmount = 0.f;
@@ -1060,12 +1060,12 @@ simulated function TickBossData(float DeltaTime)
 	if (NewHealthPercent != BossData.LastCheckedHealth)
 	{
 		BossData.CurrentHealth = NewHealthPercent;
-	
+
 		if (NewHealthPercent < BossData.LastCheckedHealth && BossData.PlayInRatio > 0.9f)
 		{
 			InitializeHitData(BossData);
 		}
-		
+
 		BossData.LastCheckedHealth = NewHealthPercent;
 
 		if (NewHealthPercent <= 0.f)
@@ -1073,7 +1073,7 @@ simulated function TickBossData(float DeltaTime)
 			BossData.PlayOutRatio = 1.f;
 		}
 	}
-		
+
 	if (BossData.CurrentHealth < BossData.PreviousHealth)
 	{
 		BossData.PreviousHealth = Lerp(BossDataHealthInterpRate * DeltaTime, BossData.PreviousHealth, BossData.CurrentHealth);
@@ -1111,7 +1111,7 @@ simulated function TickBossData(float DeltaTime)
 }
 
 simulated final function InitializeHitData(out BossEntry BossInfo)
-{	
+{
 	BossInfo.LastHit.HitAmount = FMax(BossInfo.CurrentHealth, BossInfo.LastHit.HitAmount);
 	BossInfo.LastHit.FadeRate = 0.5f;
 	BossInfo.LastHit.Ratio = 0.f;
@@ -1165,7 +1165,7 @@ simulated function DrawBossHealthBar(Canvas C)
 		C.DrawColor = MakeColor(255, 255, 255, FadeRatio * FMin((1.f - BossData.LastHit.Ratio) * 2.f, 1.f) * 255.f);
 		C.DrawTileClipped(BossHealthDamageBarFill, SizeX * DamagePercent, SizeY, 0, 0, SizeX * DamagePercent, BossHealthBarFill.MaterialVSize());
 	}
-	
+
 	C.SetPos(TempX, TempY);
 	C.DrawColor = FillColor;
 	C.DrawTileClipped(BossHealthBarFill, SizeX * HealthPercent, SizeY, 0, 0, SizeX * HealthPercent, BossHealthBarFill.MaterialVSize());
@@ -1193,7 +1193,7 @@ simulated function DrawBossHealthBar(Canvas C)
 			TempX -= TextSizeY * 0.125f;
 			continue;
 		}
-		
+
 		FillColor.A = FadeRatio * 255.f * (1.f - SyringeFadeRatio);
 		C.DrawColor = FillColor;
 		C.SetPos(TempX - (TextSizeY * 0.125f), TempY - (TextSizeY * 0.125f));
@@ -1263,7 +1263,7 @@ simulated function DrawVoteInstance(Canvas C)
 
 	OriginalModulate = C.ColorModulate;
 	C.ColorModulate.W = VoteRatio;
-	
+
 	PaddingPercent = 0.025f;
 
 	TempY = BackplateSpacing.Y * float(C.SizeY);
@@ -1291,7 +1291,7 @@ simulated function DrawVoteInstance(Canvas C)
 
 	TempX += (float(C.SizeY) * PaddingPercent * 0.5f);
 	SizeX -= (float(C.SizeY) * PaddingPercent);
-	
+
 	TempY += (float(C.SizeY) * PaddingPercent * 0.25f);
 	SizeY -= (float(C.SizeY) * PaddingPercent * 0.5f);
 
@@ -1389,12 +1389,12 @@ defaultproperties
 	BackplateSize=(X=0.075f,Y=0.05f)
 	BackplateSpacing=(X=0.01f,Y=0.02f)
 	BackplateTextSpacing=(X=0.01f,Y=0.f)
-	
+
 	RoundedContainer=Texture'KFTurbo.HUD.ContainerRounded_D'
 	EdgeContainer=Texture'KFTurbo.HUD.EdgeBackplate_D'
 	LeftEdgeContainer=Texture'KFTurbo.HUD.EdgeBackplate_R_D'
 	SquareContainer=Texture'KFTurbo.HUD.ContainerSquare_D'
-	
+
 	TrashMonsterKillLifeTime=4.f
 	TrashMonsterKillCountExtension=0.1f
 	EliteMonsterKillLifeTime=8.f

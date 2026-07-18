@@ -91,7 +91,7 @@ function PostBeginPlay()
         Count++;
     }
     CardDeltaList.Length = Count;
-    
+
     Count = 0;
     CardFlagList.Length = 80;
     foreach AllObjects(class'CardFlag', CardFlag)
@@ -117,7 +117,7 @@ function Tick(float DeltaTime)
 
 function ModifyPlayer(Pawn Pawn)
 {
-    
+
 }
 
 function OnWaveStart(int StartedWave)
@@ -180,13 +180,13 @@ final function GrantExtraWaveReward(int RewardAmount)
         }
 
         NumPlayers++;
-		
+
         if (Team == None && Controller.PlayerReplicationInfo != None && Controller.PlayerReplicationInfo.Team != None)
 		{
 			Team = Controller.PlayerReplicationInfo.Team;
 		}
 	}
-    
+
     if (Team == None || NumPlayers == 0)
     {
         return;
@@ -258,7 +258,7 @@ final function PotentiallyDoubleHuskSpawn(out array < class<KFMonster> > NextSpa
 }
 
 function GrantAllPlayersDosh(int Amount)
-{   
+{
 	local Controller Controller;
 
     for ( Controller = TurboGameType.Level.ControllerList; Controller != None; Controller = Controller.NextController )
@@ -270,7 +270,7 @@ function GrantAllPlayersDosh(int Amount)
             if(PlayerController(Controller) != none)
             {
                 PlayerController(Controller).ClientPlaySound(class'CashPickup'.default.PickupSound);
-                PlayerController(Controller).ReceiveLocalizedMessage(class 'Msg_CashReward', Amount);
+                PlayerController(Controller).ReceiveLocalizedMessage(class'Msg_CashReward', Amount);
             }
         }
     }
@@ -382,13 +382,13 @@ function MarkPlayerForDeath()
     {
         return;
     }
-    
+
     MarkedForDeathController = HumanPawn.Controller;
     CardGameRules.MarkedForDeathPawn = HumanPawn;
     TurboGameType.Level.BroadcastLocalizedMessage(class'MarkedForDeathLocalMessage', 0, HumanPawn.PlayerReplicationInfo);
-    
+
     CardCustomInfo = TurboPlayerCardCustomInfo(class'TurboPlayerCardCustomInfo'.static.FindCustomInfo(TurboPlayerReplicationInfo(MarkedForDeathController.PlayerReplicationInfo)));
-    
+
     if (CardCustomInfo != None)
     {
         CardCustomInfo.SetMarkedForDeath(true);

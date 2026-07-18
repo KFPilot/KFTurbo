@@ -88,13 +88,23 @@ simulated final function TurboCardOverlay GetTurboCardOverlay()
 	return CachedTurboCardOverlay;
 }
 
+final simulated function float GetHealthPercent()
+{
+    if (PlayerTPRI == None)
+    {
+        return 0.f;
+    }
+
+    return PlayerTPRI.GetHealthPercent();
+}
+
 simulated function Timer()
 {
 	if (TurboGameReplicationInfo(Level.GRI) != None)
 	{
 		ServerTimeActor = TurboGameReplicationInfo(Level.GRI).ServerTimeActor;
 	}
-	
+
 	if (ServerTimeActor != None)
 	{
 		return;
@@ -107,7 +117,7 @@ simulated function Tick(float DeltaTime)
 {
 	local bool bNeedsTick;
 	bNeedsTick = false;
-	
+
 	Super.Tick(DeltaTime);
 
 	if (!bRegistered)
@@ -201,7 +211,7 @@ final function SetMarkedForDeath(bool bEnable)
 	{
 		PlayerFlags = (~MARKED_FOR_DEATH) & PlayerFlags;
 	}
-	
+
 	ForceNetUpdate();
 }
 
@@ -259,7 +269,7 @@ final simulated function bool IsInPerpetualCriticalHitTime()
 	{
 		return false;
 	}
-	
+
 	return ServerTimeActor.GetServerTimeSeconds() < PerpetualCriticalHitStartTime + PerpetualCriticalHitTime;
 }
 
@@ -309,7 +319,7 @@ final function PlayerScoredHeadshot()
 	ForceNetUpdate();
 }
 
-final simulated function float GetPlayerHeadshotBonus()
+final simulated function float GetRackEmUpHeadshotBonus()
 {
 	return 1.f + (float(Min(RackEmUpHeadshotCount, 10)) * 0.05f);
 }
@@ -384,7 +394,7 @@ simulated function PostNetReceive()
 
 static final function SetupOffset(float DrawX, float DrawY, float IconX, out float OffsetX, out float OffsetY, out int Index)
 {
-	OffsetX = DrawX - ((IconX * 1.2f) * (Index % 5)); 
+	OffsetX = DrawX - ((IconX * 1.2f) * (Index % 5));
 	OffsetY = DrawY - (float(Index / 6) * (IconX * 1.2f));
 	Index++;
 }
@@ -400,7 +410,7 @@ simulated function DrawCardInfoIcon(Canvas C, Material Icon, float DrawX, float 
 	C.SetPos(DrawX, DrawY);
 	C.DrawColor = class'TurboHUDOverlay'.static.MakeColor(0, 0, 0, 80.f * Ratio);
 	DrawBox(C, class'TurboHUDKillingFloor'.default.WhiteMaterial, DrawHeight, DrawHeight);
-	
+
 	C.SetPos(DrawX, DrawY);
 	C.DrawColor = class'TurboHUDOverlay'.static.MakeColor(255, 255, 255, 255.f * Ratio);
 	DrawBox(C, Icon, DrawHeight, DrawHeight);
@@ -467,7 +477,7 @@ final simulated function float GetRackEmUpStackPercentDuration()
 		return 0.f;
 	}
 
-	return FClamp((RackEmUpHeadshotStackExpireTime - ServerTimeActor.GetServerTimeSeconds()) / RackEmUpStackDuration, 0.f, 1.f); 
+	return FClamp((RackEmUpHeadshotStackExpireTime - ServerTimeActor.GetServerTimeSeconds()) / RackEmUpStackDuration, 0.f, 1.f);
 }
 
 final simulated function float GetHealBoostPercentDuration()
@@ -487,7 +497,7 @@ final simulated function float GetGrenadeThrowPercentDuration()
 		return 0.f;
 	}
 
-	return Lerp(FClamp((ServerTimeActor.GetServerTimeSeconds() - GrenadeThrowTime) / GrenadeBoostTime, 0.f, 1.f), 1.f, 0.f); 
+	return Lerp(FClamp((ServerTimeActor.GetServerTimeSeconds() - GrenadeThrowTime) / GrenadeBoostTime, 0.f, 1.f), 1.f, 0.f);
 }
 
 final simulated function float GetPerpetualCriticalPercentDuration()
@@ -497,7 +507,7 @@ final simulated function float GetPerpetualCriticalPercentDuration()
 		return 0.f;
 	}
 
-	return Lerp(FClamp((ServerTimeActor.GetServerTimeSeconds() - PerpetualCriticalHitStartTime) / PerpetualCriticalHitTime, 0.f, 1.f), 1.f, 0.f); 
+	return Lerp(FClamp((ServerTimeActor.GetServerTimeSeconds() - PerpetualCriticalHitStartTime) / PerpetualCriticalHitTime, 0.f, 1.f), 1.f, 0.f);
 }
 
 final simulated function float GetTimePercentUntilFreeze()
@@ -539,7 +549,7 @@ defaultproperties
 	PerpetualCriticalHitTime=5.f
 
 	NonCriticalHitCount=0
-    
+
     HitEffectList(0)=class'CriticalHitEffect'
     HitEffectList(1)=class'CriticalHitEffectDouble'
     HitEffectList(2)=class'CriticalHitEffectTriple'
@@ -568,6 +578,6 @@ defaultproperties
     bOnlyRelevantToOwner=true
 	bNetNotify=true
     NetUpdateFrequency=0.5
-	
+
 	bDisableTickOnRegister=false
 }
