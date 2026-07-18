@@ -571,7 +571,7 @@ simulated function Render(Canvas C)
 static final function SetupOffset(float DrawX, float DrawY, float IconX, out float OffsetX, out float OffsetY, int Index)
 {
 	OffsetX = DrawX - ((IconX * 1.2f) * (Index % 5));
-	OffsetY = DrawY - (float(Index / 6) * (IconX * 1.2f));
+	OffsetY = DrawY - (float(Index / 5) * (IconX * 1.2f));
 }
 
 simulated function DrawCardEffects(Canvas C)

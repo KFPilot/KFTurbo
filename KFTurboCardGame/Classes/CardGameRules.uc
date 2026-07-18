@@ -373,11 +373,11 @@ function int NetDamage(int OriginalDamage, int Damage, Pawn Injured, Pawn Instig
 
             if (InstigatorCardInfo != None)
             {
-                if (InstigatorCardInfo.IsDauntlessActive())
+                if (LowHealthDamageMultiplier != 1.f && InstigatorCardInfo.IsDauntlessActive())
                 {
                     DamageMultiplier *= LowHealthDamageMultiplier;
                 }
-                else if (InstigatorCardInfo.IsPerfectionistActive()) //Mutually exclusive with Dauntless.
+                else if (PlayerDamagePerfectionistMultiplier != 1.f && InstigatorCardInfo.IsPerfectionistActive()) //Mutually exclusive with Dauntless.
                 {
                     DamageMultiplier *= PlayerDamagePerfectionistMultiplier;
                 }

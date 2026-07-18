@@ -457,7 +457,7 @@ function ActivatePanicReload(TurboCardGameplayManager GameplayManager, TurboCard
 
 function ActivatePressurizedMagazines(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
-    Card.UpdateModifier(GameplayManager.PlayerHighAmmoFireRateModifier, 1.25f, bActivate);
+    Card.UpdateModifier(GameplayManager.PlayerHighAmmoFireRateModifier, 1.33f, bActivate);
 }
 
 //========================
@@ -1040,7 +1040,7 @@ defaultproperties
         CardName(0)="Pressurized"
         CardName(1)="Magazines"
         CardDescriptionList(0)="Firerate increases"
-        CardDescriptionList(1)="by up to 25% based"
+        CardDescriptionList(1)="by up to 33% based"
         CardDescriptionList(2)="on magazine ammo"
         CardDescriptionList(3)="fill percent."
         CardDescriptionList(4)="Effect fades as"
