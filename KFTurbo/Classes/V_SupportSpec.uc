@@ -126,8 +126,10 @@ static function ApplyAdjustedExtraAmmo(KFPlayerReplicationInfo KFPRI, class<Ammu
 	Super.ApplyAdjustedExtraAmmo(KFPRI, AmmoType, Multiplier);
 }
 
-static function int AddDamage(KFPlayerReplicationInfo KFPRI, KFMonster Injured, KFPawn DamageTaker, int InDamage, class<DamageType> DmgType)
+static function int AddDamage(KFPlayerReplicationInfo KFPRI, KFMonster Injured, KFPawn Instigator, int InDamage, class<DamageType> DmgType)
 {
+	local float Multiplier;
+	Multiplier = 1.f;
 	switch (DmgType)
 	{
 	case class'W_NailGun_DT' :
@@ -137,12 +139,14 @@ static function int AddDamage(KFPlayerReplicationInfo KFPRI, KFMonster Injured, 
 	case class'DamTypeBenelli' :
 	case class'DamTypeKSGShotgun' :
 	case class'DamTypeSPShotgun' :
-		return float(InDamage) * LerpStat(KFPRI, 1.1f, 1.6f);
+		Multiplier = LerpStat(KFPRI, 1.1f, 1.6f);
+		break;
 	case class'DamTypeFrag' :
-		return float(InDamage) * LerpStat(KFPRI, 1.05f, 1.5f);
+		Multiplier = LerpStat(KFPRI, 1.05f, 1.5f);
+		break;
 	}
 
-	return InDamage;
+	return Super.AddDamage(KFPRI, Injured, Instigator, float(InDamage) * Multiplier, DmgType);
 }
 
 static function float GetShotgunPenetrationDamageMulti(KFPlayerReplicationInfo KFPRI, float DefaultPenDamageReduction)

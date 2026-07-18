@@ -78,11 +78,6 @@ static function float GetMovementSpeedModifier(KFPlayerReplicationInfo KFPRI, KF
 	return Multiplier;
 }
 
-static function ApplyAdjustedHeadshotDamageMultiplier(KFPlayerReplicationInfo KFPRI, KFPawn Pawn, class<DamageType> DamageType, out float Multiplier)
-{
-	Multiplier *= TurboGameReplicationInfo(KFPRI.Level.GRI).GetHeadshotDamageMultiplier(KFPRI, Pawn, DamageType);
-}
-
 static function float GetSyringeChargeRate(KFPlayerReplicationInfo KFPRI)
 {
 	return TurboGameReplicationInfo(KFPRI.Level.GRI).GetHealRechargeMultiplier(KFPRI);
@@ -96,6 +91,22 @@ static function float GetHealPotency(KFPlayerReplicationInfo KFPRI)
 static function float GetWeldSpeedModifier(KFPlayerReplicationInfo KFPRI)
 {
 	return 1.f;
+}
+
+static function ApplyAdjustedDamageMultiplier(KFPlayerReplicationInfo KFPRI, KFMonster Injured, KFPawn Instigator, out int InDamage, class<DamageType> DamageType)
+{
+    InDamage = Round(float(InDamage) * TurboGameReplicationInfo(KFPRI.Level.GRI).GetDamageMultiplier(KFPRI, Injured, Instigator, InDamage, DamageType));
+}
+
+static function int AddDamage(KFPlayerReplicationInfo KFPRI, KFMonster Injured, KFPawn Instigator, int InDamage, class<DamageType> DmgType)
+{
+	ApplyAdjustedDamageMultiplier(KFPRI, Injured, Instigator, InDamage, DmgType);
+	return InDamage;
+}
+
+static function ApplyAdjustedHeadshotDamageMultiplier(KFPlayerReplicationInfo KFPRI, KFPawn Pawn, class<DamageType> DamageType, out float Multiplier)
+{
+	Multiplier *= TurboGameReplicationInfo(KFPRI.Level.GRI).GetHeadshotDamageMultiplier(KFPRI, Pawn, DamageType);
 }
 
 static function float GetHeadShotDamMulti(KFPlayerReplicationInfo KFPRI, KFPawn Pawn, class<DamageType> DamageType)
@@ -115,7 +126,7 @@ static function ApplyAdjustedExtraAmmo(KFPlayerReplicationInfo KFPRI, class<Ammu
 		{
 			Multiplier *= default.HighDifficultyExtraAmmoMultiplier;
 		}
-		
+
 		if (class<FragAmmo>(AmmoType) != None)
 		{
 			Multiplier *= default.HighDifficultyExtraGrenadeAmmoMultiplier;
@@ -373,7 +384,7 @@ static function byte PreDrawPerk(Canvas C, byte Level, out Material PerkIcon, ou
 	DrawColorAlpha = C.DrawColor.A;
 
 	PerkTier = GetPerkTier(Level);
-	
+
 	if (PerkTier > GetMaxTier())
 	{
 		PerkIcon = Default.OnHUDIconMaxTier;
@@ -387,7 +398,7 @@ static function byte PreDrawPerk(Canvas C, byte Level, out Material PerkIcon, ou
 
 	C.DrawColor = GetPerkTierColor(PerkTier);
 	C.DrawColor.A = DrawColorAlpha;
-	
+
 	return Level % Default.LevelRankRequirement;
 }
 
@@ -419,7 +430,7 @@ static function FillUpAmmo(Pawn P)
 	for(Inv = P.Inventory; Inv != None; Inv = Inv.Inventory)
 	{
 		Weapon = KFWeapon(Inv);
-		
+
 		if(Weapon == None)
 		{
 			continue;
@@ -442,7 +453,7 @@ static function FillUpAmmo(Pawn P)
 static function GetAmmoCount(KFWeapon KFW, out int MaxAmmo, out int CurAmmo)
 {
 	local float retMax, retCur;
-	
+
 	KFW.GetAmmoCount(retMax, retCur);
 
 	MaxAmmo = int(retMax);
@@ -454,7 +465,7 @@ defaultproperties
 	LevelRankRequirement=6
 	HighDifficultyExtraAmmoMultiplier=1.5f
 	HighDifficultyExtraGrenadeAmmoMultiplier=1.f
-	
+
 	StarTexture=Texture'KFTurbo.Perks.Star_D'
 	OnHUDIconMaxTier=None
 
@@ -465,7 +476,7 @@ defaultproperties
 	LevelNames(4)="Inhuman"
 	LevelNames(5)="Godlike"
 	LevelNames(6)="Peak"
-	
+
 	LevelColors(0)=(R=25,G=208,B=0,A=255)
 	LevelColors(1)=(R=11,G=120,B=255,A=255)
 	LevelColors(2)=(R=255,G=0,B=255,A=255)

@@ -87,23 +87,25 @@ static function float AddExtraAmmoFor(KFPlayerReplicationInfo KFPRI, Class<Ammun
 	return Multiplier;
 }
 
-static function int AddDamage(KFPlayerReplicationInfo KFPRI, KFMonster Injured, KFPawn DamageTaker, int InDamage, class<DamageType> DmgType)
+static function int AddDamage(KFPlayerReplicationInfo KFPRI, KFMonster Injured, KFPawn Instigator, int InDamage, class<DamageType> DmgType)
 {
+	local float Multiplier;
+	Multiplier = 1.f;
+
 	if (class<DamTypeM203Grenade>(DmgType) != none)
 	{
-		return float(InDamage) * LerpStat(KFPRI, 1.f, 1.9f);
+		Multiplier = LerpStat(KFPRI, 1.f, 1.9f);
 	}
-
-	if (class<DamTypeFrag>(DmgType) != none || class<DamTypePipeBomb>(DmgType) != none ||
+	else if (class<DamTypeFrag>(DmgType) != none || class<DamTypePipeBomb>(DmgType) != none ||
 		class<DamTypeM79Grenade>(DmgType) != none || class<DamTypeM32Grenade>(DmgType) != none
 		|| class<DamTypeM203Grenade>(DmgType) != none || class<DamTypeRocketImpact>(DmgType) != none
 		|| class<DamTypeSPGrenade>(DmgType) != none || class<DamTypeSealSquealExplosion>(DmgType) != none
 		|| class<DamTypeSeekerSixRocket>(DmgType) != none)
 	{
-		return float(InDamage) * LerpStat(KFPRI, 1.05f, 1.6f);
+		Multiplier = LerpStat(KFPRI, 1.05f, 1.6f);
 	}
 
-	return InDamage;
+	return Super.AddDamage(KFPRI, Injured, Instigator, float(InDamage) * Multiplier, DmgType);
 }
 
 static function int ReduceDamage(KFPlayerReplicationInfo KFPRI, KFPawn Injured, Pawn Instigator, int InDamage, class<DamageType> DamageType)

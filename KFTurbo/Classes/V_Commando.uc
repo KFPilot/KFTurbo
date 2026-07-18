@@ -241,6 +241,9 @@ static function ApplyAdjustedExtraAmmo(KFPlayerReplicationInfo KFPRI, class<Ammu
 
 static function int AddDamage(KFPlayerReplicationInfo KFPRI, KFMonster Injured, KFPawn Instigator, int InDamage, class<DamageType> DmgType)
 {
+	local float Multiplier;
+	Multiplier = 1.f;
+
 	switch (DmgType)
 	{
 	case class'DamTypeBullpup' :
@@ -252,10 +255,11 @@ static function int AddDamage(KFPlayerReplicationInfo KFPRI, KFMonster Injured, 
 	case class'W_FNFAL_DT' :
 	case class'W_ThompsonDrum_DT' :
 	case class'W_ThompsonSMG_DT' :
-		return float(InDamage) * LerpStat(KFPRI, 1.05f, 1.5f);
+		Multiplier = LerpStat(KFPRI, 1.05f, 1.5f);
+		break;
 	}
 
-	return InDamage;
+	return Super.AddDamage(KFPRI, Injured, Instigator, float(InDamage) * Multiplier, DmgType);
 }
 
 static function float ModifyRecoilSpread(KFPlayerReplicationInfo KFPRI, WeaponFire Other, out float Recoil)

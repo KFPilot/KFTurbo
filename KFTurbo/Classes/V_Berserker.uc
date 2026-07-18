@@ -70,14 +70,17 @@ static function float AddExtraAmmoFor(KFPlayerReplicationInfo KFPRI, Class<Ammun
 	return Multiplier;
 }
 
-static function int AddDamage(KFPlayerReplicationInfo KFPRI, KFMonster Injured, KFPawn DamageTaker, int InDamage, class<DamageType> DmgType)
+static function int AddDamage(KFPlayerReplicationInfo KFPRI, KFMonster Injured, KFPawn Instigator, int InDamage, class<DamageType> DmgType)
 {
+	local float Multiplier;
+	Multiplier = 1.f;
+	
 	if (class<KFWeaponDamageType>(DmgType) != none && class<KFWeaponDamageType>(DmgType).default.bIsMeleeDamage)
 	{
-		return float(InDamage) * LerpStat(KFPRI, 1.1f, 2.f);
+		Multiplier = LerpStat(KFPRI, 1.1f, 2.f);
 	}
 
-	return InDamage;
+	return Super.AddDamage(KFPRI, Injured, Instigator, float(InDamage) * Multiplier, DmgType);
 }
 
 static function ApplyAdjustedFireRate(KFPlayerReplicationInfo KFPRI, Weapon Other, out float Multiplier)

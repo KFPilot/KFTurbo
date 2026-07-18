@@ -117,22 +117,29 @@ static function float AddExtraAmmoFor(KFPlayerReplicationInfo KFPRI, Class<Ammun
 	return Multiplier;
 }
 
-static function int AddDamage(KFPlayerReplicationInfo KFPRI, KFMonster Injured, KFPawn DamageTaker, int InDamage, class<DamageType> DmgType)
+static function int AddDamage(KFPlayerReplicationInfo KFPRI, KFMonster Injured, KFPawn Instigator, int InDamage, class<DamageType> DmgType)
 {
+	local float Multiplier;
+	Multiplier = 1.f;
+
 	switch (DmgType)
 	{
 	case class'W_MAC10_DT' :
 	case class'W_Trenchgun_DT' :
 	case class'W_ThompsonSMG_DT' :
-		return float(InDamage) * LerpStat(KFPRI, 1.f, 1.15);
+		Multiplier = LerpStat(KFPRI, 1.f, 1.15);
+		break;
 	}
 
-	if (class<DamTypeBurned>(DmgType) != none || class<DamTypeFlamethrower>(DmgType) != none || class<DamTypeHuskGunProjectileImpact>(DmgType) != none || class<W_FlareRevolver_Impact_DT>(DmgType) != none)
+	if (Multiplier != 1.f)
 	{
-		return float(InDamage) * LerpStat(KFPRI, 1.05f, 1.6f);
+		if (class<DamTypeBurned>(DmgType) != none || class<DamTypeFlamethrower>(DmgType) != none || class<DamTypeHuskGunProjectileImpact>(DmgType) != none || class<W_FlareRevolver_Impact_DT>(DmgType) != none)
+		{
+			Multiplier = LerpStat(KFPRI, 1.05f, 1.6f);
+		}
 	}
 
-	return InDamage;
+	return Super.AddDamage(KFPRI, Injured, Instigator, float(InDamage) * Multiplier, DmgType);
 }
 
 static function int ExtraRange(KFPlayerReplicationInfo KFPRI)
