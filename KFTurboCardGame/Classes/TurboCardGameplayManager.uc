@@ -35,6 +35,7 @@ var CardFlag ExplodeDoorFlag;
 var ExplodeDoorsActor ExplodeDoorsActor;
 
 var CardFlag BankRunFlag;
+var CardFlag HealthAndTaxesFlag;
 
 //CARD GAME
 var CardDeltaStack CardSelectionCountDelta;
@@ -285,6 +286,11 @@ function OnWaveEnd(int EndedWave)
     {
         GrantAllPlayersArmor();
     }
+
+    if (HealthAndTaxesFlag.IsFlagSet())
+    {
+        MultiplyPlayerCash(0.9f);
+    }
 }
 
 function OnNextSpawnSquadGenerated(out array < class<KFMonster> > NextSpawnSquad)
@@ -511,6 +517,7 @@ function ExplodeDoorFlagChanged(CardFlag Flag, bool bIsEnabled)
 }
 
 function BankRunFlagChanged(CardFlag Flag, bool bIsEnabled) {}
+function HealthAndTaxesChanged(CardFlag Flag, bool bIsEnabled) {}
 
 //CARD GAME
 function CardSelectionCountDeltaChanged(CardDeltaStack ChangedDelta, int Delta)
@@ -1436,6 +1443,13 @@ defaultproperties
         OnFlagSetChanged=BankRunFlagChanged
     End Object
     BankRunFlag=CardFlag'BankRunCardFlag'
+
+    Begin Object Name=HealthAndTaxesCardFlag Class=CardFlag
+        FlagID="HealthAndTaxes"
+        OnFlagSetChanged=HealthAndTaxesChanged
+    End Object
+    HealthAndTaxesFlag=CardFlag'HealthAndTaxesCardFlag'
+
 
 //CARD GAME
     Begin Object Name=CardSelectionCountDeltaStack Class=CardDeltaStack

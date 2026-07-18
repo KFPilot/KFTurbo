@@ -126,19 +126,19 @@ function OnWaveStart(int StartedWave)
     {
         case 0:
             ModifyWaveSize(0.2f);
-            GrantExtraWaveReward(200);
+            GrantExtraWaveReward(250);
             break;
         case 1:
             ModifyWaveSize(0.25f);
-            GrantExtraWaveReward(150);
+            GrantExtraWaveReward(200);
             break;
         case 2:
             ModifyWaveSize(0.3f);
-            GrantExtraWaveReward(100);
+            GrantExtraWaveReward(150);
             break;
         case 3:
             ModifyWaveSize(0.4f);
-            GrantExtraWaveReward(50);
+            GrantExtraWaveReward(75);
             break;
         case 4:
             ModifyWaveSize(0.5f);

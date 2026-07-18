@@ -588,7 +588,8 @@ function ActivateHoarder(TurboCardGameplayManager GameplayManager, TurboCard Car
 
 function ActivateHealthAndTaxes(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
-    //TODO IMPLEMENT
+    Card.UpdateFlag(GameplayManager.HealthAndTaxesFlag, bActivate);
+    Card.UpdateModifier(GameplayManager.PlayerMaxHealthModifier, 1.05f, bActivate);
 }
 
 defaultproperties
