@@ -49,7 +49,7 @@ replication
 function Timer()
 {
     Super.Timer();
-    
+
     if(Controller(Owner) != None && Controller(Owner).Pawn != None)
     {
         ShieldStrength = Controller(Owner).Pawn.ShieldStrength;
@@ -230,7 +230,7 @@ final simulated function float GetHealthPercent()
 {
     if (Controller(Owner) != None && TurboHumanPawn(Controller(Owner).Pawn) != None)
     {
-        return GetPawnHealthPercent(TurboHumanPawn(Controller(Owner).Pawn));
+        return TurboHumanPawn(Controller(Owner).Pawn).GetHealthPercent();
     }
 
     if (HealthMax <= 0)
@@ -241,14 +241,14 @@ final simulated function float GetHealthPercent()
     return float(PlayerHealth) / float(HealthMax);
 }
 
-final private simulated function float GetPawnHealthPercent(TurboHumanPawn Pawn)
+final simulated function float GetArmorPercent()
 {
-    if (Pawn.HealthMax <= 0.f)
+    if (Controller(Owner) != None && TurboHumanPawn(Controller(Owner).Pawn) != None)
     {
-        return float(Pawn.Health) / 100.f;
+        return TurboHumanPawn(Controller(Owner).Pawn).GetArmorPercent();
     }
 
-    return float(Pawn.Health) / Pawn.HealthMax;
+    return float(ShieldStrength) / 100.f;
 }
 
 defaultproperties
