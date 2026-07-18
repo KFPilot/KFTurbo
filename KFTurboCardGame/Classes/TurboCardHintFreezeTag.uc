@@ -6,6 +6,6 @@ class TurboCardHintFreezeTag extends TurboCardHintMultiLineText
 
 defaultproperties
 {
-	TextList(0)="Freeze Tag waits 9 seconds after holding a melee weapon before slowing the player."
-	TextList(1)="The slow gradually increases over 4 seconds."
+	TextList(0)="Freeze Tag waits 10 seconds after holding a melee weapon before slowing the player."
+	TextList(1)="The slow gradually increases over 5 seconds."
 }
