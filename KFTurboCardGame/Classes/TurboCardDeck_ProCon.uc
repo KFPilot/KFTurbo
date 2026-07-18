@@ -586,6 +586,11 @@ function ActivateHoarder(TurboCardGameplayManager GameplayManager, TurboCard Car
     Card.UpdateModifier(GameplayManager.PlayerMovementSpeedModifier, 0.95f, bActivate);
 }
 
+function ActivateHealthAndTaxes(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
+{
+    //TODO IMPLEMENT
+}
+
 defaultproperties
 {
     Begin Object Name=TradeIn Class=TurboCard_ProConStrange
@@ -598,7 +603,7 @@ defaultproperties
         CardID="PROCON_TRADEIN"
     End Object
     OptionalCardList(0)=(Card=TurboCard'TradeIn')
-    
+
     Begin Object Name=SoulForASoul Class=TurboCard_ProConStrange
         CardName(0)="A Soul For"
         CardName(1)="A Soul"
@@ -826,7 +831,7 @@ defaultproperties
         CardID="PROCON_PAIDINBLOOD"
     End Object
     DeckCardObjectList(17)=TurboCard'PaidInBlood'
-    
+
     Begin Object Name=DealWithDevil Class=TurboCard_ProConStrange
         CardName(0)="A Deal With"
         CardName(1)="The Devil"
@@ -840,7 +845,7 @@ defaultproperties
         CardID="PROCON_DEATHWITHDEVIL"
     End Object
     DeckCardObjectList(18)=TurboCard'DealWithDevil'
-    
+
     Begin Object Name=DistractedDriving Class=TurboCard_ProCon
         CardName(0)="Distracted"
         CardName(1)="Driving"
@@ -852,7 +857,7 @@ defaultproperties
         CardID="PROCON_DISTDRIVING"
     End Object
     DeckCardObjectList(19)=TurboCard'DistractedDriving'
-    
+
     Begin Object Name=HighSpeedLowDrag Class=TurboCard_ProCon
         CardName(0)="High Speed"
         CardName(1)="Low Drag"
@@ -865,7 +870,7 @@ defaultproperties
         CardID="PROCON_HIGHSPEEDLOWDRAG"
     End Object
     DeckCardObjectList(20)=TurboCard'HighSpeedLowDrag'
-    
+
     Begin Object Name=UnlicensedPractitioner Class=TurboCard_ProCon
         CardName(0)="Unlicensed"
         CardName(1)="Practitioner"
@@ -878,7 +883,7 @@ defaultproperties
         CardID="PROCON_UNLICPRACTITIONER"
     End Object
     DeckCardObjectList(21)=TurboCard'UnlicensedPractitioner'
-    
+
     Begin Object Name=RussianRoulette Class=TurboCard_ProCon
         CardName(0)="Russian"
         CardName(1)="Roulette"
@@ -891,7 +896,7 @@ defaultproperties
         CardID="PROCON_RUSSIANROULLETTE"
     End Object
     DeckCardObjectList(22)=TurboCard'RussianRoulette'
-    
+
     Begin Object Name=ConcentratedHeal Class=TurboCard_ProCon
         CardName(0)="Concentrated"
         CardName(1)="Healing"
@@ -904,7 +909,7 @@ defaultproperties
         CardID="PROCON_CONCENTRATEHEALING"
     End Object
     DeckCardObjectList(23)=TurboCard'ConcentratedHeal'
-    
+
     Begin Object Name=DroppingBallast Class=TurboCard_ProCon
         CardName(0)="Dropping"
         CardName(1)="Ballast"
@@ -916,7 +921,7 @@ defaultproperties
         CardID="PROCON_DROPBALLAST"
     End Object
     DeckCardObjectList(24)=TurboCard'DroppingBallast'
-    
+
     Begin Object Name=ShotgunsMoreKick Class=TurboCard_ProCon
         CardName(0)="With A Bit"
         CardName(1)="More Kick"
@@ -929,7 +934,7 @@ defaultproperties
         CardID="PROCON_MOREKICK"
     End Object
     DeckCardObjectList(25)=TurboCard'ShotgunsMoreKick'
-    
+
     Begin Object Name=MoreToPlay Class=TurboCard_ProCon
         CardName(0)="More Game"
         CardName(1)="To Play"
@@ -942,7 +947,7 @@ defaultproperties
         CardID="PROCON_MOREGAMETOPLAY"
     End Object
     DeckCardObjectList(26)=TurboCard'MoreToPlay'
-    
+
     Begin Object Name=CollateralDamage Class=TurboCard_ProCon
         CardName(0)="Collateral"
         CardName(1)="Damage"
@@ -954,7 +959,7 @@ defaultproperties
         CardID="PROCON_COLLATDAMAGE"
     End Object
     DeckCardObjectList(27)=TurboCard'CollateralDamage'
-    
+
     Begin Object Name=MoreHealingAndHurting Class=TurboCard_ProCon
         CardName(0)="More Healing"
         CardName(1)="More Hurting"
@@ -966,7 +971,7 @@ defaultproperties
         CardID="PROCON_HEALINGANDHURTING"
     End Object
     DeckCardObjectList(28)=TurboCard'MoreHealingAndHurting'
-    
+
     Begin Object Name=ReRoll Class=TurboCard_ProConStrange
         CardName(0)="Re-Roll"
         CardDescriptionList(0)="All cards are"
@@ -977,7 +982,7 @@ defaultproperties
         CardID="PROCON_REROLL"
     End Object
     DeckCardObjectList(29)=TurboCard'ReRoll'
-    
+
     Begin Object Name=DrawOne Class=TurboCard_ProConStrange
         CardName(0)="Draw One"
         CardDescriptionList(0)="Receive a random"
@@ -987,7 +992,7 @@ defaultproperties
         CardID="PROCON_DRAWONE"
     End Object
     DeckCardObjectList(30)=TurboCard'DrawOne'
-    
+
     Begin Object Name=OversizedPipebombs Class=TurboCard_ProCon
         CardName(0)="Oversized"
         CardName(1)="Pipebombs"
@@ -1000,7 +1005,7 @@ defaultproperties
         CardID="PROCON_OVERSIZEPIPE"
     End Object
     DeckCardObjectList(31)=TurboCard'OversizedPipebombs'
-    
+
     Begin Object Name=ShortHop Class=TurboCard_ProCon
         CardName(0)="Short Hop"
         CardDescriptionList(0)="Increases player"
@@ -1011,7 +1016,7 @@ defaultproperties
         CardID="PROCON_SHORTHOP"
     End Object
     DeckCardObjectList(32)=TurboCard'ShortHop'
-    
+
     Begin Object Name=ChargeExchange Class=TurboCard_ProCon
         CardName(0)="Charge"
         CardName(1)="Exchange"
@@ -1023,7 +1028,7 @@ defaultproperties
         CardID="PROCON_CHARGEEXCHANGE"
     End Object
     DeckCardObjectList(33)=TurboCard'ChargeExchange'
-    
+
     Begin Object Name=RiskyRegen Class=TurboCard_ProCon
         CardName(0)="Risky Regen"
         CardDescriptionList(0)="Increases regen"
@@ -1035,7 +1040,7 @@ defaultproperties
         CardID="PROCON_RISKYREGEN"
     End Object
     DeckCardObjectList(34)=TurboCard'RiskyRegen'
-    
+
     Begin Object Name=DilutedHeal Class=TurboCard_ProCon
         CardName(0)="Diluted"
         CardName(1)="Healing"
@@ -1146,4 +1151,17 @@ defaultproperties
         OnActivateCard=ActivateHoarder
     End Object
     DeckCardObjectList(44)=TurboCard'Hoarder'
+
+    Begin Object Name=HealthAndTaxes Class=TurboCard_ProCon
+        CardName(0)="Health and Taxes"
+        CardDescriptionList(0)="Increases player"
+        CardDescriptionList(1)="health by 5% but"
+        CardDescriptionList(2)="players lose 10%"
+        CardDescriptionList(3)="of their dosh"
+        CardDescriptionList(4)="at the start of"
+        CardDescriptionList(5)="trader time."
+        CardID="PROCON_HEALTHTAX"
+        OnActivateCard=ActivateHealthAndTaxes
+    End Object
+    DeckCardObjectList(45)=TurboCard'HealthAndTaxes'
 }

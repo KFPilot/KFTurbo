@@ -422,7 +422,6 @@ function ActivateLongerBreather(TurboCardGameplayManager GameplayManager, TurboC
 
 function ActivateGooseCooked(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
-    Card.UpdateModifier(GameplayManager.PlayerBurnDamageModifier, 0.5f, bActivate);
     Card.UpdateFlag(GameplayManager.PlayerBurnGivesMovementSpeed, bActivate);
 }
 
@@ -436,6 +435,31 @@ function ActivateTooMuchForZBlock(TurboCardGameplayManager GameplayManager, Turb
     Card.UpdateModifier(GameplayManager.PlayerAirControlModifier, 10000.f, bActivate);
 }
 
+function ActivateFlameRetardant(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
+{
+    Card.UpdateModifier(GameplayManager.PlayerFireDamageTakenModifier, 0.5f, bActivate);
+}
+
+function ActivatePerfectionist(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
+{
+    Card.UpdateModifier(GameplayManager.PlayerPerfectionistModifier, 1.05f, bActivate);
+}
+
+function ActivateVagrant(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
+{
+    Card.UpdateModifier(GameplayManager.PlayerLowWeightMovementSpeedModifier, 1.2f, bActivate);
+}
+
+function ActivatePanicReload(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
+{
+    Card.UpdateModifier(GameplayManager.PlayerLowAmmoWeaponReloadRateModifier, 1.2f, bActivate);
+}
+
+function ActivatePressurizedMagazines(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
+{
+    Card.UpdateModifier(GameplayManager.PlayerHighAmmoFireRateModifier, 1.2f, bActivate);
+}
+
 //========================
 //Dauntless
 
@@ -446,22 +470,71 @@ static final function bool DrawDauntless(TurboCardOverlay CardOverlay, TurboPlay
         DrawCardInfoIcon(Canvas, Texture'KFTurboCardGame.UI.DauntlessIcon_D', DrawX, DrawY, DrawHeight, CardOverlay.DauntlessStatus.Ratio);
         return true;
     }
-    
+
     return false;
 }
 
 static final function TickDauntless(TurboCardOverlay CardOverlay, TurboPlayerCardCustomInfo PlayerCustomInfo, TurboCard Card, float DeltaTime)
 {
-    if (PlayerCustomInfo.PlayerTPRI.GetHealthPercent() > 0.75f)
+    if (PlayerCustomInfo.IsDauntlessActive())
     {
-        if (CardOverlay.DauntlessStatus.Ratio > 0.003f)
-        {
-            CardOverlay.DauntlessStatus.Ratio -= DeltaTime;
-        }
+        CardOverlay.DauntlessStatus.Ratio = 1.f;
     }
     else
     {
-        CardOverlay.DauntlessStatus.Ratio = 1.f;
+        CardOverlay.DauntlessStatus.Ratio = FMax(CardOverlay.DauntlessStatus.Ratio - DeltaTime, 0.f);
+    }
+}
+
+//========================
+//Perfectionist
+
+static final function bool DrawPerfectionist(TurboCardOverlay CardOverlay, TurboPlayerCardCustomInfo PlayerCustomInfo, Canvas Canvas, TurboCard Card, float DrawX, float DrawY, float DrawHeight)
+{
+    if (CardOverlay.PerfectionistStatus.Ratio > 0.003f)
+    {
+        DrawCardInfoIcon(Canvas, Texture'KFTurboCardGame.UI.Perfectionist_D', DrawX, DrawY, DrawHeight, CardOverlay.DauntlessStatus.Ratio);
+        return true;
+    }
+
+    return false;
+}
+
+static final function TickPerfectionist(TurboCardOverlay CardOverlay, TurboPlayerCardCustomInfo PlayerCustomInfo, TurboCard Card, float DeltaTime)
+{
+    if (PlayerCustomInfo.IsPerfectionistActive())
+    {
+        CardOverlay.PerfectionistStatus.Ratio = 1.f;
+    }
+    else
+    {
+        CardOverlay.PerfectionistStatus.Ratio = FMax(CardOverlay.PerfectionistStatus.Ratio - DeltaTime, 0.f);
+    }
+}
+
+//========================
+//Panic Reload
+
+static final function bool DrawPanicReload(TurboCardOverlay CardOverlay, TurboPlayerCardCustomInfo PlayerCustomInfo, Canvas Canvas, TurboCard Card, float DrawX, float DrawY, float DrawHeight)
+{
+    if (CardOverlay.PanicReload.Ratio > 0.003f)
+    {
+        DrawCardInfoIcon(Canvas, Texture'KFTurboCardGame.UI.PanicReload_a00', DrawX, DrawY, DrawHeight, CardOverlay.PanicReload.Ratio);
+        return true;
+    }
+
+    return false;
+}
+
+static final function TickPanicReload(TurboCardOverlay CardOverlay, TurboPlayerCardCustomInfo PlayerCustomInfo, TurboCard Card, float DeltaTime)
+{
+    if (PlayerCustomInfo.IsPanicReloadActive())
+    {
+        CardOverlay.PanicReload.Ratio = 1.f;
+    }
+    else
+    {
+        CardOverlay.PanicReload.Ratio = FMax(CardOverlay.PanicReload.Ratio - DeltaTime, 0.f);
     }
 }
 
@@ -880,9 +953,7 @@ defaultproperties
         CardName(1)="Getting Cooked"
         CardDescriptionList(0)="Increases player"
         CardDescriptionList(1)="movement speed by"
-        CardDescriptionList(2)="15% when on fire"
-        CardDescriptionList(3)="and reduces burn"
-        CardDescriptionList(4)="damage by 50%."
+        CardDescriptionList(2)="15% when on fire."
         CardID="GOOD_GOOSECOOKED"
         OnActivateCard=ActivateGooseCooked
     End Object
@@ -910,4 +981,72 @@ defaultproperties
         OnActivateCard=ActivateTooMuchForZBlock
     End Object
     DeckCardObjectList(42)=TurboCard'TooMuchForZBlock'
+
+    Begin Object Name=FlameRetardant Class=TurboCard_Good
+        CardName(0)="Flame"
+        CardName(1)="Retardant"
+        CardDescriptionList(0)="Increases player"
+        CardDescriptionList(1)="fire resistance"
+        CardDescriptionList(2)="by 50%."
+        CardID="GOOD_FLAMERETARD"
+        OnActivateCard=ActivateFlameRetardant
+    End Object
+    DeckCardObjectList(43)=TurboCard'FlameRetardant'
+
+    Begin Object Name=Perfectionist Class=TurboCard_Good
+        CardName(0)="Perfectionist"
+        CardDescriptionList(0)="Increases player"
+        CardDescriptionList(1)="damage, reload speed,"
+        CardDescriptionList(2)="and movement speed"
+        CardDescriptionList(3)="by 5% when health"
+        CardDescriptionList(4)="and armor are full."
+        CardID="GOOD_PERFECTIONIST"
+        OnActivateCard=ActivatePerfectionist
+        OnStatusIconTick=TickPerfectionist
+        OnStatusIconDraw=DrawPerfectionist
+    End Object
+    DeckCardObjectList(44)=TurboCard'Perfectionist'
+
+    Begin Object Name=VagrantMindset Class=TurboCard_Good
+        CardName(0)="Vagrant"
+        CardName(1)="Mindset"
+        CardDescriptionList(0)="Increases player"
+        CardDescriptionList(1)="movement speed"
+        CardDescriptionList(2)="by 15% when carry"
+        CardDescriptionList(3)="weight is less"
+        CardDescriptionList(4)="than 5."
+        CardID="GOOD_VAGRANT"
+        OnActivateCard=ActivateVagrant
+    End Object
+    DeckCardObjectList(45)=TurboCard'VagrantMindset'
+
+    Begin Object Name=PanicReload Class=TurboCard_Good
+        CardName(0)="Panic Reload"
+        CardDescriptionList(0)="Increases reload"
+        CardDescriptionList(1)="speed by 25% when"
+        CardDescriptionList(2)="magazine ammo is"
+        CardDescriptionList(3)="less than 10% of"
+        CardDescriptionList(4)="magazine capacity."
+        CardID="GOOD_PANICRELOAD"
+        OnActivateCard=ActivatePanicReload
+        OnStatusIconTick=TickPanicReload
+        OnStatusIconDraw=DrawPanicReload
+    End Object
+    DeckCardObjectList(46)=TurboCard'PanicReload'
+
+    Begin Object Name=PressurizedMagazines Class=TurboCard_Good
+        CardName(0)="Pressurized"
+        CardName(1)="Magazines"
+        CardDescriptionList(0)="Firerate increases"
+        CardDescriptionList(1)="by up to 20% based"
+        CardDescriptionList(2)="on magazine ammo"
+        CardDescriptionList(3)="fill percent."
+        CardDescriptionList(4)="Effect fades as"
+        CardDescriptionList(5)="magazine decreases"
+        CardDescriptionList(6)="to 60% magazine"
+        CardDescriptionList(7)="capacity."
+        CardID="GOOD_PRESSUREMAG"
+        OnActivateCard=ActivatePressurizedMagazines //TODO: NEEDS IMPL
+    End Object
+    DeckCardObjectList(47)=TurboCard'PressurizedMagazines'
 }

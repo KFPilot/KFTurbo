@@ -5,7 +5,7 @@
 class CardGameRules extends TurboGameRules
     dependson(PawnHelper)
     hidecategories(Advanced,Display,Events,Object,Sound);
-	
+
 var KFTurboCardGameMut MutatorOwner;
 
 //Player
@@ -18,6 +18,7 @@ var(Turbo) float FleshpoundDamageMultiplier;
 var(Turbo) float ScrakeDamageMultiplier;
 var(Turbo) float SlomoDamageMultiplier;
 var(Turbo) float PlayerDamageMultiplier;
+var(Turbo) float PlayerDamagePerfectionistMultiplier;
 var(Turbo) float PlayerRangedDamageMultiplier;
 var(Turbo) float ExplosiveDamageMultiplier;
 var(Turbo) float ExplosiveRadiusMultiplier;
@@ -30,12 +31,11 @@ var(Turbo) float TrashHeadshotDamageMultiplier;
 var(Turbo) float TrashDamageMultiplier;
 var(Turbo) float BossDamageMultiplier;
 var(Turbo) float MonsterFullHealthDamageMultiplier;
-var(Turbo) bool bPlayerHeadshotsIncreaseHeadshotDamage;
 
 var(Turbo) float DamageTakenMultiplier;
 var(Turbo) float ExplosiveDamageTakenMultiplier;
 var(Turbo) float FallDamageTakenMultiplier;
-var(Turbo) float PlayerBurnDamageModifier;
+var(Turbo) float PlayerFireDamageTakenMultiplier;
 
 var(Turbo) float OnPerkDamageMultiplier;
 var(Turbo) float OffPerkDamageMultiplier;
@@ -266,7 +266,7 @@ function bool PreventDeath(Pawn Killed, Controller Killer, class<DamageType> Dam
             return true;
         }
     }
-		
+
 	return false;
 }
 
@@ -350,7 +350,7 @@ function int NetDamage(int OriginalDamage, int Damage, Pawn Injured, Pawn Instig
         {
             DamageMultiplier *= 0.75f;
         }
-        
+
         DamageMultiplier *= DamageTakenMultiplier;
     }
 
@@ -360,7 +360,7 @@ function int NetDamage(int OriginalDamage, int Damage, Pawn Injured, Pawn Instig
     }
 
     if (class<SirenScreamDamage>(DamageType) != None)
-    {   
+    {
         DamageMultiplier *= SirenScreamDamageMultiplier;
     }
 
@@ -369,13 +369,20 @@ function int NetDamage(int OriginalDamage, int Damage, Pawn Injured, Pawn Instig
     {
         if (InstigatorHumanPawn != None)
         {
-            if (LowHealthDamageMultiplier != 1.f && ((float(InstigatedBy.Health) / InstigatedBy.HealthMax) < 0.75f))
+            DamageMultiplier *= PlayerDamageMultiplier;
+
+            if (InstigatorCardInfo != None)
             {
-                DamageMultiplier *= LowHealthDamageMultiplier;
+                if (InstigatorCardInfo.IsDauntlessActive())
+                {
+                    DamageMultiplier *= LowHealthDamageMultiplier;
+                }
+                else if (InstigatorCardInfo.IsPerfectionistActive()) //Mutually exclusive with Dauntless.
+                {
+                    DamageMultiplier *= PlayerDamagePerfectionistMultiplier;
+                }
             }
 
-            DamageMultiplier *= PlayerDamageMultiplier;
-            
             if (WeaponDamageType.default.bIsExplosive)
             {
                 DamageMultiplier *= ExplosiveDamageMultiplier;
@@ -401,7 +408,7 @@ function int NetDamage(int OriginalDamage, int Damage, Pawn Injured, Pawn Instig
                 }
             }
             else
-            { 
+            {
                 DamageMultiplier *= PlayerRangedDamageMultiplier;
             }
 
@@ -416,7 +423,7 @@ function int NetDamage(int OriginalDamage, int Damage, Pawn Injured, Pawn Instig
             DamageMultiplier *= ExplosiveDamageTakenMultiplier;
         }
     }
-    
+
     if (InstigatorMonster != None)
     {
         DamageMultiplier *= MonsterDamageMultiplier;
@@ -443,7 +450,7 @@ function int NetDamage(int OriginalDamage, int Damage, Pawn Injured, Pawn Instig
         {
             DamageMultiplier *= SlomoDamageMultiplier;
         }
-    
+
         if (InjuredMonster != None && P_Fleshpound(Injured) != None)
         {
             DamageMultiplier *= FleshpoundDamageMultiplier;
@@ -457,16 +464,16 @@ function int NetDamage(int OriginalDamage, int Damage, Pawn Injured, Pawn Instig
 
     if (InjuredHumanPawn != None)
     {
-        if (PlayerBurnDamageModifier != 1.f && class<TurboHumanBurned_DT>(DamageType) != None)
+        if (PlayerFireDamageTakenMultiplier != 1.f && class<DamTypeBurned>(DamageType) != None)
         {
-            DamageMultiplier *= PlayerBurnDamageModifier;
+            DamageMultiplier *= PlayerFireDamageTakenMultiplier;
         }
         else if (FallDamageTakenMultiplier != 1.f && class<TurboHumanFall_DT>(DamageType) != None)
         {
             DamageMultiplier *= FallDamageTakenMultiplier;
         }
     }
-    
+
     if (DamageMultiplier > 0.f && InstigatorCardInfo != None && InjuredMonster != None)
     {
         AttemptCriticalHit(DamageMultiplier, InstigatedBy, InstigatorCardInfo, HitLocation);
@@ -484,13 +491,13 @@ function int NetDamage(int OriginalDamage, int Damage, Pawn Injured, Pawn Instig
     if (InstigatorMonster != None && InjuredHumanPawn != None)
     {
         ApplyThornsDamage(Damage, InjuredHumanPawn, InstigatorMonster);
-        
+
         if (MutatorOwner.TurboCardGameplayManagerInfo.BleedManager != None && class<ZombieMeleeDamage>(DamageType) != None && class<TurboHumanBleed_DT>(DamageType) == None)
         {
             MutatorOwner.TurboCardGameplayManagerInfo.BleedManager.ApplyBleedToPlayer(InjuredHumanPawn);
         }
     }
-    
+
     //If resulting damage was more than 1, check russian roulette if it's enabled.
     if (bRussianRouletteEnabled && FRand() < 0.001 && class<TurboHumanBurned_DT>(DamageType) == None)
     {
@@ -522,7 +529,7 @@ final function bool IsInHealingBoostTime(TurboPlayerCardCustomInfo PlayerCardInf
 function ApplyPerkDamageModifiers(out float DamageMultiplier, KFHumanPawn InstigatedBy, KFPlayerReplicationInfo InstigatedByPRI, class<KFWeaponDamageType> WeaponDamageType)
 {
     if (class<TurboVeterancyTypes>(InstigatedByPRI.ClientVeteranSkill) == None)
-    { 
+    {
         return;
     }
 
@@ -561,7 +568,7 @@ function MonsterNetDamage(out float DamageMultiplier, KFMonster Injured, Pawn In
         //It's fine to ask this again since we haven't run PlayHit yet or anything.
         if (class<DamTypeMelee>(WeaponDamageType) != None)
         {
-            bWasHeadshot = Injured.IsHeadShot(HitLocation, Normal(Momentum), 1.25f); 
+            bWasHeadshot = Injured.IsHeadShot(HitLocation, Normal(Momentum), 1.25f);
         }
         else
         {
@@ -576,11 +583,6 @@ function MonsterNetDamage(out float DamageMultiplier, KFMonster Injured, Pawn In
             }
 
             DamageMultiplier *= HeadshotDamageMultiplier;
-
-            if (bPlayerHeadshotsIncreaseHeadshotDamage && InsitgatorCardInfo != None)
-            {
-                DamageMultiplier *= InsitgatorCardInfo.GetPlayerHeadshotBonus();
-            }
         }
         else
         {
@@ -614,7 +616,7 @@ function AttemptCriticalHit(out float DamageMultiplier, Pawn InstigatedBy, Turbo
     {
         CurrentCriticalHitChance += float(PlayerCardInfo.NonCriticalHitCount) * 0.02f;
     }
-    
+
     while (CurrentCriticalHitChance >= 1.f)
     {
         NumCriticalHits++;
@@ -632,7 +634,7 @@ function AttemptCriticalHit(out float DamageMultiplier, Pawn InstigatedBy, Turbo
         {
             PlayerCardInfo.NonCriticalHitCount++;
         }
-            
+
         return;
     }
     else
@@ -642,7 +644,7 @@ function AttemptCriticalHit(out float DamageMultiplier, Pawn InstigatedBy, Turbo
             PlayerCardInfo.NonCriticalHitCount = 0;
         }
     }
-    
+
     if (bBonusCriticalHitChanceAfterCriticalHit && PlayerCardInfo != None)
     {
         PlayerCardInfo.AttemptGrantPerpetualCriticalHit();
@@ -653,7 +655,7 @@ function AttemptCriticalHit(out float DamageMultiplier, Pawn InstigatedBy, Turbo
         bHasPerformedCriticalHitEffect = true;
         PlayerCardInfo.SendClientCriticalHit(HitLocation, NumCriticalHits);
     }
-    
+
     DamageMultiplier *= CriticalHitDamageMultiplier * float(NumCriticalHits);
 }
 
@@ -736,7 +738,7 @@ function Killed(Controller Killer, Controller Killed, Pawn KilledPawn, class<Dam
     {
         GrantShieldOnKill(KFMonster(KilledPawn), PlayerController(Killer));
     }
-    
+
     Super.Killed(Killer, Killed, KilledPawn, DamageType);
 }
 
@@ -879,7 +881,7 @@ final function PerformMassDetonation(MassDetonationEntry Detonation)
 
 		Direction = Normal(HitPawn.Location - Detonation.Location);
 		HitMomentum = DamageScale * class'W_Frag_Proj'.default.MomentumTransfer * Direction * 0.125f;
-        
+
 		HitPawn.TakeDamage(DamageScale * float(Detonation.MaxHealth) * 0.25f, Detonation.Controller.Pawn, Detonation.Location, HitMomentum, class'MassDetonation_DT');
     }
 }
@@ -974,7 +976,7 @@ function ModifyActor(Actor Other)
         if (KFHumanPawn(Other.Instigator) != None)
         {
             Projectile(Other).DamageRadius *= ExplosiveRadiusMultiplier;
-            
+
             if (bOversizedPipebombs && PipeBombProjectile(Other) != None)
             {
                 Other.SetDrawScale(Other.DrawScale * 1.75f);
@@ -1166,7 +1168,7 @@ final function bool AttemptNegateDamage(TurboPlayerCardCustomInfo PlayerCardInfo
     {
         return false;
     }
-    
+
     return PlayerCardInfo.AttemptSubstituteDamage();
 }
 
@@ -1186,7 +1188,7 @@ final function ForceFlipOver(KFMonster Monster)
 	{
 		Monster.SetPhysics(PHYS_Walking);
 	}
-    
+
     if (Monster.IsInState('BeginRaging'))
     {
         if (ZombieFleshPound(Monster) != None)
@@ -1238,6 +1240,7 @@ defaultproperties
     FleshpoundDamageMultiplier=1.f
     ScrakeDamageMultiplier=1.f
     PlayerDamageMultiplier=1.f
+    PlayerDamagePerfectionistMultiplier=1.f
     SlomoDamageMultiplier=1.f
     PlayerRangedDamageMultiplier=1.f
     ExplosiveDamageMultiplier=1.f
@@ -1255,7 +1258,7 @@ defaultproperties
     DamageTakenMultiplier=1.f
     ExplosiveDamageTakenMultiplier=1.f
     FallDamageTakenMultiplier=1.f
-    PlayerBurnDamageModifier=1.f
+    PlayerFireDamageTakenMultiplier=1.f
 
     OnPerkDamageMultiplier=1.f
     OffPerkDamageMultiplier=1.f
@@ -1272,7 +1275,7 @@ defaultproperties
     bBonusCriticalHitChanceAfterCriticalHit=false
 
     PlayerJumpZMultiplier=1.f
-    PlayerAirControlMultiplier=1.f  
+    PlayerAirControlMultiplier=1.f
 
     SirenScreamDamageMultiplier=1.f
 

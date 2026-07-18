@@ -50,6 +50,9 @@ var const float GreedBegetsSlowSpeedStartCash;
 var const float GreedBegetsSlowSpeedEndCash;
 var const float GreedBegetsSlowSpeedSpeedModifier;
 
+var const float LowHealthBonusThreshold;
+var const float PanicReloadThreshold;
+
 var private TurboCardOverlay CachedTurboCardOverlay;
 
 const MARKED_FOR_DEATH = 1;
@@ -96,6 +99,43 @@ final simulated function float GetHealthPercent()
     }
 
     return PlayerTPRI.GetHealthPercent();
+}
+
+final simulated function float GetArmorPercent()
+{
+    if (PlayerTPRI == None)
+    {
+        return 0.f;
+    }
+
+    return PlayerTPRI.GetArmorPercent();
+}
+
+final simulated function float GetLoadedAmmoPercent()
+{
+    local Pawn Pawn;
+    Pawn = GetOwnerPawn();
+    if (Pawn != None)
+    {
+        return GetWeaponLoadedAmmoPercent(KFWeapon(Pawn.Weapon));
+    }
+
+    return -1.f;
+}
+
+static final simulated function float GetWeaponLoadedAmmoPercent(KFWeapon Weapon)
+{
+    if (Weapon != None)
+    {
+        if (Weapon.default.MagCapacity <= 2)
+        {
+            return -1.f;
+        }
+
+        return Weapon.MagAmmoRemaining / Weapon.MagCapacity;
+    }
+
+    return -1.f;
 }
 
 simulated function Timer()
@@ -535,6 +575,25 @@ final simulated function float GetGreedBegetsSlowSpeedModifier()
 	return Lerp(GetGreedBegetsSlowSpeedPercent(), 1.f, GreedBegetsSlowSpeedSpeedModifier);
 }
 
+final simulated function bool IsDauntlessActive()
+{
+	local float HealthPercent;
+	HealthPercent = GetHealthPercent();
+	return HealthPercent <= LowHealthBonusThreshold && HealthPercent > 0.f;
+}
+
+final simulated function bool IsPerfectionistActive()
+{
+	return GetHealthPercent() >= 1.f && GetArmorPercent() >= 1.f;
+}
+
+final simulated function bool IsPanicReloadActive()
+{
+    local float AmmoPercent;
+	AmmoPercent = GetLoadedAmmoPercent();
+	return AmmoPercent >= 0.f && AmmoPercent <= PanicReloadThreshold;
+}
+
 defaultproperties
 {
 	CheatDeathWave=-1
@@ -571,6 +630,9 @@ defaultproperties
 	GreedBegetsSlowSpeedStartCash=800.f
 	GreedBegetsSlowSpeedEndCash=5200.f
 	GreedBegetsSlowSpeedSpeedModifier=0.01f
+
+	LowHealthBonusThreshold=0.75f
+	PanicReloadThreshold=0.1f
 
 	//Replicates now that the client has to be aware of certain properties on here.
     RemoteRole=ROLE_SimulatedProxy

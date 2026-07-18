@@ -121,7 +121,7 @@ var CardModifierStack PlayerArmorStrengthModifier;
 var CardModifierStack PlayerDamageTakenModifier;
 var CardModifierStack PlayerExplosiveDamageTakenModifier;
 var CardModifierStack PlayerFallDamageModifier;
-var CardModifierStack PlayerBurnDamageModifier;
+var CardModifierStack PlayerFireDamageTakenModifier;
 
 var CardFlag PlayerDamageSubstituteFlag;
 
@@ -131,6 +131,7 @@ var CardModifierStack PlayerMeleeFireRateModifier;
 var CardModifierStack PlayerBerserkerFireRateModifier;
 var CardModifierStack PlayerFirebugFireRateModifier;
 var CardModifierStack PlayerZedTimeDualWeaponFireRateModifier;
+var CardModifierStack PlayerHighAmmoFireRateModifier;
 
 //MAGAZINE AMMO
 var CardModifierStack PlayerMagazineAmmoModifier;
@@ -142,6 +143,7 @@ var CardModifierStack PlayerDualWeaponMagazineAmmoModifier;
 var CardModifierStack PlayerReloadRateModifier;
 var CardModifierStack PlayerCommandoReloadRateModifier;
 var CardModifierStack PlayerZedTimeDualWeaponReloadRateModifier;
+var CardModifierStack PlayerLowAmmoWeaponReloadRateModifier;
 
 //EQUIP RATE
 var CardModifierStack PlayerEquipRateModifier;
@@ -178,6 +180,7 @@ var CardModifierStack PlayerReciprocalHealingModifier;
 var CardModifierStack PlayerMovementSpeedModifier;
 var CardModifierStack PlayerMovementAccelModifier;
 var CardModifierStack PlayerMovementFrictionModifier;
+var CardModifierStack PlayerLowWeightMovementSpeedModifier;
 var CardModifierStack PlayerJumpModifier;
 var CardModifierStack PlayerAirControlModifier;
 var CardFlag PlayerFreezeTagFlag;
@@ -192,6 +195,7 @@ var CardFlag PlayerGrenadeThrowBuff;
 var CardFlag PlayerHealBoostBuff;
 var CardFlag PlayerHeadshotsIncreaseHeadshotDamage;
 var CardFlag PlayerBurnGivesMovementSpeed;
+var CardModifierStack PlayerPerfectionistModifier;
 
 ////////////////////
 //MONSTER MODIFIERS
@@ -291,7 +295,7 @@ function OnNextSpawnSquadGenerated(out array < class<KFMonster> > NextSpawnSquad
     {
         return;
     }
-    
+
     for (SquadIndex = 0; SquadIndex < NextSpawnSquad.Length; SquadIndex++)
     {
         if (MonsterUpgradeFlag.IsFlagSet() && FRand() < 0.03f)
@@ -338,7 +342,7 @@ function MaxMonstersModifierChanged(CardModifierStack ModifiedStack, float Modif
     {
         return;
     }
-    
+
     TurboGameType.MaxMonsters = float(TurboGameType.MaxMonsters) * (TurboGameType.GameMaxMonstersModifier / OriginalModifier);
 }
 
@@ -352,7 +356,7 @@ function TotalMonstersModifierChanged(CardModifierStack ModifiedStack, float Mod
     {
         return;
     }
-    
+
     TurboGameType.TotalMaxMonsters = float(TurboGameType.TotalMaxMonsters) * (TurboGameType.GameTotalMonstersModifier / OriginalModifier);
 }
 
@@ -383,7 +387,7 @@ function TraderTimeModifierChanged(CardModifierStack ModifiedStack, float Modifi
     {
         return;
     }
-    
+
     TurboGameType.WaveCountDown = float(TurboGameType.WaveCountDown) * (TurboGameType.GameTraderTimeModifier / OriginalModifier);
     KFGameReplicationInfo(TurboGameType.GameReplicationInfo).TimeToNextWave = TurboGameType.WaveCountDown;
 }
@@ -470,7 +474,7 @@ function LockPerkSelectionFlagChanged(CardFlag Flag, bool bIsEnabled)
     local array<TurboPlayerController> PlayerList;
     local int Index;
     PlayerList = class'TurboGameplayHelper'.static.GetPlayerControllerList(Level);
-    
+
     for (Index = 0; Index < PlayerList.Length; Index++)
     {
         if (!bIsEnabled)
@@ -672,7 +676,7 @@ function NoSyringeFlagChanged(CardFlag Flag, bool bIsEnabled)
     CardGameRules.bDisableSyringe = bIsEnabled;
 
     HumanPawnList = class'TurboGameplayHelper'.static.GetPlayerPawnList(Level);
-    
+
     if (bIsEnabled)
     {
         for (Index = HumanPawnList.Length - 1; Index >= 0; Index--)
@@ -914,9 +918,9 @@ function PlayerFallDamageModifierChanged(CardModifierStack ModifiedStack, float 
     CardGameRules.FallDamageTakenMultiplier = Modifier;
 }
 
-function PlayerBurnDamageModifierChanged(CardModifierStack ModifiedStack, float Modifier)
+function PlayerFireDamageTakenModifierChanged(CardModifierStack ModifiedStack, float Modifier)
 {
-    CardGameRules.PlayerBurnDamageModifier = Modifier;
+    CardGameRules.PlayerFireDamageTakenMultiplier = Modifier;
 }
 
 function PlayerDamageSubstituteCardFlagChanged(CardFlag Flag, bool bIsEnabled)
@@ -957,6 +961,12 @@ function PlayerFirebugFireRateModifierChanged(CardModifierStack ModifiedStack, f
 function PlayerZedTimeDualWeaponFireRateModifierChanged(CardModifierStack ModifiedStack, float Modifier)
 {
     CardGameModifier.ZedTimeDualPistolFireRateMultiplier = Modifier;
+    CardGameModifier.ForceNetUpdate();
+}
+
+function PlayerHighAmmoFireRateModifierChanged(CardModifierStack ModifiedStack, float Modifier)
+{
+    CardGameModifier.HighAmmoFireRateMultiplier = Modifier;
     CardGameModifier.ForceNetUpdate();
 }
 
@@ -1001,6 +1011,12 @@ function PlayerCommandoReloadRateModifierChanged(CardModifierStack ModifiedStack
 function PlayerZedTimeDualWeaponReloadRateModifierChanged(CardModifierStack ModifiedStack, float Modifier)
 {
     CardGameModifier.ZedTimeDualWeaponReloadRateMultiplier = Modifier;
+    CardGameModifier.ForceNetUpdate();
+}
+
+function PlayerLowAmmoWeaponReloadRateModifierChanged(CardModifierStack ModifiedStack, float Modifier)
+{
+    CardGameModifier.LowAmmoReloadRateMultiplier = Modifier;
     CardGameModifier.ForceNetUpdate();
 }
 
@@ -1136,6 +1152,12 @@ function PlayerMovementFrictionModifierChanged(CardModifierStack ModifiedStack, 
     CardClientModifier.ForceNetUpdate();
 }
 
+function PlayerMovementLowWeightModifierChanged(CardModifierStack ModifiedStack, float Modifier)
+{
+    CardGameModifier.PlayerMovementLowWeightMultiplier = Modifier;
+    CardGameModifier.ForceNetUpdate();
+}
+
 function PlayerJumpModifierChanged(CardModifierStack ModifiedStack, float Modifier)
 {
     local array<TurboHumanPawn> HumanPawnList;
@@ -1143,7 +1165,7 @@ function PlayerJumpModifierChanged(CardModifierStack ModifiedStack, float Modifi
     local int Index;
 
     CardGameRules.PlayerJumpZMultiplier = Modifier;
-    
+
     HumanPawnList = class'TurboGameplayHelper'.static.GetPlayerPawnList(Level);
     for (Index = HumanPawnList.Length - 1; Index >= 0; Index--)
     {
@@ -1160,7 +1182,7 @@ function PlayerAirControlModifierChanged(CardModifierStack ModifiedStack, float 
     local int Index;
 
     CardGameRules.PlayerAirControlMultiplier = Modifier;
-    
+
     HumanPawnList = class'TurboGameplayHelper'.static.GetPlayerPawnList(Level);
     for (Index = HumanPawnList.Length - 1; Index >= 0; Index--)
     {
@@ -1203,19 +1225,26 @@ function PlayerHealBoostBuffFlagChanged(CardFlag Flag, bool bIsEnabled)
     {
         HealCardEventHandler.bNotifyCardCustomInfo = true;
     }
-    
+
     HealCardEventHandler.bHealingBoost = bIsEnabled;
 }
 
 function PlayerHeadshotsIncreaseHeadshotDamageFlagChanged(CardFlag Flag, bool bIsEnabled)
 {
-    CardGameRules.bPlayerHeadshotsIncreaseHeadshotDamage = bIsEnabled;
+    CardGameModifier.bPlayerHeadshotsIncreaseHeadshotDamage = bIsEnabled;
     PlayerCardEventHandler.bPlayerHeadshotsIncreaseHeadshotDamage = bIsEnabled;
 }
 
 function PlayerBurnGivesMovementSpeedFlagChanged(CardFlag Flag, bool bIsEnabled)
 {
     CardGameModifier.bBurnSpeedsUpPlayers = bIsEnabled;
+    CardGameModifier.ForceNetUpdate();
+}
+
+function PlayerPerfectionistModifierChanged(CardModifierStack ModifiedStack, float Modifier)
+{
+    CardGameRules.PlayerDamagePerfectionistMultiplier = Modifier;
+    CardGameModifier.PerfectionistMultiplier = Modifier;
     CardGameModifier.ForceNetUpdate();
 }
 
@@ -1414,19 +1443,19 @@ defaultproperties
         OnDeltaChanged=CardSelectionCountDeltaChanged
     End Object
     CardSelectionCountDelta=CardDeltaStack'CardSelectionCountDeltaStack'
-    
+
     Begin Object Name=GoodCardSelectionCountDeltaStack Class=CardDeltaStack
         DeltaStackID="GoodCardSelectionCount"
         OnDeltaChanged=GoodCardSelectionCountDeltaChanged
     End Object
     GoodCardSelectionCountDelta=CardDeltaStack'GoodCardSelectionCountDeltaStack'
-    
+
     Begin Object Name=ProConCardSelectionCountDeltaStack Class=CardDeltaStack
         DeltaStackID="ProConCardSelectionCount"
         OnDeltaChanged=ProConCardSelectionCountDeltaChanged
     End Object
     ProConCardSelectionCountDelta=CardDeltaStack'ProConCardSelectionCountDeltaStack'
-    
+
     Begin Object Name=CurseOfRaCardFlag Class=CardFlag
         FlagID="CurseOfRa"
         OnFlagSetChanged=CurseOfRaFlagChanged
@@ -1457,14 +1486,14 @@ defaultproperties
         OnModifierChanged=FriendlyFireModifierChanged
     End Object
     FriendlyFireModifier=CardModifierAdditiveStack'FriendlyFireModifierStack'
-    
+
 //DAMAGE
     Begin Object Name=BleedDamageCardFlag Class=CardFlag
         FlagID="BleedDamage"
         OnFlagSetChanged=BleedDamageFlagChanged
     End Object
     BleedDamageFlag=CardFlag'BleedDamageCardFlag'
-    
+
     Begin Object Name=NoRestForTheWickedCardFlag Class=CardFlag
         FlagID="NoRestForTheWicked"
         OnFlagSetChanged=NoRestForTheWickedFlagChanged
@@ -1489,7 +1518,7 @@ defaultproperties
         OnFlagSetChanged=RussianRouletteFlagChanged
     End Object
     RussianRouletteFlag=CardFlag'RussianRouletteCardFlag'
-    
+
 //INVENTORY
     Begin Object Name=NoSyringeCardFlag Class=CardFlag
         FlagID="NoSyringe"
@@ -1508,7 +1537,7 @@ defaultproperties
         OnFlagSetChanged=NoArmorFlagChanged
     End Object
     NoArmorFlag=CardFlag'NoArmorCardFlag'
-    
+
     Begin Object Name=NoDropOrSellItemsCardFlag Class=CardFlag
         FlagID="NoDropOrSellItems"
         OnFlagSetChanged=NoDropOrSellItemsFlagChanged
@@ -1733,11 +1762,11 @@ defaultproperties
     End Object
     PlayerFallDamageModifier=CardModifierStack'PlayerFallDamageModifierStack'
 
-    Begin Object Name=PlayerBurnDamageModifierStack Class=CardModifierStack
-        ModifierStackID="PlayerBurnDamageModifier"
-        OnModifierChanged=PlayerBurnDamageModifierChanged
+    Begin Object Name=PlayerFireDamageTakenModifierStack Class=CardModifierStack
+        ModifierStackID="PlayerFireDamageTaken"
+        OnModifierChanged=PlayerFireDamageTakenModifierChanged
     End Object
-    PlayerBurnDamageModifier=CardModifierStack'PlayerBurnDamageModifierStack'
+    PlayerFireDamageTakenModifier=CardModifierStack'PlayerFireDamageTakenModifierStack'
 
     Begin Object Name=PlayerDamageSubstituteCardFlag Class=CardFlag
         FlagID="PlayerDamageSubstitute"
@@ -1776,25 +1805,31 @@ defaultproperties
     End Object
     PlayerZedTimeDualWeaponFireRateModifier=CardModifierStack'PlayerZedTimeDualWeaponFireRateModifierStack'
 
+    Begin Object Name=PlayerHighAmmoFireRateModifierStack Class=CardModifierStack
+        ModifierStackID="PlayerHighAmmoFireRate"
+        OnModifierChanged=PlayerHighAmmoFireRateModifierChanged
+    End Object
+    PlayerHighAmmoFireRateModifier=CardModifierStack'PlayerHighAmmoFireRateModifierStack'
+
 //MAGAZINE AMMO
     Begin Object Name=PlayerMagazineAmmoModifierStack Class=CardModifierStack
         ModifierStackID="PlayerMagazineAmmo"
         OnModifierChanged=PlayerMagazineAmmoModifierChanged
     End Object
     PlayerMagazineAmmoModifier=CardModifierStack'PlayerMagazineAmmoModifierStack'
-    
+
     Begin Object Name=PlayerCommandoMagazineAmmoModifierStack Class=CardModifierStack
         ModifierStackID="PlayerCommandoMagazineAmmo"
         OnModifierChanged=PlayerCommandoMagazineAmmoModifierChanged
     End Object
     PlayerCommandoMagazineAmmoModifier=CardModifierStack'PlayerCommandoMagazineAmmoModifierStack'
-    
+
     Begin Object Name=PlayerMedicMagazineAmmoModifierStack Class=CardModifierStack
         ModifierStackID="PlayerMedicMagazineAmmo"
         OnModifierChanged=PlayerMedicMagazineAmmoModifierChanged
     End Object
     PlayerMedicMagazineAmmoModifier=CardModifierStack'PlayerMedicMagazineAmmoModifierStack'
-    
+
     Begin Object Name=PlayerDualWeaponMagazineAmmoModifierStack Class=CardModifierStack
         ModifierStackID="PlayerDualWeaponMagazineAmmo"
         OnModifierChanged=PlayerDualWeaponMagazineAmmoModifierChanged
@@ -1807,18 +1842,24 @@ defaultproperties
         OnModifierChanged=PlayerReloadRateModifierChanged
     End Object
     PlayerReloadRateModifier=CardModifierStack'PlayerReloadRateModifierStack'
-    
+
     Begin Object Name=PlayerCommandoReloadRateModifierStack Class=CardModifierStack
         ModifierStackID="PlayerCommandoReloadRate"
         OnModifierChanged=PlayerCommandoReloadRateModifierChanged
     End Object
     PlayerCommandoReloadRateModifier=CardModifierStack'PlayerCommandoReloadRateModifierStack'
-    
+
     Begin Object Name=PlayerZedTimeDualWeaponReloadRateModifierStack Class=CardModifierStack
         ModifierStackID="PlayerZedTimeDualWeaponReloadRate"
         OnModifierChanged=PlayerZedTimeDualWeaponReloadRateModifierChanged
     End Object
     PlayerZedTimeDualWeaponReloadRateModifier=CardModifierStack'PlayerZedTimeDualWeaponReloadRateModifierStack'
+
+    Begin Object Name=PlayerLowAmmoWeaponReloadRateModifierStack Class=CardModifierStack
+        ModifierStackID="PlayerLowAmmoWeaponReloadRate"
+        OnModifierChanged=PlayerLowAmmoWeaponReloadRateModifierChanged
+    End Object
+    PlayerLowAmmoWeaponReloadRateModifier=CardModifierStack'PlayerLowAmmoWeaponReloadRateModifierStack'
 
 //EQUIP RATE
     Begin Object Name=PlayerEquipRateModifierStack Class=CardModifierStack
@@ -1826,7 +1867,7 @@ defaultproperties
         OnModifierChanged=PlayerEquipRateModifierChanged
     End Object
     PlayerEquipRateModifier=CardModifierStack'PlayerEquipRateModifierStack'
-    
+
     Begin Object Name=PlayerZedTimeDualWeaponEquipRateModifierStack Class=CardModifierStack
         ModifierStackID="PlayerZedTimeDualWeaponEquipRate"
         OnModifierChanged=PlayerZedTimeDualWeaponEquipRateModifierChanged
@@ -1839,19 +1880,19 @@ defaultproperties
         OnModifierChanged=PlayerMaxAmmoModifierChanged
     End Object
     PlayerMaxAmmoModifier=CardModifierStack'PlayerMaxAmmoModifierStack'
-    
+
     Begin Object Name=PlayerCommandoMaxAmmoModifierStack Class=CardModifierStack
         ModifierStackID="PlayerCommandoMaxAmmo"
         OnModifierChanged=PlayerCommandoMaxAmmoModifierChanged
     End Object
     PlayerCommandoMaxAmmoModifier=CardModifierStack'PlayerCommandoMaxAmmoModifierStack'
-    
+
     Begin Object Name=PlayerMedicMaxAmmoModifierStack Class=CardModifierStack
         ModifierStackID="PlayerMedicMaxAmmo"
         OnModifierChanged=PlayerMedicMaxAmmoModifierChanged
     End Object
     PlayerMedicMaxAmmoModifier=CardModifierStack'PlayerMedicMaxAmmoModifierStack'
-    
+
     Begin Object Name=PlayerGrenadeMaxAmmoModifierStack Class=CardModifierStack
         ModifierStackID="PlayerGrenadeMaxAmmo"
         OnModifierChanged=PlayerGrenadeMaxAmmoModifierChanged
@@ -1864,7 +1905,7 @@ defaultproperties
         OnModifierChanged=PlayerSpreadRecoilModifierChanged
     End Object
     PlayerSpreadRecoilModifier=CardModifierStack'PlayerSpreadRecoilModifierStack'
-    
+
     Begin Object Name=PlayerShotgunSpreadRecoilModifierStack Class=CardModifierStack
         ModifierStackID="PlayerShotgunSpreadRecoil"
         OnModifierChanged=PlayerShotgunSpreadRecoilModifierChanged
@@ -1884,7 +1925,7 @@ defaultproperties
         OnModifierChanged=PlayerShotgunPelletModifierChanged
     End Object
     PlayerShotgunPelletModifier=CardModifierStack'PlayerShotgunPelletModifierStack'
-    
+
     Begin Object Name=PlayerShotgunKickbackModifierStack Class=CardModifierStack
         ModifierStackID="PlayerShotgunKickback"
         OnModifierChanged=PlayerShotgunKickbackModifierChanged
@@ -1897,7 +1938,7 @@ defaultproperties
         OnDeltaChanged=PlayerZedTimeExtensionDeltaChanged
     End Object
     PlayerZedTimeExtensionDelta=CardDeltaStack'PlayerZedTimeExtensionDeltaStack'
-    
+
     Begin Object Name=PlayerDualWeaponZedTimeExtensionDeltaStack Class=CardDeltaStack
         DeltaStackID="PlayerDualWeaponZedTime"
         OnDeltaChanged=PlayerDualWeaponZedTimeExtensionDeltaChanged
@@ -1910,13 +1951,13 @@ defaultproperties
         OnModifierChanged=PlayerNonMedicHealPotencyModifierChanged
     End Object
     PlayerNonMedicHealPotencyModifier=CardModifierStack'PlayerNonMedicHealPotencyModifierStack'
-    
+
     Begin Object Name=PlayerMedicHealPotencyModifierStack Class=CardModifierStack
         ModifierStackID="PlayerMedicHealPotency"
         OnModifierChanged=PlayerMedicHealPotencyModifierChanged
     End Object
     PlayerMedicHealPotencyModifier=CardModifierStack'PlayerMedicHealPotencyModifierStack'
-    
+
     Begin Object Name=PlayerHealRechargeModifierStack Class=CardModifierStack
         ModifierStackID="PlayerHealRecharge"
         OnModifierChanged=PlayerHealRechargeModifierChanged
@@ -1948,6 +1989,12 @@ defaultproperties
     End Object
     PlayerMovementFrictionModifier=CardModifierStack'PlayerMovementFrictionModifierStack'
 
+    Begin Object Name=PlayerLowWeightMovementSpeedModifierStack Class=CardModifierStack
+        ModifierStackID="PlayerMovementLowWeight"
+        OnModifierChanged=PlayerMovementLowWeightModifierChanged
+    End Object
+    PlayerLowWeightMovementSpeedModifier=CardModifierStack'PlayerLowWeightMovementSpeedModifierStack'
+
     Begin Object Name=PlayerJumpModifierStack Class=CardModifierStack
         ModifierStackID="PlayerJump"
         OnModifierChanged=PlayerJumpModifierChanged
@@ -1959,7 +2006,7 @@ defaultproperties
         OnModifierChanged=PlayerAirControlModifierChanged
     End Object
     PlayerAirControlModifier=CardModifierStack'PlayerAirControlModifierStack'
-    
+
     Begin Object Name=PlayerFreezeTagCardFlag Class=CardFlag
         FlagID="PlayerFreezeTag"
         OnFlagSetChanged=PlayerFreezeTagFlagChanged
@@ -2010,6 +2057,12 @@ defaultproperties
     End Object
     PlayerBurnGivesMovementSpeed=CardFlag'PlayerBurnGivesMovementSpeedFlag'
 
+    Begin Object Name=PlayerPerfectionistModifierStack Class=CardModifierStack
+        ModifierStackID="PlayerPerfectionist"
+        OnModifierChanged=PlayerPerfectionistModifierChanged
+    End Object
+    PlayerPerfectionistModifier=CardModifierStack'PlayerPerfectionistModifierStack'
+
 ////////////////////
 //MONSTER MODIFIERS
 
@@ -2031,7 +2084,7 @@ defaultproperties
         OnFlagSetChanged=HuskAmountBoostFlagChanged
     End Object
     HuskAmountBoostFlag=CardFlag'HuskAmountBoostCardFlag'
-    
+
     Begin Object Name=MonsterUpgradeCardFlag Class=CardFlag
         FlagID="MonsterUpgrade"
         OnFlagSetChanged=MonsterUpgradeFlagChanged
@@ -2045,37 +2098,37 @@ defaultproperties
         OnModifierChanged=MonsterDamageModifierChanged
     End Object
     MonsterDamageModifier=CardModifierStack'MonsterDamageModifierStack'
-    
+
     Begin Object Name=MonsterDamageMomentumModifierStack Class=CardModifierStack
         ModifierStackID="MonsterDamageMomentum"
         OnModifierChanged=MonsterDamageMomentumModifierChanged
     End Object
     MonsterDamageMomentumModifier=CardModifierStack'MonsterDamageMomentumModifierStack'
-    
+
     Begin Object Name=MonsterMeleeDamageModifierStack Class=CardModifierStack
         ModifierStackID="MonsterMeleeDamage"
         OnModifierChanged=MonsterMeleeDamageModifierChanged
     End Object
     MonsterMeleeDamageModifier=CardModifierStack'MonsterMeleeDamageModifierStack'
-    
+
     Begin Object Name=MonsterRangedDamageModifierStack Class=CardModifierStack
         ModifierStackID="MonsterRangedDamage"
         OnModifierChanged=MonsterRangedDamageModifierChanged
     End Object
     MonsterRangedDamageModifier=CardModifierStack'MonsterRangedDamageModifierStack'
-    
+
     Begin Object Name=MonsterStalkerMeleeDamageModifierStack Class=CardModifierStack
         ModifierStackID="MonsterStalkerMeleeDamage"
         OnModifierChanged=MonsterStalkerMeleeDamageModifierChanged
     End Object
     MonsterStalkerMeleeDamageModifier=CardModifierStack'MonsterStalkerMeleeDamageModifierStack'
-    
+
     Begin Object Name=MonsterSirenScreamDamageModifierStack Class=CardModifierStack
         ModifierStackID="MonsterSirenScreamDamage"
         OnModifierChanged=MonsterSirenScreamDamageModifierChanged
     End Object
     MonsterSirenScreamDamageModifier=CardModifierStack'MonsterSirenScreamDamageModifierStack'
-    
+
     Begin Object Name=MonsterSirenScreamRangeModifierStack Class=CardModifierStack
         ModifierStackID="MonsterSirenScreamRange"
         OnModifierChanged=MonsterSirenScreamRangeModifierChanged
@@ -2094,7 +2147,7 @@ defaultproperties
         OnModifierChanged=MonsterHeadSizeModifierChanged
     End Object
     MonsterHeadSizeModifier=CardModifierStack'MonsterHeadSizeModifierStack'
-    
+
     Begin Object Name=MonsterStalkerDistractionModifierStack Class=CardModifierStack
         ModifierStackID="MonsterStalkerDistraction"
         OnModifierChanged=MonsterStalkerDistractionModifierChanged
@@ -2114,13 +2167,13 @@ defaultproperties
         OnModifierChanged=MonsterFleshpoundRageThresholdModifierChanged
     End Object
     MonsterFleshpoundRageThresholdModifier=CardModifierStack'MonsterFleshpoundRageThresholdModifierStack'
-    
+
     Begin Object Name=MonsterScrakeRageThresholdModifierStack Class=CardModifierStack
         ModifierStackID="MonsterScrakeRageThreshold"
         OnModifierChanged=MonsterScrakeRageThresholdModifierChanged
     End Object
     MonsterScrakeRageThresholdModifier=CardModifierStack'MonsterScrakeRageThresholdModifierStack'
-    
+
     Begin Object Name=MonsterHuskRefireTimeModifierStack Class=CardModifierStack
         ModifierStackID="MonsterHuskRefireTime"
         OnModifierChanged=MonsterHuskRefireTimeModifierChanged

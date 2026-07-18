@@ -55,7 +55,7 @@ function InitializeDeck(TurboCardReplicationInfo TCRI)
             break;
         }
     }
-    
+
     SetOptionalCardEnabled(int(EvilOptional.Doorless), bLevelHasDoors);
     SetOptionalCardEnabled(int(EvilOptional.MixedSignals), bLevelHasMultipleTraders);
 }
@@ -69,90 +69,38 @@ function OnDeckDraw(TurboCardReplicationInfo TCRI)
 
 function ActivateHyperbloats(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
-    if (bActivate)
-    {
-        GameplayManager.MonsterBloatMovementSpeedModifier.AddModifier(4.f, Card);
-    }
-    else
-    {
-        GameplayManager.MonsterBloatMovementSpeedModifier.RemoveModifier(Card);
-    }
+    Card.UpdateModifier(GameplayManager.MonsterBloatMovementSpeedModifier, 4.f, bActivate);
 }
 
 function ActivateBelligerentScrakes(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
-    if (bActivate)
-    {
-        GameplayManager.MonsterScrakeRageThresholdModifier.AddModifier(1000000.f, Card);
-    }
-    else
-    {
-        GameplayManager.MonsterScrakeRageThresholdModifier.RemoveModifier(Card);
-    }
+    Card.UpdateModifier(GameplayManager.MonsterScrakeRageThresholdModifier, 1000000.f, bActivate);
 }
 
 function ActivateHairtriggerFleshpounds(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
-    if (bActivate)
-    {
-        GameplayManager.MonsterFleshpoundRageThresholdModifier.AddModifier(0.0000001f, Card);
-    }
-    else
-    {
-        GameplayManager.MonsterFleshpoundRageThresholdModifier.RemoveModifier(Card);
-    }
+    Card.UpdateModifier(GameplayManager.MonsterFleshpoundRageThresholdModifier, 0.0000001f, bActivate);
 }
 
 function ActivateOverclockedHusks(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
-    Card.UpdateFlag(GameplayManager.HuskAmountBoostFlag, bActivate);
-
-    if (bActivate)
-    {
-        GameplayManager.MonsterHuskRefireTimeModifier.AddModifier(0.0000001f, Card);
-    }
-    else
-    {
-        GameplayManager.MonsterHuskRefireTimeModifier.RemoveModifier(Card);
-    }
+    Card.UpdateModifier(GameplayManager.MonsterHuskRefireTimeModifier, 0.0000001f, bActivate);
 }
 
 function ActivateRecession(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
-    if (bActivate)
-    {
-        GameplayManager.TraderPriceModifier.AddModifier(2.5f, Card);
-    }
-    else
-    {
-        GameplayManager.TraderPriceModifier.RemoveModifier(Card);
-    }
+    Card.UpdateModifier(GameplayManager.TraderPriceModifier, 2.5f, bActivate);
 }
 
 function ActivateFriendlyFire(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
-    if (bActivate)
-    {
-        GameplayManager.FriendlyFireModifier.AddModifier(0.1f, Card);
-    }
-    else
-    {
-        GameplayManager.FriendlyFireModifier.RemoveModifier(Card);
-    }
+    Card.UpdateModifier(GameplayManager.FriendlyFireModifier, 0.1f, bActivate);
 }
 
 function ActivateSuperSiren(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
-    if (bActivate)
-    {
-        GameplayManager.MonsterSirenScreamDamageModifier.AddModifier(2.f, Card);
-        GameplayManager.MonsterSirenScreamRangeModifier.AddModifier(1.25f, Card);
-    }
-    else
-    {
-        GameplayManager.MonsterSirenScreamDamageModifier.RemoveModifier(Card);
-        GameplayManager.MonsterSirenScreamRangeModifier.RemoveModifier(Card);
-    }
+    Card.UpdateModifier(GameplayManager.MonsterSirenScreamDamageModifier, 2.f, bActivate);
+    Card.UpdateModifier(GameplayManager.MonsterSirenScreamRangeModifier, 1.25f, bActivate);
 }
 
 function ActivateDisablePerkSwitching(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
@@ -167,14 +115,7 @@ function ActivateCashSlowsPlayers(TurboCardGameplayManager GameplayManager, Turb
 
 function ActivateSuperSlowPlayers(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
-    if (bActivate)
-    {
-        GameplayManager.PlayerMovementSpeedModifier.AddModifier(0.2f, Card);
-    }
-    else
-    {
-        GameplayManager.PlayerMovementSpeedModifier.RemoveModifier(Card);
-    }
+    Card.UpdateModifier(GameplayManager.PlayerMovementSpeedModifier, 0.2f, bActivate);
 }
 
 function ActivateFreezeTag(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
@@ -194,16 +135,8 @@ function ActivateBleedingPlayers(TurboCardGameplayManager GameplayManager, Turbo
 
 function ActivateLightWeightPlayers(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
-    if (bActivate)
-    {
-        GameplayManager.MonsterMeleeDamageModifier.AddModifier(1.25f, Card);
-        GameplayManager.MonsterDamageMomentumModifier.AddModifier(3.f, Card);
-    }
-    else
-    {
-        GameplayManager.MonsterMeleeDamageModifier.RemoveModifier(Card);
-        GameplayManager.MonsterDamageMomentumModifier.RemoveModifier(Card);
-    }
+    Card.UpdateModifier(GameplayManager.MonsterMeleeDamageModifier, 1.25f, bActivate);
+    Card.UpdateModifier(GameplayManager.MonsterDamageMomentumModifier, 3.f, bActivate);
 }
 
 function ActivatePoorlyOiledMachine(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
@@ -213,16 +146,8 @@ function ActivatePoorlyOiledMachine(TurboCardGameplayManager GameplayManager, Tu
 
 function ActivateSlipperyFloor(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
-    if (bActivate)
-    {
-        GameplayManager.PlayerMovementAccelModifier.AddModifier(0.5f, Card);
-        GameplayManager.PlayerMovementFrictionModifier.AddModifier(0.05f, Card);
-    }
-    else
-    {
-        GameplayManager.PlayerMovementAccelModifier.RemoveModifier(Card);
-        GameplayManager.PlayerMovementFrictionModifier.RemoveModifier(Card);
-    }
+    Card.UpdateModifier(GameplayManager.PlayerMovementAccelModifier, 0.5f, bActivate);
+    Card.UpdateModifier(GameplayManager.PlayerMovementFrictionModifier, 0.05f, bActivate);
 }
 
 function ActivateNoodleArms(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
@@ -244,14 +169,7 @@ function ActivateInPlainSight(TurboCardGameplayManager GameplayManager, TurboCar
 
 function ActivateHandCramps(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
-    if (bActivate)
-    {
-        GameplayManager.PlayerReloadRateModifier.AddModifier(0.75f, Card);
-    }
-    else
-    {
-        GameplayManager.PlayerReloadRateModifier.RemoveModifier(Card);
-    }
+    Card.UpdateModifier(GameplayManager.PlayerReloadRateModifier, 0.75f, bActivate);
 }
 
 function ActivateDoorless(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
@@ -293,14 +211,7 @@ function ActivateCurseOfRa(TurboCardGameplayManager GameplayManager, TurboCard C
 
 function ActivateGarbageDay(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
-    if (bActivate)
-    {
-        GameplayManager.PlayerNonEliteDamageModifier.AddModifier(0.66f, Card);
-    }
-    else
-    {
-        GameplayManager.PlayerNonEliteDamageModifier.RemoveModifier(Card);
-    }
+    Card.UpdateModifier(GameplayManager.PlayerNonEliteDamageModifier, 0.66f, bActivate);
 }
 
 function ActivateNoJunkies(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
@@ -315,14 +226,7 @@ function ActivateMarkedForDeath(TurboCardGameplayManager GameplayManager, TurboC
 
 function ActivateRestrictedExplosives(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
-    if (bActivate)
-    {
-        GameplayManager.PlayerExplosiveRadiusModifier.AddModifier(0.5f, Card);
-    }
-    else
-    {
-        GameplayManager.PlayerExplosiveRadiusModifier.RemoveModifier(Card);
-    }
+    Card.UpdateModifier(GameplayManager.PlayerExplosiveRadiusModifier, 0.5f, bActivate);
 }
 
 function ActivateOopsAllScrakes(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
@@ -337,16 +241,8 @@ function ActivateMixedSignals(TurboCardGameplayManager GameplayManager, TurboCar
 
 function ActivateHighThroughput(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
-    if (bActivate)
-    {
-        GameplayManager.MaxMonstersModifier.AddModifier(1.4f, Card);
-        GameplayManager.WaveSpeedModifier.AddModifier(1.15f, Card);
-    }
-    else
-    {
-        GameplayManager.MaxMonstersModifier.RemoveModifier(Card);
-        GameplayManager.WaveSpeedModifier.RemoveModifier(Card);
-    }
+    Card.UpdateModifier(GameplayManager.MaxMonstersModifier, 1.4f, bActivate);
+    Card.UpdateModifier(GameplayManager.WaveSpeedModifier, 1.15f, bActivate);
 }
 
 function ActivateNakedSnake(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
@@ -420,7 +316,7 @@ static final function TickFreezeTagStatus(TurboCardOverlay CardOverlay, TurboPla
 {
     if ((PlayerCustomInfo.LastFreezeTagEvaluation + 1.f) < CardOverlay.Level.TimeSeconds)
     {
-        CardOverlay.FreezeTagStatus.Ratio = FMax(0.f, CardOverlay.FreezeTagStatus.Ratio - DeltaTime);
+        CardOverlay.FreezeTagStatus.Ratio = FMax(CardOverlay.FreezeTagStatus.Ratio - DeltaTime, 0.f);
     }
     else
     {
@@ -452,7 +348,7 @@ static final function bool DrawClottingIssues(TurboCardOverlay CardOverlay, Turb
     {
         DrawCardInfoNumberProgress(Canvas, Texture'KFTurboCardGame.UI.BleedIcon_D', PlayerCustomInfo.GetTimePercentUntilBleed(), CardOverlay.BleedStatus.Number,
             DrawX, DrawY, DrawHeight, CardOverlay.BleedStatus.Ratio, CardOverlay.BleedStatus.NumberScale);
-        
+
         return true;
     }
 
@@ -465,7 +361,7 @@ static final function TickClottingIssues(TurboCardOverlay CardOverlay, TurboPlay
     {
         if (PlayerCustomInfo.BleedCount <= 0)
         {
-            CardOverlay.BleedStatus.Ratio -= DeltaTime;
+            CardOverlay.BleedStatus.Ratio = FMax(CardOverlay.BleedStatus.Ratio - DeltaTime, 0.f);
         }
 
         CardOverlay.BleedStatus.NumberScale = Lerp(DeltaTime * 4.f, CardOverlay.BleedStatus.NumberScale, 1.f);
@@ -498,7 +394,7 @@ static final function TickMarkedForDeath(TurboCardOverlay CardOverlay, TurboPlay
 {
     if (CardOverlay.MarkedForDeathStatus.Ratio > 0.003f && !PlayerCustomInfo.IsMarkedForDeath())
     {
-        CardOverlay.MarkedForDeathStatus.Ratio -= DeltaTime;
+        CardOverlay.MarkedForDeathStatus.Ratio = FMax(CardOverlay.MarkedForDeathStatus.Ratio - DeltaTime, 0.f);
     }
 }
 
@@ -528,7 +424,7 @@ static final function TickNoRestForTheWicked(TurboCardOverlay CardOverlay, Turbo
 {
     if (CardOverlay.NoRestForTheWickedStatus.Ratio > 0.003f && !PlayerCustomInfo.IsNoRestForTheWickedActive())
     {
-        CardOverlay.NoRestForTheWickedStatus.Ratio -= DeltaTime;
+        CardOverlay.NoRestForTheWickedStatus.Ratio = FMax(CardOverlay.NoRestForTheWickedStatus.Ratio - DeltaTime, 0.f);
     }
 }
 
@@ -555,11 +451,11 @@ static final function TickGreedBegetsSlowSpeed(TurboCardOverlay CardOverlay, Tur
         {
             CardOverlay.GreedBegetsSlowSpeedStatus.Ratio = FMin(DeltaTime + CardOverlay.GreedBegetsSlowSpeedStatus.Ratio, 1.f);
         }
-        
+
     }
     else if (CardOverlay.GreedBegetsSlowSpeedStatus.Ratio > 0.003f)
     {
-        CardOverlay.GreedBegetsSlowSpeedStatus.Ratio -= DeltaTime;
+        CardOverlay.GreedBegetsSlowSpeedStatus.Ratio = FMax(CardOverlay.GreedBegetsSlowSpeedStatus.Ratio - DeltaTime, 0.f);
     }
 }
 
@@ -579,13 +475,16 @@ static final function bool DrawPoorlyOiledMachine(TurboCardOverlay CardOverlay, 
 
 static final function TickPoorlyOiledMachine(TurboCardOverlay CardOverlay, TurboPlayerCardCustomInfo PlayerCustomInfo, TurboCard Card, float DeltaTime)
 {
-    if (PlayerCustomInfo.PlayerTPRI.GetHealthPercent() < 0.75f)
+    local float HealthPercent;
+    HealthPercent = PlayerCustomInfo.GetHealthPercent();
+
+    if (HealthPercent >= 1.f && HealthPercent < 0.75f)
     {
-        CardOverlay.PoorlyOiledMachineStatus.Ratio = FMin(DeltaTime + CardOverlay.PoorlyOiledMachineStatus.Ratio, 1.f);        
+        CardOverlay.PoorlyOiledMachineStatus.Ratio = FMin(DeltaTime + CardOverlay.PoorlyOiledMachineStatus.Ratio, 1.f);
     }
     else if (CardOverlay.PoorlyOiledMachineStatus.Ratio > 0.003f)
     {
-        CardOverlay.PoorlyOiledMachineStatus.Ratio -= DeltaTime;
+        CardOverlay.PoorlyOiledMachineStatus.Ratio = FMax(CardOverlay.PoorlyOiledMachineStatus.Ratio - DeltaTime, 0.f);
     }
 }
 
@@ -613,10 +512,10 @@ static final function bool DrawTemporalAnomaly(TurboCardOverlay CardOverlay, Tur
 
 static final function TickTemporalAnomaly(TurboCardOverlay CardOverlay, TurboPlayerCardCustomInfo PlayerCustomInfo, TurboCard Card, float DeltaTime)
 {
-    if (Abs(CardOverlay.Level.TimeDilation - 1.1f) > 0.1f)
+    if (Abs(CardOverlay.Level.TimeDilation - 1.1f) > 0.05f)
     {
-        CardOverlay.TemporalAnomalyStatus.Ratio = FMin(DeltaTime + CardOverlay.TemporalAnomalyStatus.Ratio, 1.f);
-        CardOverlay.TemporalAnomalyStatus.Progress = CardOverlay.Level.TimeDilation;
+        CardOverlay.TemporalAnomalyStatus.Ratio = FClamp(DeltaTime + CardOverlay.TemporalAnomalyStatus.Ratio, 0.f, 1.f);
+        CardOverlay.TemporalAnomalyStatus.Progress = CardOverlay.Level.TimeDilation / 1.1f;
     }
     else
     {
@@ -728,7 +627,7 @@ defaultproperties
         OnActivateCard=ActivateSuperSiren
     End Object
     DeckCardObjectList(6)=TurboCard'SuperSiren'
-    
+
     Begin Object Name=DisablePerkSwitching Class=TurboCard_Evil
         CardName(0)="Locked In"
         CardDescriptionList(0)="All players are"
@@ -738,7 +637,7 @@ defaultproperties
         OnActivateCard=ActivateDisablePerkSwitching
     End Object
     DeckCardObjectList(7)=TurboCard'DisablePerkSwitching'
-    
+
     Begin Object Name=CashSlowsPlayers Class=TurboCard_Evil
         CardName(0)="Greed Begets"
         CardName(1)="Slow Speed"
@@ -753,7 +652,7 @@ defaultproperties
         OnStatusIconTick=TickGreedBegetsSlowSpeed
     End Object
     DeckCardObjectList(8)=TurboCard'CashSlowsPlayers'
-    
+
     Begin Object Name=SlipperyFloor Class=TurboCard_Evil
         CardName(0)="Slip'n'Slide"
         CardDescriptionList(0)="Players and"
@@ -763,7 +662,7 @@ defaultproperties
         OnActivateCard=ActivateSlipperyFloor
     End Object
     DeckCardObjectList(9)=TurboCard'SlipperyFloor'
-    
+
     Begin Object Name=FreezeTag Class=TurboCard_Evil
         CardName(0)="Freeze Tag"
         CardDescriptionList(0)="During the"
@@ -780,7 +679,7 @@ defaultproperties
         CardHintList(0)=class'TurboCardHintFreezeTag'
     End Object
     DeckCardObjectList(10)=TurboCard'FreezeTag'
-    
+
     Begin Object Name=SuddenDeath Class=TurboCard_Evil
         CardName(0)="Sudden Death"
         CardDescriptionList(0)="If any player"
@@ -790,7 +689,7 @@ defaultproperties
         OnActivateCard=ActivateSuddenDeath
     End Object
     DeckCardObjectList(11)=TurboCard'SuddenDeath'
-    
+
     Begin Object Name=BleedingPlayers Class=TurboCard_Evil
         CardName(0)="Clotting"
         CardName(1)="Issues"
@@ -808,7 +707,7 @@ defaultproperties
         OnStatusIconDraw=DrawClottingIssues
     End Object
     DeckCardObjectList(12)=TurboCard'BleedingPlayers'
-    
+
     Begin Object Name=LightWeightPlayers Class=TurboCard_Evil
         CardName(0)="Lethal"
         CardName(1)="Specimens"
@@ -820,7 +719,7 @@ defaultproperties
         OnActivateCard=ActivateLightWeightPlayers
     End Object
     DeckCardObjectList(13)=TurboCard'LightWeightPlayers'
-    
+
     Begin Object Name=PoorlyOiledMachine Class=TurboCard_Evil
         CardName(0)="Poorly Oiled"
         CardName(1)="Machine"
@@ -835,7 +734,7 @@ defaultproperties
         OnStatusIconDraw=DrawPoorlyOiledMachine
     End Object
     DeckCardObjectList(14)=TurboCard'PoorlyOiledMachine'
-    
+
     Begin Object Name=NoodleArms Class=TurboCard_Evil
         CardName(0)="Noodle Arms"
         CardDescriptionList(0)="Reduces max"
@@ -846,7 +745,7 @@ defaultproperties
         OnActivateCard=ActivateNoodleArms
     End Object
     DeckCardObjectList(15)=TurboCard'NoodleArms'
-    
+
     Begin Object Name=InPlainSight Class=TurboCard_Evil
         CardName(0)="In Plain Sight"
         CardDescriptionList(0)="Allows spawns"
@@ -857,7 +756,7 @@ defaultproperties
         OnActivateCard=ActivateInPlainSight
     End Object
     DeckCardObjectList(16)=TurboCard'InPlainSight'
-    
+
     Begin Object Name=HandCramps Class=TurboCard_Evil
         CardName(0)="Hand Cramps"
         CardDescriptionList(0)="Reduces reload"
@@ -867,7 +766,7 @@ defaultproperties
         OnActivateCard=ActivateHandCramps
     End Object
     DeckCardObjectList(17)=TurboCard'HandCramps'
-    
+
     Begin Object Name=ButterFingers Class=TurboCard_Evil
         CardName(0)="Butter"
         CardName(1)="Fingers"
@@ -888,7 +787,7 @@ defaultproperties
         OnActivateCard=ActivateSmallerBlind
     End Object
     DeckCardObjectList(19)=TurboCard'SmallerBlind'
-    
+
     Begin Object Name=BorrowedTime Class=TurboCard_Evil
         CardName(0)="On Borrowed"
         CardName(1)="Time"
@@ -902,7 +801,7 @@ defaultproperties
         OnActivateCard=ActivateBorrowedTime
     End Object
     DeckCardObjectList(20)=TurboCard'BorrowedTime'
-    
+
     Begin Object Name=BankRun Class=TurboCard_Evil
         CardName(0)="Bank Run"
         CardDescriptionList(0)="Players lose half"
@@ -913,7 +812,7 @@ defaultproperties
         OnActivateCard=ActivateBankRun
     End Object
     DeckCardObjectList(21)=TurboCard'BankRun'
-    
+
     Begin Object Name=NoRestForTheWicked Class=TurboCard_Evil
         CardName(0)="No Rest For"
         CardName(1)="The Wicked"
@@ -928,13 +827,13 @@ defaultproperties
         OnStatusIconDraw=DrawNoRestForTheWicked
     End Object
     DeckCardObjectList(22)=TurboCard'NoRestForTheWicked'
-    
+
     Begin Object Name=CurseOfRa Class=TurboCard_Evil_Ra
         OnActivateCard=ActivateCurseOfRa
         CardID="EVIL_CURSEOFRA"
     End Object
     DeckCardObjectList(23)=TurboCard'CurseOfRa'
-    
+
     Begin Object Name=GarbageDay Class=TurboCard_Evil
         CardName(0)="Garbage Day"
         CardDescriptionList(0)="Trash zeds have"
@@ -945,7 +844,7 @@ defaultproperties
         CardHintList(0)=class'TurboCardHintMonsterTier'
     End Object
     DeckCardObjectList(24)=TurboCard'GarbageDay'
-    
+
     Begin Object Name=Blackout Class=TurboCard_Evil
         CardName(0)="Blackout"
         CardDescriptionList(0)="Darkens the world"
@@ -973,7 +872,7 @@ defaultproperties
         OnStatusIconDraw=DrawMarkedForDeath
     End Object
     DeckCardObjectList(26)=TurboCard'MarkedForDeath'
-    
+
     Begin Object Name=RestrictedExplosives Class=TurboCard_Evil
         CardName(0)="Restricted"
         CardName(1)="Explosives"
@@ -983,7 +882,7 @@ defaultproperties
         OnActivateCard=ActivateRestrictedExplosives
     End Object
     DeckCardObjectList(27)=TurboCard'RestrictedExplosives'
-    
+
     Begin Object Name=OopsAllScrakes Class=TurboCard_Evil
         CardName(0)="Oops!"
         CardName(1)="All Scrakes!"
@@ -995,7 +894,7 @@ defaultproperties
         OnActivateCard=ActivateOopsAllScrakes
     End Object
     DeckCardObjectList(28)=TurboCard'OopsAllScrakes'
-    
+
     Begin Object Name=UnusualMutation Class=TurboCard_Evil
         CardName(0)="Unusual"
         CardName(1)="Mutation"
@@ -1020,7 +919,7 @@ defaultproperties
         OnActivateCard=ActivateHighThroughput
     End Object
     DeckCardObjectList(30)=TurboCard'HighThroughput'
-    
+
     Begin Object Name=NakedSnake Class=TurboCard_Evil
         CardName(0)="Naked"
         CardName(1)="Snake"
@@ -1031,7 +930,7 @@ defaultproperties
         OnActivateCard=ActivateNakedSnake
     End Object
     DeckCardObjectList(31)=TurboCard'NakedSnake'
-    
+
     Begin Object Name=ThisIsMyRifle Class=TurboCard_Evil
         CardName(0)="This Is"
         CardName(1)="My Rifle"
@@ -1042,7 +941,7 @@ defaultproperties
         OnActivateCard=ActivateThisIsMyRifle
     End Object
     DeckCardObjectList(32)=TurboCard'ThisIsMyRifle'
-    
+
     Begin Object Name=SacrificialCard Class=TurboCard_Evil
         CardName(0)="Sacrificial"
         CardName(1)="Card"
@@ -1052,7 +951,7 @@ defaultproperties
         OnActivateCard=ActivateSacrificialCard
     End Object
     DeckCardObjectList(33)=TurboCard'SacrificialCard'
-    
+
     Begin Object Name=UnfortunateUpgrade Class=TurboCard_Evil
         CardName(0)="Unfortunate"
         CardName(1)="Upgrade"
@@ -1070,7 +969,7 @@ defaultproperties
         CardHintList(0)=class'TurboCardHintMonsterTier'
     End Object
     DeckCardObjectList(34)=TurboCard'UnfortunateUpgrade'
-    
+
     Begin Object Name=DoubleTime Class=TurboCard_Evil
         CardName(0)="Double"
         CardName(1)="Time It"
@@ -1080,7 +979,7 @@ defaultproperties
         OnActivateCard=ActivateDoubleTime
     End Object
     DeckCardObjectList(35)=TurboCard'DoubleTime'
-    
+
     Begin Object Name=BadBlood Class=TurboCard_Evil
         CardName(0)="Bad Blood"
         CardDescriptionList(0)="Decreases max"
@@ -1090,7 +989,7 @@ defaultproperties
         OnActivateCard=ActivateBadBlood
     End Object
     DeckCardObjectList(36)=TurboCard'BadBlood'
-    
+
     Begin Object Name=TemporalAnomaly Class=TurboCard_Evil
         CardName(0)="Temporal"
         CardName(1)="Anomaly"

@@ -10,10 +10,12 @@ var(Turbo) float MeleeFireRateMultiplier;
 var(Turbo) float ZedTimeDualPistolFireRateMultiplier;
 var(Turbo) float BerserkerFireRateMultiplier;
 var(Turbo) float FirebugFireRateMultiplier;
+var(Turbo) float HighAmmoFireRateMultiplier;
 
 var(Turbo) float ReloadRateMultiplier;
 var(Turbo) float ZedTimeDualWeaponReloadRateMultiplier;
 var(Turbo) float CommandoReloadRateMultiplier;
+var(Turbo) float LowAmmoReloadRateMultiplier;
 
 var(Turbo) float MagazineAmmoMultiplier;
 var(Turbo) float DualWeaponMagazineAmmoMultiplier;
@@ -26,7 +28,7 @@ var(Turbo) float MedicMaxAmmoMultiplier;
 var(Turbo) float GrenadeMaxAmmoMultiplier;
 
 var(Turbo) float WeaponPenetrationMultiplier;
-
+var(Turbo) bool bPlayerHeadshotsIncreaseHeadshotDamage;
 var(Turbo) float WeaponSpreadRecoilMultiplier;
 
 var(Turbo) float ShotgunPelletCountMultiplier;
@@ -40,6 +42,7 @@ var(Turbo) bool bDisableArmorPurchase;
 //Modify this variable via ApplyPlayerMovementSpeedModifier since it needs to notify pawns to update movement speed.
 var(Turbo) float PlayerMovementSpeedMultiplier;
 var(Turbo) float PlayerMovementAccelMultiplier;
+var(Turbo) float PlayerMovementLowWeightMultiplier;
 var(Turbo) bool bFreezePlayersDuringWave;
 var(Turbo) bool bMoneySlowsPlayers;
 var(Turbo) bool bMissingHealthStronglySlows;
@@ -61,21 +64,25 @@ var(Turbo) bool bOversizedPipebombs;
 
 var(Turbo) bool bBurnSpeedsUpPlayers;
 
+var(Turbo) float PerfectionistMultiplier;
+
 replication
 {
     reliable if(bNetDirty && Role == ROLE_Authority)
-        FireRateMultiplier, MeleeFireRateMultiplier, ZedTimeDualPistolFireRateMultiplier, BerserkerFireRateMultiplier, FirebugFireRateMultiplier,
+        FireRateMultiplier, MeleeFireRateMultiplier, ZedTimeDualPistolFireRateMultiplier, BerserkerFireRateMultiplier, FirebugFireRateMultiplier, HighAmmoFireRateMultiplier,
         ReloadRateMultiplier, ZedTimeDualWeaponReloadRateMultiplier, CommandoReloadRateMultiplier,
         MagazineAmmoMultiplier, CommandoMagazineAmmoMultiplier, MedicMagazineAmmoMultiplier,
         MaxAmmoMultiplier, CommandoMaxAmmoMultiplier, MedicMaxAmmoMultiplier, GrenadeMaxAmmoMultiplier,
         WeaponPenetrationMultiplier,
         WeaponSpreadRecoilMultiplier, ShotgunSpreadRecoilMultiplier,
         TraderCostMultiplier, TraderGrenadeCostMultiplier, bDisableArmorPurchase,
-        PlayerMovementSpeedMultiplier, PlayerMovementAccelMultiplier, bFreezePlayersDuringWave, bMoneySlowsPlayers, bMissingHealthStronglySlows,
+        PlayerMovementSpeedMultiplier, PlayerMovementAccelMultiplier, PlayerMovementLowWeightMultiplier,
+        bFreezePlayersDuringWave, bMoneySlowsPlayers, bMissingHealthStronglySlows,
         PlayerMaxHealthMultiplier,
         HealRechargeMultiplier,
         bOversizedPipebombs,
-        bBurnSpeedsUpPlayers;
+        bBurnSpeedsUpPlayers,
+        PerfectionistMultiplier;
 }
 
 static simulated final function TurboPlayerCardCustomInfo GetPlayerCustomInfo(KFPlayerReplicationInfo KFPRI)
@@ -83,11 +90,30 @@ static simulated final function TurboPlayerCardCustomInfo GetPlayerCustomInfo(KF
     return TurboPlayerCardCustomInfo(class'TurboPlayerCardCustomInfo'.static.FindCustomInfo(TurboPlayerReplicationInfo(KFPRI)));
 }
 
+simulated final function float GetHighAmmoFireRateMultiplier(KFWeapon Weapon)
+{
+    local float AmmoPercent;
+
+    if (Weapon == None || Weapon.MagCapacity <= 2)
+    {
+        return 1.f;
+    }
+
+    AmmoPercent = FClamp(float(Weapon.MagAmmoRemaining) / float(Weapon.MagCapacity), 0.f, 1.f);
+
+    if (AmmoPercent < 0.6f)
+    {
+        return 1.f;
+    }
+
+    return Lerp((AmmoPercent - 0.6f) / 0.4f, 1.f, HighAmmoFireRateMultiplier);
+}
+
 simulated function float GetFireRateMultiplier(KFPlayerReplicationInfo KFPRI, Weapon Other)
 {
     local float Multiplier;
     Multiplier = Super.GetFireRateMultiplier(KFPRI, Other);
-    Multiplier *= FireRateMultiplier;   
+    Multiplier *= FireRateMultiplier;
 
     if (KFMeleeGun(Other) != None)
     {
@@ -96,6 +122,11 @@ simulated function float GetFireRateMultiplier(KFPlayerReplicationInfo KFPRI, We
     else if (Level.TimeDilation < 0.8f && IsDualWeapon(KFWeapon(Other)))
     {
         Multiplier *= ZedTimeDualPistolFireRateMultiplier;
+    }
+
+    if (HighAmmoFireRateMultiplier != 1.f)
+    {
+        Multiplier *= GetHighAmmoFireRateMultiplier(KFWeapon(Other));
     }
 
     return Multiplier * GetCardCustomInfoFireRateMultiplier(GetPlayerCustomInfo(KFPRI));
@@ -119,6 +150,11 @@ final simulated function float GetCardCustomInfoFireRateMultiplier(TurboPlayerCa
 simulated function float GetBerserkerFireRateMultiplier(KFPlayerReplicationInfo KFPRI, Weapon Other) { return Super.GetBerserkerFireRateMultiplier(KFPRI, Other) * BerserkerFireRateMultiplier; }
 simulated function float GetFirebugFireRateMultiplier(KFPlayerReplicationInfo KFPRI, Weapon Other) { return Super.GetFirebugFireRateMultiplier(KFPRI, Other) * FirebugFireRateMultiplier; }
 
+simulated final function bool IsLowAmmoWeapon(KFWeapon Weapon)
+{
+    return Weapon.default.MagCapacity > 2 && (float(Weapon.MagAmmoRemaining) / float(Weapon.MagCapacity)) <= class'TurboPlayerCardCustomInfo'.default.PanicReloadThreshold;
+}
+
 simulated function float GetReloadRateMultiplier(KFPlayerReplicationInfo KFPRI, Weapon Other)
 {
     local float Multiplier;
@@ -128,23 +164,36 @@ simulated function float GetReloadRateMultiplier(KFPlayerReplicationInfo KFPRI, 
     {
         Multiplier *= ZedTimeDualWeaponReloadRateMultiplier;
     }
-    
+
+    if (LowAmmoReloadRateMultiplier != 1.f && IsLowAmmoWeapon(KFWeapon(Other)))
+    {
+        Multiplier *= LowAmmoReloadRateMultiplier;
+    }
+
     return Multiplier * GetCardCustomInfoReloadRateMultiplier(GetPlayerCustomInfo(KFPRI));
 }
 
 final simulated function float GetCardCustomInfoReloadRateMultiplier(TurboPlayerCardCustomInfo CardCustomInfo)
 {
+    local float Multiplier;
+
     if (CardCustomInfo == None)
     {
         return 1.f;
     }
-    
+
+    Multiplier = 1.f;
     if (CardCustomInfo.IsInGrenadeBuffTime())
     {
-        return 2.f;
+        Multiplier *= 2.f;
     }
 
-    return 1.f;
+    if (PerfectionistMultiplier != 1.f && CardCustomInfo.IsPerfectionistActive())
+    {
+        Multiplier *= PerfectionistMultiplier;
+    }
+
+    return Multiplier;
 }
 
 simulated function float GetCommandoReloadRateMultiplier(KFPlayerReplicationInfo KFPRI, Weapon Other) { return Super.GetCommandoReloadRateMultiplier(KFPRI, Other) * CommandoReloadRateMultiplier; }
@@ -190,7 +239,7 @@ simulated function float GetWeaponSpreadRecoilMultiplier(KFPlayerReplicationInfo
 {
     local float Multiplier;
     Multiplier = Super.GetWeaponSpreadRecoilMultiplier(KFPRI, Other) * WeaponSpreadRecoilMultiplier;
-    
+
     if (ShotgunSpreadRecoilMultiplier != 1.f && ShotgunFire(Other) != None && ShotgunFire(Other).default.ProjPerFire > 1)
     {
         Multiplier *= ShotgunSpreadRecoilMultiplier;
@@ -214,19 +263,29 @@ simulated function GetTraderCostMultiplier(KFPlayerReplicationInfo KFPRI, class<
 }
 simulated function float GetTraderGrenadeCostMultiplier(KFPlayerReplicationInfo KFPRI, class<Pickup> Item) { return Super.GetTraderGrenadeCostMultiplier(KFPRI, Item) * TraderGrenadeCostMultiplier; }
 
-simulated function float GetPlayerMovementSpeedMultiplier(KFPlayerReplicationInfo KFPRI, KFGameReplicationInfo KFGRI) 
+simulated function float GetPlayerMovementSpeedMultiplier(KFPlayerReplicationInfo KFPRI, KFGameReplicationInfo KFGRI)
 {
     local float Multiplier;
-    local KFPawn Pawn;
+    local TurboHumanPawn Pawn;
     local TurboPlayerCardCustomInfo CardCustomInfo;
 
-    Pawn = KFPawn(Controller(KFPRI.Owner).Pawn);
+    Pawn = TurboHumanPawn(Controller(KFPRI.Owner).Pawn);
     CardCustomInfo = GetPlayerCustomInfo(KFPRI);
 
     Multiplier = PlayerMovementSpeedMultiplier;
 
+    if (Pawn.CurrentWeight < 5)
+    {
+        Multiplier *= PlayerMovementLowWeightMultiplier;
+    }
+
     if (CardCustomInfo != None)
     {
+        if (PerfectionistMultiplier != 1.f && CardCustomInfo.IsPerfectionistActive())
+        {
+            Multiplier *= PerfectionistMultiplier;
+        }
+
         if (bFreezePlayersDuringWave)
         {
             if (KFGRI != None && KFGRI.bWaveInProgress)
@@ -248,7 +307,7 @@ simulated function float GetPlayerMovementSpeedMultiplier(KFPlayerReplicationInf
         {
             Multiplier *= 1.3f;
         }
-        
+
         if (bMoneySlowsPlayers)
         {
             Multiplier *= CardCustomInfo.GetGreedBegetsSlowSpeedModifier();
@@ -264,7 +323,7 @@ simulated function float GetPlayerMovementSpeedMultiplier(KFPlayerReplicationInf
     {
         Multiplier *= 1.15f;
     }
-    
+
     return Super.GetPlayerMovementSpeedMultiplier(KFPRI, KFGRI) * Multiplier;
 }
 
@@ -332,6 +391,19 @@ static final function bool IsDualWeapon(KFWeapon Weapon)
     return Weapon != None && Weapon.bDualWeapon;
 }
 
+function float GetHeadshotDamageMultiplier(KFPlayerReplicationInfo KFPRI, KFPawn Pawn, class<DamageType> DamageType)
+{
+    local float Multiplier;
+    Multiplier = Super.GetHealPotencyMultiplier(KFPRI);
+
+    if (bPlayerHeadshotsIncreaseHeadshotDamage)
+    {
+        Multiplier *= GetPlayerCustomInfo(KFPRI).GetRackEmUpHeadshotBonus();
+    }
+
+    return Multiplier;
+}
+
 function float GetHealPotencyMultiplier(KFPlayerReplicationInfo KFPRI)
 {
     local float Multiplier;
@@ -363,7 +435,7 @@ function OnShotgunFire(KFShotgunFire ShotgunFire)
     {
         ShotgunFire.ProjPerFire = float(ShotgunFire.default.ProjPerFire) * ShotgunPelletCountMultiplier;
     }
-    
+
     ShotgunFire.KickMomentum = ShotgunFire.default.KickMomentum * ShotgunKickBackMultiplier;
 }
 
@@ -374,10 +446,12 @@ defaultproperties
     ZedTimeDualPistolFireRateMultiplier=1.f
     BerserkerFireRateMultiplier=1.f
     FirebugFireRateMultiplier=1.f
+    HighAmmoFireRateMultiplier=1.f
 
     ReloadRateMultiplier=1.f
     ZedTimeDualWeaponReloadRateMultiplier=1.f
     CommandoReloadRateMultiplier=1.f
+    LowAmmoReloadRateMultiplier=1.f
 
     MagazineAmmoMultiplier=1.f
     DualWeaponMagazineAmmoMultiplier=1.f
@@ -401,12 +475,13 @@ defaultproperties
 
     PlayerMovementSpeedMultiplier=1.f
     PlayerMovementAccelMultiplier=1.f
+    PlayerMovementLowWeightMultiplier=1.f
     bFreezePlayersDuringWave=false
     bMoneySlowsPlayers=false
     bMissingHealthStronglySlows=false
-    
+
     PlayerMaxHealthMultiplier=1.f
-    
+
     PlayerMaxCarryWeightModifier=0
 
     MedicHealPotencyMultiplier=1.f

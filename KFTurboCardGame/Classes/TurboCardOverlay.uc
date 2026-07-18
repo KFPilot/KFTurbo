@@ -117,6 +117,8 @@ var int LastKnownBleedCount;
 
 var CardStatus MarkedForDeathStatus;
 var CardStatus DauntlessStatus;
+var CardStatus PerfectionistStatus;
+var CardStatus PanicReload;
 var CardStatus NoRestForTheWickedStatus;
 var CardStatus PoorlyOiledMachineStatus;
 
