@@ -54,7 +54,7 @@ final function UpdateModifier(CardModifierStack ModifierStack, float Modifier, b
 	}
 	else
 	{
-		ModifierStack.RemoveModifier(Self);	
+		ModifierStack.RemoveModifier(Self);
 	}
 }
 
@@ -66,7 +66,7 @@ final function UpdateDelta(CardDeltaStack DeltaStack, int Delta, bool bActivate)
 	}
 	else
 	{
-		DeltaStack.RemoveDelta(Self);	
+		DeltaStack.RemoveDelta(Self);
 	}
 }
 
@@ -148,7 +148,7 @@ function SetupScriptedTexture(ScriptedTexture Tex)
 	SizeY = Tex.VSize;
 
 	FullTitleString = ApplyTitle(Tex);
-	
+
 	ApplyDescription(Tex);
 
 	FullTitleString = Caps(FullTitleString@"| Killing Floor Turbo");
@@ -220,7 +220,7 @@ function string ApplyTitle(ScriptedTexture Tex)
 function GetCardDescription(out array<string> Description)
 {
 	local int DescriptionIndex;
-	
+
 	Description = CardDescriptionList;
 
 	for (DescriptionIndex = 0; DescriptionIndex < Description.Length; DescriptionIndex++)
@@ -277,7 +277,7 @@ defaultproperties
 	BackplateMaskTexture=Texture'KFTurboCardGame.Card.CardBackplate_D'
 	LargeBackplateMaskTexture=Texture'KFTurboCardGame.Card.CardBackplate_Large_D'
 	BackplateColor=(R=255,G=255,B=255,A=255)
-	
+
 	CardNameColor=(R=0,G=0,B=0,A=255)
 	CardDescriptionColor=(R=0,G=0,B=0,A=255)
 	CardIDColor=(R=0,G=0,B=0,A=100)
