@@ -20,6 +20,16 @@ simulated final function bool IsLocallyOwned()
 	return PlayerTPRI != None && PlayerController(PlayerTPRI.Owner) != None && Viewport(PlayerController(PlayerTPRI.Owner).Player) != None;
 }
 
+simulated final function Pawn GetOwnerPawn()
+{
+    if (PlayerTPRI != None && PlayerController(PlayerTPRI.Owner) != None)
+    {
+        return PlayerController(PlayerTPRI.Owner).Pawn;
+    }
+
+    return None;
+}
+
 static final function TurboPlayerCustomInfo FindCustomInfo(TurboPlayerReplicationInfo TPRI)
 {
 	local int Index;
@@ -76,7 +86,7 @@ simulated function PostBeginPlay()
 	}
 
 	Super.PostBeginPlay();
-	
+
 	Enable('Tick');
 }
 
@@ -86,7 +96,7 @@ simulated function Destroyed()
 	{
 		Unregister();
 	}
-	
+
 	Super.Destroyed();
 }
 
