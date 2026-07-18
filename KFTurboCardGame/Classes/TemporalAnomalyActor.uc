@@ -193,8 +193,8 @@ function ForceNetUpdate()
 
 defaultproperties
 {
-    MinSpeedUpVariance=1.2f
-    MaxSpeedUpVariance=1.4f
+    MinSpeedUpVariance=1.125f
+    MaxSpeedUpVariance=1.2f
 
     MinSpeedDownVariance=0.65f
     MaxSpeedDownVariance=0.85f
@@ -203,7 +203,7 @@ defaultproperties
     MaxAnomalyTime=30.f
 
     MinRegularTime=25.f
-    MaxRegularTime=40.f
+    MaxRegularTime=35.f
     
     NetUpdateFrequency=1.f
 }
