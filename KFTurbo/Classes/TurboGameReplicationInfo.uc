@@ -155,6 +155,8 @@ simulated function float GetHealRechargeMultiplier(KFPlayerReplicationInfo KFPRI
 //Functions from here onward are not simulated - no need to replicate the outcome.
 function GetPlayerCarryWeightModifier(KFPlayerReplicationInfo KFPRI, out int OutCarryWeightModifier) { if (CustomTurboModifier != None) { CustomTurboModifier.GetPlayerCarryWeightModifier(KFPRI, OutCarryWeightModifier); } }
 function GetPlayerZedExtensionModifier(KFPlayerReplicationInfo KFPRI, out int OutZedExtensions) { if (CustomTurboModifier != None) { CustomTurboModifier.GetPlayerZedExtensionModifier(KFPRI, OutZedExtensions); } }
+//NOTE: GetDamageMultiplier() and GetHeadshotDamageMultiplier() are applied during the perk damage bonus step and so impact flinch and stun thresholds of damage.
+function float GetDamageMultiplier(KFPlayerReplicationInfo KFPRI, KFMonster Injured, KFPawn DamageInstigator, int InDamage, class<DamageType> DamageType) { if (CustomTurboModifier != None) { return CustomTurboModifier.GetDamageMultiplier(KFPRI, Injured, DamageInstigator, InDamage, DamageType); } return 1.f; }
 function float GetHeadshotDamageMultiplier(KFPlayerReplicationInfo KFPRI, KFPawn Pawn, class<DamageType> DamageType) { if (CustomTurboModifier != None) { return CustomTurboModifier.GetHeadshotDamageMultiplier(KFPRI, Pawn, DamageType); } return 1.f; }
 function float GetHealPotencyMultiplier(KFPlayerReplicationInfo KFPRI) { if (CustomTurboModifier != None) { return CustomTurboModifier.GetHealPotencyMultiplier(KFPRI); } return 1.f; }
 function float GetWeldSpeedModifier(KFPlayerReplicationInfo KFPRI) { if (CustomTurboModifier != None) { return CustomTurboModifier.GetWeldSpeedModifier(KFPRI); } return 1.f; }

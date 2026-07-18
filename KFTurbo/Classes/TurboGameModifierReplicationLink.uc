@@ -45,6 +45,7 @@ simulated function float GetHealRechargeMultiplier(KFPlayerReplicationInfo KFPRI
 //These functions are only called server-side so no need to replicate properties that are only used here.
 function GetPlayerCarryWeightModifier(KFPlayerReplicationInfo KFPRI, out int OutCarryWeightModifier) { if (NextGameModifierLink != None) { NextGameModifierLink.GetPlayerCarryWeightModifier(KFPRI, OutCarryWeightModifier); } }
 function GetPlayerZedExtensionModifier(KFPlayerReplicationInfo KFPRI, out int OutZedExtensions) { if (NextGameModifierLink != None) { NextGameModifierLink.GetPlayerZedExtensionModifier(KFPRI, OutZedExtensions); } }
+function float GetDamageMultiplier(KFPlayerReplicationInfo KFPRI, KFMonster Injured, KFPawn DamageInstigator, int InDamage, class<DamageType> DamageType) { if (NextGameModifierLink != None) { return NextGameModifierLink.GetDamageMultiplier(KFPRI, Injured, DamageInstigator, InDamage, DamageType); } return 1.f; }
 function float GetHeadshotDamageMultiplier(KFPlayerReplicationInfo KFPRI, KFPawn Pawn, class<DamageType> DamageType) { if (NextGameModifierLink != None) { return NextGameModifierLink.GetHeadshotDamageMultiplier(KFPRI, Pawn, DamageType); } return 1.f; }
 function float GetHealPotencyMultiplier(KFPlayerReplicationInfo KFPRI) { if (NextGameModifierLink != None) { return NextGameModifierLink.GetHealPotencyMultiplier(KFPRI); } return 1.f; }
 function float GetWeldSpeedModifier(KFPlayerReplicationInfo KFPRI) { if (NextGameModifierLink != None) { return NextGameModifierLink.GetWeldSpeedModifier(KFPRI); } return 1.f; }
