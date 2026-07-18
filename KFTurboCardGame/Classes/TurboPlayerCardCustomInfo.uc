@@ -132,7 +132,7 @@ static final simulated function float GetWeaponLoadedAmmoPercent(KFWeapon Weapon
             return -1.f;
         }
 
-        return Weapon.MagAmmoRemaining / Weapon.MagCapacity;
+        return float(Weapon.MagAmmoRemaining) / float(Weapon.MagCapacity);
     }
 
     return -1.f;

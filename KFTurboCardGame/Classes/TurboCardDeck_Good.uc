@@ -457,7 +457,7 @@ function ActivatePanicReload(TurboCardGameplayManager GameplayManager, TurboCard
 
 function ActivatePressurizedMagazines(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
-    Card.UpdateModifier(GameplayManager.PlayerHighAmmoFireRateModifier, 1.2f, bActivate);
+    Card.UpdateModifier(GameplayManager.PlayerHighAmmoFireRateModifier, 1.25f, bActivate);
 }
 
 //========================
@@ -493,7 +493,7 @@ static final function bool DrawPerfectionist(TurboCardOverlay CardOverlay, Turbo
 {
     if (CardOverlay.PerfectionistStatus.Ratio > 0.003f)
     {
-        DrawCardInfoIcon(Canvas, Texture'KFTurboCardGame.UI.Perfectionist_D', DrawX, DrawY, DrawHeight, CardOverlay.DauntlessStatus.Ratio);
+        DrawCardInfoIcon(Canvas, Texture'KFTurboCardGame.UI.Perfectionist_D', DrawX, DrawY, DrawHeight, CardOverlay.PerfectionistStatus.Ratio);
         return true;
     }
 
@@ -1002,6 +1002,7 @@ defaultproperties
         CardDescriptionList(4)="and armor are full."
         CardID="GOOD_PERFECTIONIST"
         OnActivateCard=ActivatePerfectionist
+        bHasStatusIcon=true
         OnStatusIconTick=TickPerfectionist
         OnStatusIconDraw=DrawPerfectionist
     End Object
@@ -1029,6 +1030,7 @@ defaultproperties
         CardDescriptionList(4)="magazine capacity."
         CardID="GOOD_PANICRELOAD"
         OnActivateCard=ActivatePanicReload
+        bHasStatusIcon=true
         OnStatusIconTick=TickPanicReload
         OnStatusIconDraw=DrawPanicReload
     End Object
@@ -1038,15 +1040,15 @@ defaultproperties
         CardName(0)="Pressurized"
         CardName(1)="Magazines"
         CardDescriptionList(0)="Firerate increases"
-        CardDescriptionList(1)="by up to 20% based"
+        CardDescriptionList(1)="by up to 25% based"
         CardDescriptionList(2)="on magazine ammo"
         CardDescriptionList(3)="fill percent."
         CardDescriptionList(4)="Effect fades as"
         CardDescriptionList(5)="magazine decreases"
-        CardDescriptionList(6)="to 60% magazine"
+        CardDescriptionList(6)="to 75% magazine"
         CardDescriptionList(7)="capacity."
         CardID="GOOD_PRESSUREMAG"
-        OnActivateCard=ActivatePressurizedMagazines //TODO: NEEDS IMPL
+        OnActivateCard=ActivatePressurizedMagazines
     End Object
     DeckCardObjectList(47)=TurboCard'PressurizedMagazines'
 }

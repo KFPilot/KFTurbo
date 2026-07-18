@@ -581,8 +581,6 @@ function MonsterNetDamage(out float DamageMultiplier, KFMonster Injured, Pawn In
             {
                 DamageMultiplier *= TrashHeadshotDamageMultiplier;
             }
-
-            DamageMultiplier *= HeadshotDamageMultiplier;
         }
         else
         {

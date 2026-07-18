@@ -28,7 +28,6 @@ var(Turbo) float MedicMaxAmmoMultiplier;
 var(Turbo) float GrenadeMaxAmmoMultiplier;
 
 var(Turbo) float WeaponPenetrationMultiplier;
-var(Turbo) bool bPlayerHeadshotsIncreaseHeadshotDamage;
 var(Turbo) float WeaponSpreadRecoilMultiplier;
 
 var(Turbo) float ShotgunPelletCountMultiplier;
@@ -38,6 +37,9 @@ var(Turbo) float ShotgunKickBackMultiplier;
 var(Turbo) float TraderCostMultiplier;
 var(Turbo) float TraderGrenadeCostMultiplier;
 var(Turbo) bool bDisableArmorPurchase;
+
+var(Turbo) bool bPlayerHeadshotsIncreaseHeadshotDamage;
+var(Turbo) float HeadshotDamageMultiplier;
 
 //Modify this variable via ApplyPlayerMovementSpeedModifier since it needs to notify pawns to update movement speed.
 var(Turbo) float PlayerMovementSpeedMultiplier;
@@ -70,7 +72,7 @@ replication
 {
     reliable if(bNetDirty && Role == ROLE_Authority)
         FireRateMultiplier, MeleeFireRateMultiplier, ZedTimeDualPistolFireRateMultiplier, BerserkerFireRateMultiplier, FirebugFireRateMultiplier, HighAmmoFireRateMultiplier,
-        ReloadRateMultiplier, ZedTimeDualWeaponReloadRateMultiplier, CommandoReloadRateMultiplier,
+        ReloadRateMultiplier, ZedTimeDualWeaponReloadRateMultiplier, CommandoReloadRateMultiplier, LowAmmoReloadRateMultiplier,
         MagazineAmmoMultiplier, CommandoMagazineAmmoMultiplier, MedicMagazineAmmoMultiplier,
         MaxAmmoMultiplier, CommandoMaxAmmoMultiplier, MedicMaxAmmoMultiplier, GrenadeMaxAmmoMultiplier,
         WeaponPenetrationMultiplier,
@@ -101,12 +103,12 @@ simulated final function float GetHighAmmoFireRateMultiplier(KFWeapon Weapon)
 
     AmmoPercent = FClamp(float(Weapon.MagAmmoRemaining) / float(Weapon.MagCapacity), 0.f, 1.f);
 
-    if (AmmoPercent < 0.6f)
+    if (AmmoPercent < 0.75f)
     {
         return 1.f;
     }
 
-    return Lerp((AmmoPercent - 0.6f) / 0.4f, 1.f, HighAmmoFireRateMultiplier);
+    return Lerp((AmmoPercent - 0.75f) / 0.25f, 1.f, HighAmmoFireRateMultiplier);
 }
 
 simulated function float GetFireRateMultiplier(KFPlayerReplicationInfo KFPRI, Weapon Other)
@@ -394,12 +396,14 @@ static final function bool IsDualWeapon(KFWeapon Weapon)
 function float GetHeadshotDamageMultiplier(KFPlayerReplicationInfo KFPRI, KFPawn Pawn, class<DamageType> DamageType)
 {
     local float Multiplier;
-    Multiplier = Super.GetHealPotencyMultiplier(KFPRI);
+    Multiplier = Super.GetHeadshotDamageMultiplier(KFPRI, Pawn, DamageType);
 
     if (bPlayerHeadshotsIncreaseHeadshotDamage)
     {
         Multiplier *= GetPlayerCustomInfo(KFPRI).GetRackEmUpHeadshotBonus();
     }
+
+    Multiplier *= HeadshotDamageMultiplier;
 
     return Multiplier;
 }
@@ -476,6 +480,7 @@ defaultproperties
     PlayerMovementSpeedMultiplier=1.f
     PlayerMovementAccelMultiplier=1.f
     PlayerMovementLowWeightMultiplier=1.f
+    PerfectionistMultiplier=1.f
     bFreezePlayersDuringWave=false
     bMoneySlowsPlayers=false
     bMissingHealthStronglySlows=false
@@ -489,4 +494,6 @@ defaultproperties
     BodyArmorDamageModifier=1.f
     HealRechargeMultiplier=1.f
     WeldStrengthMultiplier=1.f
+
+    HeadshotDamageMultiplier=1.f
 }
