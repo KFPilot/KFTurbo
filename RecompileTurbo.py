@@ -7,8 +7,10 @@ import argparse
 from enum import Enum
 import pathlib
 import os
+import re
 import subprocess
 import shutil
+import sys
 
 class MissingPackagesError(Exception):
     pass
@@ -134,14 +136,131 @@ def DeleteTurboPackages():
             else:
                 print(f"\033[33m {ErrorMessageSplit[1]} {FileName} \033[0m")
 
+_ANSI_RE = re.compile(r'\x1b\[[0-9;]*m')
+_PARSE_RE = re.compile(r'^Parsing\s+(\S+)', re.IGNORECASE)
+_COMPILE_RE = re.compile(r'^Compiling\s+(\S+)', re.IGNORECASE)
+_IMPORT_RE = re.compile(r'^Importing Defaults(?:\s+for)?\s+(\S+)', re.IGNORECASE)
+
+
+class ProgressStatusLine:
+    def __init__(self):
+        self.text = None
+
+    @staticmethod
+    def _visible_len(s):
+        return len(_ANSI_RE.sub('', s))
+
+    @staticmethod
+    def _terminal_width():
+        try:
+            return shutil.get_terminal_size((100, 20)).columns
+        except Exception:
+            return 100
+
+    def set(self, text):
+        if text is None:
+            return
+        self.text = text
+        self._render()
+
+    def _render(self):
+        if self.text is None:
+            return
+        width = self._terminal_width()
+        pad = max(1, width - self._visible_len(self.text) - 1)
+        sys.stdout.write("\r" + self.text + " " * pad + "\r" + self.text)
+        sys.stdout.flush()
+
+    def clear(self):
+        width = self._terminal_width()
+        sys.stdout.write("\r" + " " * (width - 1) + "\r")
+        sys.stdout.flush()
+
+    def print_above(self, print_fn, *args, **kwargs):
+        was_active = self.text is not None
+        if was_active:
+            self.clear()
+        print_fn(*args, **kwargs)
+        if was_active:
+            self._render()
+
+    def finalize(self):
+        if self.text is not None:
+            sys.stdout.write("\n")
+            sys.stdout.flush()
+            self.text = None
+
+
+class PackageProgress:
+    STAGES = ("Parsing", "Compiling", "Importing Defaults")
+    _BAR_WIDTH = 24
+
+    def __init__(self, package_name, classes_path):
+        self.package_name = package_name
+        self.remaining = {}
+        self.total = 0
+        self.current_stage = None
+        self.has_files = False
+        self.has_error = False
+        try:
+            if classes_path.is_dir():
+                files = [p.stem for p in classes_path.iterdir()
+                         if p.is_file() and p.suffix.lower() == ".uc"]
+                if files:
+                    for stage in self.STAGES:
+                        self.remaining[stage] = set(f.lower() for f in files)
+                    self.total = len(files)
+                    self.has_files = True
+        except Exception:
+            pass
+
+    def mark(self, stage, class_name):
+        if not self.has_files:
+            return
+        s = self.remaining.get(stage)
+        if s is None:
+            return
+        s.discard(class_name.lower())
+        self.current_stage = stage
+
+    def render(self, include_stage=True):
+        if not self.has_files or self.current_stage is None:
+            return None
+        total_work = self.total * len(self.STAGES)
+        done_work = sum(self.total - len(self.remaining[s]) for s in self.STAGES)
+        percent = (done_work * 100) // total_work if total_work > 0 else 0
+        filled = (self._BAR_WIDTH * done_work) // total_work if total_work > 0 else 0
+        fill_color = "\033[91m" if self.has_error else "\033[97m"
+        bar = (fill_color + "█" * filled +
+               "\033[38;5;240m" + "░" * (self._BAR_WIDTH - filled) + "\033[0m")
+        stage_label = self.current_stage
+        if self.current_stage == "Importing Defaults" and not self.remaining["Importing Defaults"]:
+            stage_label = "Finalizing"
+        suffix = f" {stage_label}" if include_stage else ""
+        gutter = "\033[41m \033[0m" if self.has_error else "\033[48;5;7m \033[0m"
+        return f"{gutter}   {bar} {percent:3d}%{suffix}"
+
+
 def ProcessUCCMake(Process):
     HasReachedEnd = False
     FoundAnyErrors = False
     PreviousLine = ""
+    status = ProgressStatusLine()
+    progress = None
+
+    def finish_package():
+        if progress is not None:
+            rendered = progress.render(include_stage=False)
+            if rendered is not None:
+                status.set(rendered)
+        status.finalize()
+
     while True:
         Line = Process.stdout.readline()
 
         if not Line:
+            finish_package()
+            progress = None
             if not FoundAnyErrors:
                 PrintSuccess("Compile completed without any errors.")
             break
@@ -150,27 +269,48 @@ def ProcessUCCMake(Process):
 
         if Line.startswith("Compile"):
             HasReachedEnd = True
+            finish_package()
+            progress = None
 
         if HasReachedEnd:
             if Line.startswith("Compile aborted") or Line.startswith("Failure -"):
                 PrintError(Line)
                 FoundAnyErrors = True
         elif Line.startswith("Analyzing..."):
+            finish_package()
             ModuleName = PreviousLine.replace("-", "").split(' ')[0]
             PrintStep(f"Compiling {ModuleName}...")
+            classes_path = LocalPath.joinpath(ModuleName, "Classes")
+            progress = PackageProgress(ModuleName, classes_path)
+        elif progress is not None and (m := _PARSE_RE.match(Line)):
+            progress.mark("Parsing", m.group(1))
+            status.set(progress.render())
+        elif progress is not None and (m := _COMPILE_RE.match(Line)):
+            progress.mark("Compiling", m.group(1))
+            status.set(progress.render())
+        elif progress is not None and (m := _IMPORT_RE.match(Line)):
+            progress.mark("Importing Defaults", m.group(1))
+            status.set(progress.render())
         elif any (FlagString in Line.lower() for FlagString in ErrorStrings):
-            PrintError("  " + Line)
+            if progress is not None:
+                progress.has_error = True
+                rendered = progress.render()
+                if rendered is not None:
+                    status.text = rendered
+            status.print_above(PrintError, "  " + Line)
             FoundAnyErrors = True
         elif any (FlagString in Line.lower() for FlagString in WarningStrings):
-            PrintWarning("  " + Line)
+            status.print_above(PrintWarning, "  " + Line)
             FoundAnyErrors = True
         elif any (FlagString in Line.lower() for FlagString in StepStrings):
-            PrintStep("  " + Line)
+            status.print_above(PrintStep, "  " + Line)
 
         PreviousLine = Line
 
         if not (Process.poll() is None):
             break
+
+    finish_package()
 
 def RunUCCMake():
     UCCMakePath = LocalPath.joinpath(SystemPath, "UCC.exe")
