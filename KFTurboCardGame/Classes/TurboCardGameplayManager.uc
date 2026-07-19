@@ -257,6 +257,11 @@ function OnWaveStart(int StartedWave)
         MultiplyPlayerCash(0.5f);
     }
 
+    if (HealthAndTaxesFlag.IsFlagSet())
+    {
+        MultiplyPlayerCash(0.85f);
+    }
+
     if (MarkedForDeathFlag.IsFlagSet())
     {
         MarkPlayerForDeath();
@@ -285,11 +290,6 @@ function OnWaveEnd(int EndedWave)
     if (FreeArmorFlag.IsFlagSet())
     {
         GrantAllPlayersArmor();
-    }
-
-    if (HealthAndTaxesFlag.IsFlagSet())
-    {
-        MultiplyPlayerCash(0.9f);
     }
 }
 

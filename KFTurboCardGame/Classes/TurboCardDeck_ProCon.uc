@@ -1157,9 +1157,9 @@ defaultproperties
         CardName(0)="Health and Taxes"
         CardDescriptionList(0)="Increases player"
         CardDescriptionList(1)="health by 5% but"
-        CardDescriptionList(2)="players lose 10%"
+        CardDescriptionList(2)="players lose 15%"
         CardDescriptionList(3)="of their dosh"
-        CardDescriptionList(4)="at the start of"
+        CardDescriptionList(4)="at the end of"
         CardDescriptionList(5)="trader time."
         CardID="PROCON_HEALTHTAX"
         OnActivateCard=ActivateHealthAndTaxes
