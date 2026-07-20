@@ -53,13 +53,13 @@ simulated function ProcessTouch(Actor Other, Vector HitLocation)
         OrigLoc = Instigator.Location;
     }
 
-    class'TurboPlayerEventHandler'.static.CollectMonsterHitData(Other, HitLocation, Normal(Velocity), HitData);
-    
+    class'TurboPlayerEventHandler'.static.CollectMonsterHitData(Other, HitLocation, Normal(Velocity), Damage, HitData, -1.f);
+
 	Explode(HitLocation,Normal(HitLocation-Other.Location));
-    
+
     if (HitData.DamageDealt > 0 && Weapon(Owner) != None && Owner.Instigator != None)
     {
-        class'TurboPlayerEventHandler'.static.BroadcastPlayerFireHit(Owner.Instigator.Controller, Weapon(Owner).GetFireMode(0), HitData);
+        class'TurboPlayerEventHandler'.static.BroadcastPlayerFireHit(Owner.Instigator.Controller, Weapon(Owner).GetFireMode(0), HitData, MyDamageType);
     }
 }
 
@@ -85,7 +85,7 @@ simulated function HitWall( vector HitNormal, actor Wall )
         TrickBounceCount++;
         CurrentCoefficient = (TrickBounceBonusCoefficient ** (float(Min(TrickBounceCount-1, MaxTrickBounceCount-1))));
         Damage = default.Damage * ((CurrentCoefficient * TrickBounceMultiplier) ** float(Min(TrickBounceCount, MaxTrickBounceCount)));
-    } 
+    }
     // first bounce: damage*multiplier, second: damage*(multiplier*coef)*(multiplier*coef), third:damage*(multiplier*coef*coef)*(multiplier*coef*coef)*(multiplier*coef*coef)
 
     VNorm = (Velocity dot HitNormal) * HitNormal;

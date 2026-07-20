@@ -43,7 +43,7 @@ function PostBeginPlay()
     TurboGameType = KFTurboGameType(Level.Game);
     TurboGRI = TurboGameReplicationInfo(Level.GRI);
     Mutator = KFTurboMut(Owner);
-    
+
     PlayerStatsHandler = TurboPlayerEventHandler(class'TurboPlayerEventHandler'.static.CreateHandler(Self));
     PlayerStatsHandler.OnPlayerFire = OnPlayerFire;
     PlayerStatsHandler.OnPlayerMeleeFire = OnPlayerMeleeFire;
@@ -53,7 +53,7 @@ function PostBeginPlay()
     PlayerStatsHandler.OnPlayerReceivedDamage = OnPlayerReceivedDamage;
     PlayerStatsHandler.OnPlayerKilledMonster = OnPlayerKilledMonster;
     PlayerStatsHandler.OnPlayerDied = OnPlayerDied;
-    
+
     HealStatsHandler = TurboHealEventHandler(class'TurboHealEventHandler'.static.CreateHandler(Self));
     HealStatsHandler.OnPawnDartHealed = OnPawnDartHealed;
     HealStatsHandler.OnPawnSyringeHealed = IncrementHealStats;
@@ -128,7 +128,7 @@ final function OnPlayerFire(TurboPlayerController Player, WeaponFire FireMode)
     WavePlayerStatCollector.IncrementShotsFired();
 }
 
-final function OnPlayerFireHit(TurboPlayerController Player, WeaponFire FireMode, KFMonster HitMonster, class<KFMonster> MonsterClass, bool bHeadshot, int Damage)
+final function OnPlayerFireHit(TurboPlayerController Player, WeaponFire FireMode, KFMonster HitMonster, class<KFMonster> MonsterClass, bool bHeadshot, int BaseDamage, int Damage, class<DamageType> DamageType)
 {
     local TurboWavePlayerStatCollector WavePlayerStatCollector;
     WavePlayerStatCollector = GetPlayerWaveStats(Player);
@@ -158,7 +158,7 @@ final function OnPlayerReload(TurboPlayerController Player, KFWeapon Weapon)
 {
     local TurboWavePlayerStatCollector WavePlayerStatCollector;
     WavePlayerStatCollector = GetPlayerWaveStats(Player);
-    
+
     if (WavePlayerStatCollector == None)
     {
         return;
@@ -227,7 +227,7 @@ final function OnPawnDartHealed(Pawn Instigator, Pawn Target, int HealingAmount,
 final function IncrementHealStats(Pawn Instigator, Pawn Target, int HealingAmount)
 {
     local TurboWavePlayerStatCollector StatCollector;
-    
+
     if (HealingAmount <= 0)
     {
         return;
@@ -260,13 +260,13 @@ function Tick(float DeltaTime)
     if (TurboGRI == None)
     {
         TurboGRI = TurboGameReplicationInfo(Level.GRI);
-        
+
         if (TurboGRI == None)
         {
             return;
         }
     }
-    
+
     if (!TurboGameType.bWaveInProgress)
     {
         return;
@@ -283,7 +283,7 @@ state WaveStart
         {
             return;
         }
-        
+
         if (TurboGRI.EndGameType != 0)
         {
             GotoState('GameEnd');
@@ -387,7 +387,7 @@ function ReplicateStatCollector(TurboPlayerController Controller)
     {
         return;
     }
-    
+
     if (Mutator != None && Mutator.StatsTcpLink != None)
     {
         Mutator.StatsTcpLink.SendWaveStats(TurboWavePlayerStatCollector(StatsCollector));
@@ -414,5 +414,5 @@ function SendEndGameStats()
 
 defaultproperties
 {
-    
+
 }

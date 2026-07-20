@@ -17,7 +17,7 @@ simulated function Explode(vector HitLocation, vector HitNormal)
 		return;
 	}
 
-	class'TurboPlayerEventHandler'.static.CollectMonsterHitData(Base, HitLocation, Normal(Velocity), HitData);
+	class'TurboPlayerEventHandler'.static.CollectMonsterHitData(Base, HitLocation, Normal(Velocity), Damage, HitData, -1.f);
 
 	if (HitData.DamageDealt > 0)
 	{
@@ -28,7 +28,7 @@ simulated function Explode(vector HitLocation, vector HitNormal)
 
 	if (HitData.DamageDealt > 0 && Weapon(Owner) != None && Owner.Instigator != None)
 	{
-		class'TurboPlayerEventHandler'.static.BroadcastPlayerFireHit(Owner.Instigator.Controller, Weapon(Owner).GetFireMode(0), HitData);
+		class'TurboPlayerEventHandler'.static.BroadcastPlayerFireHit(Owner.Instigator.Controller, Weapon(Owner).GetFireMode(0), HitData, MyDamageType);
 	}
 }
 
@@ -125,7 +125,7 @@ simulated function StickToPawn(Pawn HitPawn, Vector HitLocation, Vector HitDirec
 	bBlockActors = false;
 	bBlockPlayers = false;
 
-	//Ok so dedicated servers don't seem to play nice with skeletal meshes (optimization?) so we do an aprox attachment on dedicated servers. Better than nothing.	
+	//Ok so dedicated servers don't seem to play nice with skeletal meshes (optimization?) so we do an aprox attachment on dedicated servers. Better than nothing.
 	if(Level.NetMode == NM_DedicatedServer)
 	{
 		bHardAttach = true;
@@ -155,7 +155,7 @@ simulated function StickToPawn(Pawn HitPawn, Vector HitLocation, Vector HitDirec
 		}
 
 		KFM.NumHarpoonsAttached++;
-		
+
 		class'TurboGameplayEventHandler'.static.BroadcastPawnHarpooned(Instigator, KFM, KFM.NumHarpoonsAttached);
 	}
 }

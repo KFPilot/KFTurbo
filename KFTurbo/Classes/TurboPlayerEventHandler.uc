@@ -8,13 +8,14 @@ struct MonsterHitData
     var KFMonster Monster;
     var class<KFMonster> MonsterClass;
     var bool bIsHeadshot;
+    var int BaseDamage;
     var int DamageDealt;
 };
 
 delegate OnPlayerFire(TurboPlayerController Player, WeaponFire FireMode);
 delegate OnPlayerMeleeFire(TurboPlayerController Player, KFMeleeFire FireMode);
 
-delegate OnPlayerFireHit(TurboPlayerController Player, WeaponFire FireMode, KFMonster HitMonster, class<KFMonster> MonsterClass, bool bHeadshot, int Damage);
+delegate OnPlayerFireHit(TurboPlayerController Player, WeaponFire FireMode, KFMonster HitMonster, class<KFMonster> MonsterClass, bool bHeadshot, int BaseDamage, int Damage, class<DamageType> DamageType);
 
 delegate OnPlayerMedicDartFire(TurboPlayerController Player, WeaponFire FireMode);
 
@@ -91,7 +92,7 @@ static final function BroadcastPlayerFire(Controller Player, WeaponFire FireMode
     {
         return;
     }
-    
+
     GameType = KFTurboGameType(Player.Level.Game);
 
     if (GameType == None)
@@ -110,13 +111,14 @@ static final function BroadcastPlayerFire(Controller Player, WeaponFire FireMode
     }
 }
 
-static final function CollectMonsterHitData(Actor Other, vector HitLocation, vector Direction, out MonsterHitData HitData, optional float HeadshotAdditionalScale)
+static final function CollectMonsterHitData(Actor Other, vector HitLocation, vector Direction, int BaseDamage, out MonsterHitData HitData, optional float HeadshotAdditionalScale)
 {
     HitData.Monster = None;
     HitData.MonsterClass = None;
     HitData.bIsHeadshot = false;
     HitData.DamageDealt = 0;
-    
+    HitData.BaseDamage = BaseDamage;
+
     HitData.Monster = KFMonster(Other);
     if (HitData.Monster == None)
     {
@@ -125,12 +127,16 @@ static final function CollectMonsterHitData(Actor Other, vector HitLocation, vec
 
     if (HitData.Monster != None)
     {
-        if (HeadshotAdditionalScale == 0.f)
+        if (HeadshotAdditionalScale != -1.f)
         {
-            HeadshotAdditionalScale = 1.f;
+            if (HeadshotAdditionalScale == 0.f)
+            {
+                HeadshotAdditionalScale = 1.f;
+            }
+
+            HitData.bIsHeadshot = !HitData.Monster.bDecapitated && HitData.Monster.IsHeadShot(HitLocation, Direction, HeadshotAdditionalScale);
         }
 
-        HitData.bIsHeadshot = !HitData.Monster.bDecapitated && HitData.Monster.IsHeadShot(HitLocation, Direction, HeadshotAdditionalScale);
         HitData.DamageDealt = HitData.Monster.Health;
     }
 }
@@ -143,7 +149,7 @@ static final function FinalizeMonsterHitData(out MonsterHitData HitData)
     }
 }
 
-static final function BroadcastPlayerFireHit(Controller Player, WeaponFire FireMode, MonsterHitData HitData)
+static final function BroadcastPlayerFireHit(Controller Player, WeaponFire FireMode, MonsterHitData HitData, class<DamageType> DamageType)
 {
     local TurboPlayerController TurboPlayerController;
     local KFTurboGameType GameType;
@@ -155,7 +161,7 @@ static final function BroadcastPlayerFireHit(Controller Player, WeaponFire FireM
     {
         return;
     }
-    
+
     GameType = KFTurboGameType(Player.Level.Game);
 
     if (GameType == None)
@@ -167,12 +173,12 @@ static final function BroadcastPlayerFireHit(Controller Player, WeaponFire FireM
 
     for (Index = TurboPlayerController.PlayerEventHandlerList.Length - 1; Index >= 0; Index--)
     {
-        TurboPlayerController.PlayerEventHandlerList[Index].OnPlayerFireHit(TurboPlayerController, FireMode, HitData.Monster, HitData.MonsterClass, HitData.bIsHeadshot, HitData.DamageDealt);
+        TurboPlayerController.PlayerEventHandlerList[Index].OnPlayerFireHit(TurboPlayerController, FireMode, HitData.Monster, HitData.MonsterClass, HitData.bIsHeadshot, HitData.BaseDamage, HitData.DamageDealt, DamageType);
     }
 
     for (Index = GameType.GlobalPlayerEventHandlerList.Length - 1; Index >= 0; Index--)
     {
-        GameType.GlobalPlayerEventHandlerList[Index].OnPlayerFireHit(TurboPlayerController, FireMode, HitData.Monster, HitData.MonsterClass, HitData.bIsHeadshot, HitData.DamageDealt);
+        GameType.GlobalPlayerEventHandlerList[Index].OnPlayerFireHit(TurboPlayerController, FireMode, HitData.Monster, HitData.MonsterClass, HitData.bIsHeadshot, HitData.BaseDamage, HitData.DamageDealt, DamageType);
     }
 }
 
@@ -188,7 +194,7 @@ static final function BroadcastPlayerMeleeFire(Controller Player, KFMeleeFire Fi
     {
         return;
     }
-    
+
     GameType = KFTurboGameType(Player.Level.Game);
 
     if (GameType == None)
@@ -205,7 +211,7 @@ static final function BroadcastPlayerMeleeFire(Controller Player, KFMeleeFire Fi
     {
         GameType.GlobalPlayerEventHandlerList[Index].OnPlayerMeleeFire(TurboPlayerController, FireMode);
     }
-    
+
     BroadcastPlayerFire(Player, FireMode);
 }
 
@@ -221,7 +227,7 @@ static final function BroadcastPlayerMedicDartFire(Controller Player, WeaponFire
     {
         return;
     }
-    
+
     GameType = KFTurboGameType(Player.Level.Game);
 
     if (GameType == None)
@@ -252,7 +258,7 @@ static final function BroadcastPlayerReload(Controller Player, KFWeapon Weapon)
     {
         return;
     }
-    
+
     GameType = KFTurboGameType(Player.Level.Game);
 
     if (GameType == None)
@@ -283,7 +289,7 @@ static final function BroadcastPlayerDamagedMonster(Controller Player, KFMonster
     {
         return;
     }
-    
+
     GameType = KFTurboGameType(Player.Level.Game);
 
     if (GameType == None)
@@ -322,7 +328,7 @@ static final function BroadcastPlayerReceivedDamage(Controller Player, KFMonster
     {
         return;
     }
-    
+
     GameType = KFTurboGameType(Player.Level.Game);
 
     if (GameType == None)
@@ -353,7 +359,7 @@ static final function BroadcastPlayerKilledMonster(Controller Player, KFMonster 
     {
         return;
     }
-    
+
     GameType = KFTurboGameType(Player.Level.Game);
 
     if (GameType == None)
@@ -368,6 +374,7 @@ static final function BroadcastPlayerKilledMonster(Controller Player, KFMonster 
         return;
     }
 
+    log("Monster killed");
     for (Index = TurboPlayerController.PlayerEventHandlerList.Length - 1; Index >= 0; Index--)
     {
         TurboPlayerController.PlayerEventHandlerList[Index].OnPlayerKilledMonster(TurboPlayerController, Target, DamageType);

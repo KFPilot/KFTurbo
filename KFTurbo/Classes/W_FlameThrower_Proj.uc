@@ -85,7 +85,7 @@ final function bool HasAlreadyHitPawn(Actor Other)
 simulated function bool ShouldReportHit()
 {
 	local W_FlameThrower_Fire FlamethrowerFire;
-	
+
 	if (Weapon(Owner) == None)
 	{
 		return false;
@@ -137,10 +137,10 @@ simulated function ProcessTouch(Actor Other, vector HitLocation)
 
 	//Ignore all projectiles.
 	ProjectileOwner = Owner;
-	
+
 	if (!bHasReportedHit)
 	{
-		class'TurboPlayerEventHandler'.static.CollectMonsterHitData(Other, HitLocation, Normal(Velocity), HitData);
+		class'TurboPlayerEventHandler'.static.CollectMonsterHitData(Other, HitLocation, Normal(Velocity), Damage, HitData, -1.f);
 	}
 
 	HurtRadius(Damage, DamageRadius, MyDamageType, MomentumTransfer, HitLocation);
@@ -151,8 +151,8 @@ simulated function ProcessTouch(Actor Other, vector HitLocation)
 
 		if (ShouldReportHit())
 		{
-			class'TurboPlayerEventHandler'.static.BroadcastPlayerFireHit(ProjectileOwner.Instigator.Controller, Weapon(ProjectileOwner).GetFireMode(0), HitData);
-		}	
+			class'TurboPlayerEventHandler'.static.BroadcastPlayerFireHit(ProjectileOwner.Instigator.Controller, Weapon(ProjectileOwner).GetFireMode(0), HitData, MyDamageType);
+		}
 	}
 
 	PenetrationCount++;

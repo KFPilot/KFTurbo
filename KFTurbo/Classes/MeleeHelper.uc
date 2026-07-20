@@ -69,7 +69,7 @@ static final function bool PerformMeleeSwing(KFWeapon Weapon, KFMeleeFire MeleeF
 			MyDamage *= 2.f;
 		}
 
-		class'TurboPlayerEventHandler'.static.CollectMonsterHitData(HitActor, HitLocation, vector(PointRot), HitData, 1.25f);
+		class'TurboPlayerEventHandler'.static.CollectMonsterHitData(HitActor, HitLocation, vector(PointRot), MyDamage, HitData, 1.25f);
 
 		if (HitData.Monster != None)
 		{
@@ -78,7 +78,7 @@ static final function bool PerformMeleeSwing(KFWeapon Weapon, KFMeleeFire MeleeF
 
 			if (!bSkipHitBroadcast && HitData.DamageDealt > 0)
 			{
-				class'TurboPlayerEventHandler'.static.BroadcastPlayerFireHit(Weapon.Instigator.Controller, MeleeFire, HitData);
+				class'TurboPlayerEventHandler'.static.BroadcastPlayerFireHit(Weapon.Instigator.Controller, MeleeFire, HitData, MeleeFire.hitDamageClass);
 				bBroadcastedHit = true;
 			}
 

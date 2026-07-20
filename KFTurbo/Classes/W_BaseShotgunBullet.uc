@@ -46,7 +46,7 @@ final function RegisterHit(out array<HitRegisterEntry> HitRegisterList, TurboPla
         if (HitRegisterList[Index].HitRegisterCount == FireModeHitRegisterCount)
         {
             HitRegisterList.Remove(Index, 1);
-            class'TurboPlayerEventHandler'.static.BroadcastPlayerFireHit(GetWeaponController(), GetWeaponFire(), HitData);
+            class'TurboPlayerEventHandler'.static.BroadcastPlayerFireHit(GetWeaponController(), GetWeaponFire(), HitData, MyDamageType);
             continue;
         }
 
@@ -91,18 +91,18 @@ simulated function ProcessTouch(Actor Other, vector HitLocation)
         {
             return;
         }
-        
+
         HitPawn.ProcessLocationalDamage(Damage, Instigator, TempHitLocation, MomentumTransfer * Normal(Velocity), MyDamageType, HitPoints);
 	}
     else
     {
-        class'TurboPlayerEventHandler'.static.CollectMonsterHitData(Other, HitLocation, Normal(Velocity), HitData);
+        class'TurboPlayerEventHandler'.static.CollectMonsterHitData(Other, HitLocation, Normal(Velocity), Damage, HitData);
 
         //Just pass it through. It's likely a pawn or an extended z collision.
         Other.TakeDamage(Damage, Instigator, HitLocation, MomentumTransfer * Normal(Velocity), MyDamageType);
 
         NotifyProjectileRegisterHit(HitData);
-              
+
         if (HitData.DamageDealt > 0 && Damage < default.Damage)
         {
             class'WeaponHelper'.static.OnShotgunPenetratingProjectileHit(Self, Other, Damage);

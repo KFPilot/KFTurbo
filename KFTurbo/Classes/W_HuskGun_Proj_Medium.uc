@@ -62,7 +62,7 @@ simulated function ProcessTouch(Actor Other, vector HitLocation)
     {
         return;
     }
-    
+
     OtherLocation = Other.Location;
 	if (Instigator != None)
 	{
@@ -95,18 +95,18 @@ simulated function ProcessTouch(Actor Other, vector HitLocation)
         {
             return;
         }
-        
+
         HitPawn.ProcessLocationalDamage(ImpactDamage, Instigator, TempHitLocation, MomentumTransfer * Normal(Velocity), ImpactDamageType,HitPoints);
     }
     else
     {
-        class'TurboPlayerEventHandler'.static.CollectMonsterHitData(Other, HitLocation, Normal(Velocity), HitData);
+        class'TurboPlayerEventHandler'.static.CollectMonsterHitData(Other, HitLocation, Normal(Velocity), ImpactDamage, HitData);
 
         Other.TakeDamage(ImpactDamage, Instigator, HitLocation, MomentumTransfer * Normal(Velocity), ImpactDamageType);
-        
+
         if (HitData.DamageDealt > 0 && Weapon(Owner) != None && Owner.Instigator != None)
         {
-            class'TurboPlayerEventHandler'.static.BroadcastPlayerFireHit(Owner.Instigator.Controller, Weapon(Owner).GetFireMode(0), HitData);
+            class'TurboPlayerEventHandler'.static.BroadcastPlayerFireHit(Owner.Instigator.Controller, Weapon(Owner).GetFireMode(0), HitData, ImpactDamageType);
         }
     }
 

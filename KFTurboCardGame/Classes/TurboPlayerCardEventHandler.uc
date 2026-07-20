@@ -4,7 +4,15 @@
 class TurboPlayerCardEventHandler extends TurboPlayerEventHandler;
 
 var bool bTossGrenadeBuff;
-var bool bPlayerHeadshotsIncreaseHeadshotDamage;
+
+var protected bool bNotifyCardCustomInfoOnHeadshot;
+var protected bool bRackEmUpEnabled;
+var protected bool bPrecisionChainEnabled;
+
+var float PrecisionChainChance;
+var protected PrecisionChainManager PrecisionChainActor;
+
+var float PlayerKillsReloadMagazineChance;
 
 static function TurboPlayerCardCustomInfo FindCardCustomInfo(TurboPlayerController Player)
 {
@@ -22,6 +30,30 @@ function PostBeginPlay()
 
     OnPlayerFire = PlayerFire;
     OnPlayerFireHit = PlayerFireHit;
+    OnPlayerKilledMonster = PlayerKilledMonster;
+}
+
+final function SetRackEmUpEnabled(bool bEnabled)
+{
+    bRackEmUpEnabled = bEnabled;
+    UpdateNotify();
+}
+
+final function SetPrecisionChainEnabled(bool bEnabled)
+{
+    bPrecisionChainEnabled = bEnabled;
+
+    if (PrecisionChainActor == None)
+    {
+        PrecisionChainActor = Spawn(class'PrecisionChainManager', Self);
+    }
+
+    UpdateNotify();
+}
+
+final function UpdateNotify()
+{
+    bNotifyCardCustomInfoOnHeadshot = bRackEmUpEnabled || bPrecisionChainEnabled;
 }
 
 final function PlayerFire(TurboPlayerController Player, WeaponFire FireMode)
@@ -29,23 +61,77 @@ final function PlayerFire(TurboPlayerController Player, WeaponFire FireMode)
     local TurboPlayerCardCustomInfo PlayerCardCustomInfo;
     PlayerCardCustomInfo = FindCardCustomInfo(Player);
     PlayerCardCustomInfo.PlayerFire(Player, FireMode);
-    
+
     if (bTossGrenadeBuff && W_Frag_Fire(FireMode) != None)
     {
-        PlayerCardCustomInfo.PlayerThrewGrenade(); 
+        PlayerCardCustomInfo.PlayerThrewGrenade();
     }
 }
 
-final function PlayerFireHit(TurboPlayerController Player, WeaponFire FireMode, KFMonster HitMonster, class<KFMonster> MonsterClass, bool bHeadshot, int Damage)
+final function PlayerFireHit(TurboPlayerController Player, WeaponFire FireMode, KFMonster HitMonster, class<KFMonster> MonsterClass, bool bHeadshot, int BaseDamage, int Damage, class<DamageType> DamageType)
 {
-    if (bHeadshot && bPlayerHeadshotsIncreaseHeadshotDamage)
+    local TurboPlayerCardCustomInfo CardCustomInfo;
+
+    if (bPrecisionChainEnabled && PrecisionChainActor.bProcessingChainList)
     {
-        FindCardCustomInfo(Player).PlayerScoredHeadshot(); 
+        return;
     }
+
+    if (bHeadShot && bNotifyCardCustomInfoOnHeadshot)
+    {
+        CardCustomInfo = FindCardCustomInfo(Player);
+    }
+
+    //Do not consider precision chain headshots as player headshots.
+    if (bHeadshot)
+    {
+        if (bRackEmUpEnabled)
+        {
+            CardCustomInfo.IncrementRackEmUp();
+        }
+
+        if (bPrecisionChainEnabled && CardCustomInfo.AttemptPrecisionChain() && FRand() < PrecisionChainChance)
+        {
+            PrecisionChainActor.NotifyPrecisionChain(HitMonster, HitMonster.Location, TurboPlayerReplicationInfo(Player.PlayerReplicationInfo), BaseDamage, DamageType);
+        }
+    }
+}
+
+final function PlayerKilledMonster(TurboPlayerController Player, KFMonster Target, class<DamageType> DamageType)
+{
+    log("Player killed");
+    if (PlayerKillsReloadMagazineChance != 0.f && Player.Pawn != None && Player.Pawn.Health > 0)
+    {
+        log(" - rolling reload");
+        if (FRand() < PlayerKillsReloadMagazineChance)
+        {
+            log(" - reloading");
+            ReloadWeapon(Player.Pawn);
+        }
+    }
+}
+
+final function ReloadWeapon(Pawn PlayerPawn)
+{
+    local KFWeapon Weapon;
+    Weapon = KFWeapon(PlayerPawn.Weapon);
+
+    if (Weapon == None || Weapon.default.MagCapacity <= 2)
+    {
+        return;
+    }
+
+    Weapon.AddReloadedAmmo();
 }
 
 defaultproperties
 {
     bTossGrenadeBuff=false
-    bPlayerHeadshotsIncreaseHeadshotDamage=false
+
+    bNotifyCardCustomInfoOnHeadshot=false
+    bRackEmUpEnabled=false
+    bPrecisionChainEnabled=false
+    PrecisionChainChance=0.f
+
+    PlayerKillsReloadMagazineChance = 0.f;
 }

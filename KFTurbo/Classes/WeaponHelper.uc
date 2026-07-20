@@ -28,11 +28,11 @@ static final function float GetDistanceToClosestPointOnActor(Vector Location, Ac
 
 	Location = (Location - Target.Location);
 	DistZ = FMax(0.f, Abs(Location.Z) - Target.CollisionHeight);
-	
+
 	Location.X = Abs(Location.X);
 	Location.Y = Abs(Location.Y);
 	Location.Z = 0.f;
-	
+
 	Location -= (Normal(Location) * Target.CollisionRadius);
 	Location.Z = DistZ;
 
@@ -46,11 +46,11 @@ static final function float GetDistanceBetweenActors(Actor A, Actor B)
 	local Vector Distance;
 
 	Distance = (A.Location - B.Location);
-	
+
 	//Get result Z component and clear it out from distance vector for now.
 	DistZ = FMax(0.f, Abs(Distance.Z) - (A.CollisionHeight + B.CollisionHeight));
 	Distance.Z = 0.f;
-	
+
 	//Remove sum of cylinder sizes from the XY component.
 	Distance.X = Abs(Distance.X);
 	Distance.Y = Abs(Distance.Y);
@@ -60,7 +60,7 @@ static final function float GetDistanceBetweenActors(Actor A, Actor B)
 	Distance.X = FMax(Distance.X, 0.f);
 	Distance.Y = FMax(Distance.Y, 0.f);
 	Distance.Z = DistZ;
-	
+
 	return VSize(Distance);
 }
 
@@ -70,7 +70,7 @@ static final function Actor GetExtendedCollisionFor(xPawn Pawn)
 	{
 		return KFPawn(Pawn).AuxCollisionCylinder;
 	}
-	
+
 	if (KFMonster(Pawn) != None)
 	{
 		return KFMonster(Pawn).MyExtCollision;
@@ -102,7 +102,7 @@ static final function PenetratingWeaponTrace(Vector TraceStart, Rotator Directio
 	{
 		WeaponPenetrationMultiplier = class<TurboVeterancyTypes>(KFPRI.ClientVeteranSkill).static.GetWeaponPenetrationMultiplier(KFPRI, Fire);
 		PenetrationMax = Round(float(PenetrationMax) * WeaponPenetrationMultiplier);
-		
+
 		if (PenetrationMax > 1 && PenetrationMultiplier <= 0.f)
 		{
 			PenetrationMultiplier = 0.5f; //If the weapon didn't provide a weapon penetration modifier (probably because it originally didn't penetrate), give it a nice 50% damage loss.
@@ -147,7 +147,7 @@ static final function PenetratingWeaponTrace(Vector TraceStart, Rotator Directio
 					IgnoreActors[IgnoreActors.Length - 1] = HitActorExtendedCollision;
 				}
 			}
-			
+
 			HitList[HitListIndex].HitActor.SetCollision(false);
 			IgnoreActors[IgnoreActors.Length] = HitList[HitListIndex].HitActor;
 		}
@@ -177,9 +177,9 @@ static final function PenetratingWeaponTrace(Vector TraceStart, Rotator Directio
 
 static final function TraceHitInfo WeaponTrace(Vector TraceStart, Vector TraceEnd, KFWeapon Weapon)
 {
-	local TraceHitInfo HitInfo;	
+	local TraceHitInfo HitInfo;
 	HitInfo.HitActor = Weapon.Instigator.HitPointTrace(HitInfo.HitLocation, HitInfo.HitDirection, TraceEnd, HitInfo.HitPoints, TraceStart,, 1);
-	
+
 	if (HitInfo.HitActor == None)
 	{
 		HitInfo.HitLocation = TraceEnd;
@@ -203,7 +203,7 @@ static final function TraceHitInfo WeaponTrace(Vector TraceStart, Vector TraceEn
 	{
 		if(KFWeaponAttachment(Weapon.ThirdPersonActor) != None)
 		{
-			KFWeaponAttachment(Weapon.ThirdPersonActor).UpdateHit(HitInfo.HitActor, HitInfo.HitLocation, HitInfo.HitDirection);		
+			KFWeaponAttachment(Weapon.ThirdPersonActor).UpdateHit(HitInfo.HitActor, HitInfo.HitLocation, HitInfo.HitDirection);
 		}
 
 		HitInfo.HitResult = TR_Block;
@@ -237,7 +237,7 @@ static final function PerformTraceHit(KFFire Fire, TraceHitInfo HitInfo, Vector 
 
 	if (NumberMonstersHit == 0)
 	{
-		class'TurboPlayerEventHandler'.static.CollectMonsterHitData(HitInfo.HitActor, HitInfo.HitLocation, Normal(Momentum), HitData);
+		class'TurboPlayerEventHandler'.static.CollectMonsterHitData(HitInfo.HitActor, HitInfo.HitLocation, Normal(Momentum), Fire.DamageMax, HitData);
 	}
 
 	if (HitData.Monster != None)
@@ -249,7 +249,7 @@ static final function PerformTraceHit(KFFire Fire, TraceHitInfo HitInfo, Vector 
 
 	if (HitData.DamageDealt > 0)
 	{
-		class'TurboPlayerEventHandler'.static.BroadcastPlayerFireHit(Fire.Instigator.Controller, Fire, HitData);
+		class'TurboPlayerEventHandler'.static.BroadcastPlayerFireHit(Fire.Instigator.Controller, Fire, HitData, Fire.DamageType);
 	}
 }
 
@@ -288,7 +288,7 @@ static final function bool IsWorldHit(Actor Other)
 
 static final function bool ShouldSkipActor(Actor Other, Pawn Instigator)
 {
-	return Other == Instigator || Other.Base == Instigator; 
+	return Other == Instigator || Other.Base == Instigator;
 }
 
 static final function EnableCollision(Array<Actor> IgnoreList)
@@ -339,7 +339,7 @@ static final function bool AlreadyHitPawn(out Actor HitActor, out array<Pawn> Hi
 	{
 		return false;
 	}
-	
+
 	HitActor = Pawn;
 
 	for (Index = 0; Index < HitPawnList.Length; Index++)
@@ -418,7 +418,7 @@ static final function BeginGrenadeSmoothRotation(Nade Grenade, float UpwardOffse
 	Grenade.DesiredRotation = Rotator(Normal(Vector(Grenade.Rotation) + vect(0, 0, 1000)));
 	Grenade.DesiredRotation.Roll = Roll;
 	Grenade.SetRotation(Grenade.DesiredRotation);
-	
+
 	if (Grenade.Class != class'KFMod.Nade')
 	{
 		GetUnAxes(Grenade.Rotation, X, Y, Z);
@@ -505,7 +505,7 @@ static final function bool DualWeaponHandlePickupQuery(KFWeapon DualWeapon, Pick
 	{
 		return false;
 	}
-	
+
 	if( DualWeapon.LastHasGunMsgTime < DualWeapon.Level.TimeSeconds && PlayerController(DualWeapon.Instigator.Controller) != none )
 	{
 		DualWeapon.LastHasGunMsgTime = DualWeapon.Level.TimeSeconds + 0.5;
@@ -609,7 +609,7 @@ static final function DualWeaponDropFrom(KFWeapon DualWeapon, Vector StartLocati
 		AmmoThrown -= OtherAmmo;
 		Weapon = DualWeapon.Spawn(class<KFWeapon>(DualWeapon.DemoReplacement));
 		Weapon.GiveTo(DualWeapon.Instigator);
-		
+
 		WeaponAmmunition = Ammunition(DualWeapon.Instigator.FindInventoryType(DualWeapon.GetFireMode(0).AmmoClass));
 
 		if (WeaponAmmunition != None)
@@ -727,7 +727,7 @@ static final function OnShotgunPenetratingProjectileHit(ShotgunBullet Projectile
 	{
 		return;
 	}
-	
+
 	if (Monster(HitActor) == None && ExtendedZCollision(HitActor) == None)
 	{
 		return;
@@ -747,11 +747,11 @@ static final function OnWeaponFire(WeaponFire FireMode)
 	{
 		TurboGameReplicationInfo(FireMode.Level.GRI).OnWeaponFire(FireMode);
 	}
-	
+
 	if (FireMode.Instigator != None)
 	{
 		class'TurboPlayerEventHandler'.static.BroadcastPlayerFire(FireMode.Instigator.Controller, FireMode);
-	}   
+	}
 }
 
 static final function OnShotgunFire(KFShotgunFire FireMode, int FireEffectCount, out array<W_BaseShotgunBullet.HitRegisterEntry> HitRegistryList)
@@ -775,7 +775,7 @@ static final function OnMeleeFire(KFMeleeFire FireMode)
 	{
 		TurboGameReplicationInfo(FireMode.Level.GRI).OnMeleeFire(FireMode);
 	}
-	
+
 	if (FireMode.Instigator != None)
 	{
 		class'TurboPlayerEventHandler'.static.BroadcastPlayerMeleeFire(FireMode.Instigator.Controller, FireMode);
@@ -788,11 +788,11 @@ static final function OnMedicDartFire(WeaponFire FireMode)
 	{
 		TurboGameReplicationInfo(FireMode.Level.GRI).OnMedicDartFire(FireMode);
 	}
-	
+
 	if (FireMode.Instigator != None)
 	{
 		class'TurboPlayerEventHandler'.static.BroadcastPlayerMedicDartFire(FireMode.Instigator.Controller, FireMode);
-	}   
+	}
 }
 
 static final function OnWeaponReload(KFWeapon Weapon)
@@ -811,7 +811,7 @@ static final function Projectile SpawnProjectile(BaseProjectileFire ProjectileFi
 	{
 		Projectile = ProjectileFire.Weapon.Spawn(ProjectileFire.GetDesiredProjectileClass(), ProjectileFire.Weapon,, Start, Dir);
 	}
-    
+
     if (Projectile == None)
     {
         Projectile = ProjectileFire.ForceSpawnProjectile(Start,Dir);
@@ -844,7 +844,7 @@ static final function Projectile ForceSpawnProjectile(BaseProjectileFire Project
 	{
 		Projectile = ProjectileFire.Weapon.Spawn(ProjectileFire.GetDesiredProjectileClass(), ProjectileFire.Weapon,, Start, Dir);
 	}
-    
+
     return Projectile;
 }
 
@@ -910,7 +910,7 @@ static final function SealSquealProjTakeDamage(SealSquealProjectile Projectile, 
 	{
 		return;
 	}
-	
+
 	if (Monster(InstigatedBy) != none || InstigatedBy == Projectile.Instigator)
 	{
         if(class<SirenScreamDamage>(DamageType) != None)
@@ -994,7 +994,7 @@ static final function CrossbowProjectileProcessTouch(Projectile Projectile, floa
 	local array<int>	HitPoints;
     local KFPawn HitPawn;
 	local bool	bHitWhipAttachment;
-	
+
 	local TurboPlayerEventHandler.MonsterHitData HitData;
 
 	if (Other == None || Other == Projectile.Instigator || Other.Base == Projectile.Instigator || !Other.bBlockHitPointTraces || Other == IgnoreImpactPawn || (IgnoreImpactPawn != None && Other.Base == IgnoreImpactPawn))
@@ -1007,7 +1007,7 @@ static final function CrossbowProjectileProcessTouch(Projectile Projectile, floa
  	if (ROBulletWhipAttachment(Other) != None)
 	{
     	bHitWhipAttachment=true;
-		
+
         if (Other.Base.bDeleteMe)
 		{
 			return;
@@ -1056,7 +1056,7 @@ static final function CrossbowProjectileProcessTouch(Projectile Projectile, floa
 	if (Projectile.Physics == PHYS_Projectile && Pawn(Other) != None && Vehicle(Other) == None)
 	{
 		IgnoreImpactPawn = Pawn(Other);
-    	class'TurboPlayerEventHandler'.static.CollectMonsterHitData(Other, HitLocation, X, HitData);
+    	class'TurboPlayerEventHandler'.static.CollectMonsterHitData(Other, HitLocation, X, Projectile.Damage, HitData);
 
 		if (HitData.bIsHeadshot)
 		{
@@ -1070,7 +1070,7 @@ static final function CrossbowProjectileProcessTouch(Projectile Projectile, floa
 		if (bHasRegisteredHit == 0 && Weapon(Projectile.Owner) != None && Projectile.Owner.Instigator != None)
 		{
 			bHasRegisteredHit = 1;
-			class'TurboPlayerEventHandler'.static.BroadcastPlayerFireHit(Projectile.Owner.Instigator.Controller, Weapon(Projectile.Owner).GetFireMode(0), HitData);
+			class'TurboPlayerEventHandler'.static.BroadcastPlayerFireHit(Projectile.Owner.Instigator.Controller, Weapon(Projectile.Owner).GetFireMode(0), HitData, Projectile.MyDamageType);
 		}
 
 		Projectile.Damage *= PenetrationDamageMulti;

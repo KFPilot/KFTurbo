@@ -34,13 +34,13 @@ simulated function ProcessTouch(Actor Other, Vector HitLocation)
 			AmbientSound=none;
 			PlaySound(Sound'ProjectileSounds.PTRD_deflect04',,2.0);
 
-			class'TurboPlayerEventHandler'.static.CollectMonsterHitData(Other, HitLocation, Normal(Velocity), HitData);
+			class'TurboPlayerEventHandler'.static.CollectMonsterHitData(Other, HitLocation, Normal(Velocity), ImpactDamage, HitData);
 
 			Other.TakeDamage(ImpactDamage, Instigator, HitLocation, Normal(Velocity), ImpactDamageType);
 
 			if (HitData.DamageDealt > 0 && Weapon(Owner) != None && Owner.Instigator != None)
 			{
-				class'TurboPlayerEventHandler'.static.BroadcastPlayerFireHit(Owner.Instigator.Controller, Weapon(Owner).GetFireMode(0), HitData);	
+				class'TurboPlayerEventHandler'.static.BroadcastPlayerFireHit(Owner.Instigator.Controller, Weapon(Owner).GetFireMode(0), HitData, ImpactDamageType);
 			}
 		}
 
@@ -53,13 +53,13 @@ simulated function ProcessTouch(Actor Other, Vector HitLocation)
 
 	if (!bDud)
 	{
-		class'TurboPlayerEventHandler'.static.CollectMonsterHitData(Other, HitLocation, Normal(Velocity), HitData);
+		class'TurboPlayerEventHandler'.static.CollectMonsterHitData(Other, HitLocation, Normal(Velocity), ImpactDamage, HitData);
 
 		Explode(HitLocation,Normal(HitLocation-Other.Location));
 
 		if (HitData.DamageDealt > 0 && Weapon(Owner) != None && Owner.Instigator != None)
 		{
-			class'TurboPlayerEventHandler'.static.BroadcastPlayerFireHit(Owner.Instigator.Controller, Weapon(Owner).GetFireMode(0), HitData);	
+			class'TurboPlayerEventHandler'.static.BroadcastPlayerFireHit(Owner.Instigator.Controller, Weapon(Owner).GetFireMode(0), HitData, ImpactDamageType);
 		}
 	}
 }

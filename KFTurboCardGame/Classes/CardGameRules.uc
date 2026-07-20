@@ -588,12 +588,19 @@ function MonsterNetDamage(out float DamageMultiplier, KFMonster Injured, Pawn In
         }
     }
 
-    if (InsitgatorCardInfo != None && MonsterStunChance > 0.f && DamageMultiplier > 0.f && InsitgatorCardInfo.AttemptStunningHit())
+    if (DamageMultiplier <= 0.f)
     {
-        if (FRand() < MonsterStunChance)
+        return;
+    }
+
+    if (InsitgatorCardInfo != None)
+    {
+        if (MonsterStunChance > 0.f && InsitgatorCardInfo.AttemptStunningHit(MonsterStunChance, Injured))
         {
             ForceFlipOver(Injured);
         }
+
+
     }
 }
 

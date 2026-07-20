@@ -195,8 +195,10 @@ var CardModifierStack PlayerThornsModifier;
 var CardFlag PlayerGrenadeThrowBuff;
 var CardFlag PlayerHealBoostBuff;
 var CardFlag PlayerHeadshotsIncreaseHeadshotDamage;
+var CardModifierStack PlayerHeadshotChainModifier;
 var CardFlag PlayerBurnGivesMovementSpeed;
 var CardModifierStack PlayerPerfectionistModifier;
+var CardModifierStack PlayerKillsReloadMagazineModifier;
 
 ////////////////////
 //MONSTER MODIFIERS
@@ -1239,7 +1241,18 @@ function PlayerHealBoostBuffFlagChanged(CardFlag Flag, bool bIsEnabled)
 function PlayerHeadshotsIncreaseHeadshotDamageFlagChanged(CardFlag Flag, bool bIsEnabled)
 {
     CardGameModifier.bPlayerHeadshotsIncreaseHeadshotDamage = bIsEnabled;
-    PlayerCardEventHandler.bPlayerHeadshotsIncreaseHeadshotDamage = bIsEnabled;
+    PlayerCardEventHandler.SetRackEmUpEnabled(bIsEnabled);
+}
+
+function PlayerHeadshotChainModifierChanged(CardModifierStack ModifiedStack, float Modifier)
+{
+    PlayerCardEventHandler.SetPrecisionChainEnabled(Modifier > 0.f);
+    PlayerCardEventHandler.PrecisionChainChance = Modifier;
+}
+
+function PlayerKillsReloadMagazineModifierChanged(CardModifierStack ModifiedStack, float Modifier)
+{
+    PlayerCardEventHandler.PlayerKillsReloadMagazineChance = Modifier;
 }
 
 function PlayerBurnGivesMovementSpeedFlagChanged(CardFlag Flag, bool bIsEnabled)
@@ -2064,6 +2077,18 @@ defaultproperties
         OnFlagSetChanged=PlayerHeadshotsIncreaseHeadshotDamageFlagChanged
     End Object
     PlayerHeadshotsIncreaseHeadshotDamage=CardFlag'PlayerHeadshotsIncreaseHeadshotDamageFlag'
+
+    Begin Object Name=PlayerHeadshotsChainModifierStack Class=CardModifierAdditiveStack
+        ModifierStackID="PlayerHeadshotChainModifier"
+        OnModifierChanged=PlayerHeadshotChainModifierChanged
+    End Object
+    PlayerHeadshotChainModifier=CardModifierAdditiveStack'PlayerHeadshotsChainModifierStack'
+
+    Begin Object Name=PlayerKillsReloadMagazineModifierStack Class=CardModifierAdditiveStack
+        ModifierStackID="PlayerKillsReloadMagazineModifier"
+        OnModifierChanged=PlayerKillsReloadMagazineModifierChanged
+    End Object
+    PlayerKillsReloadMagazineModifier=CardModifierAdditiveStack'PlayerKillsReloadMagazineModifierStack'
 
     Begin Object Name=PlayerBurnGivesMovementSpeedFlag Class=CardFlag
         FlagID="PlayerBurnGivesMovementSpeed"

@@ -79,7 +79,7 @@ simulated function HurtRadius( float DamageAmount, float DamageRadius, class<Dam
 	local Pawn Pawn;
 	local array<Pawn> CheckedPawns;
 	local bool bAlreadyChecked;
-	
+
 	local TurboPlayerEventHandler.MonsterHitData HitData;
 	local bool bWasAltFire;
 
@@ -91,12 +91,12 @@ simulated function HurtRadius( float DamageAmount, float DamageRadius, class<Dam
 	}
 
 	bHurtEntry = true;
-	
+
 	if (LastTouchedOverride == None)
 	{
 		LastTouchedOverride = LastTouched;
 	}
-		
+
 	if (ExtendedZCollision(LastTouchedOverride) != None)
 	{
 		LastTouchedOverride = LastTouchedOverride.Base;
@@ -104,7 +104,7 @@ simulated function HurtRadius( float DamageAmount, float DamageRadius, class<Dam
 
 	if (!bAlreadyDidHitRegister && KFMonster(LastTouchedOverride) != None)
 	{
-		class'TurboPlayerEventHandler'.static.CollectMonsterHitData(LastTouchedOverride, HitLocation, Normal(Velocity), HitData);
+		class'TurboPlayerEventHandler'.static.CollectMonsterHitData(LastTouchedOverride, HitLocation, Normal(Velocity), DamageAmount, HitData);
 	}
 
 	foreach CollidingActors (class'Actor', Target, DamageRadius, HitLocation)
@@ -113,7 +113,7 @@ simulated function HurtRadius( float DamageAmount, float DamageRadius, class<Dam
 		{
 			continue;
 		}
-		
+
 		Direction = Target.Location - HitLocation;
 		Distance = FMax(VSize(Direction), 1.f);
 		Direction = Direction / Distance;
@@ -133,7 +133,7 @@ simulated function HurtRadius( float DamageAmount, float DamageRadius, class<Dam
 		{
 			DamageScale = FMax(1.f - (Distance / DamageRadius), 0.f);
 		}
-		
+
 		UsedMomentum = Momentum;
 		UsedMomentum *= InterpCurveEval(AppliedMomentumCurve, Target.Mass);
 
@@ -231,11 +231,11 @@ simulated function HurtRadius( float DamageAmount, float DamageRadius, class<Dam
 	{
 		if (!bWasAltFire)
 		{
-			class'TurboPlayerEventHandler'.static.BroadcastPlayerFireHit(Owner.Instigator.Controller, Weapon(Owner).GetFireMode(0), HitData);
+			class'TurboPlayerEventHandler'.static.BroadcastPlayerFireHit(Owner.Instigator.Controller, Weapon(Owner).GetFireMode(0), HitData, ImpactDamageType);
 		}
 		else
 		{
-			class'TurboPlayerEventHandler'.static.BroadcastPlayerFireHit(Owner.Instigator.Controller, Weapon(Owner).GetFireMode(1), HitData);
+			class'TurboPlayerEventHandler'.static.BroadcastPlayerFireHit(Owner.Instigator.Controller, Weapon(Owner).GetFireMode(1), HitData, ImpactDamageType);
 		}
 	}
 
@@ -264,7 +264,7 @@ defaultproperties
 	MaxSpeed=2000.000000
 	DrawScale=3.000000
 	RotationRate=(Roll=50000)
-	
+
 	FlockRadius=10.000000
 	FlockStiffness=-100.000000
 	FlockMaxForce=600.000000
@@ -275,4 +275,3 @@ defaultproperties
 	DamageRadius=150.000000
     bGameRelevant=false
 }
-

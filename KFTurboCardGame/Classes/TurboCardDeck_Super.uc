@@ -396,6 +396,16 @@ function ActivateTheLittleThings(TurboCardGameplayManager GameplayManager, Turbo
     }
 }
 
+function ActivatePrecisionChain(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
+{
+    Card.UpdateModifier(GameplayManager.PlayerHeadshotChainModifier, 0.25f, bActivate);
+}
+
+function ActivateWormeholeMagazine(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
+{
+    Card.UpdateModifier(GameplayManager.PlayerKillsReloadMagazineModifier, 0.10f, bActivate);
+}
+
 //========================
 //Cheat Death Status
 
@@ -631,7 +641,7 @@ defaultproperties
         CardID="SUPER_FISTOFNORTH"
     End Object
     DeckCardObjectList(0)=TurboCard'Berserker'
-    
+
     Begin Object Name=Commando Class=TurboCard_Super
         CardName(0)="Commando"
         CardName(1)="Firing"
@@ -647,7 +657,7 @@ defaultproperties
         CardID="SUPER_CMDOFIRINGEXT"
     End Object
     DeckCardObjectList(1)=TurboCard'Commando'
-    
+
     Begin Object Name=Firebug Class=TurboCard_Super
         CardName(0)="Fire Hazard"
         CardDescriptionList(0)="Increases Firebug"
@@ -658,7 +668,7 @@ defaultproperties
         CardID="SUPER_FIREHAZARD"
     End Object
     DeckCardObjectList(2)=TurboCard'Firebug'
-    
+
     Begin Object Name=UberMedic Class=TurboCard_Super
         CardName(0)="Uber Medic"
         CardDescriptionList(0)="Increases Field"
@@ -672,7 +682,7 @@ defaultproperties
         CardID="SUPER_UBERMEDIC"
     End Object
     DeckCardObjectList(3)=TurboCard'UberMedic'
-    
+
     Begin Object Name=FleshpoundDamage Class=TurboCard_Super
         CardName(0)="Weakened"
         CardName(1)="Fleshpounds"
@@ -683,7 +693,7 @@ defaultproperties
         CardID="SUPER_WEAKFP"
     End Object
     DeckCardObjectList(4)=TurboCard'FleshpoundDamage'
-    
+
     Begin Object Name=ScrakeDamage Class=TurboCard_Super
         CardName(0)="Anti-Chainsaw"
         CardName(1)="Coalition"
@@ -694,7 +704,7 @@ defaultproperties
         CardID="SUPER_WEAKSC"
     End Object
     DeckCardObjectList(5)=TurboCard'ScrakeDamage'
-    
+
     Begin Object Name=SuperGrenades Class=TurboCard_Super
         CardName(0)="Super"
         CardName(1)="Grenades"
@@ -707,7 +717,7 @@ defaultproperties
         CardID="SUPER_SUPERNADES"
     End Object
     DeckCardObjectList(6)=TurboCard'SuperGrenades'
-    
+
     Begin Object Name=MaxHealth Class=TurboCard_Super
         CardName(0)="Overheal"
         CardDescriptionList(0)="Increase max"
@@ -717,7 +727,7 @@ defaultproperties
         CardID="SUPER_OVERHEAL"
     End Object
     DeckCardObjectList(7)=TurboCard'MaxHealth'
-    
+
     Begin Object Name=MovementSpeed Class=TurboCard_Super
         CardName(0)="Adrenaline"
         CardDescriptionList(0)="Increases player"
@@ -727,7 +737,7 @@ defaultproperties
         CardID="SUPER_ADRENALINE"
     End Object
     DeckCardObjectList(8)=TurboCard'MovementSpeed'
-    
+
     Begin Object Name=ReloadSpeed Class=TurboCard_Super
         CardName(0)="Strategic"
         CardName(1)="Reload"
@@ -738,7 +748,7 @@ defaultproperties
         CardID="SUPER_STRATRELOAD"
     End Object
     DeckCardObjectList(9)=TurboCard'ReloadSpeed'
-    
+
     Begin Object Name=SirenScreemNullify Class=TurboCard_Super
         CardName(0)="Earplugs"
         CardDescriptionList(0)="Completely nullify"
@@ -747,7 +757,7 @@ defaultproperties
         CardID="SUPER_EARPLUGS"
     End Object
     DeckCardObjectList(10)=TurboCard'SirenScreemNullify'
-    
+
     Begin Object Name=CheatDeath Class=TurboCard_Super
         CardName(0)="Cheating Death"
         CardDescriptionList(0)="All players can"
@@ -1025,6 +1035,10 @@ defaultproperties
         CardDescriptionList(0)="Player damage has"
         CardDescriptionList(1)="a 2% chance to"
         CardDescriptionList(2)="stun non-boss zeds."
+        CardDescriptionList(3)="Reapeated damage"
+        CardDescriptionList(4)="to the same zed"
+        CardDescriptionList(5)="increases the"
+        CardDescriptionList(6)="chance by 0.5%."
         OnActivateCard=ActivateStunningHit
         CardID="SUPER_STUNNING"
     End Object
@@ -1073,4 +1087,27 @@ defaultproperties
         CardID="SUPER_THELITTLETHINGS"
     End Object
     DeckCardObjectList(37)=TurboCard'TheLittleThings'
+
+    Begin Object Name=PrecisionChain Class=TurboCard_Super
+        CardName(0)="Precision Chain"
+        CardDescriptionList(0)="Headshots have"
+        CardDescriptionList(1)="a 25% chance to"
+        CardDescriptionList(2)="ricochet a nearby"
+        CardDescriptionList(3)="zed with a headshot."
+        OnActivateCard=ActivatePrecisionChain
+        CardID="SUPER_PRECISIONCHAIN"
+    End Object
+    DeckCardObjectList(38)=TurboCard'PrecisionChain'
+
+    Begin Object Name=WormholeMagazine Class=TurboCard_Super
+        CardName(0)="Wormhole"
+        CardName(1)="Magazines"
+        CardDescriptionList(0)="Kills have a 10%"
+        CardDescriptionList(1)="chance to instantly"
+        CardDescriptionList(2)="reload the current"
+        CardDescriptionList(3)="weapon's magazine."
+        OnActivateCard=ActivateWormeholeMagazine
+        CardID="SUPER_WORMMAG"
+    End Object
+    DeckCardObjectList(39)=TurboCard'WormholeMagazine'
 }

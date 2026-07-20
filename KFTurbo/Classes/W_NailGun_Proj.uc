@@ -19,7 +19,7 @@ simulated function ProcessTouch(Actor Other, vector HitLocation)
      local array<int>	HitPoints;
      local KFPawn HitPawn;
      local bool bWasDecapitated;
-     
+
      local KFMonster Monster;
 	local TurboPlayerEventHandler.MonsterHitData HitData;
 
@@ -66,7 +66,7 @@ simulated function ProcessTouch(Actor Other, vector HitLocation)
           if (Monster != None)
           {
                bWasDecapitated = Monster.bDecapitated;
-			class'TurboPlayerEventHandler'.static.CollectMonsterHitData(Other, HitLocation, Normal(Velocity), HitData);
+               class'TurboPlayerEventHandler'.static.CollectMonsterHitData(Other, HitLocation, Normal(Velocity), Damage, HitData);
           }
 
           Other.TakeDamage(Damage, Instigator, HitLocation, MomentumTransfer * Normal(Velocity), MyDamageType);
@@ -92,7 +92,7 @@ simulated function ProcessTouch(Actor Other, vector HitLocation)
 
                if (Weapon(Owner) != None && Owner.Instigator != None)
                {
-                    class'TurboPlayerEventHandler'.static.BroadcastPlayerFireHit(Owner.Instigator.Controller, Weapon(Owner).GetFireMode(0), HitData);
+                    class'TurboPlayerEventHandler'.static.BroadcastPlayerFireHit(Owner.Instigator.Controller, Weapon(Owner).GetFireMode(0), HitData, MyDamageType);
                }
           }
      }
@@ -148,7 +148,7 @@ defaultproperties
      CullDistance=4000.000000
      DrawScale=3.000000
      PenDamageReduction=0.900000
-     
+
      Damage=260.000000
      MyDamageType=Class'KFTurbo.W_NailGun_DT'
 }

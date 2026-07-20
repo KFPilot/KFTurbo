@@ -37,6 +37,11 @@ var float LastDropWeaponTime;
 var float MinDropWeaponTime;
 
 var int StunningHitFireCounter;
+var KFMonster LastStunningHitMonster;
+var int StunningHitMonsterCount;
+var const float StunningHitMonsterStackingChance;
+
+var int PrecisionChainHitFireCounter;
 
 var float MeleeWeaponHoldTime;
 var float LastFreezeTagEvaluation;
@@ -326,6 +331,7 @@ final function PlayerFire(TurboPlayerController Player, WeaponFire FireMode)
 	{
 		FireCounter = 0;
 		StunningHitFireCounter = -1;
+		PrecisionChainHitFireCounter = -1;
 	}
 }
 
@@ -351,7 +357,7 @@ final simulated function bool IsInHealBoostTime()
 	return ServerTimeActor != None && HealBoostTime > 0.f && (HealBoostTime + HealBoostBoostTime > ServerTimeActor.GetServerTimeSeconds());
 }
 
-final function PlayerScoredHeadshot()
+final function IncrementRackEmUp()
 {
 	RackEmUpHeadshotCount++;
 	RackEmUpHeadshotStackExpireTime = Level.TimeSeconds + RackEmUpStackDuration;
@@ -402,7 +408,7 @@ simulated function ClientCriticalHit(Vector Location, int CriticalHitCount)
     Spawn(HitEffectList[Min(CriticalHitCount - 1, ArrayCount(HitEffectList) - 1)], PlayerTPRI.Owner,, Location);
 }
 
-final function bool AttemptStunningHit()
+final function bool AttemptStunningHit(float MonsterStunChance, KFMonster HitMonster)
 {
 	if (StunningHitFireCounter >= FireCounter)
 	{
@@ -410,7 +416,34 @@ final function bool AttemptStunningHit()
 	}
 
 	StunningHitFireCounter = FireCounter;
-	return true;
+
+	if (LastStunningHitMonster != HitMonster)
+	{
+	    LastStunningHitMonster = HitMonster;
+		StunningHitMonsterCount = 0;
+	}
+	else
+	{
+	    StunningHitMonsterCount++;
+	}
+
+	if (FRand() < (MonsterStunChance + (float(StunningHitMonsterCount) * StunningHitMonsterStackingChance)))
+	{
+	    return true;
+	}
+
+	return false;
+}
+
+final function bool AttemptPrecisionChain()
+{
+    if (PrecisionChainHitFireCounter >= FireCounter)
+	{
+		return false;
+	}
+
+    PrecisionChainHitFireCounter = FireCounter;
+    return true;
 }
 
 final function UpdateBleedCounter(int Count, float Time)
@@ -621,6 +654,8 @@ defaultproperties
 	HealBoostBoostTime=5.f
 
 	MinDropWeaponTime=0.f
+
+	StunningHitMonsterStackingChance=0.005f
 
 	FreezeTagTimeUntilSlow=10.f
 	FreezeTagTimeUntilFreeze=5.f

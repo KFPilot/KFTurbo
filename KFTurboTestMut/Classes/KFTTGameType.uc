@@ -14,10 +14,10 @@ function RestartPlayer(Controller C) {
 
 	C.PlayerReplicationInfo.bOutOfLives = false;
 	Super(Invasion).RestartPlayer(C);
-	
+
 	if (KFHumanPawn(C.Pawn) != None)
 		KFHumanPawn(C.Pawn).VeterancyChanged();
-	
+
 	if (C.bIsPlayer)
 		C.Pawn.bBlockActors = true;
 }
@@ -27,7 +27,7 @@ function bool AllowBecomeActivePlayer(PlayerController PC) {
 		PC.ReceiveLocalizedMessage(GameMessageClass, 13);
 		return false;
 	}
-	
+
 	if (PC.PlayerReplicationInfo == None || !PC.PlayerReplicationInfo.bOnlySpectator)
 		return false;
 
@@ -35,12 +35,38 @@ function bool AllowBecomeActivePlayer(PlayerController PC) {
 		remainingBots--;
 		bPlayerBecameActive = true;
 	}
-	
+
 	return true;
 }
 
-function Killed(Controller Killer, Controller Killed, Pawn KilledPawn, class<DamageType> DamageType) {
-	if (MonsterController(Killed) != None || Monster(KilledPawn) != None) {
+function Killed(Controller Killer, Controller Killed, Pawn KilledPawn, class<DamageType> DamageType)
+{
+    //Need to make sure we pipe along our expected events from turbo.
+    local GameRules GameRules;
+    local CoreGameRules CoreGameRules;
+
+    GameRules = GameRulesModifiers;
+
+    //Find the first CoreGameRules in the chain and start the event flow.
+    while (GameRules != None)
+    {
+        CoreGameRules = CoreGameRules(GameRules);
+
+        if (CoreGameRules != None)
+        {
+            break;
+        }
+
+        GameRules = GameRules.NextGameRules;
+    }
+
+    if (CoreGameRules != None)
+    {
+        CoreGameRules.Killed(Killer, Killed, KilledPawn, DamageType);
+    }
+
+	if (MonsterController(Killed) != None || Monster(KilledPawn) != None)
+	{
 		zombiesKilled++;
 		KFGameReplicationInfo(Level.Game.GameReplicationInfo).maxMonsters = Max(totalMaxMonsters + numMonsters - 1, 0);
 	}
@@ -71,10 +97,10 @@ State MatchInProgress {
 
 		if (NeedPlayers() && AddBot() && remainingBots > 0)
 			remainingBots--;
-		
+
 		elapsedTime++;
 		GameReplicationInfo.elapsedTime = elapsedTime;
-		
+
 		if (bUpdateViewTargs)
 			UpdateViews();
 

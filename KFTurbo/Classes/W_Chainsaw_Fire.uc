@@ -31,7 +31,7 @@ function DoFireEffect()
 	{
 		return;
 	}
-		
+
 	if (++FireEffectCount >= 10)
 	{
 		class'WeaponHelper'.static.OnWeaponFire(self);
@@ -94,13 +94,13 @@ function DoFireEffect()
 	{
 		Monster.bBackstabbed = bBackStabbed;
 
-		class'TurboPlayerEventHandler'.static.CollectMonsterHitData(Monster, HitLocation, vector(PointRot), HitData, 1.25f);
+		class'TurboPlayerEventHandler'.static.CollectMonsterHitData(Monster, HitLocation, vector(PointRot), Damage, HitData, 1.25f);
 
 		HitActor.TakeDamage(Damage, Instigator, HitLocation, vector(PointRot), hitDamageClass);
 
 		if (HitData.DamageDealt > 0 && HitRegisterCount != LastHitRegisterCount && Weapon.Instigator != None)
 		{
-			class'TurboPlayerEventHandler'.static.BroadcastPlayerFireHit(Weapon.Instigator.Controller, Self, HitData);
+			class'TurboPlayerEventHandler'.static.BroadcastPlayerFireHit(Weapon.Instigator.Controller, Self, HitData, hitDamageClass);
 			LastHitRegisterCount = HitRegisterCount;
 		}
 
