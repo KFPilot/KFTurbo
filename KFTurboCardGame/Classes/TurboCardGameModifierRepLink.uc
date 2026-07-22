@@ -96,7 +96,7 @@ simulated final function float GetHighAmmoFireRateMultiplier(KFWeapon Weapon)
 {
     local float AmmoPercent;
 
-    if (Weapon == None || Weapon.MagCapacity <= 2)
+    if (Weapon == None || Weapon.default.MagCapacity <= 2)
     {
         return 1.f;
     }
@@ -276,7 +276,7 @@ simulated function float GetPlayerMovementSpeedMultiplier(KFPlayerReplicationInf
 
     Multiplier = PlayerMovementSpeedMultiplier;
 
-    if (Pawn.CurrentWeight < 5)
+    if (Pawn != None && Pawn.CurrentWeight < 5)
     {
         Multiplier *= PlayerMovementLowWeightMultiplier;
     }
@@ -396,11 +396,21 @@ static final function bool IsDualWeapon(KFWeapon Weapon)
 function float GetHeadshotDamageMultiplier(KFPlayerReplicationInfo KFPRI, KFPawn Pawn, class<DamageType> DamageType)
 {
     local float Multiplier;
+    local TurboPlayerCardCustomInfo CardCustomInfo;
+
     Multiplier = Super.GetHeadshotDamageMultiplier(KFPRI, Pawn, DamageType);
 
     if (bPlayerHeadshotsIncreaseHeadshotDamage)
     {
-        Multiplier *= GetPlayerCustomInfo(KFPRI).GetRackEmUpHeadshotBonus();
+        if (CardCustomInfo == None)
+        {
+            CardCustomInfo = GetPlayerCustomInfo(KFPRI);
+        }
+
+        if (CardCustomInfo != None)
+        {
+            Multiplier *= GetPlayerCustomInfo(KFPRI).GetRackEmUpHeadshotBonus();
+        }
     }
 
     Multiplier *= HeadshotDamageMultiplier;

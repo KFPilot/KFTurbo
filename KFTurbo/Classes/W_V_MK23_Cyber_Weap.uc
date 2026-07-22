@@ -11,7 +11,7 @@ var int LastKnownMagAmmo;
 exec function ReloadMeNow()
 {
      Super.ReloadMeNow();
-     
+
      UpdateAttachmentState(3);
 }
 
@@ -31,7 +31,7 @@ simulated function ClientFinishReloading()
 
 simulated function ClientInterruptReload()
 {
-     Super.ClientFinishReloading();
+     Super.ClientInterruptReload();
      UpdateSkin();
 }
 
@@ -78,7 +78,7 @@ simulated function UpdateSkin()
           UpdateAttachmentState(0);
           return;
      }
-     
+
      if (MagAmmoRemaining > 0)
      {
           Skins[0] = LoadedStateMaterialList[1];
@@ -86,7 +86,7 @@ simulated function UpdateSkin()
           return;
      }
 
-     
+
      Skins[0] = LoadedStateMaterialList[2];
      UpdateAttachmentState(2);
 }

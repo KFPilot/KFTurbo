@@ -161,12 +161,12 @@ simulated function HurtRadius( float DamageAmount, float DamageRadius, class<Dam
 			}
 		}
 
-		CheckedPawns[CheckedPawns.Length] = Pawn;
-
 		if( bAlreadyChecked )
 		{
 			continue;
 		}
+
+		CheckedPawns[CheckedPawns.Length] = Pawn;
 
 		if (KFMonster(Target) != None)
 		{

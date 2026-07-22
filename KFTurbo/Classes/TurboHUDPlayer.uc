@@ -175,7 +175,7 @@ simulated function AddTickEntry(float DeltaTime)
 
 	if (FrameTimeAverage * 2.f < FrameTime)
 	{
-		if (HitchFrameTime > FrameTime && LastHitchTime < Level.TimeSeconds + 2.f)
+		if (HitchFrameTime > FrameTime && Level.TimeSeconds < LastHitchTime + 2.f)
 		{
 			return;
 		}
@@ -359,8 +359,8 @@ simulated final function FindSyringe(Pawn CurrentPawn)
 	if (CurrentSyringe != None)
 	{
 		return;
-	}	
-	
+	}
+
 	CurrentSyringe = Syringe(CurrentPawn.FindInventoryType(class'Syringe'));
 }
 
@@ -369,8 +369,8 @@ simulated final function FindWelder(Pawn CurrentPawn)
 	if (CurrentWelder != None)
 	{
 		return;
-	}	
-	
+	}
+
 	CurrentWelder = Welder(CurrentPawn.FindInventoryType(class'Welder'));
 }
 
@@ -379,8 +379,8 @@ simulated final function FindGrenade(Pawn CurrentPawn)
 	if (CurrentGrenade != None)
 	{
 		return;
-	}	
-	
+	}
+
 	CurrentGrenade = Frag(CurrentPawn.FindInventoryType(class'Frag'));
 }
 
@@ -545,7 +545,7 @@ simulated function WeaponUpdate(float DeltaTime, KFWeapon Weapon)
 	bIsOutOfAmmo = false;
 
 	bIsFlashlightOn = Weapon.FlashLight != None && Weapon.FlashLight.bHasLight;
-	
+
 	bIsMeleeGun = KFMeleeGun(Weapon) != None;
 	bIsWelderOrSyringe = (Weapon == CurrentWelder) || (Weapon == CurrentSyringe);
 
@@ -601,7 +601,7 @@ simulated function WeaponUpdate(float DeltaTime, KFWeapon Weapon)
 			bWeaponSecondaryCanFire = Weapon.ReadyToFire(1); //Ask if we can perform secondary fire.
 		}
 	}
-	
+
 	bIsMedicGun = KFMedicGun(Weapon) != None;
 	if (bIsMedicGun)
 	{
@@ -613,7 +613,7 @@ simulated function WeaponUpdate(float DeltaTime, KFWeapon Weapon)
 		bIsHuskGun = HuskGun(Weapon) != None;
 
 		bIsSingleShotWeapon = !bIsHuskGun;
-		
+
 		if (bIsSingleShotWeapon)
 		{
 			Weapon.GetAmmoCount(MaxAmmo, CurrentLoadedAmmo);
@@ -670,7 +670,7 @@ simulated function MagazineAmmoUpdate(KFWeapon Weapon)
 	{
 		CurrentSpareAmmo = CurrentSpareAmmo - CurrentLoadedAmmo;
 	}
-	
+
 	bIsOutOfAmmo = CurrentSpareAmmo <= 0;
 	CurrentMagazineAmmo = Weapon.MagAmmoRemaining;
 }
@@ -679,11 +679,11 @@ simulated function HuskGunUpdate(HuskGun HuskGun)
 {
 	local W_HuskGun_Fire FireMode;
 	local float MaxAmmo;
-	
+
 	FireMode = W_HuskGun_Fire(HuskGun.GetFireMode(0));
 
 	HuskGun.GetAmmoCount(MaxAmmo, CurrentSpareAmmo);
-	
+
 	CurrentLoadedAmmo = 0.f;
 	CurrentMagazineAmmo = FMin((FireMode.HoldTime / FireMode.GetScaledMaxChargeTime()) * 100.f, 100.f);
 }
@@ -777,14 +777,14 @@ simulated final function DrawBackplates(Canvas C, out Vector2D BackplateACenter,
 	if (CurrentHealingRatio > 0.f)
 	{
 		C.DrawColor = MakeColor(200, 255, 150, CurrentHealingRatio * 48.f);
-		
+
 		C.SetPos(TempX + (C.ClipY * HealthBackplateSize.X * 0.025f), TempY);
 		C.DrawTileClipped(HealingMaterial, C.ClipY * HealthBackplateSize.X * 0.95f, C.ClipY * HealthBackplateSize.Y, 0.f, 0.f,
 			HealingMaterial.MaterialUSize(), float(HealingMaterial.MaterialVSize()) / (HealthBackplateSize.X * 0.95f / HealthBackplateSize.Y));
-		
+
 		C.DrawColor = BackplateColor;
 	}
-	
+
 	LeftAnchor.X = TempX - (C.ClipY * BackplateSpacing.X * 0.5f);
 	LeftAnchor.Y = C.ClipY * (1.f - BackplateSpacing.Y);
 
@@ -824,7 +824,7 @@ simulated final function DrawHealthText(Canvas C, Vector2D BackplateACenter)
 	C.FontScaleY = 1.f;
 	C.Font = TurboHUD.LoadLargeNumberFont(BaseFontSize);
 	C.TextSize(GetStringOfZeroes(3), DefaultTextSizeX, DefaultTextSizeY);
-	
+
 	//Health
 	C.DrawColor = MakeColor(200, 255, 150, 220);
 
@@ -843,7 +843,7 @@ simulated final function DrawHealthText(Canvas C, Vector2D BackplateACenter)
 	C.FontScaleX = TextScale;
 	C.FontScaleY = TextScale;
 	C.TextSize(GetStringOfZeroes(3), TextSizeX, TextSizeY);
-	
+
 	C.SetPos(BackplateACenter.X - (HealthSizeX - (BackplateSizeX * 0.5f)), BackplateACenter.Y - (TextSizeY * 0.515f));
 
 	HealthString = FillStringWithZeroes(Min(int(CurrentHealth), 999), 3);
@@ -891,10 +891,10 @@ simulated final function DrawHealthText(Canvas C, Vector2D BackplateACenter)
 	}
 
 	C.DrawColor = C.MakeColor(255, 255, 255, SyringeOpacity);
-	
+
 	SyringeString = FillStringWithZeroes(Min(int(CurrentSyringeCharge), 999), 3);
 	DrawCounterTextMeticulous(C, SyringeString, TextSizeX, EmptyDigitOpacityMultiplier);
-	
+
 	C.DrawColor = C.MakeColor(255, 255, 255, 255);
 
 	C.SetPos(BackplateACenter.X - ((BackplateSizeX * 0.5f)), (BackplateACenter.Y - (BackplateSizeY * 0.22f)) - (TextSizeY * 0.4f));
@@ -912,7 +912,7 @@ simulated final function DrawAmmoText(Canvas C, Vector2D BackplateCenter)
 	BackplateSizeX = AmmoBackplateTextArea.X * C.ClipY;
 	BackplateSizeY = AmmoBackplateTextArea.Y * C.ClipY;
 	LoadedAmmoSizeX = BackplateSizeX * 0.667f;
-	
+
 	C.DrawColor = C.MakeColor(255, 255, 255, 255);
 
 	//Get how big this font is in general for 3 digit numbers.
@@ -930,9 +930,9 @@ simulated final function DrawAmmoText(Canvas C, Vector2D BackplateCenter)
 	{
 		CurrentLoadedAmmoString = "";
 	}
-	
+
 	C.SetPos(BackplateCenter.X - (BackplateSizeX * 0.5f), (BackplateCenter.Y - (BackplateSizeY * 0.5f)));
-	
+
 	C.Font = TurboHUD.LoadFont(BaseFontSize + 3);
 	C.TextSize(CurrentLoadedAmmoString, TextSizeX, TextSizeY);
 	C.FontScaleX = 0.75f;
@@ -967,20 +967,20 @@ simulated final function DrawAmmoText(Canvas C, Vector2D BackplateCenter)
 	{
 		C.DrawColor.A = 120;
 	}
-	
+
 	DrawCounterTextMeticulous(C, CurrentLoadedAmmoString, TextSizeX, EmptyDigitOpacityMultiplier);
 
 	LoadedAmmoSizeY = TextSizeY;
 	SpareAmmoSizeX = BackplateSizeX - TextSizeX;
 
 	//Spare Ammo
-	CurrentSpareAmmoString = GetSpareAmmoString(); 
+	CurrentSpareAmmoString = GetSpareAmmoString();
 
 	C.FontScaleX = 1.f;
 	C.FontScaleY = 1.f;
 	C.Font = TurboHUD.LoadLargeNumberFont(BaseFontSize + 1);
 	C.TextSize(GetStringOfZeroes(Len(CurrentSpareAmmoString)), TextSizeX, TextSizeY);
-	
+
 	TextScale = ((LoadedAmmoSizeY * 0.5f) / TextSizeY);
 	C.FontScaleX = TextScale;
 	C.FontScaleY = TextScale;
@@ -1025,7 +1025,7 @@ simulated final function DrawAmmoText(Canvas C, Vector2D BackplateCenter)
 	C.TextSize(GetStringOfZeroes(Len(CurrentGrenadeCountString)), TextSizeX, TextSizeY);
 
 	C.SetPos(BackplateCenter.X + (BackplateSizeX * 0.49f) - (TextSizeY * 0.6f), (BackplateCenter.Y - (BackplateSizeY * 0.24f)) - (TextSizeY * 0.3f));
-	C.DrawTileScaled(GrenadeIcon, (TextSizeY / float(SyringeIcon.VSize)) * 0.6f, (TextSizeY / float(SyringeIcon.USize)) * 0.6f);
+	C.DrawTileScaled(GrenadeIcon, (TextSizeY / float(GrenadeIcon.VSize)) * 0.6f, (TextSizeY / float(GrenadeIcon.USize)) * 0.6f);
 
 	C.SetPos((BackplateCenter.X + ((BackplateSizeX * 0.49f)) - TextSizeX) - (TextSizeY * 0.6f), (BackplateCenter.Y - (BackplateSizeY * 0.24f)) - (TextSizeY * 0.5f));
 	DrawCounterTextMeticulous(C, CurrentGrenadeCountString, TextSizeX, EmptyDigitOpacityMultiplier);
@@ -1110,7 +1110,7 @@ simulated final function DrawAlternativeAmmo(Canvas C, Vector2D RightAnchor)
 
 		//Draw current power.
 		FlashlightString = FillStringWithZeroes(int(FlashlightPower), 3);
-		
+
 		C.FontScaleX = 1.f;
 		C.FontScaleY = 1.f;
 		C.Font = TurboHUD.LoadLargeNumberFont(BaseFontSize + 3);
@@ -1138,10 +1138,10 @@ simulated final function DrawAlternativeAmmo(Canvas C, Vector2D RightAnchor)
 
 		C.SetPos(TempX, TempY - BackplateSizeY);
 		C.DrawTileStretched(RoundedContainer, BackplateSizeX, BackplateSizeY);
-		
+
 		BackplateCenterX = TempX + (BackplateSizeX * 0.5f);
 		BackplateCenterY = TempY - (BackplateSizeY * 0.5f);
-	
+
 		C.DrawColor = C.MakeColor(255, 255, 255, Max(Lerp(1.f - SecondaryAmmoFade, 220, 0), 0));
 
 		if (!bWeaponSecondaryCanFire)
@@ -1167,7 +1167,7 @@ simulated final function DrawAlternativeAmmo(Canvas C, Vector2D RightAnchor)
 
 		//Draw Secondary Ammo amount.
 		FlashlightString = FillStringWithZeroes(Min(int(CurrentSpareSecondaryAmmo), 999), 3);
-		
+
 		C.FontScaleX = 1.f;
 		C.FontScaleY = 1.f;
 		C.Font = TurboHUD.LoadLargeNumberFont(BaseFontSize + 3);
@@ -1191,10 +1191,10 @@ simulated final function DrawAlternativeAmmo(Canvas C, Vector2D RightAnchor)
 
 		C.SetPos(TempX, TempY - BackplateSizeY);
 		C.DrawTileStretched(RoundedContainer, BackplateSizeX, BackplateSizeY);
-		
+
 		BackplateCenterX = TempX + (BackplateSizeX * 0.5f);
 		BackplateCenterY = TempY - (BackplateSizeY * 0.5f);
-	
+
 		C.DrawColor = C.MakeColor(255, 255, 255, Max(Lerp(1.f - MedicGunAmmoFade, 220, 0), 0));
 
 		TempX = BackplateCenterX;
@@ -1214,7 +1214,7 @@ simulated final function DrawAlternativeAmmo(Canvas C, Vector2D RightAnchor)
 
 		//Draw Secondary Ammo amount.
 		FlashlightString = FillStringWithZeroes(Min(int(CurrentSpareMedicGunAmmo), 999), 3);
-		
+
 		C.FontScaleX = 1.f;
 		C.FontScaleY = 1.f;
 		C.Font = TurboHUD.LoadLargeNumberFont(BaseFontSize + 3);
@@ -1256,7 +1256,7 @@ simulated final function DrawWeight(Canvas C, Vector2D LeftAnchor)
 
 	C.SetPos(TempX - BackplateSizeX, TempY - BackplateSizeY);
 	C.DrawTileStretched(RoundedContainer, BackplateSizeX, BackplateSizeY);
-	
+
 	C.DrawColor = C.MakeColor(255, 255, 255, 220);
 	C.SetPos(BackplateCenterX - (BackplateTextSizeX * 0.5f), (BackplateCenterY - (BackplateTextSizeY * 0.4f)));
 	C.DrawTileScaled(WeightIcon, (BackplateTextSizeY / float(WeightIcon.VSize)) * 0.8f, (BackplateTextSizeY / float(WeightIcon.USize)) * 0.8f);
@@ -1324,15 +1324,15 @@ simulated final function DrawCash(Canvas C)
 	TotalSizeX = CurrentCashBackplateX + (BackplateSizeX - BackplateTextSizeX);
 
 	DrawString = int(CurrentPlayerCash) @ class'KFTab_BuyMenu'.default.MoneyCaption;
-	
+
 	TempX = (C.ClipX - SpacingX) - TotalSizeX;
 	TempY = (C.ClipY - (C.ClipY * BackplateSpacing.Y)) - BackplateSizeY;
 	BackplateCenterX = TempX + (TotalSizeX * 0.5f);
 	BackplateCenterY = TempY + (BackplateSizeY * 0.5f);
-	
+
 	C.SetPos(TempX, TempY);
 	C.DrawTileStretched(RoundedContainer, TotalSizeX, BackplateSizeY);
-	
+
 	C.DrawColor = C.MakeColor(255, 255, 255, 220);
 	C.TextSize(GetStringOfZeroes(Len(DrawString)), TextSizeX, TextSizeY);
 	C.SetPos(((TempX + TotalSizeX) - ((BackplateSizeX - BackplateTextSizeX) * 0.5f)) - TextSizeX, BackplateCenterY - (TextSizeY * 0.5f));
@@ -1386,7 +1386,7 @@ simulated final function DrawPerk(Canvas C)
 	C.DrawColor = C.MakeColor(16, 16, 16, 200);
 	C.SetPos(PerkX + 1.f, PerkY + 2.f);
 	C.DrawTile(PerkMaterial, PerkDrawSize, PerkDrawSize, 0, 0, PerkMaterial.MaterialUSize(), PerkMaterial.MaterialVSize());
-	
+
 	C.DrawColor = PerkDrawColor;
 	C.SetPos(PerkX, PerkY);
 	C.DrawTile(PerkMaterial, PerkDrawSize, PerkDrawSize, 0, 0, PerkMaterial.MaterialUSize(), PerkMaterial.MaterialVSize());
@@ -1407,7 +1407,7 @@ simulated final function DrawPerk(Canvas C)
 			PerkX += (PerkStarSize * 0.75);
 		}
 	}
-	
+
 	C.DrawColor.A = 255;
 	class'TurboHUDPerkProgressDrawer'.static.DrawPerkProgress(C, TopX, TopY, SizeX, SizeY, PerkProgress, C.MakeColor(16,16,16,240), C.DrawColor);
 }
@@ -1464,7 +1464,7 @@ defaultproperties
 
 	ReloadFadeRate=6.f
 	OutOfAmmoFadeRate=3.f
-	
+
 	SyringeIcon=Texture'KFTurbo.Ammo.SyringeIcon_D'
 	GrenadeIcon=Texture'KFTurbo.Ammo.NadeIcon_D'
 	FlashlightIcon=Texture'KFTurbo.Ammo.BulbIcon_D'

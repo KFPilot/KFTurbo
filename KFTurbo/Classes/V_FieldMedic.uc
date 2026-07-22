@@ -78,8 +78,8 @@ static function ApplyAdjustedExtraAmmo(KFPlayerReplicationInfo KFPRI, class<Ammu
 	Super.ApplyAdjustedExtraAmmo(KFPRI, AmmoType, Multiplier);
 
 	if (TurboGameReplicationInfo(KFPRI.Level.GRI) != None && IsPerkAmmunition(AmmoType))
-	{	
-		Multiplier *= TurboGameReplicationInfo(KFPRI.Level.GRI).GetMaxAmmoMultiplier(KFPRI, AmmoType);
+	{
+		Multiplier *= TurboGameReplicationInfo(KFPRI.Level.GRI).GetMedicMaxAmmoMultiplier(KFPRI, AmmoType);
 	}
 }
 
@@ -195,7 +195,7 @@ static function float GetCostScaling(KFPlayerReplicationInfo KFPRI, class<Pickup
 {
 	local float Multiplier;
 	Multiplier = 1.f;
-	
+
 	switch(Item)
 	{
 	case class'W_MP7M_Pickup' :
@@ -247,10 +247,10 @@ defaultproperties
 	OnHUDIcon=Texture'KillingFloorHUD.Perks.Perk_Medic'
 	OnHUDGoldIcon=Texture'KFTurbo.Perks.Medic_D'
 	OnHUDIconMaxTier=Shader'KFTurbo.Perks.Medic_SHDR'
-	
+
 	VeterancyName="Field Medic"
 	PerkIndex=0
 	CustomLevelInfo=""
 	Requirements(0)="Heal %x HP on your teammates."
-	SRLevelEffects(6)="200% faster syringe recharge|75% more potent healing|75% less damage from Bloat bile|20% faster movement speed|100% larger medic gun clips|75% better body armor|70% discount on body armor|50% discount on medic guns|Grenades heal teammates and hurt enemies|Spawn with full armor and MP7M"
+	SRLevelEffects(6)="200% faster syringe recharge|75% more potent healing|75% less damage from Bloat bile|20% faster movement speed|100% larger medic gun clips|75% better body armor|70% discount on body armor|50% discount on medic guns|Grenades heal teammates and hurt enemies|Spawn with full armor and MP5M"
 }

@@ -3,6 +3,12 @@
 //For more information see https://github.com/KFPilot/KFTurbo.
 class W_V_Deagle_Gold_Fire extends GoldenDeagleFire;
 
+function DoFireEffect()
+{
+    class'WeaponHelper'.static.OnWeaponFire(self);
+    Super.DoFireEffect();
+}
+
 function DoTrace(Vector Start, Rotator Direction)
 {
 	class'WeaponHelper'.static.PenetratingWeaponTrace(Start, Direction, KFWeapon(Weapon), self, 1, 0.8);

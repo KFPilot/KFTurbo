@@ -319,11 +319,6 @@ function OnNextSpawnSquadGenerated(out array < class<KFMonster> > NextSpawnSquad
             NextSpawnSquad[SquadIndex] = class'P_Scrake_STA';
         }
     }
-
-    if (HuskAmountBoostFlag.IsFlagSet())
-    {
-        PotentiallyDoubleHuskSpawn(NextSpawnSquad);
-    }
 }
 
 function OnBossSpawned()

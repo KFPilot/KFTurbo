@@ -31,7 +31,7 @@ static final function bool PerformMeleeSwing(KFWeapon Weapon, KFMeleeFire MeleeF
 	MyDamage = MeleeFire.MeleeDamage;
 	StartTrace = Instigator.Location + Instigator.EyePosition();
 
-	if(Instigator.Controller != None && Instigator.IsHumanControlled() && Instigator.Controller.Enemy != None)
+	if(Instigator.Controller != None && !Instigator.IsHumanControlled() && Instigator.Controller.Enemy != None)
 	{
 		PointRot = rotator(Instigator.Controller.Enemy.Location-StartTrace); // Give aimbot for bots.
 	}

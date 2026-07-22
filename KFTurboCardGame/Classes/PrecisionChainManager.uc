@@ -45,6 +45,7 @@ function Tick(float DeltaTime)
 
     PrecisionChainList.Length = 0;
     bProcessingChainList = false;
+    Disable('Tick');
 }
 
 function ProcessPrecisionChain(PrecisionChainEntry Entry)
@@ -114,6 +115,11 @@ function NotifyPrecisionChain(KFMonster Monster, vector Location, TurboPlayerRep
     PrecisionChainList[Index].TPRI = TPRI;
     PrecisionChainList[Index].DamageType = DamageType;
     PrecisionChainList[Index].Damage = Damage;
+
+    if (Index == 0)
+    {
+        Enable('Tick');
+    }
 }
 
 defaultproperties

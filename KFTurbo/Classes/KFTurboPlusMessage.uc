@@ -27,7 +27,7 @@ static function string GetString(optional int Switch, optional PlayerReplication
 
 static function bool IgnoreLocalMessage(TurboPlayerController PlayerController, optional int Switch, optional PlayerReplicationInfo RelatedPRI_1, optional PlayerReplicationInfo RelatedPRI_2, optional Object OptionalObject)
 {
-    if (PlayerController == None && PlayerController.TurboInteraction == None)
+    if (PlayerController == None || PlayerController.TurboInteraction == None)
     {
         return false;
     }

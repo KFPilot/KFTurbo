@@ -234,7 +234,7 @@ exec simulated function MarkActor(optional TurboPlayerMarkReplicationInfo.EMarkC
 	{
 		return;
 	}
-	
+
 	if (Color == Invalid)
 	{
 		Color = MarkColor;
@@ -242,23 +242,23 @@ exec simulated function MarkActor(optional TurboPlayerMarkReplicationInfo.EMarkC
 
 	StartMarkTrace = ViewportOwner.Actor.Pawn.Location + ViewportOwner.Actor.Pawn.EyePosition();
 	ViewportOwner.Actor.Pawn.Weapon.GetViewAxes(X, Y, Z);
-	
+
 	EndMarkTrace = StartMarkTrace + (X * 500.f);
 
 	Actor = ViewportOwner.Actor.Pawn.Trace(HitLocation, HitNormal, EndMarkTrace, StartMarkTrace, true, vect(10, 10, 10));
 
 	if (Actor != None)
 	{
-		TurboPlayerController(ViewportOwner.Actor).AttemptMarkActor(StartMarkTrace, HitLocation, Actor, None, -1, MarkColor);
+		TurboPlayerController(ViewportOwner.Actor).AttemptMarkActor(StartMarkTrace, HitLocation, Actor, None, -1, Color);
 		return;
 	}
-	
+
 	EndMarkTrace += (X * 1000.f);
 	Actor = ViewportOwner.Actor.Pawn.Trace(HitLocation, HitNormal, EndMarkTrace, StartMarkTrace, true, vect(5, 5, 5));
 
 	if (Actor != None)
 	{
-		TurboPlayerController(ViewportOwner.Actor).AttemptMarkActor(StartMarkTrace, HitLocation, Actor, None, -1, MarkColor);
+		TurboPlayerController(ViewportOwner.Actor).AttemptMarkActor(StartMarkTrace, HitLocation, Actor, None, -1, Color);
 		return;
 	}
 
@@ -267,7 +267,7 @@ exec simulated function MarkActor(optional TurboPlayerMarkReplicationInfo.EMarkC
 
 	if (Actor != None)
 	{
-		TurboPlayerController(ViewportOwner.Actor).AttemptMarkActor(StartMarkTrace, HitLocation, Actor, None, -1, MarkColor);
+		TurboPlayerController(ViewportOwner.Actor).AttemptMarkActor(StartMarkTrace, HitLocation, Actor, None, -1, Color);
 		return;
 	}
 }
@@ -287,7 +287,7 @@ simulated function CheckForVoiceCommandMark(Name Type, int Index)
 	}
 
 	VoiceCommandMarkData = class'TurboMarkerType_VoiceCommand'.static.GetGenerateMarkerDataFromVoiceCommand(Type, Index);
-	
+
 	if (VoiceCommandMarkData == -1)
 	{
 		return;
@@ -307,7 +307,7 @@ simulated function CheckForVoiceCommandMark(Name Type, int Index)
 
 	StartMarkTrace = ViewportOwner.Actor.Pawn.Location + ViewportOwner.Actor.Pawn.EyePosition();
 	ViewportOwner.Actor.Pawn.Weapon.GetViewAxes(X, Y, Z);
-	
+
 	EndMarkTrace = StartMarkTrace + (X * 500.f);
 	TargetActor = ViewportOwner.Actor.Pawn.Trace(HitLocation, HitNormal, EndMarkTrace, StartMarkTrace, true, vect(10, 10, 10));
 
@@ -666,7 +666,7 @@ simulated function InitializeFontLocale()
 				FontLocale = "THA";
 				break;
 		}
-		
+
 		log("- Resolved to "$FontLocale$".", 'KFTurbo');
 		bHasPerformedInitialFontLocalCheck = true;
 		LocaleVersion = GetLatestLocaleVersion();
@@ -809,7 +809,7 @@ defaultproperties
 	LocaleVersion = NoLocaleVersion
 	FontLocale="ENG"
 	bAltF4Exits=false
-	
+
 	bIsAltPressed=false
 	bUseBaseGameFontForChat=true
 

@@ -55,7 +55,7 @@ static function bool IsPerkAmmunition(class<Ammunition> AmmoType)
 		case class'W_Huskgun_Ammo':
 			return true;
 	}
-	
+
 	return false;
 }
 
@@ -129,14 +129,11 @@ static function int AddDamage(KFPlayerReplicationInfo KFPRI, KFMonster Injured, 
 	case class'W_ThompsonSMG_DT' :
 		Multiplier = LerpStat(KFPRI, 1.f, 1.15);
 		break;
-	}
-
-	if (Multiplier != 1.f)
-	{
-		if (class<DamTypeBurned>(DmgType) != none || class<DamTypeFlamethrower>(DmgType) != none || class<DamTypeHuskGunProjectileImpact>(DmgType) != none || class<W_FlareRevolver_Impact_DT>(DmgType) != none)
-		{
-			Multiplier = LerpStat(KFPRI, 1.05f, 1.6f);
-		}
+	default:
+    	if (class<DamTypeBurned>(DmgType) != none || class<DamTypeFlamethrower>(DmgType) != none || class<DamTypeHuskGunProjectileImpact>(DmgType) != none || class<W_FlareRevolver_Impact_DT>(DmgType) != none)
+    	{
+    		Multiplier = LerpStat(KFPRI, 1.05f, 1.6f);
+    	}
 	}
 
 	return Super.AddDamage(KFPRI, Injured, Instigator, float(InDamage) * Multiplier, DmgType);
@@ -180,7 +177,7 @@ static function float GetCostScaling(KFPlayerReplicationInfo KFPRI, class<Pickup
 {
 	local float Multiplier;
 	Multiplier = 1.f;
-	
+
 	switch (Item)
 	{
 	case class'W_FlameThrower_Pickup' :
@@ -201,7 +198,7 @@ static function float GetCostScaling(KFPlayerReplicationInfo KFPRI, class<Pickup
 static function AddDefaultInventory(KFPlayerReplicationInfo KFPRI, Pawn P)
 {
 	KFHumanPawn(P).CreateInventoryVeterancy(string(class'KFTurbo.W_MAC10_Weap'), default.StartingWeaponSellPriceLevel6);
-	
+
 	if (IsHighDifficulty(KFPRI))
 	{
 		KFHumanPawn(P).CreateInventoryVeterancy(string(class'KFTurbo.W_HuskGun_Weap'), default.StartingWeaponSellPriceLevel6);

@@ -24,7 +24,7 @@ auto state Pickup
 		//If not yet landed and also within regarb time.
 		if (!bHasLanded && (CreationTime + PreventRegrabDelay) > Level.TimeSeconds)
 		{
-			if (Owner != None && Owner == Other && Pawn(Other) != None && !class'KFTurboMut'.default.bPreventImmediateCashRegrab)
+			if (Owner != None && Owner == Other && Pawn(Other) != None && class'KFTurboMut'.default.bPreventImmediateCashRegrab)
 			{
 				return false;
 			}

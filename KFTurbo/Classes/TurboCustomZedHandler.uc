@@ -32,7 +32,7 @@ var bool bAllowRandomness;
 function PostBeginPlay()
 {
     Super.PostBeginPlay();
-    
+
     TurboWaveEventHandler(class'TurboWaveEventHandler'.static.CreateHandler(Self)).OnWaveStarted = WaveStarted;
     TurboWaveSpawnEventHandler(class'TurboWaveSpawnEventHandler'.static.CreateHandler(Self)).OnNextSpawnSquadGenerated = NextSpawnSquadGenerated;
 
@@ -40,6 +40,9 @@ function PostBeginPlay()
     {
         ConsoleCommand("Suppress KFTurboCustomZedHandler");
     }
+
+    bAllowRandomness = !KFTurboGameType(Level.Game).IsHighDifficulty();
+    bRandomizeProgressAtWaveStart = bAllowRandomness;
 
     if (bAllowRandomness)
     {
@@ -50,23 +53,20 @@ function PostBeginPlay()
 function WaveStarted(KFTurboGameType GameType, int StartedWave)
 {
     local int Index;
-    
-    bAllowRandomness = !GameType.IsHighDifficulty();
-    bRandomizeProgressAtWaveStart = bAllowRandomness;
 
     if (bRandomizeProgressAtWaveStart)
     {
         for (Index = 0; Index < ReplacementList.Length; Index++)
         {
             ReplacementList[Index].ReplacementProgress = FRand() * 0.75f;
-        } 
+        }
     }
     else
     {
         for (Index = 0; Index < ReplacementList.Length; Index++)
         {
             ReplacementList[Index].ReplacementProgress = 0.f;
-        }        
+        }
     }
 }
 
@@ -93,13 +93,21 @@ final function bool IncrementMonsterProgress(int Index)
         ReplacementList[Index].ReplacementProgress += ReplacementList[Index].ReplacementRate * ReplacementRateMultiplier;
     }
 
-    log("Incremented progress for monster replacement index"@Index@"to"@ReplacementList[Index].ReplacementProgress, 'KFTurboCustomZedHandler');
+    if (bDebugReplacement)
+    {
+        log("Incremented progress for monster replacement index"@Index@"to"@ReplacementList[Index].ReplacementProgress, 'KFTurboCustomZedHandler');
+    }
+
     if (ReplacementList[Index].ReplacementProgress < 1.f)
     {
         return false;
     }
-    
-    log(" - Requesting replacement with"@ReplacementList[Index].ReplacementClass, 'KFTurboCustomZedHandler');
+
+    if (bDebugReplacement)
+    {
+        log(" - Requesting replacement with"@ReplacementList[Index].ReplacementClass, 'KFTurboCustomZedHandler');
+    }
+
     ReplacementList[Index].ReplacementProgress -= 1.f;
     return true;
 }

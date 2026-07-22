@@ -117,7 +117,7 @@ function AddPanels()
 function bool ButtonClicked(GUIComponent Sender)
 {
     local PlayerController PC;
- 
+
     PC = PlayerOwner();
 
 	if ( Sender == b_Settings )
@@ -176,7 +176,7 @@ function bool ButtonClicked(GUIComponent Sender)
 		// Profile
 		Controller.OpenMenu(string(Class'TurboProfilePage'));
 	}
-	
+
 	return true;
 }
 
@@ -198,7 +198,7 @@ function bool InternalOnPreDraw(Canvas C)
 		if ( (PC.myHUD == None || !PC.myHUD.IsInCinematic()) && GRI != none && GRI.bMatchHasBegun && !PC.IsInState('GameEnded') )
         	EnableComponent(b_Spec);
 		else DisableComponent(b_Spec);
-		
+
 		if( PC.PlayerReplicationInfo!=None && bOldSpectator!=PC.PlayerReplicationInfo.bOnlySpectator )
 		{
 			bOldSpectator = !bOldSpectator;
@@ -304,7 +304,7 @@ function SetButtonPositions(Canvas C)
 
             for (j = i + 1; j < Components.Length && ButtonsLeftInRow < ButtonsPerRow; j++)
             {
-                if (Components[i].bVisible && GUIButton(Components[i]) != None)
+                if (Components[j].bVisible && GUIButton(Components[j]) != None)
                 {
                     ButtonsLeftInRow++;
                 }

@@ -3,7 +3,7 @@
 //For more information see https://github.com/KFPilot/KFTurbo.
 class TurboPlayerController extends CorePlayerController;
 
-var private ClientPerkRepLink ClientPerkRepLink;	
+var private ClientPerkRepLink ClientPerkRepLink;
 var private TurboRepLink TurboRepLink;
 var class<WeaponRemappingSettings> WeaponRemappingSettings;
 var TurboInteraction TurboInteraction;
@@ -55,7 +55,7 @@ replication
 simulated function PostBeginPlay()
 {
 	bDynamicNetSpeed = false;
-	
+
 	//For some reason this really does not like getting set!
 	if (class<TurboPlayerReplicationInfo>(PlayerReplicationInfoClass) == None)
 	{
@@ -233,7 +233,7 @@ event ClientOpenMenu(string Menu, optional bool bDisconnect,optional string Msg1
 		Menu = string(LobbyMenuBaseClass);
 	}
 
-	Super.ClientOpenMenu(Menu, bDisconnect, Msg1, Msg2);	
+	Super.ClientOpenMenu(Menu, bDisconnect, Msg1, Msg2);
 }
 
 simulated function ClientReceiveLoginMenu(string MenuClass, bool bForce)
@@ -289,7 +289,7 @@ simulated event ReceiveLocalizedMessage(class<LocalMessage> Message, optional in
 	}
 
     Message.Static.ClientReceive( Self, Switch, RelatedPRI_1, RelatedPRI_2, OptionalObject );
-	
+
 	if (Player == None || Player.Console == None)
 	{
 		return;
@@ -301,7 +301,7 @@ simulated event ReceiveLocalizedMessage(class<LocalMessage> Message, optional in
 	{
 		Player.Console.Message(LocalMessageString, 0);
 	}
-	
+
 	if (TurboLocalMessage != None && TurboLocalMessage.static.IsRelevantToInGameChat(Self, Switch, RelatedPRI_1, RelatedPRI_2, OptionalObject) && ExtendedConsole(Player.Console) != None)
 	{
 		ExtendedConsole(Player.Console).OnChat(LocalMessageString, 0);
@@ -402,7 +402,7 @@ function ServerTeamSay( string Msg )
 	{
 		return;
 	}
-	
+
 	Super.ServerTeamSay(Msg);
 }
 
@@ -472,7 +472,7 @@ function ChangeName(coerce string S)
 	{
         S = left(S,20);
 	}
-	
+
     S = Repl(S, "\"", "");
 
     Level.Game.ChangeName(self, S, true);
@@ -500,12 +500,12 @@ function AttemptMarkActor(vector Start, vector End, Actor TargetActor, class<Tur
 			return;
 		}
 	}
-	
+
     if (Pawn(TargetActor.Base) != None)
     {
         TargetActor = TargetActor.Base;
     }
-	
+
 	if (Role != ROLE_Authority)
 	{
 		ServerMarkActor(Start, End, TargetActor, DataClassOverride, DataOverride, Color);
@@ -530,6 +530,11 @@ function AttemptMarkActor(vector Start, vector End, Actor TargetActor, class<Tur
 
 function ServerMarkActor(vector Start, vector End, Actor TargetActor, class<TurboMarkerType> DataClassOverride, int DataOverride, TurboPlayerMarkReplicationInfo.EMarkColor Color)
 {
+    if (TargetActor == None)
+    {
+        return;
+    }
+
 	AttemptMarkActor(Start, End, TargetActor, DataClassOverride, DataOverride, Color);
 }
 
@@ -542,11 +547,11 @@ function ClientCloseBuyMenu()
 	{
 		return;
 	}
-	
+
 	GUIController = GUIController(Player.GUIController);
 
 	BuyMenu = TurboGUIBuyMenu(GUIController.FindMenuByClass(Class'TurboGUIBuyMenu'));
-	
+
 	if (BuyMenu != None)
 	{
 		BuyMenu.CloseSale(false);
@@ -592,7 +597,7 @@ function ServerInitializeSteamStats(TurboSteamStatsHandler.StatPayload Payload)
 	local int Index, StatValue;
 
 	local ClientPerkRepLink CPRL;
-	
+
 	local class<SRCustomProgressInt> ProgressClass;
 	local SRCustomProgressInt Progress;
 
@@ -632,7 +637,7 @@ function ServerInitializeSteamStats(TurboSteamStatsHandler.StatPayload Payload)
 		{
 			continue;
 		}
-		
+
 		Progress = SRCustomProgressInt(CPRL.AddCustomValue(ProgressClass));
 
 		if (Progress == None)
@@ -731,7 +736,7 @@ function bool AttemptChangePerk(class<KFVeterancyTypes> VetSkill)
 	{
 		return false;
 	}
-	
+
 	for (Index = 0; Index < PerkChangeLockList.Length; Index++)
 	{
 		if (!PerkChangeLockList[Index].static.CanSelectPerk(self, TurboVeterancyClass))
@@ -830,7 +835,7 @@ exec function GetWeapon(class<Weapon> NewWeaponClass )
 	{
 		NewWeaponClass = WeaponRemappingSettings.static.GetRemappedWeapon(Self, NewWeaponClass);
 	}
-	
+
 	Super.GetWeapon(NewWeaponClass);
 }
 
@@ -1017,14 +1022,14 @@ exec function VoteTest()
 
 	TurboGRI = TurboGameReplicationInfo(Level.GRI);
 
-	if (TurboGRI != None)
+	if (TurboGRI == None)
 	{
 		return;
 	}
 
 	TurboGRI.VoteInstance = Spawn(class'TurboGameVoteTest', Self);
 	TurboGRI.VoteInstance.InitiateVote(TurboPlayerReplicationInfo(PlayerReplicationInfo));
-	
+
 	if (TurboGRI.VoteInstance != None && TurboGRI.VoteInstance.GetVoteState() < Expired)
 	{
 		TurboGRI.RegisterVoteInstance(TurboGRI.VoteInstance);
@@ -1066,7 +1071,7 @@ simulated function ClientWeaponSpawned(class<Weapon> WeaponClass, Inventory Inv)
 	{
 		if (Inv != None)
 		{
-			KFAttachmentClass.static.PreloadAssets(KFWeaponAttachment(Inv.ThirdPersonActor));    
+			KFAttachmentClass.static.PreloadAssets(KFWeaponAttachment(Inv.ThirdPersonActor));
 		}
 		else
 		{
@@ -1135,7 +1140,7 @@ state Spectating
 	{
 		local Vector XAxis, YAxis, ZAxis;
 		local Actor HitActor;
-		
+
 		if (!(ViewTarget == None || ViewTarget == Self))
 		{
 			return;
@@ -1150,6 +1155,11 @@ state Spectating
 
 		GetAxes(Rotation, XAxis, YAxis, ZAxis);
 		HitActor = Trace(YAxis, ZAxis, Location + (XAxis * 500.f), Location, true, vect(16, 16, 16));
+
+		if (HitActor == None)
+		{
+		    return;
+		}
 
 		if (Pawn(HitActor) == None)
 		{
@@ -1173,7 +1183,7 @@ state Spectating
 	function BeginState()
 	{
 		Super.BeginState();
-		
+
 		if (Role == ROLE_Authority && SpectatorActorClass != None && SpectatorActor == None
 			&& KFTurboGameType(Level.Game) != None && !KFTurboGameType(Level.Game).bHasVisibleSpectatorMutator)
 		{
@@ -1184,7 +1194,7 @@ state Spectating
 	function EndState()
 	{
 		Super.EndState();
-		
+
 		if (Role == ROLE_Authority && SpectatorActor != None)
 		{
 			SpectatorActor.Destroy();

@@ -9,7 +9,7 @@ var PlayerController LocalPlayerController;
 simulated function PostBeginPlay()
 {
     local bool bIsAuthority;
-    
+
     Super.PostBeginPlay();
 
     SetTimer(5.f, true);
@@ -64,7 +64,7 @@ simulated function Timer()
 
     foreach DynamicActors(class'ClientPerkRepLink', CPRL)
         break;
-    
+
     if (CPRL == None)
     {
         DebugPrint("NO CPRLS ARE PRESENT", bIsAuthority);
@@ -127,13 +127,13 @@ simulated function Timer()
         return;
     }
 
-    if (CPRL.CachePerks.Length != 0)
+    if (CPRL.CachePerks.Length == 0)
     {
         DebugPrint("CachePerks IS EMPTY.", bIsAuthority);
         return;
     }
 
-    if (CPRL.ShopInventory.Length != 0)
+    if (CPRL.ShopInventory.Length == 0)
     {
         DebugPrint("ShopInventory IS EMPTY.", bIsAuthority);
         return;

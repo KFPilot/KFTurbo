@@ -66,7 +66,7 @@ simulated function Timer()
 
 				continue;
 			}
-			
+
 			//Test achievement status.
 			WeaponLockID = WeaponClass.default.UnlockedByAchievement;
 			if (WeaponLockID != -1)
@@ -94,7 +94,7 @@ simulated function Timer()
 		{
 			continue;
 		}
-		
+
 		WeaponLockID = class<KFWeapon>(CPRL.ShopInventory[WeaponIndex].PC.Default.InventoryType).Default.AppID;
 		if(WeaponLockID != 0)
 		{
@@ -115,6 +115,11 @@ simulated function Timer()
 		}
 
 		WeaponLockID = class<KFWeapon>(CPRL.ShopInventory[WeaponIndex].PC.Default.InventoryType).Default.UnlockedByAchievement;
+
+		if (WeaponLockID == -1)
+		{
+		    continue;
+		}
 
 		if( Achievements[WeaponLockID].bCompleted == 1 )
 		{
@@ -144,7 +149,7 @@ simulated function UpdatePerkStats()
 
 	//This guy will take our stats and wait patiently for server perks to finish reading from the ftp before notifying stats of their value.
 	Handler = Spawn(class'TurboSteamStatsHandler', PCOwner);
-	
+
 	GetStatInt(DamageHealedStat, SteamNameStat[KFSTAT_DamageHealed]);
 	Handler.SteamDamageHealedStat = DamageHealedStat.Value;
 	GetStatInt(WeldingPointsStat, SteamNameStat[KFSTAT_WeldingPoints]);

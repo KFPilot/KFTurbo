@@ -37,7 +37,7 @@ simulated function Timer()
     }
 
     Weapon.PlayOwnedSound(FireEndSound, SLOT_Interact, TransientSoundVolume,, TransientSoundRadius,, false);
-    
+
     MeleeDamage = default.MeleeDamage;
 
     CurrentHitCount++;
@@ -55,7 +55,7 @@ simulated function ModeTick(float DeltaTime)
 {
     Super.ModeTick(DeltaTime);
 
-    if (bAwaitingHitTimer && NextHitTimerPop > Level.TimeSeconds)
+    if (bAwaitingHitTimer && NextHitTimerPop <= Level.TimeSeconds)
     {
         bAwaitingHitTimer = false;
         Timer();

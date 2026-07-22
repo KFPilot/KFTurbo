@@ -66,14 +66,14 @@ function DrawPerk(Canvas Canvas, int CurIndex, float X, float Y, float Width, fl
 	class'TurboHUDKillingFloor'.static.ResetCanvas(Canvas);
     Padding = Height / 16.f;
     BarHeight = Height * 0.25f;
-    
+
     UpdateFont(Canvas, TurboHUD, Width, Height);
 
     TempX = X;
 	TempY = Y + Padding;
 	Canvas.SetPos(TempX, TempY);
 	Canvas.DrawTileStretched(ItemBackground, Width, Height - (Padding * 2.f));
-    
+
     Canvas.ClipX = (X + Width) - Padding;
     Canvas.OrgX = TempX + Padding;
 
@@ -95,7 +95,7 @@ function DrawPerk(Canvas Canvas, int CurIndex, float X, float Y, float Width, fl
 	Canvas.DrawTileStretched(ProgressBarForeground, ((Width - (Padding * 4.f)) - 4.f) * RequirementProgress[CurIndex], BarHeight - 4.f);
 
     TempX += Width - (Padding * 4.f);
-    
+
 	Canvas.SetDrawColor(255, 255, 255, 255);
 	Canvas.TextSize(RequirementProgressString[Index], TextSizeX, TextSizeY);
     Canvas.FontScaleX *= ((BarHeight * 1.1f) / TextSizeY);
@@ -104,7 +104,7 @@ function DrawPerk(Canvas Canvas, int CurIndex, float X, float Y, float Width, fl
     TempX -= TextSizeX;
     TempY -= (TextSizeY * 0.05f);
 	Canvas.SetPos(TempX, TempY);
-    Canvas.DrawText(RequirementProgressString[CurIndex]);
+    Canvas.DrawText(RequirementProgressString[Index]);
 }
 
 defaultproperties

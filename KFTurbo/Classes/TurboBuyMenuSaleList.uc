@@ -67,7 +67,7 @@ event Opened(GUIComponent Sender)
 
 		BuyMenuSettings = new(self) BuyMenuSettingsClass;
 	}
-	
+
 	Super.Opened(Sender);
 
 	OpenCurrentPerkCategory();
@@ -80,6 +80,12 @@ simulated function OpenCurrentPerkCategory()
 	local class<KFVeterancyTypes> PlayerPerk;
 
 	CPRL = TurboPlayerController(PlayerOwner()).GetClientPerkRepLink();
+
+    if (CPRL == None)
+    {
+        return;
+    }
+
     if ( KFPlayerController(PlayerOwner()) != none && KFPlayerReplicationInfo(PlayerOwner().PlayerReplicationInfo).ClientVeteranSkill != none )
     {
         PlayerPerk = KFPlayerReplicationInfo(PlayerOwner().PlayerReplicationInfo).ClientVeteranSkill;
@@ -153,7 +159,7 @@ function bool InternalOnClick(GUIComponent Sender)
 	{
 		return false;
 	}
-	
+
 	UpdateSelectedAlternateSkin(Sender);
 
 	return false;
@@ -190,7 +196,7 @@ function IndexChanged(GUIComponent Sender)
 	}
 
 	Super(GUIVertList).IndexChanged(Sender);
-	
+
 	OnSaleItemClicked(TurboGUIBuyable(GetSelectedBuyable()));
 }
 
@@ -239,7 +245,7 @@ function UpdateSelectedAlternateSkin(GUIComponent Sender)
 	{
 		OnChange(Sender);
 	}
-	
+
 	OnSaleItemClicked(Buyable);
 }
 
@@ -425,7 +431,7 @@ final function DrawAlternateSkinButtons(Canvas Canvas, int CurIndex, float X, fl
 				MouseOverSubIndex = i;
 			}
 		}
-		
+
 		if (CanBuys[CurIndex] != 1)
 		{
 			Canvas.SetDrawColor(50, 50, 50, 150);
@@ -515,7 +521,7 @@ final function TurboGUIBuyable AllocateKFPEntry(ClientPerkRepLink L)
 
 	NewBuyable.VariantList.Length = 0;
 	NewBuyable.VariantSelection = -1;
-	
+
 	return NewBuyable;
 }
 
@@ -558,7 +564,7 @@ function UpdateForSaleBuyables()
 	}
 
 	CurrentShop = GetCurrentShop();
-	
+
 	// Grab the weapons!
 	if (ActiveCategory >= -1)
 	{
@@ -573,7 +579,7 @@ function UpdateForSaleBuyables()
 				ForSalePickup = class<KFWeaponPickup>(CurrentShop.SaleItems[z]);
 				if (ForSalePickup == None)
 					continue;
-				for (j = (CPRL.ShopInventory.Length - 1); j >= CPRL.ShopInventory.Length; --j)
+				for (j = (CPRL.ShopInventory.Length - 1); j >= 0; --j)
 					if (CPRL.ShopInventory[j].PC == ForSalePickup)
 						break;
 				if (j < 0)

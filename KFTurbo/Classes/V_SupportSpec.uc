@@ -77,7 +77,7 @@ static function bool IsPerkAmmunition(class<Ammunition> AmmoType)
 		case class'W_AA12_Ammo':
 			return true;
 	}
-	
+
 	return false;
 }
 
@@ -105,7 +105,7 @@ static function float AddExtraAmmoFor(KFPlayerReplicationInfo KFPRI, Class<Ammun
 	case class'W_Boomstick_Ammo' :
 	case class'W_KSG_Ammo' :
 	case class'W_Shotgun_Ammo' :
-	case class'TrenchgunAmmo' :
+	case class'W_Trenchgun_Ammo' :
 	case class'W_SPShotgun_Ammo' :
 		Multiplier = LerpStat(KFPRI, 1.f, 1.3f);
 		break;
@@ -122,7 +122,7 @@ static function float AddExtraAmmoFor(KFPlayerReplicationInfo KFPRI, Class<Ammun
 }
 
 static function ApplyAdjustedExtraAmmo(KFPlayerReplicationInfo KFPRI, class<Ammunition> AmmoType, out float Multiplier)
-{	
+{
 	Super.ApplyAdjustedExtraAmmo(KFPRI, AmmoType, Multiplier);
 }
 
@@ -161,7 +161,7 @@ static function float GetCostScaling(KFPlayerReplicationInfo KFPRI, class<Pickup
 {
 	local float Multiplier;
 	Multiplier = 1.f;
-	
+
 	switch (Item)
 	{
 	case class'W_AA12_Pickup' :
@@ -187,11 +187,11 @@ static function AddDefaultInventory(KFPlayerReplicationInfo KFPRI, Pawn P)
 		KFHumanPawn(P).CreateInventoryVeterancy(string(class'W_Shotgun_Weap'), default.StartingWeaponSellPriceLevel6);
 	}
 	else
-	{	
+	{
 		KFHumanPawn(P).CreateInventoryVeterancy(string(class'W_Boomstick_Weap'), default.StartingWeaponSellPriceLevel6);
 		KFHumanPawn(P).CreateInventoryVeterancy(string(class'W_AA12_Weap'), default.StartingWeaponSellPriceLevel6);
 	}
-	
+
 	Super.AddDefaultInventory(KFPRI, P);
 }
 
@@ -204,7 +204,7 @@ defaultproperties
 {
 	HighDifficultyExtraAmmoMultiplier=1.5f
 	HighDifficultyExtraGrenadeAmmoMultiplier=1.7778f
-	
+
 	OnHUDIcon=Texture'KillingFloorHUD.Perks.Perk_Support'
     OnHUDGoldIcon=Texture'KFTurbo.Perks.Support_D'
 	OnHUDIconMaxTier=Shader'KFTurbo.Perks.Support_SHDR'

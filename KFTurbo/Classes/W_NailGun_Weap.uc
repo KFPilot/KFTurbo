@@ -185,25 +185,31 @@ simulated function ToggleLaser()
 
 simulated function TurnOffLaser()
 {
-	if (Instigator.IsLocallyControlled())
+	if (!Instigator.IsLocallyControlled())
 	{
-		if (Role < ROLE_Authority)
-		{
-			ServerSetLaserActive(false);
-		}
+	    return;
+	}
 
-		bLaserActive = false;
-		LaserAttachment.bHidden = true;
+	if (Role < ROLE_Authority)
+	{
+		ServerSetLaserActive(false);
+	}
 
-		if (Beam != none)
-		{
-			Beam.SetActive(false);
-		}
+	bLaserActive = false;
 
-		if (Spot != None)
-		{
-			Spot.Destroy();
-		}
+	if (LaserAttachment != None)
+	{
+	    LaserAttachment.bHidden = true;
+	}
+
+	if (Beam != none)
+	{
+		Beam.SetActive(false);
+	}
+
+	if (Spot != None)
+	{
+		Spot.Destroy();
 	}
 }
 

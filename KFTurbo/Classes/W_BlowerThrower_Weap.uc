@@ -14,4 +14,6 @@ defaultproperties
      MagCapacity=100
      PickupClass=Class'KFTurbo.W_BlowerThrower_Pickup'
      InventoryGroup=4
+     FireModeClass(0)=class'KFTurbo.W_BlowerThrower_Fire'
+     FireModeClass(1)=class'KFTurbo.W_BlowerThrower_Fire_Alt'
 }

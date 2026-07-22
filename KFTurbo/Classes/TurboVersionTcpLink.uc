@@ -19,30 +19,65 @@ function PostBeginPlay()
 
     LinkMode = MODE_Text;
     ReceiveMode = RMODE_Event;
-    BindPort();
-    Resolve(TurboDomain);
+
+    SetTimer(1.f, false);
 }
 
-function Resolved(IpAddr ResolvedAddress)
+function Timer()
 {
-    TurboAddress = ResolvedAddress;
-    TurboAddress.Port = 80;
+    GotoState('ResolveAddress');
+}
 
-    if (!OpenNoSteam(TurboAddress))
+state ResolveAddress
+{
+    function BeginState()
     {
-        Close();
-        LifeSpan = 1.f;
+        AttemptResolve();
+    }
+
+    function Resolved(IpAddr ResolvedAddress)
+    {
+        TurboAddress = ResolvedAddress;
+        TurboAddress.Port = 80;
+        GotoState('AttemptConnection');
+    }
+
+    function ResolveFailed()
+    {
+        SetTimer(1.f, false);
+    }
+
+    function Timer()
+    {
+        AttemptResolve();
+    }
+
+    function AttemptResolve()
+    {
+        BindPort();
+        Resolve(TurboDomain);
     }
 }
 
-function ResolveFailed()
+state AttemptConnection
 {
-    log("Failed to resolve version domain.", 'KFTurboVersion');
-
-    if (!OpenNoSteam(TurboAddress))
+    function BeginState()
     {
-        Close();
-        LifeSpan = 1.f;
+        SetTimer(1.f, false);
+    }
+
+    function Timer()
+    {
+        AttemptConnect();
+    }
+
+    function AttemptConnect()
+    {
+        if (!OpenNoSteam(TurboAddress))
+        {
+            Close();
+            LifeSpan = 1.f;
+        }
     }
 }
 

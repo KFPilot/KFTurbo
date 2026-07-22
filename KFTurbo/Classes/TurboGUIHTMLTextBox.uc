@@ -33,7 +33,7 @@ protected function TurboInitHTMLArea( Canvas C )
 			}
 		}
 	}
-	
+
 	// Setup background image scaling
 	if( BgImage.Img!=None )
 	{
@@ -65,7 +65,7 @@ protected function TurboInitHTMLArea( Canvas C )
 			break;
 		}
 	}
-	
+
 	FontSize = -2;
 	if ( C.SizeY < 480 )
 		FontSize++;
@@ -151,7 +151,7 @@ protected function TurboInitHTMLArea( Canvas C )
 			}
 			Lines[i].XS = XS;
 			X+=XS;
-			
+
 			for( j=0; j<Lines[i].ImgList.Length; ++j )
 			{
 				z = Lines[i].ImgList[j];
@@ -209,7 +209,7 @@ function bool RenderHTMLText( canvas C )
 	{
 		C.SetPos(0,0);
 		C.DrawColor = BGColor;
-		
+
 		if( BgImage.Img!=None )
 		{
 			if( BgImage.Align==1 ) // not locked on screen.
@@ -253,7 +253,7 @@ function bool RenderHTMLText( canvas C )
 		case 1: // Center
 			C.CurX = (C.ClipX-Images[i].XS)/2;
 			break;
-		case 1: // Right
+		case 2: // Right
 			C.CurX = C.ClipX-Images[i].XS;
 			break;
 		}
@@ -284,7 +284,7 @@ function bool RenderHTMLText( canvas C )
 			continue;
 		if( C.CurY>C.ClipY )
 			break;
-		
+
 		// Check if mouse hovers over URL
 		if( bMouseOnClient && Lines[i].bHasURL && MX>=Lines[i].X && MX<=(Lines[i].X+Lines[i].XS)
 												&& MY>=Lines[i].Y && MY<=(Lines[i].Y+Lines[i].YS) )
@@ -321,11 +321,11 @@ function bool RenderHTMLText( canvas C )
 	C.OrgY = 0;
 	C.ClipX = CX;
 	C.ClipY = CY;
-	
+
 	return false;
 }
 
 defaultproperties
 {
-	
+
 }

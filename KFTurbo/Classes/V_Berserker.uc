@@ -74,7 +74,7 @@ static function int AddDamage(KFPlayerReplicationInfo KFPRI, KFMonster Injured, 
 {
 	local float Multiplier;
 	Multiplier = 1.f;
-	
+
 	if (class<KFWeaponDamageType>(DmgType) != none && class<KFWeaponDamageType>(DmgType).default.bIsMeleeDamage)
 	{
 		Multiplier = LerpStat(KFPRI, 1.1f, 2.f);
@@ -118,17 +118,18 @@ static function float GetMeleeMovementSpeedModifier(KFPlayerReplicationInfo KFPR
 
 static function int ReduceDamage(KFPlayerReplicationInfo KFPRI, KFPawn Injured, Pawn Instigator, int InDamage, class<DamageType> DmgType)
 {
-	switch(DmgType)
-	{
-		case class'DamTypeVomit':
-			return float(InDamage) * static.GetBloatDamageReduction(KFPRI);
-			break;
-		case class'SirenScreamDamage':
-			return float(InDamage) * static.GetSirenDamageReduction(KFPRI);
-			break;
-	}
-
-	InDamage = float(InDamage) * LerpStat(KFPRI, 1.f, 0.85f);
+    if (class<SirenScreamDamage>(DmgType) != None)
+    {
+        InDamage = float(InDamage) * static.GetBloatDamageReduction(KFPRI);
+    }
+    else if (class<DamTypeVomit>(DmgType) != None)
+    {
+        InDamage = float(InDamage) * static.GetSirenDamageReduction(KFPRI);
+    }
+    else
+    {
+        InDamage = float(InDamage) * LerpStat(KFPRI, 1.f, 0.85f);
+    }
 
 	if (ZombieBoss(Instigator) != None)
 	{

@@ -51,6 +51,7 @@ static function bool IsPerkAmmunition(class<Ammunition> AmmoType)
 		case class'WinchesterAmmo':
 		case class'W_Magnum44_Ammo':
 		case class'W_Deagle_Ammo':
+		case class'W_MK23_Ammo':
 		case class'W_M32_Ammo':
 		case class'W_Crossbow_Ammo':
 		case class'W_SPSniper_Ammo':
@@ -58,7 +59,7 @@ static function bool IsPerkAmmunition(class<Ammunition> AmmoType)
 		case class'W_M99_Ammo':
 			return true;
 	}
-	
+
 	return false;
 }
 
@@ -94,14 +95,12 @@ static function float GetHeadShotDamMulti(KFPlayerReplicationInfo KFPRI, KFPawn 
 	case class'DamTypeM99HeadShot' :
 	case class'DamTypeSPSniper' :
 	case class'W_SPSniper_DT' :
-		Multiplier = LerpStat(KFPRI, 1.05f, 1.6f);
-		break;
+		return Multiplier * LerpStat(KFPRI, 1.05f, 1.6f);
 	case class'W_Magnum44_DT' :
 	case class'W_Dual44_DT' :
-		return LerpStat(KFPRI, 1.05f, 1.45f);
-		break;
+		return Multiplier * LerpStat(KFPRI, 1.05f, 1.45f);
 	case class'DamTypeDualies' :
-		return LerpStat(KFPRI, 1.05f, 1.4f);
+		return Multiplier * LerpStat(KFPRI, 1.05f, 1.4f);
 	}
 
 	return Multiplier * LerpStat(KFPRI, 1.1f, 1.5f);
@@ -156,7 +155,7 @@ static function float GetReloadSpeedModifier(KFPlayerReplicationInfo KFPRI, KFWe
 		|| Deagle(Other) != None || DualDeagle(Other) != None
 		|| MK23Pistol(Other) != None || DualMK23Pistol(Other) != None
 		|| M14EBRBattleRifle(Other) != None
-		|| SPSniperRifle(Other) != None || Magnum44Pistol(Other) != None 
+		|| SPSniperRifle(Other) != None || Magnum44Pistol(Other) != None
 		|| Dual44Magnum(Other) != None)
 	{
 		Multiplier *= LerpStat(KFPRI, 1.f, 1.6f);
@@ -170,7 +169,7 @@ static function float GetCostScaling(KFPlayerReplicationInfo KFPRI, class<Pickup
 {
 	local float Multiplier;
 	Multiplier = 1.f;
-	
+
 	switch(Item)
 	{
 		case class'W_MK23_Pickup':
@@ -220,7 +219,7 @@ static function AddDefaultInventory(KFPlayerReplicationInfo KFPRI, Pawn P)
 	{
 		KFHumanPawn(P).CreateInventoryVeterancy(string(class'W_M14_Weap'), default.StartingWeaponSellPriceLevel6);
 	}
-	
+
 	Super.AddDefaultInventory(KFPRI, P);
 }
 

@@ -3,60 +3,12 @@
 //For more information see https://github.com/KFPilot/KFTurbo.
 class P_Husk_HAL extends P_Husk;
 
-
 #exec OBJ LOAD FILE=KF_EnemiesFinalSnd_HALLOWEEN.uax
-
-function SpawnTwoShots()
-{
-	local vector X,Y,Z, FireStart;
-	local rotator FireRotation;
-	local KFMonsterController KFMonstControl;
-
-	if( Controller!=None && KFDoorMover(Controller.Target)!=None )
-	{
-		Controller.Target.TakeDamage(22,Self,Location,vect(0,0,0),Class'DamTypeVomit');
-		return;
-	}
-
-	GetAxes(Rotation,X,Y,Z);
-	FireStart = GetBoneCoords('Barrel').Origin;
-	if ( !SavedFireProperties.bInitialized )
-	{
-		SavedFireProperties.AmmoClass = Class'SkaarjAmmo';
-		SavedFireProperties.ProjectileClass = Class'HuskFireProjectile_HALLOWEEN';
-		SavedFireProperties.WarnTargetPct = 1;
-		SavedFireProperties.MaxRange = 65535;
-		SavedFireProperties.bTossed = False;
-		SavedFireProperties.bTrySplash = true;
-		SavedFireProperties.bLeadTarget = True;
-		SavedFireProperties.bInstantHit = False;
-		SavedFireProperties.bInitialized = True;
-	}
-
-    // Turn off extra collision before spawning vomit, otherwise spawn fails
-    ToggleAuxCollision(false);
-
-	FireRotation = Controller.AdjustAim(SavedFireProperties,FireStart,600);
-
-	foreach DynamicActors(class'KFMonsterController', KFMonstControl)
-	{
-        if( KFMonstControl != Controller )
-        {
-            if( PointDistToLine(KFMonstControl.Pawn.Location, vector(FireRotation), FireStart) < 75 )
-            {
-                KFMonstControl.GetOutOfTheWayOfShot(vector(FireRotation),FireStart);
-            }
-        }
-	}
-
-    Spawn(Class'HuskFireProjectile_HALLOWEEN',,,FireStart,FireRotation);
-
-	// Turn extra collision back on
-	ToggleAuxCollision(true);
-}
 
 defaultproperties
 {
+    HuskFireProjClass=Class'HuskFireProjectile_HALLOWEEN'
+
      MoanVoice=SoundGroup'KF_EnemiesFinalSnd_HALLOWEEN.Husk.Husk_Talk'
      MeleeAttackHitSound=SoundGroup'KF_EnemiesFinalSnd_HALLOWEEN.Bloat.Bloat_HitPlayer'
      JumpSound=SoundGroup'KF_EnemiesFinalSnd_HALLOWEEN.Husk.Husk_Jump'

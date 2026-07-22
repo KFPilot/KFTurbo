@@ -50,7 +50,7 @@ function InitComponent(GUIController MyController, GUIComponent MyOwner)
     PipebombGroupCheckBox.Checked(class'TurboInteraction'.static.ShouldPipebombUseSpecialGroup(PlayerController));
     LeftSection.ManageComponent(UseBaseGameChatFontBox);
     UseBaseGameChatFontBox.Checked(class'TurboInteraction'.static.ShouldUseBaseGameFontForChat(PlayerController));
-    
+
     FontLocaleComboBox.bIgnoreChange = true;
     LeftSection.ManageComponent(FontLocaleComboBox);
     FontLocaleComboBox.AddItem(LocaleOptionList[0]);
@@ -66,7 +66,7 @@ function InitComponent(GUIController MyController, GUIComponent MyOwner)
     AltF4EnabledBox.Checked(class'TurboInteraction'.static.GetIsAltF4Enabled(PlayerController));
     MiddleSection.ManageComponent(AutoIncreaseNetSpeed);
     AutoIncreaseNetSpeed.Checked(class'TurboInteraction'.static.GetAutoAdjustNetSpeed(PlayerController));
-    
+
     if (PlayerController.HasExtraOptions())
     {
         GetCustomOptionContainer().SetVisibility(true);
@@ -355,11 +355,11 @@ defaultproperties
 
     Begin Object Class=TurboOptionCheckBox Name=AutoIncreaseNetSpeedButton
         Caption="Auto Adjust Netspeed"
-        OnCreateComponent=UseBaseGameChatFont.InternalOnCreateComponent
+        OnCreateComponent=AutoIncreaseNetSpeedButton.InternalOnCreateComponent
         Hint="Will adjust netspeed on initialization."
         TabOrder=12
         OnChange=OnAutoAdjustNetspeedChange
     End Object
     AutoIncreaseNetSpeed=moCheckbox'AutoIncreaseNetSpeedButton'
-    
+
 }

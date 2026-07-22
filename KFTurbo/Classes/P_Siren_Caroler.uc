@@ -34,7 +34,7 @@ simulated function SpawnExtraSirenScreamEffect()
 
      NextExtraEffectSpawnTime = Level.TimeSeconds + ExtraEffectCooldownTime;
      ExtraEffect = Spawn(class'P_Siren_Caroler_Scream', self);
-     ExtraEffect.AttachToBone(self, 'Collision_Attach');
+     AttachToBone(ExtraEffect, 'Collision_Attach');
 }
 
 simulated function HurtRadius( float DamageAmount, float DamageRadius, class<DamageType> DamageType, float Momentum, vector HitLocation )
@@ -68,7 +68,7 @@ simulated function HurtRadius( float DamageAmount, float DamageRadius, class<Dam
           {
                MomentumVector.Z = FMax(MomentumVector.Z, 4.f);
           }
-          
+
           HumanPawn.AddVelocity( MomentumVector );
      }
 
@@ -78,7 +78,7 @@ simulated function HurtRadius( float DamageAmount, float DamageRadius, class<Dam
 defaultproperties
 {
      MenuName="Caroler"
-     
+
      ScreamDamage=4
 
      ExtraEffectCooldownTime=4.5f

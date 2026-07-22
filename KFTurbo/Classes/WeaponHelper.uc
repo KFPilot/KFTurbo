@@ -96,22 +96,22 @@ static final function PenetratingWeaponTrace(Vector TraceStart, Rotator Directio
 	WeaponPenetrationMultiplier = 1.f;
 	PenetrationMax++;
 
-	KFPRI = KFPlayerReplicationInfo(Weapon.Instigator.PlayerReplicationInfo);
-
-	if (Weapon.Instigator != None && KFPRI != None && class<TurboVeterancyTypes>(KFPRI.ClientVeteranSkill) != None)
+	if (Weapon.Instigator != None && KFPlayerReplicationInfo(Weapon.Instigator.PlayerReplicationInfo) != None)
 	{
+	    KFPRI = KFPlayerReplicationInfo(Weapon.Instigator.PlayerReplicationInfo);
 		WeaponPenetrationMultiplier = class<TurboVeterancyTypes>(KFPRI.ClientVeteranSkill).static.GetWeaponPenetrationMultiplier(KFPRI, Fire);
-		PenetrationMax = Round(float(PenetrationMax) * WeaponPenetrationMultiplier);
+	}
 
-		if (PenetrationMax > 1 && PenetrationMultiplier <= 0.f)
-		{
-			PenetrationMultiplier = 0.5f; //If the weapon didn't provide a weapon penetration modifier (probably because it originally didn't penetrate), give it a nice 50% damage loss.
-		}
+	PenetrationMax = Round(float(PenetrationMax) * WeaponPenetrationMultiplier);
 
-		if (PenetrationMultiplier < 1.f && WeaponPenetrationMultiplier > 1.f)
-		{
-			PenetrationMultiplier = PenetrationMultiplier ** (1.f / WeaponPenetrationMultiplier);
-		}
+	if (PenetrationMax > 1 && PenetrationMultiplier <= 0.f)
+	{
+		PenetrationMultiplier = 0.5f; //If the weapon didn't provide a weapon penetration modifier (probably because it originally didn't penetrate), give it a nice 50% damage loss.
+	}
+
+	if (PenetrationMultiplier < 1.f && WeaponPenetrationMultiplier > 1.f)
+	{
+		PenetrationMultiplier = PenetrationMultiplier ** (1.f / WeaponPenetrationMultiplier);
 	}
 
 	GetTraceInfo(Weapon, Fire, TraceStart, Direction, TraceEnd, MomentumVector);
@@ -171,7 +171,7 @@ static final function PenetratingWeaponTrace(Vector TraceStart, Rotator Directio
 			continue;
 		}
 
-		PerformTraceHit(Fire, HitList[HitCount], MomentumVector, (PenetrationMultiplier ** float(HitCount)), NumberMonstersHit);
+		PerformTraceHit(Fire, HitList[HitCount], MomentumVector, (PenetrationMultiplier ** float(HitList[HitCount].HitCount)), NumberMonstersHit);
 	}
 }
 
@@ -570,7 +570,6 @@ static final function DualWeaponGiveTo(KFWeapon DualWeapon, Pawn Other, optional
 	if (bNoPickup)
 	{
 		DualWeapon.AddAmmo(OldAmmo, 0);
-		Clamp(Ammunition(DualWeapon.Instigator.FindInventoryType(DualWeapon.GetFireMode(0).AmmoClass)).AmmoAmount, 0, DualWeapon.MaxAmmo(0));
 	}
 }
 
@@ -582,7 +581,7 @@ static final function DualWeaponDropFrom(KFWeapon DualWeapon, Vector StartLocati
 	local Ammunition WeaponAmmunition;
 	local int AmmoThrown, OtherAmmo;
 
-	if(DualWeapon == None && !DualWeapon.bCanThrow)
+	if(DualWeapon == None || !DualWeapon.bCanThrow)
 	{
 		return;
 	}

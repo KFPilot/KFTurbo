@@ -77,7 +77,7 @@ function ProcessServerTravel(string URL, bool bItems)
     HealEventHandlerList.Length = 0;
     WaveEventHandlerList.Length = 0;
     WaveSpawnEventHandlerList.Length = 0;
-    
+
     MapConfigurationObject = None;
     MusicManager = None;
 
@@ -149,7 +149,7 @@ function DistributeCash(TurboPlayerController ExitingPlayer)
 	local array<TurboPlayerController> PlayerList;
 
 	PlayerList = class'TurboGameplayHelper'.static.GetPlayerControllerList(Level);
-    
+
     if (PlayerList.Length == 0)
     {
         return;
@@ -178,7 +178,7 @@ function DistributeCash(TurboPlayerController ExitingPlayer)
 
 function int SetFakedPlayerCount(int NewFakedPlayerCount)
 {
-    return Super.SetFakedPlayerCount(Min(NewFakedPlayerCount, MAX_FAKED_PLAYERS - 1));
+    return Super.SetFakedPlayerCount(Min(NewFakedPlayerCount, MAX_FAKED_PLAYERS));
 }
 
 function int CalculateTotalMaxMonsters()
@@ -282,7 +282,7 @@ static final function bool StaticIsHighDifficulty( Actor Actor )
 	}
 
 	GameClass = class<KFTurboGameType>(Actor.Level.GetGameClass());
-	
+
 	if (GameClass == none)
 	{
 		return false;
@@ -316,7 +316,7 @@ static final function bool StaticAreStatsAndAchievementsEnabled( Actor Actor )
 	}
 
 	GameClass = class<KFTurboGameType>(Actor.Level.GetGameClass());
-	
+
 	if (GameClass == none)
 	{
 		return false;
@@ -353,7 +353,7 @@ static final function bool StaticIsTestGameType( Actor Actor )
 	}
 
 	GameClass = class<KFTurboGameType>(Actor.Level.GetGameClass());
-	
+
 	if (GameClass == none)
 	{
 		return false;
@@ -374,9 +374,9 @@ final function bool HasAnyTraders()
 		{
 			continue;
 		}
-		
+
 		bHasAnyTraders = true;
-		break;		
+		break;
 	}
 
 	return bHasAnyTraders;
@@ -502,7 +502,7 @@ function AddBossBuddySquad()
     {
         TotalZeds = 16;
     }
-	
+
 	class'TurboWaveSpawnEventHandler'.static.BroadcastAddBossBuddySquad(Self, TotalZeds);
 
     for (Index = 0; Index < 10; Index++)
@@ -585,7 +585,8 @@ function SetupWave()
 
 function UpdateMaxMonsters()
 {
-    MaxMonsters = float(MaxMonsters) * GameMaxMonstersModifier * MapMaxMonstersModifier * AdminMaxMonstersModifier * PlayerCountMaxMonstersModifier;
+    Super.UpdateMaxMonsters();
+    MaxMonsters *= PlayerCountMaxMonstersModifier;
 }
 
 function UpdatePlayerCountMaxMonsters()
@@ -629,7 +630,7 @@ function ShowPathTo(PlayerController P, int TeamNum)
         return;
     }
 
-    //In KF's original code, it was calling InitTeleports for each player controller. 
+    //In KF's original code, it was calling InitTeleports for each player controller.
     if (!CurrentShop.bTelsInit)
     {
         CurrentShop.InitTeleports();
@@ -660,19 +661,20 @@ state MatchInProgress
         Super.BeginState();
 
         KFTurboMut = class'KFTurboMut'.static.FindMutator(Self);
-        if (KFTurboMut != None)
+        if (KFTurboMut == None)
         {
-            if (KFTurboMut.HasVersionUpdate())
-            {
-                BroadcastLocalized(Level.GRI, class'TurboVersionLocalMessage');
-            }
-
-            if (MapConfigurationObject != None && MapConfigurationObject.bSkipInitialMonsterWander)
-            {
-                KFTurboMut.bSkipInitialMonsterWander = true;
-            }
+            Error("GAME STARTED WITHOUT A KFTURBO MUTATOR. KFTURBO REQUIRES ITS MUTATOR TO FUNCTION.");
         }
 
+        if (KFTurboMut.HasVersionUpdate())
+        {
+            BroadcastLocalized(Level.GRI, class'TurboVersionLocalMessage');
+        }
+
+        if (MapConfigurationObject != None && MapConfigurationObject.bSkipInitialMonsterWander)
+        {
+            KFTurboMut.bSkipInitialMonsterWander = true;
+        }
         NotifyTurboMutatorGameStart();
 		class'TurboWaveEventHandler'.static.BroadcastGameStarted(Self, WaveNum);
     }
@@ -716,7 +718,7 @@ state MatchInProgress
             }
         }
     }
-	
+
 	function StartWaveBoss()
 	{
 		Super.StartWaveBoss();
@@ -750,7 +752,7 @@ state MatchInProgress
             DoWaveEnd();
         }
     }
-	
+
 	function DoWaveEnd()
 	{
 		Super.DoWaveEnd();
@@ -761,7 +763,7 @@ state MatchInProgress
 
     function float CalcNextSquadSpawnTime()
 	{
-		return Super.CalcNextSquadSpawnTime() / FMax((GameWaveSpawnRateModifier * MapWaveSpawnRateModifier * AdminSpawnRateModifier * PlayerCountSpawnRateModifier), 0.1f);
+		return Super.CalcNextSquadSpawnTime() / FMax(PlayerCountSpawnRateModifier, 0.0001f);
 	}
 }
 
@@ -803,7 +805,7 @@ function bool IsEarlyGame()
         case GL_Long:
             return WaveNum < 7;
     }
-    
+
     //GL_Custom
     return false;
 }
@@ -942,16 +944,16 @@ function ChangeName(Controller Other, string NewName, bool bNameChange)
     {
         NewName = FixUTFEncoding(NewName);
     }
-    
+
 	NewName = Left(NewName, 20);
 
 	if (bNameChange)
     {
 		GameEvent("NameChange", NewName, Other.PlayerReplicationInfo);
     }
-    
+
     Other.PlayerReplicationInfo.SetPlayerName(NewName);
-    
+
     if (bNameChange)
     {
         for (C = Level.ControllerList; C != None; C = C.NextController)
@@ -1123,11 +1125,11 @@ defaultproperties
     SpecialEventMonsterCollections(3)=Class'KFTurbo.MC_XMA'
 
 	GameReplicationInfoClass=Class'KFTurbo.TurboGameReplicationInfo'
-	
+
     MapPrefix="KF"
     BeaconName="KF"
     Acronym="KF"
-    
+
     GameName="Killing Floor Turbo Game Type"
     Description="KF Turbo version of the regular Killing Floor Game Type."
     ScreenShotName="KFTurbo.Generic.KFTurbo_FB"

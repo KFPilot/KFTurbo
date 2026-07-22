@@ -84,7 +84,7 @@ function HealOrHurt(float DamageAmount, float DamageRadius, class<DamageType> Da
 	local KFPawn KFPawnTarget;
 
 	local float DamageScale;
-    
+
 	local int NumKilled;
 	// Healing
 	local KFPlayerReplicationInfo PRI;
@@ -97,6 +97,11 @@ function HealOrHurt(float DamageAmount, float DamageRadius, class<DamageType> Da
 		return;
     }
 
+    if( Instigator == None || Instigator.Health <= 0 )
+    {
+        return;
+    }
+
     NextHealTime = Level.TimeSeconds + HealInterval;
 
 	bHurtEntry = true;
@@ -106,11 +111,6 @@ function HealOrHurt(float DamageAmount, float DamageRadius, class<DamageType> Da
 		Fear.StartleBots();
 	}
 
-    if( Instigator == None || Instigator.Health <= 0 )
-    {
-        return;
-    }
-
     PRI = KFPlayerReplicationInfo(Instigator.PlayerReplicationInfo);
 
 	foreach CollidingActors(class'Pawn', Target, DamageRadius, HitLocation)
@@ -119,7 +119,7 @@ function HealOrHurt(float DamageAmount, float DamageRadius, class<DamageType> Da
         {
             continue;
         }
-			
+
         DamageScale = 1.0;
 
         if ( Instigator == None || Instigator.Controller == None )
@@ -158,7 +158,7 @@ function HealOrHurt(float DamageAmount, float DamageRadius, class<DamageType> Da
             {
                 NumKilled++;
             }
-            
+
             continue;
         }
 
@@ -166,7 +166,7 @@ function HealOrHurt(float DamageAmount, float DamageRadius, class<DamageType> Da
         {
             continue;
         }
-        
+
         PlayersHealed += 1;
         MedicReward = HealBoostAmount;
 
@@ -176,8 +176,8 @@ function HealOrHurt(float DamageAmount, float DamageRadius, class<DamageType> Da
         }
 
         HealSum = MedicReward;
-        MedicReward = Min(MedicReward, FMax((KFPawnTarget.HealthMax - float(KFPawnTarget.Health)) - KFPawnTarget.HealthToGive, 0.f)); 
-        
+        MedicReward = Min(MedicReward, FMax((KFPawnTarget.HealthMax - float(KFPawnTarget.Health)) - KFPawnTarget.HealthToGive, 0.f));
+
         KFPawnTarget.GiveHealth(HealSum, KFPawnTarget.HealthMax);
 
         class'TurboHealEventHandler'.static.BroadcastPawnGrenadeHealed(Instigator, KFPawnTarget, MedicReward);
@@ -232,7 +232,7 @@ defaultproperties
     StaticMesh=StaticMesh'KFTurbo.T10.T10Projectile'
 	Skins(0)=Texture'KFTurbo.G28.G28MedicGrenade'
     DrawScale=0.2
-	
+
 	Physics=PHYS_Falling
     bGameRelevant=false
 	bUseCollisionStaticMesh = false

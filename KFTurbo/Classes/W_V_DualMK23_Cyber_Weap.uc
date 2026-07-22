@@ -23,7 +23,7 @@ simulated function ClientFinishReloading()
 
 simulated function ClientInterruptReload()
 {
-     Super.ClientFinishReloading();
+     Super.ClientInterruptReload();
      UpdateSkin();
 }
 
@@ -53,14 +53,14 @@ simulated function UpdateSkin()
           Skins[0] = LoadedStateMaterialList[0];
           return;
      }
-     
+
      if (MagAmmoRemaining > 0)
      {
           Skins[0] = LoadedStateMaterialList[1];
           return;
      }
 
-     
+
      Skins[0] = LoadedStateMaterialList[2];
 }
 
@@ -103,7 +103,7 @@ defaultproperties
      ReloadAnim="Reload"
 
      ItemName="Dual Cyber MK23s"
-     SkinRefs(0)="KFTurbo.Turbo.MK23_Turbo_SHDR"
+     SkinRefs(0)="KFTurbo.Cyber.Cyber_MK23_SHDR"
      PickupClass=Class'KFTurbo.W_V_DualMK23_Cyber_Pickup'
      AttachmentClass=Class'KFTurbo.W_V_DualMK23_Cyber_Attachment'
      DemoReplacement=Class'KFTurbo.W_V_MK23_Cyber_Weap'

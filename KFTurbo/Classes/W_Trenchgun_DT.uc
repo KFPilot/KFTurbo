@@ -5,5 +5,6 @@ class W_Trenchgun_DT extends DamTypeTrenchgun;
 
 defaultproperties
 {
+    WeaponClass=class'W_Trenchgun_Weap'
     HeadShotDamageMult=1.300000
 }

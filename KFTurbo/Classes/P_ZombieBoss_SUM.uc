@@ -59,8 +59,8 @@ static simulated function PreCacheMaterials(LevelInfo myLevel)
 
 defaultproperties
 {
-	CloakedSkinList(0) = Shader'KF_Specimens_Trip_T.patriarch_invisible_gun';
-    CloakedSkinList(1) = Shader'KF_Specimens_Trip_HALLOWEEN_T.Patriarch.Patriarch_Halloween_Invisible';
+	CloakedSkinList(0) = Shader'KF_Specimens_Trip_T.patriarch_invisible';
+    CloakedSkinList(1) = Shader'KF_Specimens_Trip_T.patriarch_invisible_gun';
     HelpMeSound=Sound'KF_EnemiesFinalSnd_CIRCUS.Patriarch.Kev_SaveMe'
 
     RocketFireSound=SoundGroup'KF_EnemiesFinalSnd_CIRCUS.Patriarch.Kev_FireRocket'

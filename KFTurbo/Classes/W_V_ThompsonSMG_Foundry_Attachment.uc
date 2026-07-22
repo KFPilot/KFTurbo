@@ -5,5 +5,5 @@ class W_V_ThompsonSMG_Foundry_Attachment extends ThompsonAttachment;
 
 defaultproperties
 {
-     
+    Skins(0)=Combiner'KFTurbo.Foundry.Thompson_Foundry_3rd_CMB'
 }

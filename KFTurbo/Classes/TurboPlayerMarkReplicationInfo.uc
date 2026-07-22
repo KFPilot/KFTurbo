@@ -94,7 +94,7 @@ simulated function final vector GetMarkLocation()
 {
     local class<TurboMarkerType> MarkerDataClass;
     MarkerDataClass = class<TurboMarkerType>(DataClass);
-    
+
     if (MarkedActor != None && CanMarkReceiveLocationUpdate())
     {
         if (MarkerDataClass != None)
@@ -120,7 +120,7 @@ function MarkActor(Actor Target, class<TurboMarkerType> DataClassOverride, int D
     {
         return;
     }
-    
+
     if (!CanMarkActor(Target, DataClassOverride))
     {
         return;
@@ -186,7 +186,7 @@ function ClearMarkedActor()
 {
     MarkedActor = None;
     MarkActorClass = None;
-    
+
     DataObject = None;
     DataClass = None;
 
@@ -199,7 +199,7 @@ function ClearMarkedActor()
     WorldZOffset = 0;
 
     Disable('Tick');
-    
+
     NetUpdateTime = Level.TimeSeconds - 2.f;
 }
 
@@ -319,9 +319,7 @@ function Tick(float DeltaTime)
 
     if (Level.NetMode != NM_DedicatedServer && !bHasInitializedTurboInteraction)
     {
-        TurboPlayerController(Level.GetLocalPlayerController()).SetupTurboInteraction();
-        if (TurboPlayerController(Level.GetLocalPlayerController()).TurboInteraction != None
-            && TurboPlayerController(Level.GetLocalPlayerController()).TurboChatInteraction != None)
+        if (AttemptTurboInteractionSetup(TurboPlayerController(Level.GetLocalPlayerController())))
         {
             bHasInitializedTurboInteraction = true;
 
@@ -354,11 +352,17 @@ function Tick(float DeltaTime)
         ClearMarkedActor();
         return;
     }
-    
+
     if (CanMarkReceiveLocationUpdate())
     {
         MarkLocation = MarkedActor.Location;
     }
+}
+
+simulated function bool AttemptTurboInteractionSetup(TurboPlayerController PlayerController)
+{
+    PlayerController.SetupTurboInteraction();
+    return PlayerController.TurboInteraction != None && PlayerController.TurboChatInteraction != None;
 }
 
 simulated function bool CanMarkReceiveLocationUpdate()
@@ -388,7 +392,7 @@ simulated function bool HasMarkUpdate()
     {
         return true;
     }
-    
+
     return false;
 }
 
@@ -410,7 +414,7 @@ simulated function String GenerateDisplayString()
     {
         return class<TurboMarkerType>(DataClass).static.GenerateMarkerDisplayString(MarkedActor, MarkActorClass, DataObject, DataClass, MarkerData);
     }
-    
+
     if (Pickup(MarkedActor) != None || class<Pickup>(MarkActorClass) != None)
     {
         return GeneratePickupDisplayString(Pickup(MarkedActor), class<Pickup>(MarkActorClass));
@@ -447,7 +451,7 @@ simulated function String GeneratePickupDisplayString(Pickup PickupActor, class<
         }
         else if (CashPickup(MarkedActor) != None)
         {
-            return PickupStringLeft$MarkerData@class'KFTab_BuyMenu'.default.MoneyCaption$PickupStringRight; 
+            return PickupStringLeft$MarkerData@class'KFTab_BuyMenu'.default.MoneyCaption$PickupStringRight;
         }
 
         if (Pickup(MarkedActor).InventoryType == None)
@@ -459,7 +463,7 @@ simulated function String GeneratePickupDisplayString(Pickup PickupActor, class<
 
             return "";
         }
-    
+
         return PickupStringLeft$Pickup(MarkedActor).InventoryType.default.ItemName$PickupStringRight;
     }
 
@@ -490,7 +494,7 @@ simulated function String GenerateMonsterDisplayString(KFMonster Monster, class<
     {
         return MonsterStringLeft$Caps(Monster.MenuName)$MonsterStringRight;
     }
-    
+
     return MonsterStringLeft$Caps(MonsterClass.default.MenuName)$MonsterStringRight;
 }
 
@@ -556,13 +560,13 @@ function TryVoiceLine()
     {
         return;
     }
-    
+
     if (KFMonster(MarkedActor) != None)
     {
         TryMonsterVoiceLine(KFMonster(MarkedActor));
         return;
     }
-    
+
     if (Pickup(MarkedActor) != None)
     {
         TryPickupVoiceLine(Pickup(MarkedActor));
@@ -593,7 +597,7 @@ function TryPickupVoiceLine(Pickup MarkedPickup)
         PlayerController(Owner).Speech('AUTO', 4, "");
         return;
     }
-    
+
     if (MarkedPickup.InventoryType != None)
     {
         if (FRand() < 0.25f)

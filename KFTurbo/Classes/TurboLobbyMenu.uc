@@ -67,7 +67,7 @@ function DrawPerk(Canvas Canvas)
 		HandleClientNotReady();
 		return;
 	}
-	
+
 	SelectedVeterancy = class<TurboVeterancyTypes>(KFPRI.ClientVeteranSkill);
 
 	if (SelectedVeterancy == None)
@@ -90,7 +90,7 @@ function DrawPerk(Canvas Canvas)
 
 	Width -= 6.f;
 	Height -= 34.f;
-	
+
 
 	CPRL = TurboPlayerController(PlayerOwner()).GetClientPerkRepLink();
 
@@ -134,7 +134,7 @@ function AddPlayer(KFPlayerReplicationInfo PRI, int Index, Canvas Canvas)
 		AppendComponent(PlayerBoxes[Index].PlayerPerk, true);
 		AppendComponent(PlayerBoxes[Index].PlayerVetLabel, true);
 		AppendComponent(PlayerNameLabelList[Index], true);
-		
+
 		Top = (PlayerBoxes[Index].PlayerBox.WinTop + PlayerBoxes[Index].PlayerBox.WinHeight);
 	}
 
@@ -159,11 +159,6 @@ function AddPlayer(KFPlayerReplicationInfo PRI, int Index, Canvas Canvas)
 function EmptyPlayers(int Index)
 {
 	Super.EmptyPlayers(Index);
-	while (Index < PlayerBoxes.Length && !PlayerBoxes[Index].bIsEmpty)
-	{
-
-		Index++;
-	}
 }
 
 function FPlayerBoxEntry CreatePlayerEntry(float Top)

@@ -19,7 +19,7 @@ var float GameTraderTimeModifier;
 //Faked player count. Used to make wave size larger.
 var protected int FakedPlayerCount;
 //Forced player health count. Used to scale up monster health.
-var protected int ForcedPlayerHealthCount; 
+var protected int ForcedPlayerHealthCount;
 //Allows for zed time to be disabled.
 var protected bool bZedTimeEnabled;
 var protected array< Object > ZedTimeDisableRequestList;
@@ -27,7 +27,7 @@ var protected array< Object > ZedTimeDisableRequestList;
 function InitGame(string Options, out string Error)
 {
     InitializeMapConfigurationObject();
-    
+
     Super.InitGame(Options, Error);
 }
 
@@ -87,7 +87,7 @@ function Killed(Controller Killer, Controller Killed, Pawn KilledPawn, class<Dam
 {
     local GameRules GameRules;
     local CoreGameRules CoreGameRules;
-    
+
     GameRules = GameRulesModifiers;
 
     //Find the first CoreGameRules in the chain and start the event flow.
@@ -297,12 +297,13 @@ function SetupWave()
 
     TotalMaxMonsters = CalculateTotalMaxMonsters();
     KFGameReplicationInfo(Level.Game.GameReplicationInfo).MaxMonsters = TotalMaxMonsters;
-	
+
     DoWaveStartForPlayers();
 }
 
 function UpdateMaxMonsters()
 {
+    MaxMonsters = Clamp(TotalMaxMonsters, 5, MaxZombiesOnce); //Do default initialization, then apply modifiers.
     MaxMonsters = float(MaxMonsters) * GameMaxMonstersModifier * MapMaxMonstersModifier * AdminMaxMonstersModifier;
 }
 
@@ -319,7 +320,7 @@ function DoWaveStartForPlayers()
         {
             continue;
         }
-        
+
         if (CorePlayerController(PRI.Owner) != None && PRI.bOnlySpectator)
         {
             CorePlayerController(PRI.Owner).MarkSpectatingWave();
@@ -360,7 +361,7 @@ function string GetNameOf(Pawn Other)
     }
 
     NameString = Other.MenuName;
-    
+
     if (NameString == "")
     {
         Other.MenuName = string(Other.Class.Name);
@@ -375,7 +376,7 @@ function string GetNameOf(Pawn Other)
     {
         return "an"@NameString;
     }
-    
+
     return "a"@NameString;
 }
 

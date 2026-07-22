@@ -92,7 +92,12 @@ static final simulated function float GetShield(TurboHUDPlayerInfo.PlayerInfoDat
 		return PlayerInfo.HumanPawn.ShieldStrength / 100.f;
 	}
 
-	return float(PlayerInfo.TPRI.ShieldStrength) / 100.f;
+	if (PlayerInfo.TPRI != None)
+	{
+	    return float(PlayerInfo.TPRI.ShieldStrength) / 100.f;
+	}
+
+	return 0.f;
 }
 
 final simulated function InitializeHitData()
@@ -106,7 +111,7 @@ final simulated function InitializeHitData()
 		LastHit.Ratio = 0.f;
 		return;
 	}
-	
+
 	if (NewLostHealth < LastHit.HitAmount * 0.5f && LastHit.Ratio < 0.75f)
 	{
 		return;

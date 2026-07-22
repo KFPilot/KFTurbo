@@ -114,9 +114,9 @@ simulated function UpdateScoreBoard(Canvas Canvas)
 	}
 
 	TempY = ((1.f - ScoreboardSize.Y) * 0.5f) * Canvas.ClipY;
-	
+
 	EntrySizeY = (ScoreboardSize.Y * Canvas.ClipY) / float(PlayerCount);
-	EntrySizeY = Max(Min(EntrySizeY, Canvas.ClipY * 0.035f), 32.f);
+	EntrySizeY = FMax(FMin(EntrySizeY, Canvas.ClipY * 0.035f), 32.f);
 
 	DrawPlayerEntryHeader(Canvas, EntrySizeY, TempY);
 
@@ -182,7 +182,7 @@ simulated final function DrawScoreboardHeader(Canvas Canvas, float CenterY, floa
 	Canvas.TextSize(DrawString, TextSizeX, TextSizeY);
 	Canvas.SetPos(CenterX - (TextSizeX * 0.5f), CenterY + (SizeY * 0.15f));
 	Canvas.DrawText(DrawString);
-	
+
 	//Draw Time
 	DrawString = FormatTime(GRI.ElapsedTime);
 	Canvas.TextSize(class'TurboHUDOverlay'.static.GetStringOfZeroes(Len(DrawString)), TextSizeX, TextSizeY);
@@ -255,7 +255,7 @@ simulated final function DrawPlayerEntry(Canvas Canvas, TurboPlayerReplicationIn
 	CenterY = PositionY + (SizeY * 0.5f);
 
 	SizeX = (ScoreboardSize.X * Canvas.ClipX);
-	
+
 	TempX = CenterX - (SizeX * 0.5f);
 	Canvas.DrawColor = ScoreboardBackplateColor;
 
@@ -271,7 +271,7 @@ simulated final function DrawPlayerEntry(Canvas Canvas, TurboPlayerReplicationIn
 	if (Class<SRVeterancyTypes>(TurboPRI.ClientVeteranSkill) != None)
 	{
 		NumStars = Class<SRVeterancyTypes>(TurboPRI.ClientVeteranSkill).static.PreDrawPerk(Canvas, TurboPRI.ClientVeteranSkillLevel, PerkIcon, PerkStarIcon);
-		
+
 		Canvas.SetPos(TempX + 1.f, int(((PositionY + SizeY) - 1.f) - (SizeY * 0.04f)));
 		Canvas.DrawColor.A = 200;
 		Canvas.DrawTileStretched(ScoreboardBackplate, ((SizeX * FClamp(float(TurboPRI.PlayerHealth) / float(TurboPRI.HealthMax), 0.f, 1.f)) * 0.9925f) - 2.f, SizeY * 0.04f);
@@ -279,7 +279,7 @@ simulated final function DrawPlayerEntry(Canvas Canvas, TurboPlayerReplicationIn
 
 		Canvas.SetPos(int(TempX), PositionY);
 		Canvas.DrawTileScaled(ScoreboardBackplateLeft, (SizeY * 0.25f) / float(ScoreboardBackplateLeft.USize), (SizeY * 0.25f) / float(ScoreboardBackplateLeft.VSize));
-		
+
 		Canvas.SetPos(int(TempX + SizeX - (SizeX * 0.00725f)), PositionY);
 		Canvas.DrawTileScaled(ScoreboardBackplate, (SizeX * 0.0075f) / float(ScoreboardBackplate.USize), SizeY / float(ScoreboardBackplate.VSize));
 
@@ -352,7 +352,7 @@ simulated final function DrawPlayerEntry(Canvas Canvas, TurboPlayerReplicationIn
 	//Draw Health
 	TempX = (CenterX - (SizeX * 0.5f)) + (SizeX * HealthOffsetX);
 	TempY = CenterY - (SizeY * HealthSizeY * 0.5f);
-	
+
 	Canvas.DrawColor = ScoreboardTextColor;
 	DrawText = string(TurboPRI.PlayerHealth)$HealthyString;
 	Canvas.TextSize(class'TurboHUDOverlay'.static.GetStringOfZeroes(Len(DrawText)), TextSizeX, TextSizeY);
@@ -362,7 +362,7 @@ simulated final function DrawPlayerEntry(Canvas Canvas, TurboPlayerReplicationIn
 	//Draw Healing
 	TempX = (CenterX - (SizeX * 0.5f)) + (SizeX * HealedHealthOffsetX);
 	TempY = CenterY - (SizeY * HealedHealthSizeY * 0.5f);
-	
+
 	Canvas.DrawColor = ScoreboardTextColor;
 	DrawText = GetCompressedNumber(TurboPRI.HealthHealed);
 
@@ -373,7 +373,7 @@ simulated final function DrawPlayerEntry(Canvas Canvas, TurboPlayerReplicationIn
 	//Draw Cash
 	TempX = (CenterX - (SizeX * 0.5f)) + (SizeX * CashOffsetX);
 	TempY = CenterY - (SizeY * CashSizeY * 0.5f);
-	
+
 	Canvas.DrawColor = ScoreboardTextColor;
 	DrawText = GetCompressedNumber(TurboPRI.Score) $ class'KFTab_BuyMenu'.default.MoneyCaption;
 	Canvas.TextSize(class'TurboHUDOverlay'.static.GetStringOfZeroes(Len(DrawText)), TextSizeX, TextSizeY);
@@ -383,7 +383,7 @@ simulated final function DrawPlayerEntry(Canvas Canvas, TurboPlayerReplicationIn
 	//Draw Ping
 	TempX = (CenterX - (SizeX * 0.5f)) + (SizeX * PingOffsetX);
 	TempY = CenterY - (SizeY * PingSizeY * 0.5f);
-	
+
 	Canvas.DrawColor = ScoreboardTextColor;
 	DrawText = Eval(TurboPRI.bBot, Eval(BotText != "", BotText, "BOT"), string(Min(TurboPRI.Ping * 4, 999)));
 	Canvas.TextSize(class'TurboHUDOverlay'.static.GetStringOfZeroes(Len(DrawText)), TextSizeX, TextSizeY);
@@ -435,7 +435,7 @@ defaultproperties
 
 	PerkIconOffsetX=0.005f
 	PerkIconSizeY=1.f
-	
+
 	UsernameSizeY=0.8f
 	UsernameOffsetX=0.052500
 

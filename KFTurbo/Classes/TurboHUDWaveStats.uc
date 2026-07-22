@@ -105,7 +105,7 @@ static final function ProcessStatReplicator(out WaveStats ProcessedStats, TurboW
 
 	ProcessedStats.Damage += Replicator.DamageDone;
 	ProcessedStats.FleshpoundDamage += Replicator.DamageDoneFleshpound;
-	
+
 	ProcessedStats.Reloads += Replicator.Reloads;
 }
 
@@ -170,9 +170,9 @@ simulated function OnReceiveStatReplicator(TurboPlayerReplicationInfo PlayerRepl
 
 		ProcessingWave = WavePlayerStatReplicator.Wave;
 	}
-	
+
 	ProcessStatReplicator(ProcessedWaveTeamStats, WavePlayerStatReplicator);
-	
+
 	if (PlayerReplicationInfo == TurboHUD.PlayerOwner.PlayerReplicationInfo)
 	{
 		ProcessStatReplicator(ProcessedWavePlayerStats, WavePlayerStatReplicator);
@@ -270,7 +270,7 @@ state DisplayWaveStats
 			}
 			return;
 		}
-		
+
 		DisplayDuration = FMax(DisplayDuration - DeltaTime, 0.f);
 
 		if (DisplayRatio < 1.f)
@@ -283,7 +283,7 @@ state DisplayWaveStats
 			}
 			return;
 		}
-	}	
+	}
 }
 
 simulated function OnScreenSizeChange(Canvas C, Vector2D CurrentClipSize, Vector2D PreviousClipSize)
@@ -317,7 +317,7 @@ simulated function DrawStats(Canvas C)
 	local float SubtitleFontScale;
 
 	local string DrawString;
-	
+
 	TempX = C.ClipX * (WaveStatsPosition.X - (WaveStatsSize.X * 0.5f));
 	TempY = C.ClipY * (WaveStatsPosition.Y - (WaveStatsSize.Y * DisplayRatio));
 
@@ -334,15 +334,15 @@ simulated function DrawStats(Canvas C)
 	//Calculate box title size.
 	C.Font = TurboHUD.LoadBoldFont(1 + FontSizeOffset);
 	C.FontScaleX = 1.f;
-	C.FontScaleX = 1.f;
+	C.FontScaleY = 1.f;
 	C.TextSize("000", TextSizeX, TextSizeY);
 
 	TextScale = FMin((SizeY * StatsHeaderSizeY) / TextSizeY, 1.f);
 	C.FontScaleX = TextScale;
 	C.FontScaleY = TextScale;
 	C.TextSize("000", TextSizeX, TextSizeY);
-	
-	//Draw box title.	
+
+	//Draw box title.
 	if (SquareContainer != None)
 	{
 		C.DrawColor = KillsBar.FillColor;
@@ -356,13 +356,13 @@ simulated function DrawStats(Canvas C)
 	C.DrawColor = TurboHUD.WhiteColor;
 	C.SetPos(TempX + (SizeX * 0.05f), TempY + (SizeY * 0.02f));
 	C.DrawText(StatsHeaderString);
-	
+
 	TempY += TextSizeY;
 	SizeYPerEntry = (SizeY - TextSizeY) / 5.5f;
-	
+
 	C.Font = TurboHUD.LoadFont(1 + FontSizeOffset);
 	C.FontScaleX = 1.f;
-	C.FontScaleX = 1.f;
+	C.FontScaleY = 1.f;
 	C.TextSize("000", TextSizeX, TextSizeY);
 
 	TextScale = (SizeY * StatsSubheaderSizeY) / TextSizeY;
@@ -421,7 +421,7 @@ simulated function DrawStats(Canvas C)
 		C.SetPos(TempX + (SizeX * 0.025f), TempY);
 		C.DrawText(DrawString);
 	}
-	
+
 	//Try to find something to display!
 	TempY += SizeYPerEntry;
 	if (ProcessedWaveTeamStats.HealAmount > 0)
@@ -469,7 +469,7 @@ simulated function DrawStats(Canvas C)
 		C.SetPos(TempX + (SizeX * 0.025f), TempY);
 		C.DrawText(DrawString);
 	}
-	
+
 	TempY += SizeYPerEntry;
 	if (ProcessedWavePlayerStats.ShotsFired > 0)
 	{
@@ -502,7 +502,7 @@ final function DrawTeamBar(Canvas C, float PositionX, float PositionY, float Siz
 	local float RemainingPercent;
 	local int Index;
 	local float TextSizeX, TextSizeY;
-	
+
 	local Color TeammateBarColor;
 	local string TeammateString;
 
@@ -520,13 +520,13 @@ final function DrawTeamBar(Canvas C, float PositionX, float PositionY, float Siz
 	{
 		return;
 	}
-	
+
 	C.Font = TurboHUD.LoadBoldFont(3 + FontSizeOffset);
 	C.FontScaleX = 1.f;
-	C.FontScaleX = 1.f;
+	C.FontScaleY = 1.f;
 	C.TextSize("000", TextSizeX, TextSizeY);
 	C.FontScaleX = (SizeY * 1.f) / TextSizeY;
-	C.FontScaleY = C.FontScaleX;	
+	C.FontScaleY = C.FontScaleX;
 
 	TeammateBarColor = BlendColor(TurboHUD.WhiteColor, Config.FillColor, 0.25f);
 	RemainingPercent = 1.f;
@@ -537,9 +537,9 @@ final function DrawTeamBar(Canvas C, float PositionX, float PositionY, float Siz
 		{
 			continue;
 		}
-		
+
 		TeammateBarPercent = float(TeamAmount[Index].Amount) / float(TotalAmount);
-		
+
 		if (TeammateBarPercent <= 0.f)
 		{
 			continue;
@@ -562,7 +562,7 @@ final function DrawTeamBar(Canvas C, float PositionX, float PositionY, float Siz
 		C.TextSize(TeammateString, TextSizeX, TextSizeY);
 		C.SetPos(PositionX + (SizeX * RemainingPercent) - TextSizeX, (PositionY + (SizeY * 0.5f)) - (TextSizeY * 0.5f));
 		C.DrawTextClipped(TeammateString);
-		
+
 		RemainingPercent -= TeammateBarPercent;
 	}
 
@@ -584,7 +584,7 @@ final function DrawTeamBar(Canvas C, float PositionX, float PositionY, float Siz
 
 	PositionX += SizeX * PlayerBarPercent;
 	SizeX = SizeY * 0.75f;
-	
+
 	C.SetPos(PositionX - (SizeX * 0.5f), PositionY - (SizeX * 0.8f));
 	C.DrawColor = BackplateColor;
 	C.DrawRect(MarkerTexture, SizeX, SizeX);
@@ -610,10 +610,10 @@ final function DrawAccuracyBar(Canvas C, float PositionX, float PositionY, float
 	C.DrawColor = ShotsFiredColor;
 	C.SetPos(PositionX, PositionY);
 	C.DrawTileStretched(SquareContainer, SizeX, SizeY);
-	
+
 	C.Font = TurboHUD.LoadFont(3 + FontSizeOffset);
 	C.FontScaleX = 1.f;
-	C.FontScaleX = 1.f;
+	C.FontScaleY = 1.f;
 	C.TextSize("000", TextSizeX, TextSizeY);
 	C.FontScaleX = (SizeY * 1.f) / TextSizeY;
 	C.FontScaleY = C.FontScaleX;
@@ -624,9 +624,9 @@ final function DrawAccuracyBar(Canvas C, float PositionX, float PositionY, float
 	}
 
 	HitAmount = Min(HitAmount, ShotAmount);
-	
+
 	HitPercent = float(HitAmount) / float(ShotAmount);
-	
+
 	DisplayString = Repl(StatsAccuracyMissString, "%p", int(Round(100.f * (1.f - HitPercent))));
 	C.DrawColor = StatTextColor;
 	C.TextSize(DisplayString, TextSizeX, TextSizeY);
@@ -641,7 +641,7 @@ final function DrawAccuracyBar(Canvas C, float PositionX, float PositionY, float
 	C.DrawColor = ShotsHitColor;
 	C.SetPos(PositionX, PositionY);
 	C.DrawTileStretched(SquareContainer, SizeX * HitPercent, SizeY);
-	
+
 	DisplayString = Repl(StatsAccuracyHitString, "%p", int(Round(100.f * HitPercent)));
 	C.DrawColor = StatTextColor;
 	C.TextSize(DisplayString, TextSizeX, TextSizeY);
@@ -657,17 +657,17 @@ final function DrawAccuracyBar(Canvas C, float PositionX, float PositionY, float
 	{
 		return;
 	}
-	
+
 	HeadshotPercent = float(HeadshotAmount) / float(ShotAmount);
 
 	C.DrawColor = ShotsHeadshotColor;
 	C.SetPos(PositionX, PositionY);
 	C.DrawTileStretched(SquareContainer, SizeX * HeadshotPercent, SizeY);
-	
+
 	DisplayString = Repl(StatsAccuracyHeadshotString, "%p", int(Round(100.f * HeadshotPercent)));
 	C.DrawColor = StatTextColor;
 	C.TextSize(DisplayString, TextSizeX, TextSizeY);
-	
+
 	if (SizeX * HeadshotPercent >= TextSizeX)
 	{
 		C.SetPos((PositionX + (SizeX * HeadshotPercent)) - (TextSizeX + (SizeY * 0.1f)), (PositionY + (SizeY * 0.5f)) - (TextSizeY * 0.45f));
@@ -701,7 +701,7 @@ defaultproperties
 	StatsHeaderSizeY=0.2f
 	StatsSubheaderSizeY=0.125f
 	StatsBarOffsetY=0.75f
-	
+
 	SquareContainer=Texture'KFTurbo.HUD.ContainerSquare_D'
 	BackplateColor=(R=0,G=0,B=0,A=120)
 

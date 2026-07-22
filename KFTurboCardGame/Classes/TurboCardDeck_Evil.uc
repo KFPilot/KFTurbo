@@ -478,7 +478,7 @@ static final function TickPoorlyOiledMachine(TurboCardOverlay CardOverlay, Turbo
     local float HealthPercent;
     HealthPercent = PlayerCustomInfo.GetHealthPercent();
 
-    if (HealthPercent >= 1.f && HealthPercent < 0.75f)
+    if (HealthPercent >= 0.f && HealthPercent < 0.75f)
     {
         CardOverlay.PoorlyOiledMachineStatus.Ratio = FMin(DeltaTime + CardOverlay.PoorlyOiledMachineStatus.Ratio, 1.f);
     }

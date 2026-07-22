@@ -64,7 +64,7 @@ function TakeDamage( int Damage, Pawn InstigatedBy, Vector Hitlocation, Vector M
     {
 		TwoSecondDamageTotal = 0;
     }
-	
+
     LastDamagedTime = Level.TimeSeconds + 2.f;
 	OldHealth = Health;
 
@@ -330,7 +330,7 @@ Ignores StartCharging;
     {
         if( !bShotAnim )
         {
-            Global.PlayDirectionalHit(HitLoc);
+            global.PlayDirectionalHit(HitLoc);
         }
     }
 
@@ -339,11 +339,11 @@ Ignores StartCharging;
 		local bool RetVal,bWasEnemy;
 
 		bWasEnemy = (Controller.Target==Controller.Enemy);
-		RetVal = Super(ZombieFleshpoundBase).MeleeDamageTarget(hitdamage*1.75, pushdir*3);
+		RetVal = global.MeleeDamageTarget(hitdamage*1.75, pushdir*3);
 
 		if(RetVal && bWasEnemy && ProAI != None && !ProAI.bForcedRage)
 			GoToState('');
-            
+
 		return RetVal;
 	}
 }

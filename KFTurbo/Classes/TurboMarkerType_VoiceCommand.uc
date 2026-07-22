@@ -81,6 +81,7 @@ static function float GetMarkerDuration(Actor MarkedActor, class<Actor> MarkActo
 {
     switch(ETurboVoiceCommand(MarkerData))
     {
+        case Medic:
         case Help:
         case LetsHoleUpHere:
             return 20.f;
@@ -96,6 +97,8 @@ static function float GetMarkerDuration(Actor MarkedActor, class<Actor> MarkActo
         case InsultPlayers:
             return 10.f;
     }
+
+    return 5.f;
 }
 
 static function bool ShouldReceiveLocationUpdate(Actor MarkedActor, class<Actor> MarkActorClass, Object DataObject, class<Object> DataClass, int MarkerData)
@@ -131,7 +134,7 @@ static function String GenerateMarkerDisplayString(Actor MarkedActor, class<Acto
             return VoicePack.default.SupportString[0];
         case Help:
             return VoicePack.default.SupportString[1];
-            
+
         case Run:
             return VoicePack.default.AlertString[1];
         case WaitForMe:

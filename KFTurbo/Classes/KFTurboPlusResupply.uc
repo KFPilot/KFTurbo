@@ -6,8 +6,8 @@ class KFTurboPlusResupply extends TurboWaveEventHandler;
 var globalconfig bool bEnableResupply;
 var globalconfig string ResupplyActorClassOverride;
 
-var globalconfig bool bFillArmor;
 var globalconfig bool bFillHealth;
+var globalconfig bool bFillArmor;
 var globalconfig bool bFillAmmo;
 
 static final function bool ShouldPerformResupply()
@@ -56,9 +56,20 @@ function ResupplyPlayers()
             continue;
         }
 
-        PlayerList[Index].Pawn.Health = PlayerList[Index].Pawn.HealthMax;
-        PlayerList[Index].Pawn.ShieldStrength = FMax(PlayerList[Index].Pawn.ShieldStrength, 100.f);
-        FillUpAmmo(PlayerList[Index].Pawn);
+        if (bFillHealth)
+        {
+            PlayerList[Index].Pawn.Health = PlayerList[Index].Pawn.HealthMax;
+        }
+
+        if (bFillArmor)
+        {
+            PlayerList[Index].Pawn.ShieldStrength = FMax(PlayerList[Index].Pawn.ShieldStrength, 100.f);
+        }
+
+        if (bFillAmmo)
+        {
+            FillUpAmmo(PlayerList[Index].Pawn);
+        }
     }
 }
 
@@ -71,7 +82,7 @@ function FillUpAmmo(Pawn Pawn)
 	for(Inv = Pawn.Inventory; Inv != None; Inv = Inv.Inventory)
 	{
 		Weapon = KFWeapon(Inv);
-		
+
 		if(Weapon == None)
 		{
 			continue;
@@ -94,7 +105,7 @@ function FillUpAmmo(Pawn Pawn)
 static final function GetAmmoCount(KFWeapon Weapon, out int MaxAmmo, out int CurrentAmmo)
 {
 	local float AmmoCountMax, AmmoCountCurrent;
-	
+
 	Weapon.GetAmmoCount(AmmoCountMax, AmmoCountCurrent);
 
 	MaxAmmo = int(AmmoCountMax);

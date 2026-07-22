@@ -46,7 +46,7 @@ function bool IsPouncePathClear()
 
     HitActor = Trace(HitLocation, HitNormal, Target.Location,Location,true,vect(3,3,3));
 
-    return HitActor == Target || HitActor.Base == Target || HitActor == None;
+    return HitActor == None || HitActor == Target || HitActor.Base == Target;
 }
 
 simulated event SetAnimAction(name NewAction)
@@ -143,7 +143,7 @@ ignores HitWall, RangedAttack, PlayDirectionalHit;
     function PerformPounce()
     {
         GotoState('RegularMoving');
-        
+
         if ( !CanPounce() )
         {
             return;
@@ -181,7 +181,7 @@ defaultproperties
     End Object
 
     AfflictionData=(Burn=AfflictionBurn'BurnAffliction',Zap=AfflictionZap'ZapAffliction',Harpoon=AfflictionHarpoon'HarpoonAffliction')
-    
+
     ControllerClass=class'KFTurbo.AI_Crawler_Jumper'
     MenuName="Raptor"
 }

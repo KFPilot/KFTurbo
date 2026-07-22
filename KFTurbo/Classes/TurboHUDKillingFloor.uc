@@ -73,7 +73,7 @@ simulated event PostRender(Canvas Canvas)
 		Canvas.ColorModulate = InvactiveModulate;
 		return;
 	}
-	
+
 	bUseBloom = bool(ConsoleCommand("get ini:Engine.Engine.ViewportManager Bloom"));
 
 	CalculateModulation();
@@ -92,13 +92,13 @@ simulated event PostRender(Canvas Canvas)
 	}
 	else
 	{
-		if (PlayerOwner == None || PawnOwner == None || PawnOwnerPRI == None || (PlayerOwner.IsSpectating() && PlayerOwner.bBehindView))
+		if (PawnOwner == None || PawnOwnerPRI == None || (PlayerOwner.IsSpectating() && PlayerOwner.bBehindView))
 		{
 			DrawSpectatingHud(Canvas);
 		}
 		else if (!PawnOwner.bHideRegularHUD)
 		{
-			DrawHud(Canvas); 
+			DrawHud(Canvas);
 		}
 
 		RenderHUDOverlays(Canvas);
@@ -202,18 +202,18 @@ simulated function CalculateModulation()
 
 	if (Brightness > 0.5f)
 	{
-		Multiplier *= Lerp((Brightness - 0.5f) * 2.f, 1.f, 0.5f); 
+		Multiplier *= Lerp((Brightness - 0.5f) * 2.f, 1.f, 0.5f);
 	}
-	
+
 	Gamma = float(PlayerOwner.ConsoleCommand("get ini:Engine.Engine.ViewportManager Gamma"));
 
 	if (Gamma > 1.f)
 	{
-		Multiplier *= Lerp((Gamma - 1.f), 1.f, 0.5f); 
+		Multiplier *= Lerp((Gamma - 1.f), 1.f, 0.5f);
 	}
 
 	Multiplier = FMax(Multiplier, 0.6f);
-	
+
 	ActiveModulate.X *= Multiplier;
 	ActiveModulate.Y *= Multiplier;
 	ActiveModulate.Z *= Multiplier;
@@ -246,16 +246,26 @@ simulated function AddPreDrawOverlay(HudOverlay Overlay)
 
 simulated function RemoveHudOverlay(HudOverlay Overlay)
 {
-	local int i;
+	local int Index;
 	Super.RemoveHudOverlay(Overlay);
 
-	for (i = 0; i < PreDrawOverlays.length; i++)
+	for (Index = Overlays.Length - 1; Index >= 0; Index--)
 	{
-		if (PreDrawOverlays[i] == Overlay)
+		if (Overlays[Index] == Overlay)
 		{
-			Overlays.Remove(i, 1);
+			Overlays.Remove(Index, 1);
 			Overlay.SetOwner(None);
-			return;
+			break;
+		}
+	}
+
+	for (Index = PreDrawOverlays.Length - 1; Index > 0; Index--)
+	{
+		if (PreDrawOverlays[Index] == Overlay)
+		{
+			Overlays.Remove(Index, 1);
+			Overlay.SetOwner(None);
+			break;
 		}
 	}
 }
@@ -320,7 +330,7 @@ simulated function PostBeginPlay()
 
 	PlayerInfoHUD = Spawn(PlayerInfoHUDClass, Self);
 	PlayerInfoHUD.Initialize(Self);
-	
+
 	WaveInfoHUD = Spawn(WaveInfoHUDClass, Self);
 	WaveInfoHUD.Initialize(Self);
 
@@ -329,7 +339,7 @@ simulated function PostBeginPlay()
 
 	MarkInfoHUD = Spawn(MarkInfoHUDClass, Self);
 	MarkInfoHUD.Initialize(Self);
-	
+
 	WaveStatsHUD = Spawn(WaveStatsHUDClass, Self);
 	WaveStatsHUD.Initialize(Self);
 
@@ -374,13 +384,13 @@ simulated function Tick(float DeltaTime)
 		{
 			UpdateEmoteList();
 		}
-		
+
 		if (bHasPendingCommands)
 		{
 			UpdateCommandList();
 		}
 	}
-	
+
 	if (bDisplayingProgress)
 	{
 		bDisplayingProgress = false;
@@ -485,7 +495,7 @@ simulated function DrawHud(Canvas C)
 	ResetCanvas(C);
 
 	RenderPreDrawOverlays(C);
-	
+
 	ResetCanvas(C);
 
 	if (FontsPrecached < 2)
@@ -555,7 +565,7 @@ simulated function DrawGameHud(Canvas C)
 	{
 		return;
 	}
-	
+
 	DrawKFHUDTextElements(C);
 }
 
@@ -643,7 +653,7 @@ simulated function DrawSpectatingHud(Canvas C)
 	{
 		return;
 	}
-	
+
 	ResetCanvas(C);
 
 	CurrentGame = KFGameReplicationInfo(Level.GRI);
@@ -656,7 +666,7 @@ simulated function DrawSpectatingHud(Canvas C)
 			DrawStoryHUDInfo(C);
 		}
 	}
-	
+
 	ResetCanvas(C);
 
 	RenderPreDrawOverlays(C);
@@ -695,7 +705,7 @@ simulated function DrawSpectatingHud(Canvas C)
 	{
 		ScoreBoard.DrawScoreboard(C);
 	}
-	
+
 	ResetCanvas(C);
 
 	ReduceModulation(C, 0.5f);
@@ -704,12 +714,12 @@ simulated function DrawSpectatingHud(Canvas C)
 		DrawPortraitX(C);
 	}
 	C.ColorModulate = ActiveModulate;
-	
+
 	if ( bDrawHint )
 	{
 		DrawHint(C);
 	}
-	
+
 	DrawStoryHUDInfo(C);
 }
 
@@ -860,20 +870,20 @@ simulated function DrawHudPassC(Canvas C)
 	{
 		ScoreBoard.DrawScoreboard(C);
 	}
-	
+
 	ResetCanvas(C);
-	
+
 	ReduceModulation(C, 0.5f);
 	if (bShowPortrait && (Portrait != None))
 	{
 		DrawPortraitX(C);
 	}
 	C.ColorModulate = ActiveModulate;
-	
+
 	ResetCanvas(C);
 
 	DrawConsoleCommandHint(C);
-	
+
 	ResetCanvas(C);
 }
 
@@ -1078,9 +1088,9 @@ simulated function RegisterCommand(TurboTypingPrompt.CommandHint Command, bool b
 	local int Index;
 	if (bAdminOnly)
 	{
-		Index = RegisteredCommandList.Length;
-		RegisteredCommandList.Length = Index + 1;
-		RegisteredCommandList[Index] = Command;
+		Index = RegisteredAdminCommandList.Length;
+		RegisteredAdminCommandList.Length = Index + 1;
+		RegisteredAdminCommandList[Index] = Command;
 	}
 	else
 	{
@@ -1088,7 +1098,7 @@ simulated function RegisterCommand(TurboTypingPrompt.CommandHint Command, bool b
 		RegisteredCommandList.Length = Index + 1;
 		RegisteredCommandList[Index] = Command;
 	}
-	
+
 	bHasPendingCommands = true;
 }
 
@@ -1124,7 +1134,7 @@ simulated function DrawConsoleCommandHint(Canvas Canvas)
 defaultproperties
 {
 	TextReactionSettingsClass=class'TurboTextReactionSettings'
-	
+
 	MerchantPortrait=Texture'KFTurbo.Merchant.Merchant_Portrait'
 	MerchantString="Merchant"
 

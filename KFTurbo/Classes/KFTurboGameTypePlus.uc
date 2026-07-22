@@ -34,7 +34,7 @@ function PreBeginPlay()
     }
 
     // Close all shops! We don't use them at this difficulty.
-	foreach AllActors(Class'ShopVolume',Shop) 
+	foreach AllActors(Class'ShopVolume',Shop)
 	{
 		Shop.bAlwaysClosed = true;
         Shop.bAlwaysEnabled = false;
@@ -116,14 +116,14 @@ State MatchInProgress
         }
 
         WaveCountDown = WAVE_COUNTDOWN;
-        
+
         BroadcastLocalizedMessage(class'KFTurboPlusMessage', 0); //ETurboPlusMessage.TraderHint
         BroadcastLocalizedMessage(class'KFTurboPlusMessage', 1); //ETurboPlusMessage.TraderHint
     }
 
     // Don't select shops.
     function SelectShop() {}
-    
+
     function float CalcNextSquadSpawnTime()
     {
         WaveNextSquadSpawnTime = TurboMonsterCollection.GetNextSquadSpawnTime(WaveNum, NumPlayers + NumBots);
@@ -132,7 +132,7 @@ State MatchInProgress
             WaveNextSquadSpawnTime = MIN_SPAWN_TIME;
         }
         WaveNextSquadSpawnTime /= (GameWaveSpawnRateModifier * MapWaveSpawnRateModifier* AdminSpawnRateModifier);
-        
+
         return WaveNextSquadSpawnTime;
     }
 
@@ -145,12 +145,12 @@ State MatchInProgress
         {
             return;
         }
-    
+
         for (Index = 0; Index < ShopList.Length; Index++)
         {
             ShopList[Index].OpenShop();
         }
-    
+
         bTradingDoorsOpen = True;
 
         for( C=Level.ControllerList; C!=None; C=C.NextController )
@@ -180,7 +180,7 @@ State MatchInProgress
         {
             BroadcastLocalizedMessage(class'KFTurboPlusMessage', 1); //ETurboPlusMessage.TraderHint
         }
-        
+
         Super.OpenShops();
     }
 
@@ -213,7 +213,7 @@ final function FillUpAmmo(TurboHumanPawn HumanPawn)
 	for(Inv = HumanPawn.Inventory; Inv != None; Inv = Inv.Inventory)
 	{
 		Weapon = KFWeapon(Inv);
-		
+
 		if(Weapon == None)
 		{
 			continue;
@@ -244,11 +244,22 @@ function ResetZombieVolumes()
 
 function LoadUpMonsterList()
 {
-    local int Index;
+    local int Index, LoadedMonsterIndex;
+    local class<KFMonster> MonsterClass;
+
     for( Index = Index; Index < MonsterCollection.default.MonsterClasses.Length; Index++ )
     {
-        TurboMonsterCollection.LoadedMonsterList[TurboMonsterCollection.LoadedMonsterList.Length] = Class<KFMonster>(DynamicLoadObject(MonsterCollection.default.MonsterClasses[Index].MClassName,Class'Class', false));
-        TurboMonsterCollection.LoadedMonsterList[TurboMonsterCollection.LoadedMonsterList.Length - 1].static.PreCacheAssets(Level);
+        MonsterClass = class<KFMonster>(DynamicLoadObject(MonsterCollection.default.MonsterClasses[Index].MClassName, Class'Class', false));
+
+        if (MonsterClass == None)
+        {
+            Error("LoadUpMonsterList failed to load class"@MonsterCollection.default.MonsterClasses[Index].MClassName$".");
+            continue;
+        }
+
+        Index = TurboMonsterCollection.LoadedMonsterList.Length;
+        TurboMonsterCollection.LoadedMonsterList[Index] = MonsterClass;
+        TurboMonsterCollection.LoadedMonsterList[Index].static.PreCacheAssets(Level);
     }
 
     TurboMonsterCollection.InitializeCollection();
@@ -284,7 +295,7 @@ function SetupWave()
     TurboMonsterCollection.InitializeForWave(WaveNum);
 
     BuildNextSquad();
-    
+
     DoWaveStartForPlayers();
     class'KFTurboMut'.static.FindMutator(Self).OnWaveStart();
 	class'TurboWaveEventHandler'.static.BroadcastWaveStarted(Self, WaveNum);
@@ -320,7 +331,7 @@ function bool AddSquad()
         if (LastZVol != None)
         {
             LastSpawningVolume = LastZVol;
-        } 
+        }
     }
 
     if (LastZVol == None)
@@ -402,7 +413,7 @@ function BuildNextSquad()
 
     NextSpawnSquad = Squad.MonsterList;
     CurrentSquad = Squad;
-    
+
 	class'TurboWaveSpawnEventHandler'.static.BroadcastNextSpawnSquadGenerated(Self, NextSpawnSquad);
 }
 

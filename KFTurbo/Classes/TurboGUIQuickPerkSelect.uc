@@ -4,21 +4,21 @@
 class TurboGUIQuickPerkSelect extends ServerPerks.SRKFQuickPerkSelect;
 
 function bool MyOnDraw(Canvas C)
-{                                                                                                         
+{
 	local int i, j;
 	local ClientPerkRepLink S;
 	local Material M,SM;
 
 	Super(GUIMultiComponent).OnDraw(C);
-	
+
 	C.SetDrawColor(255, 255, 255, 255);
-	
+
 	// make em square
 	if ( !bResized )
 	{
 		ResizeIcons(C);
-	}	
-		
+	}
+
 	// Current perk background
 	C.SetPos(WinLeft * C.ClipX , WinTop * C.ClipY);
 	C.DrawTileScaled(CurPerkBack, (WinHeight * C.ClipY) / CurPerkBack.USize, (WinHeight * C.ClipY) / CurPerkBack.USize);
@@ -36,7 +36,7 @@ function bool MyOnDraw(Canvas C)
 	j = 0;
 
 	// Draw the available perks
-	for (i=0; i <= MaxPerks; i++) //Changed to <= to fix weird missing perk (although the original should have worked?).
+	for (i=0; i < MaxPerks; i++)
 	{
 		if (i != CurPerk)
 		{
@@ -58,7 +58,7 @@ function bool MyOnDraw(Canvas C)
 	// Draw current perk
 	if( CurPerk!=255 )
 		DrawCurrentPerkX(S, C, CurPerk);
-	
+
 	return false;
 }
 
@@ -77,8 +77,8 @@ function bool InternalOnClick(GUIComponent Sender)
 
 		bPerkChange = true;
 	}
-	
-	return false;	
+
+	return false;
 }
 
 function DrawCurrentPerkX( ClientPerkRepLink S, Canvas C, Int PerkIndex)
@@ -100,7 +100,7 @@ function CheckPerksX( ClientPerkRepLink S )
 
 	// Grab the Player Controller for later use
 	PRI = KFPlayerReplicationInfo(PlayerOwner().PlayerReplicationInfo);
-                                                                                         
+
 	// Hold onto our reference
 	if( S==None )
 		return;
@@ -112,7 +112,7 @@ function CheckPerksX( ClientPerkRepLink S )
 	}
 
 	// Update the ItemCount and select the first item
-	MaxPerks = Min(S.CachePerks.Length,ArrayCount(PerkSelectIcons));
+	MaxPerks = Min(S.CachePerks.Length, ArrayCount(PerkSelectIcons) + 1);
 	CurPerk = 255;
 
 	for( i=0; i<S.CachePerks.Length; i++ )
@@ -123,7 +123,7 @@ function CheckPerksX( ClientPerkRepLink S )
 			break;
 		}
 	}
-	
+
 	bPerkChange = false;
 }
 

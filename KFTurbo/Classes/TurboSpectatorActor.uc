@@ -177,7 +177,7 @@ simulated function Tick(float DeltaTime)
         {
             UpdateVisibility(DeltaTime);
         }
-        
+
         if (Level.NetMode != NM_DedicatedServer)
         {
             TickVisibility(DeltaTime);
@@ -190,7 +190,7 @@ simulated function Tick(float DeltaTime)
         {
             UpdateMovement(DeltaTime);
         }
-        
+
         CurrentRoll += DeltaTime * 2000.f;
         TickMovementBuffer(DeltaTime);
     }
@@ -288,7 +288,7 @@ simulated function UpdateVisibility(float DeltaTime)
     {
         return;
     }
-    
+
     if (!bIsVisible)
     {
         NetUpdateFrequency = 1.f;
@@ -368,7 +368,7 @@ static final function Quat QLerp(Quat A, Quat B, float Alpha)
     Result.Y = Lerp(Alpha, A.Y, B.Y);
     Result.Z = Lerp(Alpha, A.Z, B.Z);
     Result.W = Lerp(Alpha, A.W, B.W);
-    
+
     CosAngle = Sqrt(Result.X * Result.X + Result.Y * Result.Y + Result.Z * Result.Z + Result.W * Result.W);
 
     if (CosAngle > 0.0001f)
@@ -405,7 +405,7 @@ simulated function TickMovementBuffer(float DeltaTime)
         {
             break;
         }
-        
+
         MovementBuffer[Index].Time = 0.f;
 
         if (MovementBuffer.Length != 1)
@@ -413,7 +413,7 @@ simulated function TickMovementBuffer(float DeltaTime)
             MovementBuffer.Remove(Index, 1);
         }
     }
-    
+
     AttachToActor(NextStep.AttachParent);
 
     if (IsLocalPlayerSpectator())
@@ -429,7 +429,7 @@ simulated function TickMovementBuffer(float DeltaTime)
 
     GetAxes(TargetRotation, X, Y, Z);
     TargetQuat = QuatProduct(QuatFromRotator(TargetRotation), QuatFromAxisAngle(Z, -90.f));
-    
+
     SetRotation(QuatToRotator(QLerp(CurrentQuat, TargetQuat, DeltaTime * InterpolationRate * 0.25f)));
     CurrentRotation = Rotation;
 
@@ -441,12 +441,12 @@ simulated function TickMovementBuffer(float DeltaTime)
 
     StartingLocation = Location;
     Displacement = (NextStep.Location - Location);
-    
+
     MovementBufferVelocity.X = Lerp(DeltaTime * InterpolationRate, MovementBufferVelocity.X, Displacement.X);
     MovementBufferVelocity.Y = Lerp(DeltaTime * InterpolationRate, MovementBufferVelocity.Y, Displacement.Y);
     MovementBufferVelocity.Z = Lerp(DeltaTime * InterpolationRate, MovementBufferVelocity.Z, Displacement.Z);
     SetLocation(Location + (MovementBufferVelocity * DeltaTime * (InterpolationRate * 0.5f)));
-    if (VSizeSquared(Location) < 2.f || (Normal(Location - NextStep.Location) dot Normal(StartingLocation - NextStep.Location)) <= 0.f)
+    if (VSizeSquared(Location - NextStep.Location) < 2.f || (Normal(Location - NextStep.Location) dot Normal(StartingLocation - NextStep.Location)) <= 0.f)
     {
         SetLocation(NextStep.Location);
     }
@@ -512,9 +512,9 @@ defaultproperties
 
     DrawType=DT_None
     bHidden=True //Default bHidden is True to let us warm up before showing the actor.
-    
+
     Physics=PHYS_None
-    
+
     RemoteRole=ROLE_SimulatedProxy
     bAlwaysRelevant=True
     bOnlyRelevantToOwner=False
@@ -522,7 +522,7 @@ defaultproperties
     bReplicateMovement=False
     NetUpdateFrequency=8.0
     bNetNotify=True
-    
+
     CollisionRadius=1.0
     CollisionHeight=1.0
     bCollideActors=false

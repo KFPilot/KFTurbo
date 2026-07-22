@@ -5,5 +5,5 @@ class W_V_Crossbow_DarkCamo_Attachment extends CrossbowAttachment;
 
 defaultproperties
 {
-    Skins(0)=Combiner'KFTurbo.Foundry.Crossbow_Foundry_3rd_CMB'
+    Skins(0)=Texture'KFTurbo.Camo.Crossbow_DarkCamo_3rd_D'
 }

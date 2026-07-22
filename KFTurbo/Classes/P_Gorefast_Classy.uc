@@ -11,6 +11,7 @@ function PlayDyingSound()
 	if(Level.NetMode != NM_Client && !bGibbed && !bDecapitated)
 	{
 		PlaySound(DeathSound[Rand(3)], SLOT_Pain,1.30,true,525);
+		return;
 	}
 
 	Super.PlayDyingSound();

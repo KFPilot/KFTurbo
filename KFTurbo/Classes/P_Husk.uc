@@ -153,7 +153,7 @@ function RangedAttack(Actor A)
 	{
 		bShotAnim = true;
 		SetAnimAction('Claw');
-        
+
 		Controller.bPreparingMove = true;
 		Acceleration = vect(0,0,0);
         return;
@@ -172,7 +172,7 @@ function RangedAttack(Actor A)
         }
 
         TargetDistance = VSize(A.Location - Location);
-        if (TargetDistance >= ProjectileMaxRange || (!Region.Zone.bDistanceFog && TargetDistance >= Region.Zone.DistanceFogEnd * 0.8f))
+        if (TargetDistance >= ProjectileMaxRange || (Region.Zone.bDistanceFog && TargetDistance > Region.Zone.DistanceFogEnd * 0.8f))
         {
             return;
         }
@@ -211,7 +211,6 @@ function SpawnTwoShots()
 
 	GetAxes(Rotation, X, Y, Z);
 	FireStart = GetBoneCoords('Barrel').Origin;
-	HuskFireProjClass = Class'HuskFireProjectile';
 
 	if (!SavedFireProperties.bInitialized || CanPerformAdvancedAim() != SavedFireProperties.bTrySplash)
 	{
@@ -222,7 +221,7 @@ function SpawnTwoShots()
 		SavedFireProperties.bTossed = false;
 		SavedFireProperties.bInstantHit = false;
 		SavedFireProperties.bInitialized = true;
-        
+
         //These can now be made worse by shooting the husk right before it fires.
 		SavedFireProperties.bTrySplash = CanPerformAdvancedAim();
 		SavedFireProperties.bLeadTarget = SavedFireProperties.bTrySplash;

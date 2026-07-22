@@ -118,5 +118,6 @@ simulated function ProcessTouch(Actor Other, vector HitLocation)
 
 defaultproperties
 {
+    ImpactDamageType=class'W_HuskGun_DT_Impact'
     HeadShotDamageMult=1.f
 }

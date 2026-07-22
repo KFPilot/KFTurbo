@@ -8,6 +8,6 @@ defaultproperties
      AmmoPickupAmount=6
      MaxAmmo=54
      InitialAmount=24
-     
-     PickupClass=Class'KFMod.SeekerSixAmmoPickup'
+
+     PickupClass=Class'KFTurbo.W_SeekerSix_AmmoPickup'
 }

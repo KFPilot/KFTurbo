@@ -58,7 +58,7 @@ function NotifyPlayerClosedTrader()
 
 defaultproperties
 {
-	Begin Object Class=TurboGUIQuickPerkSelect Name=TurboQuickSelect
+	Begin Object Name=TurboQuickSelect Class=TurboGUIQuickPerkSelect
 		WinTop=0.011906
 		WinLeft=0.008008
 		WinWidth=0.316601

@@ -92,15 +92,14 @@ static function int AddDamage(KFPlayerReplicationInfo KFPRI, KFMonster Injured, 
 	local float Multiplier;
 	Multiplier = 1.f;
 
-	if (class<DamTypeM203Grenade>(DmgType) != none)
+	if (class<DamTypeM203Grenade>(DmgType) != None)
 	{
 		Multiplier = LerpStat(KFPRI, 1.f, 1.9f);
 	}
-	else if (class<DamTypeFrag>(DmgType) != none || class<DamTypePipeBomb>(DmgType) != none ||
-		class<DamTypeM79Grenade>(DmgType) != none || class<DamTypeM32Grenade>(DmgType) != none
-		|| class<DamTypeM203Grenade>(DmgType) != none || class<DamTypeRocketImpact>(DmgType) != none
-		|| class<DamTypeSPGrenade>(DmgType) != none || class<DamTypeSealSquealExplosion>(DmgType) != none
-		|| class<DamTypeSeekerSixRocket>(DmgType) != none)
+	else if (class<DamTypeFrag>(DmgType) != None || class<DamTypePipeBomb>(DmgType) != None
+		|| class<DamTypeM79Grenade>(DmgType) != None || class<DamTypeM32Grenade>(DmgType) != None
+		|| class<DamTypeRocketImpact>(DmgType) != None || class<DamTypeSPGrenade>(DmgType) != None
+		|| class<DamTypeSealSquealExplosion>(DmgType) != None || class<DamTypeSeekerSixRocket>(DmgType) != None)
 	{
 		Multiplier = LerpStat(KFPRI, 1.05f, 1.6f);
 	}
@@ -227,7 +226,7 @@ static function float GetAmmoCostScaling(KFPlayerReplicationInfo KFPRI, class<Pi
 static function AddDefaultInventory(KFPlayerReplicationInfo KFPRI, Pawn P)
 {
 	KFHumanPawn(P).CreateInventoryVeterancy(string(class'W_PipeBomb_Weap'), default.StartingWeaponSellPriceLevel5);
-	
+
 	if (!IsHighDifficulty(KFPRI))
 	{
 		KFHumanPawn(P).CreateInventoryVeterancy(string(class'W_M4203_Weap'), default.StartingWeaponSellPriceLevel6);

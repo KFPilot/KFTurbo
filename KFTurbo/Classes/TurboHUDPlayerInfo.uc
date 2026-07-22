@@ -98,7 +98,7 @@ final simulated function UpdatePlayerInfoList(float DeltaTime)
 }
 
 //Returns true if we've detected some sort of diff in GameReplicationInfo::PRIArray.
-//Can return true even if player list is technically the same due to the scoreboard sorting the PRIArray. 
+//Can return true even if player list is technically the same due to the scoreboard sorting the PRIArray.
 simulated function bool ShouldRefreshPlayerInfoList(float DeltaTime)
 {
 	local array<PlayerReplicationInfo> PRIArray;
@@ -140,7 +140,7 @@ simulated function bool ShouldRefreshPlayerInfoList(float DeltaTime)
 			PlayerInfoIndex++;
 			continue;
 		}
-		
+
 		bFoundNew = true;
 		break;
 	}
@@ -150,7 +150,7 @@ simulated function bool ShouldRefreshPlayerInfoList(float DeltaTime)
 	return !bFoundAll || bFoundNew;
 }
 
-//Updates PlayerInfoDataList, removing no longer valid entries and adding newly found ones. 
+//Updates PlayerInfoDataList, removing no longer valid entries and adding newly found ones.
 //Returns true if we added a new entry to the PlayerInfoDataList.
 simulated function bool RefreshPlayerInfoList(float DeltaTime)
 {
@@ -181,7 +181,7 @@ simulated function bool RefreshPlayerInfoList(float DeltaTime)
 		{
 			continue;
 		}
-		
+
 		bFoundEntry = false;
 		for (PlayerInfoIndex = 0; PlayerInfoIndex < PlayerInfoDataList.Length; PlayerInfoIndex++)
 		{
@@ -235,7 +235,7 @@ simulated function UpdatePlayerInfoPawns(float DeltaTime)
 			{
 				continue;
 			}
-			
+
 			PlayerInfoDataList[PlayerInfoIndex].HumanPawn = Pawn;
 			break;
 		}
@@ -258,22 +258,22 @@ simulated function TickPlayerInfoList(float DeltaTime)
 		{
 			PlayerInfoDataList[Index].Entry.DistanceSquared = Square(TurboHUD.HealthBarCutoffDist);
 		}
-		
+
 		if (PlayerInfoDataList[Index].TPRI != None)
 		{
 			PlayerInfoDataList[Index].Entry.ConnectionState = PlayerInfoDataList[Index].TPRI.GetConnectionState();
 		}
-		
+
 		PlayerInfoDataList[Index].Entry.Tick(DeltaTime, PlayerInfoDataList[Index]);
 	}
-	
+
 	//Rebuild depth-sorted index list.
 	PlayerInfoDataDistanceOrderList.Length = 0;
     for (Index = 0; Index < PlayerInfoDataList.Length; Index++)
     {
 		bInserted = false;
 		for (TestIndex = 0; TestIndex < PlayerInfoDataDistanceOrderList.Length; TestIndex++)
-		{	
+		{
 			if (PlayerInfoDataList[Index].Entry.DistanceSquared > PlayerInfoDataList[PlayerInfoDataDistanceOrderList[TestIndex]].Entry.DistanceSquared)
 			{
 				PlayerInfoDataDistanceOrderList.Insert(TestIndex, 1);
@@ -297,7 +297,7 @@ static final simulated function bool ShouldDrawPlayerInfo(vector CameraPosition,
 	{
 		return false;
 	}
-		
+
 	if (PlayerInfo.HumanPawn.FastTrace(PlayerInfo.HumanPawn.Location, CameraPosition))
 	{
 		PlayerInfo.Entry.VisibilityFade = 1.f;
@@ -312,7 +312,7 @@ static final simulated function bool ShouldDrawPlayerInfo(vector CameraPosition,
 	{
 		return false;
 	}
-	
+
 	return true;
 }
 
@@ -368,7 +368,7 @@ simulated function Render(Canvas C)
 		}
 
 		ScreenPos = C.WorldToScreen(HumanPawn.Location + (vect(0,0,1) * HumanPawn.CollisionHeight));
-		
+
 		if (ScreenPos.X >= 0 && ScreenPos.Y >= 0 && ScreenPos.X <= C.ClipX && ScreenPos.Y <= C.ClipY)
 		{
 			DrawPlayerInfo(C, PlayerInfoDataList[PlayerInfoIndex], ScreenPos.X, ScreenPos.Y);
@@ -379,7 +379,7 @@ simulated function Render(Canvas C)
 	{
 		DrawMedicPlayerInfo(C);
 	}
-	
+
 	class'TurboHUDKillingFloor'.static.ResetCanvas(C);
 }
 
@@ -491,7 +491,7 @@ final simulated function DrawPlayerInfo(Canvas C, PlayerInfoData PlayerInfo, flo
 		TempX = ScreenLocX + (CachedBarLength * 0.5f);
 		TempX = TempX + (TempSize * 0.25f);
 		TempY = (ScreenLocY - (TempSize * 0.5f));
-		
+
 		C.SetPos(TempX - (TempSize * 0.125f), TempY - (TempSize * 0.125f));
 		C.DrawColor = BarBackplateColor;
 		C.DrawColor.A = int(float(BeaconAlpha) * 0.5f);
@@ -573,7 +573,7 @@ final simulated function DrawPlayerInfo(Canvas C, PlayerInfoData PlayerInfo, flo
 
 	// Health
 	DrawHealthBar(C, ScreenLocX, ScreenLocY, BeaconAlpha, PlayerInfo.Entry);
-		
+
 	// Armor
 	if (PlayerInfo.Entry.PreviousShield > 0.f || PlayerInfo.Entry.CurrentShield > 0.f)
 	{
@@ -615,13 +615,13 @@ final simulated function DrawHealthBar(Canvas C, float ScreenLocX, float ScreenL
 final simulated function DrawShieldBar(Canvas C, float ScreenLocX, float ScreenLocY, byte BeaconAlpha, TurboHUDPlayerInfoEntry Entry)
 {
 	DrawBackplate(C, ScreenLocX, ScreenLocY - (CachedBarHeight + 2.f), BeaconAlpha, 0.5f);
-	
+
 	if (Entry.PreviousShield > Entry.CurrentShield)
 	{
 		ShieldLossBarColor.A = byte(float(default.ShieldLossBarColor.A) * (float(BeaconAlpha) / 255.f));
 		DrawBar(C, ScreenLocX + FMax((CachedBarLength * (Entry.CurrentShield - 0.01f)), 0.f), ScreenLocY - (CachedBarHeight + 2.f), FClamp((Entry.PreviousShield - Entry.CurrentShield) + 0.01f, 0, 1), ShieldLossBarColor, 0.5f);
 	}
-	
+
 	if (Entry.CurrentShield > 0.f)
 	{
 		ShieldBarColor.A = byte(float(default.ShieldBarColor.A) * (float(BeaconAlpha) / 255.f));
@@ -638,7 +638,7 @@ final simulated function DrawHitEffect(Canvas C, float ScreenLocX, float ScreenL
 	LastHitAlpha = 1.f - (((2.f * Entry.LastHit.Ratio) - 1.f) ** 4.f);
 	LastHitAlpha *= (float(BeaconAlpha) / 255.f);
 	LastHitAlpha *= (float(HealthHitBarColor.A) / 255.f);
-	
+
 	C.DrawColor = HealthHitBarColor;
 	C.DrawColor.A = (LastHitAlpha * 255.f);
 	C.SetPos((ScreenLocX - (0.5 * CachedBarLength)) + (CachedBarLength * FClamp(Entry.CurrentHealth, 0, 1)), (ScreenLocY - (CachedBarHeight * 0.5f)) - (0.25f * CachedBarHeight * (LastHitScale * 1.f)));
@@ -712,7 +712,7 @@ simulated function DrawMedicPlayerInfo(Canvas C)
 	local float HealthPercent;
 	local TurboHUDPlayerInfoEntry PlayerInfoEntry;
 	local string HealthString;
-	
+
 	C.FontScaleX = 1.f;
 	C.FontScaleY = 1.f;
 	C.Font = TurboHUD.LoadFont(3 + FontSizeOffset);
@@ -729,7 +729,7 @@ simulated function DrawMedicPlayerInfo(Canvas C)
 			continue;
 		}
 
-		C.TextSize(Left(PlayerInfoDataList[PlayerInfoIndex].TPRI.PlayerName, 12), TextSizeX, TextSizeY);
+		C.TextSize(Left(PlayerInfoDataList[PlayerInfoIndex].TPRI.PlayerName, 15), TextSizeX, TextSizeY);
 		MinEntrySizeX = FMax(TextSizeX, MinEntrySizeX);
 		EntrySizeY = FMax(TextSizeY, EntrySizeY);
 	}
@@ -738,7 +738,7 @@ simulated function DrawMedicPlayerInfo(Canvas C)
 	MinEntrySizeX += (float(C.SizeX) * 0.02f) + (HealthTextSizeX * 1.5);
 	EntrySizeY += (float(C.SizeY) * 0.0035f);
 	HealthOffsetX = HealthTextSizeX * 0.25f;
-	
+
 	TempX = C.ClipX;
 	TempY = C.ClipY * (1.f - (class'TurboHUDPlayer'.default.CashBackplateSize.Y + (class'TurboHUDPlayer'.default.BackplateSpacing.Y * 2.f)));
 
@@ -760,13 +760,13 @@ simulated function DrawMedicPlayerInfo(Canvas C)
 		C.SetPos((TempX + EntrySizeY) - MinEntrySizeX, TempY - EntrySizeY);
 		C.DrawTileStretched(MedicBackplate, (MinEntrySizeX - EntrySizeY) + 4.f, EntrySizeY);
 
-		PlayerName = Left(PlayerInfoDataList[PlayerInfoIndex].TPRI.PlayerName, 20);
+		PlayerName = Left(PlayerInfoDataList[PlayerInfoIndex].TPRI.PlayerName, 15);
 
 		C.SetDrawColor(255, 255, 255, 255);
 		C.TextSize(PlayerName, TextSizeX, TextSizeY);
 		C.SetPos(TempX - (TextSizeX + 10.f), TempY - ((EntrySizeY * 0.5f) + (TextSizeY * 0.5f)));
 		C.DrawTextClipped(PlayerName);
-		
+
 		HealthString = FillStringWithZeroes(Min(int(HealthPercent * PlayerInfoEntry.GetHealthMax(PlayerInfoDataList[PlayerInfoIndex])), 999), 3);
 		C.SetPos((TempX - MinEntrySizeX) + EntrySizeY + HealthOffsetX, (TempY - (EntrySizeY * 0.5f)) - (TextSizeY * 0.5f));
 		DrawTextMeticulous(C, HealthString $ class'TurboHUDScoreboard'.default.HealthyString, HealthTextSizeX);
@@ -783,7 +783,7 @@ simulated function DrawMedicPlayerInfo(Canvas C)
 		}
 
 		AnimTime = 1.f - FMax(PlayerInfoEntry.VoiceSupportAnim, PlayerInfoEntry.VoiceAlertAnim);
-		if (AnimTime < 1.f)	
+		if (AnimTime < 1.f)
 		{
 			AlertOpacity = Round(InterpCurveEval(MedicRequestOpacityCurve, AnimTime) * 225.f);
 			C.DrawColor.A = AlertOpacity;

@@ -18,7 +18,7 @@ struct BurnParameters
 	var float BurnSecondaryModifier;
 	var float BurnDuration;
 	var int Priority;
-};	
+};
 var BurnParameters Parameters;
 
 struct AfflictionBurnPriorityData
@@ -72,7 +72,7 @@ final simulated function UpdateBurnData(class<DamageType> DamageType)
 {
 	local int Index;
 
-	if (Parameters.Priority == 0)
+	if (Parameters.Priority == (FirePriorityList.Length - 1))
 	{
 		return;
 	}
@@ -84,7 +84,7 @@ final simulated function UpdateBurnData(class<DamageType> DamageType)
 		{
 			break;
 		}
-		
+
 		if (FirePriorityList[Index].DamageType != DamageType)
 		{
 			continue;
@@ -92,7 +92,7 @@ final simulated function UpdateBurnData(class<DamageType> DamageType)
 
 		Parameters = FirePriorityList[Index].Parameters;
 		//Half the burn ratio if we assigned a new burn type.
-		BurnRatio = BurnRatio * 0.5f;
+		BurnRatio = BurnRatio * 0.25f;
 		break;
 	}
 }
@@ -105,7 +105,7 @@ defaultproperties
 	BurnPrimaryModifier=1.f
 	BurnSecondaryModifier=1.f
 	BurnDurationModifier=1.f
-	
+
 	BurnMonsterDamageModifier=0.8f;
 
 	//Default parameter for burn does nothing.

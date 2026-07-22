@@ -5,5 +5,6 @@ class W_AA12_DT extends DamTypeAA12Shotgun;
 
 defaultproperties
 {
+    WeaponClass=class'W_AA12_Weap'
     HeadShotDamageMult=1.700000
 }

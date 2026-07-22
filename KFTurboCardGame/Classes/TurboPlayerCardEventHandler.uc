@@ -99,13 +99,10 @@ final function PlayerFireHit(TurboPlayerController Player, WeaponFire FireMode, 
 
 final function PlayerKilledMonster(TurboPlayerController Player, KFMonster Target, class<DamageType> DamageType)
 {
-    log("Player killed");
     if (PlayerKillsReloadMagazineChance != 0.f && Player.Pawn != None && Player.Pawn.Health > 0)
     {
-        log(" - rolling reload");
         if (FRand() < PlayerKillsReloadMagazineChance)
         {
-            log(" - reloading");
             ReloadWeapon(Player.Pawn);
         }
     }

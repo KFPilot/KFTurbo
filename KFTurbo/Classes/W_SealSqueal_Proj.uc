@@ -181,6 +181,7 @@ simulated function HurtRadius(float DamageAmount, float DamageRadius, class<Dama
 
 	local int i;
 	local array<Pawn> CheckedPawns;
+	local bool bAlreadyChecked;
 
 	local int NumKilled;
 
@@ -253,12 +254,19 @@ simulated function HurtRadius(float DamageAmount, float DamageRadius, class<Dama
 			continue;
 		}
 
+		bAlreadyChecked = false;
 		for (i = 0; i < CheckedPawns.Length; i++)
 		{
 			if (CheckedPawns[i] == HitPawn)
 			{
-				continue;
+			    bAlreadyChecked = true;
+				break;
 			}
+		}
+
+		if (bAlreadyChecked)
+		{
+		    continue;
 		}
 
 		//Immediately add this actor to list of checked pawns.
