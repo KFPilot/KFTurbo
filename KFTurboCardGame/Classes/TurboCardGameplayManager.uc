@@ -335,8 +335,6 @@ function WaveSpeedModifierChanged(CardModifierStack ModifiedStack, float Modifie
 
 function MaxMonstersModifierChanged(CardModifierStack ModifiedStack, float Modifier)
 {
-    local float OriginalModifier;
-    OriginalModifier = TurboGameType.GameMaxMonstersModifier;
     TurboGameType.GameMaxMonstersModifier = MaxMonstersModifier.GetModifier();
 
     //If the change occurs while the wave is in progress, we need to apply this to it.
@@ -345,7 +343,7 @@ function MaxMonstersModifierChanged(CardModifierStack ModifiedStack, float Modif
         return;
     }
 
-    TurboGameType.MaxMonsters = float(TurboGameType.MaxMonsters) * (TurboGameType.GameMaxMonstersModifier / OriginalModifier);
+    TurboGameType.UpdateMaxMonsters();
 }
 
 function TotalMonstersModifierChanged(CardModifierStack ModifiedStack, float Modifier)
@@ -360,6 +358,7 @@ function TotalMonstersModifierChanged(CardModifierStack ModifiedStack, float Mod
     }
 
     TurboGameType.TotalMaxMonsters = float(TurboGameType.TotalMaxMonsters) * (TurboGameType.GameTotalMonstersModifier / OriginalModifier);
+    TurboGameType.UpdateMaxMonsters();
 }
 
 function SpecialVariantSpawnModifierChanged(CardModifierStack ModifiedStack, float Modifier)

@@ -46,6 +46,11 @@ function bool MyOnDraw(Canvas C)
 			PerkSelectIcons[j].ImageColor = C.DrawColor;
 			PerkSelectIcons[j].ImageColor.A = 255;
 			j++;
+
+			if (j >= ArrayCount(PerkSelectIcons))
+			{
+			    break;
+			}
 		}
 	}
 

@@ -159,6 +159,12 @@ function AddPlayer(KFPlayerReplicationInfo PRI, int Index, Canvas Canvas)
 function EmptyPlayers(int Index)
 {
 	Super.EmptyPlayers(Index);
+
+	while(Index < PlayerNameLabelList.Length && PlayerNameLabelList[Index].Caption != "")
+	{
+	    PlayerNameLabelList[Index].Caption = "";
+		++Index;
+	}
 }
 
 function FPlayerBoxEntry CreatePlayerEntry(float Top)

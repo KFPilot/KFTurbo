@@ -11,6 +11,8 @@ var IpAddr TurboAddress;
 
 var string CRLF;
 
+var int AttemptCount;
+
 function PostBeginPlay()
 {
     log("KFTurbo is preparing to check for a new version!", 'KFTurboVersion');
@@ -44,7 +46,14 @@ state ResolveAddress
 
     function ResolveFailed()
     {
+        if (AttemptCount > 20)
+        {
+            LifeSpan = 0.5f;
+            return;
+        }
+
         SetTimer(1.f, false);
+        AttemptCount++;
     }
 
     function Timer()

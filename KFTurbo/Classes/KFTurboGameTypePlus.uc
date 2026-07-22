@@ -244,7 +244,7 @@ function ResetZombieVolumes()
 
 function LoadUpMonsterList()
 {
-    local int Index;
+    local int Index, MonsterIndex;
     local class<KFMonster> MonsterClass;
 
     for( Index = Index; Index < MonsterCollection.default.MonsterClasses.Length; Index++ )
@@ -257,9 +257,9 @@ function LoadUpMonsterList()
             continue;
         }
 
-        Index = TurboMonsterCollection.LoadedMonsterList.Length;
-        TurboMonsterCollection.LoadedMonsterList[Index] = MonsterClass;
-        TurboMonsterCollection.LoadedMonsterList[Index].static.PreCacheAssets(Level);
+        MonsterIndex = TurboMonsterCollection.LoadedMonsterList.Length;
+        TurboMonsterCollection.LoadedMonsterList[MonsterIndex] = MonsterClass;
+        TurboMonsterCollection.LoadedMonsterList[MonsterIndex].static.PreCacheAssets(Level);
     }
 
     TurboMonsterCollection.InitializeCollection();

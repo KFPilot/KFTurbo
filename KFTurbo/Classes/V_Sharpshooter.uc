@@ -52,7 +52,7 @@ static function bool IsPerkAmmunition(class<Ammunition> AmmoType)
 		case class'W_Magnum44_Ammo':
 		case class'W_Deagle_Ammo':
 		case class'W_MK23_Ammo':
-		case class'W_M32_Ammo':
+		case class'W_M32_Ammo': //For fun, Sharpshooter considers M32 on-perk so that it can do fun combos with it easier.
 		case class'W_Crossbow_Ammo':
 		case class'W_SPSniper_Ammo':
 		case class'W_M14_Ammo':

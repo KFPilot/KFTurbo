@@ -660,6 +660,7 @@ state MatchInProgress
 
         Super.BeginState();
 
+        //Don't bother null checking this after the initial warning. If there is no KFTurboMut, a lot of things will not work.
         KFTurboMut = class'KFTurboMut'.static.FindMutator(Self);
         if (KFTurboMut == None)
         {
