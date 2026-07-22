@@ -48,6 +48,8 @@ var array<TurboTypingPrompt.CommandHint> RegisteredCommandList;
 var array<TurboTypingPrompt.CommandHint> RegisteredAdminCommandList;
 var bool bHasPendingCommands;
 
+var float ModulationEvaluateTime;
+
 simulated function Destroyed()
 {
 	Super.Destroyed();
@@ -74,12 +76,13 @@ simulated event PostRender(Canvas Canvas)
 		return;
 	}
 
-	bUseBloom = bool(ConsoleCommand("get ini:Engine.Engine.ViewportManager Bloom"));
-
-	CalculateModulation();
 	Canvas.ColorModulate = ActiveModulate;
 
-	PlayerOwner.PostFX_SetActive(0, false);
+	bUseBloom = PlayerOwner.PostFX_IsActive(0);
+	if (bUseBloom)
+	{
+	    PlayerOwner.PostFX_SetActive(0, false);
+	}
 
 	if (PawnOwner != None && PawnOwner.bSpecialHUD)
 	{
@@ -149,7 +152,7 @@ simulated event PostRender(Canvas Canvas)
 
 	if (bUseBloom)
 	{
-		PlayerOwner.PostFX_SetActive(0, bUseBloom);
+		PlayerOwner.PostFX_SetActive(0, true);
 	}
 }
 
@@ -247,25 +250,23 @@ simulated function AddPreDrawOverlay(HudOverlay Overlay)
 simulated function RemoveHudOverlay(HudOverlay Overlay)
 {
 	local int Index;
-	Super.RemoveHudOverlay(Overlay);
-
 	for (Index = Overlays.Length - 1; Index >= 0; Index--)
 	{
 		if (Overlays[Index] == Overlay)
 		{
 			Overlays.Remove(Index, 1);
 			Overlay.SetOwner(None);
-			break;
+			return;
 		}
 	}
 
-	for (Index = PreDrawOverlays.Length - 1; Index > 0; Index--)
+	for (Index = PreDrawOverlays.Length - 1; Index >= 0; Index--)
 	{
 		if (PreDrawOverlays[Index] == Overlay)
 		{
-			Overlays.Remove(Index, 1);
+			PreDrawOverlays.Remove(Index, 1);
 			Overlay.SetOwner(None);
-			break;
+			return;
 		}
 	}
 }
@@ -389,6 +390,13 @@ simulated function Tick(float DeltaTime)
 		{
 			UpdateCommandList();
 		}
+	}
+
+	ModulationEvaluateTime -= DeltaTime;
+	if (ModulationEvaluateTime < 0.f)
+	{
+	    ModulationEvaluateTime = 0.25f;
+		CalculateModulation();
 	}
 
 	if (bDisplayingProgress)

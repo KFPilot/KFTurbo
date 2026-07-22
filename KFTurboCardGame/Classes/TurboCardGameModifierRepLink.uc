@@ -271,6 +271,11 @@ simulated function float GetPlayerMovementSpeedMultiplier(KFPlayerReplicationInf
     local TurboHumanPawn Pawn;
     local TurboPlayerCardCustomInfo CardCustomInfo;
 
+    if (Controller(KFPRI.Owner) == None)
+    {
+        return 1.f;
+    }
+
     Pawn = TurboHumanPawn(Controller(KFPRI.Owner).Pawn);
     CardCustomInfo = GetPlayerCustomInfo(KFPRI);
 

@@ -23,7 +23,7 @@ simulated function PostBeginPlay()
 	{
 		return;
 	}
-	
+
 	SetBoneScale(20, 1.15f, 'CHR_RArmForeArm');
 
 	// Attach steam stream emitter
@@ -34,13 +34,16 @@ simulated function PostBeginPlay()
 	{
 		AttachedEmitter = Spawn(SteamEmitterClass, , , BoneLocation, rot(0, 0, 0));
 
-		if (AttachToBone(AttachedEmitter, 'CHR_Ribcage'))
+		if (AttachedEmitter != None)
 		{
-			AttachedEmitter.SetRelativeLocation(AttachOffset);
-		}
-		else
-		{
-			AttachedEmitter.Destroy();
+    		if (AttachToBone(AttachedEmitter, 'CHR_Ribcage'))
+    		{
+    			AttachedEmitter.SetRelativeLocation(AttachOffset);
+    		}
+    		else
+    		{
+    			AttachedEmitter.Destroy();
+    		}
 		}
 	}
 
@@ -51,13 +54,16 @@ simulated function PostBeginPlay()
 	{
 		AttachedEmitter2 = Spawn(SteamPuffEmitterClass, , , BoneLocation, rot(0, 0, 0));
 
-		if (AttachToBone(AttachedEmitter2, 'CHR_Ribcage'))
+		if (AttachedEmitter2 != None)
 		{
-			AttachedEmitter2.SetRelativeLocation(AttachOffset);
-		}
-		else
-		{
-			AttachedEmitter2.Destroy();
+    		if (AttachToBone(AttachedEmitter2, 'CHR_Ribcage'))
+    		{
+    			AttachedEmitter2.SetRelativeLocation(AttachOffset);
+    		}
+    		else
+    		{
+    			AttachedEmitter2.Destroy();
+    		}
 		}
 	}
 }
@@ -108,7 +114,7 @@ function RangedAttack(Actor A)
 	{
 		bShotAnim = true;
 		SetAnimAction('Claw');
-		
+
 		Controller.bPreparingMove = true;
 		Acceleration = vect(0, 0, 0);
 		return;

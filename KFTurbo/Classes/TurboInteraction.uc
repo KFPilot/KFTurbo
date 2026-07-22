@@ -778,7 +778,7 @@ simulated function ApplyNetspeedAdjustment()
 {
 	local int UsedNetspeed;
 	UsedNetspeed = Max(Max(AdjustedNetspeed, ViewportOwner.CurrentNetspeed), ViewportOwner.ConfiguredInternetSpeed);
-	ViewportOwner.ConfiguredInternetSpeed = AdjustedNetspeed;
+	ViewportOwner.ConfiguredInternetSpeed = UsedNetspeed;
 	ViewportOwner.Actor.SetNetspeed(UsedNetspeed);
 }
 

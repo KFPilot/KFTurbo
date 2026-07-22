@@ -111,7 +111,8 @@ function CheckPerksX( ClientPerkRepLink S )
 		return;
 	}
 
-	// Update the ItemCount and select the first item
+	// Update the ItemCount and select the first item.
+	// For some reason needs 1 added to ArrayCount(PerkSelectIcons) in order for the calling function to properly draw all icons in all available boxes.
 	MaxPerks = Min(S.CachePerks.Length, ArrayCount(PerkSelectIcons) + 1);
 	CurPerk = 255;
 

@@ -123,11 +123,12 @@ static final function CollectMonsterHitData(Actor Other, vector HitLocation, vec
     if (HitData.Monster == None)
     {
         HitData.Monster = KFMonster(Other.Base);
-        HitData.MonsterClass = HitData.Monster.Class;
     }
 
     if (HitData.Monster != None)
     {
+        HitData.MonsterClass = HitData.Monster.Class;
+
         if (HeadshotAdditionalScale != -1.f)
         {
             if (HeadshotAdditionalScale == 0.f)

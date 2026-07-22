@@ -99,7 +99,11 @@ static final function PenetratingWeaponTrace(Vector TraceStart, Rotator Directio
 	if (Weapon.Instigator != None && KFPlayerReplicationInfo(Weapon.Instigator.PlayerReplicationInfo) != None)
 	{
 	    KFPRI = KFPlayerReplicationInfo(Weapon.Instigator.PlayerReplicationInfo);
-		WeaponPenetrationMultiplier = class<TurboVeterancyTypes>(KFPRI.ClientVeteranSkill).static.GetWeaponPenetrationMultiplier(KFPRI, Fire);
+
+		if (class<TurboVeterancyTypes>(KFPRI.ClientVeteranSkill) != None)
+		{
+		    WeaponPenetrationMultiplier = class<TurboVeterancyTypes>(KFPRI.ClientVeteranSkill).static.GetWeaponPenetrationMultiplier(KFPRI, Fire);
+		}
 	}
 
 	PenetrationMax = Round(float(PenetrationMax) * WeaponPenetrationMultiplier);

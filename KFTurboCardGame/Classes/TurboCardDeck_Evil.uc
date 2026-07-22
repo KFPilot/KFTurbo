@@ -237,7 +237,7 @@ function ActivateMixedSignals(TurboCardGameplayManager GameplayManager, TurboCar
 function ActivateHighThroughput(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
     Card.UpdateModifier(GameplayManager.MaxMonstersModifier, 1.4f, bActivate);
-    Card.UpdateModifier(GameplayManager.WaveSpeedModifier, 1.15f, bActivate);
+    Card.UpdateModifier(GameplayManager.WaveSpeedModifier, 1.15f, bActivate); //Increase spawn rate as a hidden effect so that the max monster are felt even on smaller maps.
 }
 
 function ActivateNakedSnake(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)

@@ -49,7 +49,7 @@ var EFogState FogState;
 static final function FogManager GetOrCreateFogManager(Actor Context)
 {
     local FogManager Manager;
-    
+
     if (Context == None)
     {
         return None;
@@ -76,7 +76,7 @@ simulated function PostBeginPlay()
             continue;
         }
 
-        Error("More than one FogManager was created!");
+        Warn("More than one FogManager was created!");
         LifeSpan = 0.1f;
         return;
     }
@@ -98,7 +98,7 @@ auto state Initialize
         {
             FadeRate = default.FadeRate;
         }
-        
+
         FadeRate = FMax(FadeRate, 0.1f);
 
         bHasPendingFogChange = true;
@@ -236,7 +236,7 @@ simulated function ConsumePendingFogChange()
     TargetFogColor = PendingTargetFogColor;
     TargetFogDistanceStart = PendingTargetFogDistanceStart;
     TargetFogDistanceEnd = PendingTargetFogDistanceEnd;
-    
+
     FogState = FadingToTarget;
     NotifyUpdatePending();
 }
@@ -284,14 +284,14 @@ simulated function FadeFogToTarget(float DeltaTime)
         ZoneInfoList[Index].Zone.bClearToFogColor = true;
         FadeZone(ZoneInfoList[Index], FadeRatio, TargetFogDistanceStart, TargetFogDistanceEnd);
     }
-    
+
     for (Index = SkyZoneInfoList.Length - 1; Index >= 0; Index--)
     {
         SkyZoneInfoList[Index].Zone.bDistanceFog = true;
         SkyZoneInfoList[Index].Zone.bClearToFogColor = true;
         FadeZone(SkyZoneInfoList[Index], FMin(FadeRatio * 2.f, 1.f), -128.f, 4.f);
     }
-    
+
     for (Index = PhysicsVolumeList.Length - 1; Index >= 0; Index--)
     {
         PhysicsVolumeList[Index].Volume.bDistanceFog = true;
@@ -321,20 +321,20 @@ simulated function FadeFogToOriginal(float DeltaTime)
         ZoneInfoList[Index].Zone.bClearToFogColor = true;
         FadeZone(ZoneInfoList[Index], FadeRatio, TargetFogDistanceStart, TargetFogDistanceEnd);
     }
-    
+
     for (Index = SkyZoneInfoList.Length - 1; Index >= 0; Index--)
     {
         SkyZoneInfoList[Index].Zone.bDistanceFog = true;
         SkyZoneInfoList[Index].Zone.bClearToFogColor = true;
         FadeZone(SkyZoneInfoList[Index], FMin(FadeRatio * 2.f, 1.f), -128.f, 4.f);
     }
-    
+
     for (Index = PhysicsVolumeList.Length - 1; Index >= 0; Index--)
     {
         PhysicsVolumeList[Index].Volume.bDistanceFog = true;
         FadeVolume(PhysicsVolumeList[Index], FadeRatio, TargetFogDistanceStart, TargetFogDistanceEnd);
     }
-    
+
     if (FadeRatio > 0.f)
     {
         return;
@@ -345,13 +345,13 @@ simulated function FadeFogToOriginal(float DeltaTime)
         ZoneInfoList[Index].Zone.bDistanceFog = ZoneInfoList[Index].bOriginalDistanceFog;
         ZoneInfoList[Index].Zone.bClearToFogColor = ZoneInfoList[Index].bOriginalClearToFogColor;
     }
-    
+
     for (Index = SkyZoneInfoList.Length - 1; Index >= 0; Index--)
     {
         SkyZoneInfoList[Index].Zone.bDistanceFog = SkyZoneInfoList[Index].bOriginalDistanceFog;
         SkyZoneInfoList[Index].Zone.bClearToFogColor = SkyZoneInfoList[Index].bOriginalClearToFogColor;
     }
-    
+
     for (Index = PhysicsVolumeList.Length - 1; Index >= 0; Index--)
     {
         PhysicsVolumeList[Index].Volume.bDistanceFog = PhysicsVolumeList[Index].bOriginalDistanceFog;

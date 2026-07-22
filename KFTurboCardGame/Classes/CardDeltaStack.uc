@@ -68,7 +68,7 @@ final function AddDelta(int Delta, TurboCard Card)
 
     log(DeltaStackID$": Adding delta"@Delta@"applied by"@ID@".", 'KFTurboCardGame');
     DeltaList.Length = DeltaList.Length + 1;
-    DeltaList[DeltaList.Length - 1].ID = Card.CardID;
+    DeltaList[DeltaList.Length - 1].ID = ID;
     DeltaList[DeltaList.Length - 1].Delta = Delta;
     UpdateDeltaChange();
 }
@@ -79,9 +79,9 @@ local string ID;
     local int Index;
 
     ID = "NONE";
-    if (Card == None)
+    if (Card != None)
     {
-        return;
+        ID = Card.CardID;
     }
 
     for (Index = DeltaList.Length - 1; Index >= 0; Index--)

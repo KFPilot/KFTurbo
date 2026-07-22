@@ -663,7 +663,7 @@ state MatchInProgress
         KFTurboMut = class'KFTurboMut'.static.FindMutator(Self);
         if (KFTurboMut == None)
         {
-            Error("GAME STARTED WITHOUT A KFTURBO MUTATOR. KFTURBO REQUIRES ITS MUTATOR TO FUNCTION.");
+            Warn("GAME STARTED WITHOUT A KFTURBO MUTATOR. KFTURBO REQUIRES ITS MUTATOR TO FUNCTION.");
         }
 
         if (KFTurboMut.HasVersionUpdate())

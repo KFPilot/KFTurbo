@@ -215,7 +215,7 @@ static function float GetAmmoCostScaling(KFPlayerReplicationInfo KFPRI, class<Pi
 			Multiplier *= LerpStat(KFPRI, 1.f, 0.7f);
 			break;
 		case class'W_Pipebomb_Pickup' :
-			Multiplier *= LerpStat(KFPRI, 0.5f, 0.8f);
+			Multiplier *= LerpStat(KFPRI, 0.9f, 0.8f);
 			break;
 	}
 

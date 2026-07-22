@@ -346,7 +346,7 @@ defaultproperties
 
     Begin Object Class=TurboOptionCheckBox Name=AltF4EnabledBoxButton
         Caption="Enabled Alt F4"
-        OnCreateComponent=UseBaseGameChatFont.InternalOnCreateComponent
+        OnCreateComponent=AltF4EnabledBoxButton.InternalOnCreateComponent
         Hint="Will enable Alt F4 closing the game."
         TabOrder=12
         OnChange=OnAltF4EnabledChange

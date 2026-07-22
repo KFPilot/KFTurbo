@@ -293,6 +293,11 @@ function KillRandomMonster()
 
     MonsterPawnList = class'TurboGameplayHelper'.static.GetMonsterPawnList(Level);
 
+    if (MonsterPawnList.Length == 0)
+    {
+        return;
+    }
+
     SelectedMonster = MonsterPawnList[Rand(MonsterPawnList.Length)];
 
     if (SelectedMonster == None)

@@ -244,7 +244,7 @@ function ResetZombieVolumes()
 
 function LoadUpMonsterList()
 {
-    local int Index, LoadedMonsterIndex;
+    local int Index;
     local class<KFMonster> MonsterClass;
 
     for( Index = Index; Index < MonsterCollection.default.MonsterClasses.Length; Index++ )
@@ -253,7 +253,7 @@ function LoadUpMonsterList()
 
         if (MonsterClass == None)
         {
-            Error("LoadUpMonsterList failed to load class"@MonsterCollection.default.MonsterClasses[Index].MClassName$".");
+            Warn("LoadUpMonsterList failed to load class"@MonsterCollection.default.MonsterClasses[Index].MClassName$".");
             continue;
         }
 

@@ -120,11 +120,11 @@ static function int ReduceDamage(KFPlayerReplicationInfo KFPRI, KFPawn Injured, 
 {
     if (class<SirenScreamDamage>(DmgType) != None)
     {
-        InDamage = float(InDamage) * static.GetBloatDamageReduction(KFPRI);
+        InDamage = float(InDamage) * static.GetSirenDamageReduction(KFPRI);
     }
     else if (class<DamTypeVomit>(DmgType) != None)
     {
-        InDamage = float(InDamage) * static.GetSirenDamageReduction(KFPRI);
+        InDamage = float(InDamage) * static.GetBloatDamageReduction(KFPRI);
     }
     else
     {

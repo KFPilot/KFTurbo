@@ -29,8 +29,13 @@ function ApplyBleedToPlayer(KFHumanPawn Pawn)
 {
     local int Index;
     local TurboPlayerCardCustomInfo CardCustomInfo;
-    
-    CardCustomInfo = TurboPlayerCardCustomInfo(class'TurboPlayerCardCustomInfo'.static.FindCustomInfo(TurboPlayerReplicationInfo(BleedList[Index].Pawn.PlayerReplicationInfo)));
+
+    CardCustomInfo = TurboPlayerCardCustomInfo(class'TurboPlayerCardCustomInfo'.static.FindCustomInfo(TurboPlayerReplicationInfo(Pawn.PlayerReplicationInfo)));
+
+    if (CardCustomInfo == None)
+    {
+        return;
+    }
 
     for (Index = BleedList.Length - 1; Index >= 0; Index--)
     {
@@ -47,7 +52,7 @@ function ApplyBleedToPlayer(KFHumanPawn Pawn)
     BleedList[Index].Pawn = Pawn;
     BleedList[Index].NextBleedTime = Level.TimeSeconds + BleedInterval;
     BleedList[Index].BleedCount = int(BleedCount);
-    
+
     CardCustomInfo.UpdateBleedCounter(BleedList[Index].BleedCount, BleedList[Index].NextBleedTime);
 }
 
@@ -67,7 +72,7 @@ function Tick(float DeltaTime)
                 CardCustomInfo.UpdateBleedCounter(0, 0.f);
             }
         }
-        
+
         BleedList.Length = 0;
         return;
     }
@@ -87,7 +92,7 @@ function Tick(float DeltaTime)
 
         BleedList[Index].BleedCount--;
         BleedList[Index].Pawn.TakeDamage(BleedDamage, None, BleedList[Index].Pawn.Location, vect(0, 0, 0), class'TurboHumanBleed_DT');
-    
+
         CardCustomInfo = TurboPlayerCardCustomInfo(class'TurboPlayerCardCustomInfo'.static.FindCustomInfo(TurboPlayerReplicationInfo(BleedList[Index].Pawn.PlayerReplicationInfo)));
 
         if (BleedList[Index].BleedCount <= 0)

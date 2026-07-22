@@ -231,32 +231,6 @@ final function AttemptReplaceWeakMonster(out class<KFMonster> Monster)
     }
 }
 
-final function PotentiallyDoubleHuskSpawn(out array < class<KFMonster> > NextSpawnSquad)
-{
-    local int Index;
-    local int HuskCount;
-    HuskCount = 0;
-
-    for (Index = NextSpawnSquad.Length - 1; Index >= 0; Index--)
-    {
-        if (class<P_Husk>(NextSpawnSquad[Index]) != None)
-        {
-            HuskCount++;
-        }
-    }
-
-    while (HuskCount > 0)
-    {
-        HuskCount--;
-
-        if (FRand() < 0.75f)
-        {
-            NextSpawnSquad.Length = NextSpawnSquad.Length + 1;
-            NextSpawnSquad[NextSpawnSquad.Length - 1] = class'P_Husk_STA';
-        }
-    }
-}
-
 function GrantAllPlayersDosh(int Amount)
 {
 	local Controller Controller;

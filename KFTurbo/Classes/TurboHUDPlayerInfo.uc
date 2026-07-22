@@ -451,7 +451,7 @@ final simulated function DrawPlayerInfo(Canvas C, PlayerInfoData PlayerInfo, flo
 	Dist -= TurboHUD.HealthBarFullVisDist;
 	Dist = FClamp(Dist, 0, TurboHUD.HealthBarCutoffDist - TurboHUD.HealthBarFullVisDist);
 	Dist = Dist / (TurboHUD.HealthBarCutoffDist - TurboHUD.HealthBarFullVisDist);
-	BeaconAlpha = byte((1.f - Dist) * 255.f);
+	//BeaconAlpha = byte((1.f - Dist) * 255.f); Remove depth fading for now.
 	BeaconAlpha = byte(255.f * FMin(PlayerInfo.Entry.VisibilityFade * 2.f, 1.f));
 
 	if (BeaconAlpha == 0)

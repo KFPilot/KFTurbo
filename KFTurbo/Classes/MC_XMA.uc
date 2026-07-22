@@ -30,7 +30,7 @@ defaultproperties
      NormalSpecialSquads(4)=(ZedClass=("KFTurbo.P_Fleshpound_XMA"))
      NormalSpecialSquads(5)=(ZedClass=("KFTurbo.P_Bloat_XMA","KFTurbo.P_Siren_XMA","KFTurbo.P_Fleshpound_XMA"))
      NormalSpecialSquads(6)=(ZedClass=("KFTurbo.P_Bloat_XMA","KFTurbo.P_Siren_XMA","KFTurbo.P_Fleshpound_XMA"))
-     LongSpecialSquads(4)=(ZedClass=("KFTurbo.P_Crawler_XMA","KFTurbo.P_Gorefast_XMA","KFTurbo.P_Stalker_XMA","P_Scrake_XMA"))
+     LongSpecialSquads(4)=(ZedClass=("KFTurbo.P_Crawler_XMA","KFTurbo.P_Gorefast_XMA","KFTurbo.P_Stalker_XMA","KFTurbo.P_Scrake_XMA"))
      LongSpecialSquads(6)=(ZedClass=("KFTurbo.P_Fleshpound_XMA"))
      LongSpecialSquads(7)=(ZedClass=("KFTurbo.P_Bloat_XMA","KFTurbo.P_Siren_XMA","KFTurbo.P_Fleshpound_XMA"))
      LongSpecialSquads(8)=(ZedClass=("KFTurbo.P_Bloat_XMA","KFTurbo.P_Siren_XMA","KFTurbo.P_Scrake_XMA","KFTurbo.P_Fleshpound_XMA"))

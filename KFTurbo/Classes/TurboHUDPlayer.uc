@@ -1106,7 +1106,7 @@ simulated final function DrawAlternativeAmmo(Canvas C, Vector2D RightAnchor)
 		TempX = BackplateCenterX;
 		TempY = BackplateCenterY - (BackplateTextSizeY * 0.25f);
 		C.SetPos(TempX - (BackplateTextSizeX * 0.4f), TempY - (BackplateTextSizeX * 0.375f));
-		C.DrawTileScaled(FlashlightIcon, (BackplateTextSizeX * 0.8f) / float(SyringeIcon.USize), (BackplateTextSizeX * 0.8f) / float(SyringeIcon.VSize));
+		C.DrawTileScaled(FlashlightIcon, (BackplateTextSizeX * 0.8f) / float(FlashlightIcon.USize), (BackplateTextSizeX * 0.8f) / float(FlashlightIcon.VSize));
 
 		//Draw current power.
 		FlashlightString = FillStringWithZeroes(int(FlashlightPower), 3);

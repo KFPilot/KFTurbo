@@ -56,18 +56,6 @@ function ActivateFreeArmor(TurboCardGameplayManager GameplayManager, TurboCard C
     Card.UpdateFlag(GameplayManager.FreeArmorFlag, bActivate);
 }
 
-function ActivateIncreaseSelectableCards(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
-{
-    if (bActivate)
-    {
-        GameplayManager.CardSelectionCountDelta.AddDelta(1, Card);
-    }
-    else
-    {
-        GameplayManager.CardSelectionCountDelta.RemoveDelta(Card);
-    }
-}
-
 function ActivateMaxAmmo(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
     if (bActivate)
@@ -452,7 +440,7 @@ function ActivateVagrant(TurboCardGameplayManager GameplayManager, TurboCard Car
 
 function ActivatePanicReload(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
-    Card.UpdateModifier(GameplayManager.PlayerLowAmmoWeaponReloadRateModifier, 1.2f, bActivate);
+    Card.UpdateModifier(GameplayManager.PlayerLowAmmoWeaponReloadRateModifier, 1.25f, bActivate);
 }
 
 function ActivatePressurizedMagazines(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)

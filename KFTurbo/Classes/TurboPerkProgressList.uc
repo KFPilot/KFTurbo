@@ -37,7 +37,7 @@ static final function UpdateFont(Canvas Canvas, TurboHUDKillingFloor TurboHUD, f
 	{
 		Canvas.Font = TurboHUD.LoadFont(5);
 	}
-	if (Height < 100)
+	else if (Height < 100)
 	{
 		Canvas.Font = TurboHUD.LoadFont(4);
 	}
@@ -97,14 +97,14 @@ function DrawPerk(Canvas Canvas, int CurIndex, float X, float Y, float Width, fl
     TempX += Width - (Padding * 4.f);
 
 	Canvas.SetDrawColor(255, 255, 255, 255);
-	Canvas.TextSize(RequirementProgressString[Index], TextSizeX, TextSizeY);
+	Canvas.TextSize(RequirementProgressString[CurIndex], TextSizeX, TextSizeY);
     Canvas.FontScaleX *= ((BarHeight * 1.1f) / TextSizeY);
     Canvas.FontScaleY = Canvas.FontScaleX;
-	Canvas.TextSize(RequirementProgressString[Index], TextSizeX, TextSizeY);
+	Canvas.TextSize(RequirementProgressString[CurIndex], TextSizeX, TextSizeY);
     TempX -= TextSizeX;
     TempY -= (TextSizeY * 0.05f);
 	Canvas.SetPos(TempX, TempY);
-    Canvas.DrawText(RequirementProgressString[Index]);
+    Canvas.DrawText(RequirementProgressString[CurIndex]);
 }
 
 defaultproperties

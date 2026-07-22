@@ -98,7 +98,7 @@ simulated final function TurboCard ResolveCardInstance(CardReference Reference)
         return EvilGameDeck.GetCardInstanceFromReference(Reference);
     }
 
-    Error("TurboCardReplicationInfo attempted to resolve a card instance for a reference that wasn't in a deck.");
+    Warn("TurboCardReplicationInfo attempted to resolve a card instance for a reference that wasn't in a deck.");
     return None;
 }
 

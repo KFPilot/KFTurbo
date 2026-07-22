@@ -91,7 +91,7 @@ function TakeDamage( int Damage, Pawn InstigatedBy, Vector Hitlocation, Vector M
             // Do nothing
         }
 		// Don't reduce the damage so much if its a high headshot damage weapon
-        else if( (bIsHeadShot && WeaponDamageType.default.HeadShotDamageMult >= 1.5) || (class<DamTypeCrossbuzzsaw>(DamageType) != None))
+        else if ((bIsHeadShot && WeaponDamageType != None && WeaponDamageType.default.HeadShotDamageMult >= 1.5) || class<DamTypeCrossbuzzsaw>(DamageType) != None)
 		{
 			Damage *= 0.75;
 		}

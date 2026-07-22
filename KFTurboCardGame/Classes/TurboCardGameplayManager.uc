@@ -206,7 +206,6 @@ var CardModifierStack PlayerKillsReloadMagazineModifier;
 //REPLACEMENT/SPAWNING
 var CardFlag WeakMonsterReplacementFlag;
 var CardFlag ScrakeMonsterReplacementFlag;
-var CardFlag HuskAmountBoostFlag;
 var CardFlag MonsterUpgradeFlag;
 
 //DAMAGE
@@ -2112,12 +2111,6 @@ defaultproperties
         OnFlagSetChanged=ScrakeMonsterReplacementFlagChanged
     End Object
     ScrakeMonsterReplacementFlag=CardFlag'ScrakeMonsterReplacementCardFlag'
-
-    Begin Object Name=HuskAmountBoostCardFlag Class=CardFlag
-        FlagID="HuskAmountBoost"
-        OnFlagSetChanged=HuskAmountBoostFlagChanged
-    End Object
-    HuskAmountBoostFlag=CardFlag'HuskAmountBoostCardFlag'
 
     Begin Object Name=MonsterUpgradeCardFlag Class=CardFlag
         FlagID="MonsterUpgrade"

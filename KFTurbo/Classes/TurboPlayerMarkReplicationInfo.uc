@@ -361,7 +361,13 @@ function Tick(float DeltaTime)
 
 simulated function bool AttemptTurboInteractionSetup(TurboPlayerController PlayerController)
 {
+    if (PlayerController == None)
+    {
+        return false;
+    }
+
     PlayerController.SetupTurboInteraction();
+
     return PlayerController.TurboInteraction != None && PlayerController.TurboChatInteraction != None;
 }
 

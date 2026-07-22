@@ -375,18 +375,18 @@ function ActivateRackEmUp(TurboCardGameplayManager GameplayManager, TurboCard Ca
 function ActivateTheLittleThings(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
     local int Index;
-    local TurboCard Card;
+    local TurboCard NewCard;
     Index = 0;
 
     if (bActivate)
     {
         while (Index < 5)
         {
-            Card = GameplayManager.GrantRandomGoodCard();
+            NewCard = GameplayManager.GrantRandomGoodCard();
 
-            if (Card != None)
+            if (NewCard != None)
             {
-                TheLittleThingsCardList[TheLittleThingsCardList.Length] = Card;
+                TheLittleThingsCardList[TheLittleThingsCardList.Length] = NewCard;
             }
 
             Index++;

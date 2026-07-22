@@ -891,11 +891,14 @@ exec function ServerDebugSpawnFriend()
 		break;
 	}
 
-
 	Soldier = Spawn(class'TurboHumanBot');
 	Soldier.PlayerReplicationInfo.Team.TeamIndex = PlayerReplicationInfo.Team.TeamIndex;
 	Soldier.GiveWeapon("KFTurbo.W_Shotgun_Weap");
-	TeamAI.AddSquadWithLeader(Soldier.Controller, None);
+
+	if (TeamAI != None)
+	{
+	    TeamAI.AddSquadWithLeader(Soldier.Controller, None);
+	}
 }
 
 exec function AdminSetTraderTime(int Time)
