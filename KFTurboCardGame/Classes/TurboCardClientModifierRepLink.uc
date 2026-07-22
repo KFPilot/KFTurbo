@@ -50,7 +50,7 @@ simulated function PostBeginPlay()
     {
         FogManagerActor = class'FogManager'.static.GetOrCreateFogManager(Self);
     }
-    
+
     CollectAllPhysicsVolumes();
     UpdateBlackout();
 }
@@ -103,11 +103,11 @@ simulated function UpdatePhysicsVolumes()
     }
 }
 
-simulated function ModifyMonster(KFMonster Monster) 
+simulated function ModifyMonster(KFMonster Monster)
 {
     Super.ModifyMonster(Monster);
 
-    if (MonsterHeadSizeModifier != 1.f) 
+    if (MonsterHeadSizeModifier != 1.f)
     {
         ApplyHeadSizeModification(Monster);
     }
@@ -143,7 +143,7 @@ simulated function ModifyStalker(P_Stalker Monster)
 simulated function OnWeaponChange(KFWeapon CurrentWeapon, KFWeapon PendingWeapon)
 {
     Super.OnWeaponChange(CurrentWeapon, PendingWeapon);
-    
+
     ApplyEquipSpeedModifier(PendingWeapon);
 }
 
@@ -167,18 +167,18 @@ simulated function UpdateWeaponEquipSpeed()
     {
         return;
     }
-    
+
     Pawn = PlayerController.Pawn;
 
     if (Pawn == None)
     {
         return;
     }
-    
+
     for (Inv = Pawn.Inventory; Inv != None; Inv = Inv.Inventory)
     {
         ApplyEquipSpeedModifier(KFWeapon(Inv));
-    }    
+    }
 }
 
 simulated final function ApplyEquipSpeedModifier(KFWeapon Weapon)
@@ -190,13 +190,13 @@ simulated final function ApplyEquipSpeedModifier(KFWeapon Weapon)
 
     Weapon.BringUpTime = Weapon.default.BringUpTime * WeaponBringUpSpeedModifier;
     Weapon.SelectAnimRate = Weapon.default.SelectAnimRate / WeaponBringUpSpeedModifier;
-    
+
     Weapon.PutDownTime = Weapon.default.PutDownTime * WeaponPutDownSpeedModifier;
     Weapon.PutDownAnimRate = Weapon.default.PutDownAnimRate / WeaponPutDownSpeedModifier;
 
     if (Weapon.bDualWeapon && Level.TimeDilation < 0.75f)
     {
-        Weapon.PutDownTime *= ZedTimeWeaponBringUpSpeedModifier;
+        Weapon.BringUpTime *= ZedTimeWeaponBringUpSpeedModifier;
         Weapon.SelectAnimRate /= ZedTimeWeaponBringUpSpeedModifier;
 
         Weapon.PutDownTime *= ZedTimeWeaponPutDownSpeedModifier;
@@ -212,7 +212,7 @@ simulated function UpdateBlackout()
     }
 
     bLastKnownBlackout = bBlackout;
-    
+
     if (bBlackout)
     {
         FogManagerActor.SetFog(class'HUD'.default.BlackColor, -16.f, 1000.f, 1.f);

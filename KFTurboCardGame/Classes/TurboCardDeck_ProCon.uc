@@ -106,16 +106,8 @@ function ActivateBriskPace(TurboCardGameplayManager GameplayManager, TurboCard C
 
 function ActivateSpecialization(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
-    if (bActivate)
-    {
-        GameplayManager.PlayerOnPerkDamageModifier.AddModifier(1.05f, Card);
-        GameplayManager.PlayerOffPerkDamageModifier.AddModifier(1.05f, Card);
-    }
-    else
-    {
-        GameplayManager.PlayerOnPerkDamageModifier.RemoveModifier(Card);
-        GameplayManager.PlayerOffPerkDamageModifier.RemoveModifier(Card);
-    }
+    Card.UpdateModifier(GameplayManager.PlayerOnPerkDamageModifier, 1.05f, bActivate);
+    Card.UpdateModifier(GameplayManager.PlayerOffPerkDamageModifier, 0.85f, bActivate);
 }
 
 function ActivatePrecisionExplosives(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
@@ -491,8 +483,11 @@ function ActivateRiskyRegen(TurboCardGameplayManager GameplayManager, TurboCard 
 
 function ActivateSoulForASoul(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
-    GameplayManager.RemoveRandomSuperCard();
-    GameplayManager.RemoveRandomEvilCard();
+    if (bActivate)
+    {
+        GameplayManager.RemoveRandomSuperCard();
+        GameplayManager.RemoveRandomEvilCard();
+    }
 }
 
 function ActivateDilutedHeal(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
@@ -504,19 +499,19 @@ function ActivateDilutedHeal(TurboCardGameplayManager GameplayManager, TurboCard
 
 function ActivateVolatileDamage(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
-    Card.UpdateModifier(GameplayManager.CriticalHitChanceModifier, 0.1f, bActivate);
-    Card.UpdateModifier(GameplayManager.PlayerDamageModifier, 0.95f, bActivate);
+    Card.UpdateModifier(GameplayManager.CriticalHitChanceModifier, 0.15f, bActivate);
+    Card.UpdateModifier(GameplayManager.PlayerDamageModifier, 0.9f, bActivate);
 }
 
 function ActivateCriticalAmmo(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
-    Card.UpdateModifier(GameplayManager.CriticalHitChanceModifier, 0.15f, bActivate);
-    Card.UpdateModifier(GameplayManager.PlayerMagazineAmmoModifier, 0.9f, bActivate);
+    Card.UpdateModifier(GameplayManager.CriticalHitChanceModifier, 0.1f, bActivate);
+    Card.UpdateModifier(GameplayManager.PlayerMagazineAmmoModifier, 0.95f, bActivate);
 }
 
 function ActivateCriticalCaution(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
-    Card.UpdateModifier(GameplayManager.CriticalHitChanceModifier, 0.25f, bActivate);
+    Card.UpdateModifier(GameplayManager.CriticalHitChanceModifier, 0.15f, bActivate);
     Card.UpdateModifier(GameplayManager.FriendlyFireModifier, 0.05f, bActivate);
 }
 
@@ -535,6 +530,7 @@ function ActivateSomething(TurboCardGameplayManager GameplayManager, TurboCard C
 {
     local TurboCard RandomCard;
 
+    log("Activating Card Something. Selecting random card.", 'KFTurboCardGame');
     if (bActivate)
     {
         RandomCard = DrawRandomCard();
@@ -561,8 +557,8 @@ function ActivateSomething(TurboCardGameplayManager GameplayManager, TurboCard C
             return;
         }
 
-        log("- Removing activated card"@RandomCard.CardID@"was selected. Deactivating card now.", 'KFTurboCardGame');
         RandomCard = SomethingCardList[SomethingCardList.Length - 1];
+        log("- Removing activated card"@RandomCard.CardID@"was selected. Deactivating card now.", 'KFTurboCardGame');
         SomethingCardList.Length = SomethingCardList.Length - 1;
         RandomCard.OnActivateCard(GameplayManager, RandomCard, false);
     }

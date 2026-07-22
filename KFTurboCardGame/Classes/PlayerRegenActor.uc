@@ -6,14 +6,6 @@ class PlayerRegenActor extends Engine.Info;
 var float RegenInterval;
 var int RegenAmount;
 
-struct BleedEntry
-{
-    var KFHumanPawn Pawn;
-    var float NextBleedTime;
-    var int BleedCount;
-};
-var array<BleedEntry> BleedList;
-
 function PostBeginPlay()
 {
     Super.PostBeginPlay();

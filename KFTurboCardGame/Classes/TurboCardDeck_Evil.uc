@@ -113,11 +113,6 @@ function ActivateCashSlowsPlayers(TurboCardGameplayManager GameplayManager, Turb
     Card.UpdateFlag(GameplayManager.PlayerGreedSlowsFlag, bActivate);
 }
 
-function ActivateSuperSlowPlayers(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
-{
-    Card.UpdateModifier(GameplayManager.PlayerMovementSpeedModifier, 0.2f, bActivate);
-}
-
 function ActivateFreezeTag(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
     Card.UpdateFlag(GameplayManager.PlayerFreezeTagFlag, bActivate);

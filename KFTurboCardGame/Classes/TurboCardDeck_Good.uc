@@ -447,7 +447,7 @@ function ActivatePerfectionist(TurboCardGameplayManager GameplayManager, TurboCa
 
 function ActivateVagrant(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
-    Card.UpdateModifier(GameplayManager.PlayerLowWeightMovementSpeedModifier, 1.2f, bActivate);
+    Card.UpdateModifier(GameplayManager.PlayerLowWeightMovementSpeedModifier, 1.15f, bActivate);
 }
 
 function ActivatePanicReload(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)

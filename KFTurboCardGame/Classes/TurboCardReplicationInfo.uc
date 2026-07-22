@@ -164,7 +164,7 @@ simulated function Tick(float DeltaTime)
     if (Level.GetLocalPlayerController() != None)
     {
         if (TurboCardOverlay == None)
-        { 
+        {
             AddOverlay(Level.GetLocalPlayerController());
         }
 
@@ -182,7 +182,7 @@ simulated function SetupTurboCardInteraction()
     {
         return;
     }
-    
+
     TurboCardInteraction = TurboCardInteraction(Level.GetLocalPlayerController().Player.InteractionMaster.AddInteraction("KFTurboCardGame.TurboCardInteraction", Level.GetLocalPlayerController().Player));
 
     if (TurboCardInteraction != None)
@@ -299,7 +299,7 @@ simulated function CheckForSelectableCardUpdates()
     {
         return;
     }
-    
+
     bCurrentlyVoting = bHasSelectableCards;
     OnSelectableCardsUpdated(Self);
 }
@@ -464,7 +464,7 @@ function SelectCard(TurboCard SelectedCard, optional bool bFromVote)
     {
         return;
     }
-    
+
     if (SelectedCard == None)
     {
         return;
@@ -474,7 +474,7 @@ function SelectCard(TurboCard SelectedCard, optional bool bFromVote)
     {
         SendVoteResult(SelectedCard);
     }
-    
+
     for (Index = 0; Index < ArrayCount(ActiveCardList); Index++)
     {
         if (ResolveCard(ActiveCardList[Index]) != None)
@@ -492,7 +492,7 @@ function SelectCard(TurboCard SelectedCard, optional bool bFromVote)
 
     log("Executing OnActivateCard delegate for"@SelectedCard.CardID, 'KFTurboCardGame');
     SelectedCard.OnActivateCard(OwnerMutator.TurboCardGameplayManagerInfo, SelectedCard, true);
-    
+
     ForceNetUpdate();
     CheckForActiveCardUpdates();
 }
@@ -597,7 +597,7 @@ function StartSelection(int WaveNumber)
         {
             Deck = ProConGameDeck;
         }
-        else 
+        else
         {
             Deck = GoodGameDeck;
         }
@@ -615,7 +615,7 @@ function StartSelection(int WaveNumber)
         log ("- Selected Card:"@Count@AuthSelectableCardList[Count].CardName[0]);
         Count--;
     }
-    
+
     SelectionUpdateCounter++;
     CheckForSelectableCardUpdates();
     ForceNetUpdate();
@@ -637,7 +637,7 @@ function array<TurboCard_Super> GetActiveSuperCardList(optional bool bCheckCanDe
             break;
         }
 
-        if (bCheckCanDeactivate && ActiveCardInstanceList[Index].bCanBeDeactivated)
+        if (bCheckCanDeactivate && !ActiveCardInstanceList[Index].bCanBeDeactivated)
         {
             continue;
         }
@@ -703,7 +703,7 @@ function RemoveActiveCard(TurboCard Card)
     {
         return;
     }
-    
+
     log("Attempting to remove card"@Card.CardID$".", 'KFTurboCardGame');
 
     bRemovedCard = false;
@@ -733,7 +733,7 @@ function RemoveActiveCard(TurboCard Card)
     //If there are no cards after the one we removed, return.
     if (Index >= (ArrayCount(ActiveCardInstanceList) - 1) || ActiveCardInstanceList[Index + 1] == None)
     {
-        return;    
+        return;
     }
 
     log("- Shifting cards down one index.", 'KFTurboCardGame');
@@ -826,7 +826,7 @@ function DeactivateRandomSuperCard()
 {
     local array<TurboCard_Super> ActiveSuperCardList;
     ActiveSuperCardList = GetActiveSuperCardList(false); //Let the random super we deactivate have bCanBeDeactivated be false as a "lucky" deactivation.
-    
+
     if (ActiveSuperCardList.Length == 0)
     {
         return;
@@ -857,7 +857,7 @@ function ResetDecksAndReRollCards(optional TurboCard TopCard)
     local int NumEvil;
     local int NumGood;
     local int NumProCon;
-    
+
     local CardReference EmptyReference;
     EmptyReference.Deck = None;
     EmptyReference.CardIndex = -1;
@@ -946,7 +946,7 @@ function ResetDecksAndReRollCards(optional TurboCard TopCard)
         SelectCard(SuperGameDeck.DrawRandomCard());
         NumSuper--;
     }
-    
+
     bIsPerformingReRoll = false;
 }
 
@@ -960,7 +960,7 @@ function RemoveAllCards()
         {
             continue;
         }
-        
+
         ActiveCardInstanceList[Index].OnActivateCard(OwnerMutator.TurboCardGameplayManagerInfo, ActiveCardInstanceList[Index], false);
         ActiveCardInstanceList[Index] = None;
         ActiveCardList[Index] = EmptyReference;
@@ -1028,7 +1028,7 @@ function OnSelectionTimeEnd()
 
     TopVotedCount = 1;
 
-    //Voting is done via 1-based indexing but the selectable card array and the vote tally array are 0-based so index conversion is done during tally. 
+    //Voting is done via 1-based indexing but the selectable card array and the vote tally array are 0-based so index conversion is done during tally.
     for (Index = 0; Index < Level.GRI.PRIArray.Length; Index++)
     {
         if (Level.GRI.PRIArray[Index].bOnlySpectator)
@@ -1086,7 +1086,7 @@ function OnSelectionTimeEnd()
         {
             SelectCard(AuthSelectableCardList[TiedVotingList[Rand(TiedVotingList.Length)]], true);
         }
-        else 
+        else
         {
             SelectRandomCard();
         }
@@ -1102,7 +1102,7 @@ function ResetPlayerVotes()
     local int Index;
     local CardGamePlayerReplicationInfo CardLRI;
 
-    //Voting is done via 1-based indexing but the selectable card array and the vote tally array are 0-based so index conversion is done during tally. 
+    //Voting is done via 1-based indexing but the selectable card array and the vote tally array are 0-based so index conversion is done during tally.
     for ( Index = 0; Index < Level.GRI.PRIArray.Length; Index++)
     {
         CardLRI = class'CardGamePlayerReplicationInfo'.static.GetCardGameLRI(Level.GRI.PRIArray[Index]);
@@ -1179,7 +1179,7 @@ function DebugActivateCard(string CardID)
         if (Card == None)
         {
             Card = ProConGameDeck.FindCardByCardID(CardID);
-    
+
             if (Card == None)
             {
                 Card = EvilGameDeck.FindCardByCardID(CardID);
@@ -1225,7 +1225,7 @@ defaultproperties
 {
     bAlwaysRelevant=true
     bNetNotify=true
-    
+
     NetUpdateFrequency=0.25
     SelectionCount=3
     GoodSelectionDelta=0

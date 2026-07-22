@@ -73,7 +73,7 @@ replication
     reliable if(bNetDirty && Role == ROLE_Authority)
         FireRateMultiplier, MeleeFireRateMultiplier, ZedTimeDualPistolFireRateMultiplier, BerserkerFireRateMultiplier, FirebugFireRateMultiplier, HighAmmoFireRateMultiplier,
         ReloadRateMultiplier, ZedTimeDualWeaponReloadRateMultiplier, CommandoReloadRateMultiplier, LowAmmoReloadRateMultiplier,
-        MagazineAmmoMultiplier, CommandoMagazineAmmoMultiplier, MedicMagazineAmmoMultiplier,
+        MagazineAmmoMultiplier, DualWeaponMagazineAmmoMultiplier, CommandoMagazineAmmoMultiplier, MedicMagazineAmmoMultiplier,
         MaxAmmoMultiplier, CommandoMaxAmmoMultiplier, MedicMaxAmmoMultiplier, GrenadeMaxAmmoMultiplier,
         WeaponPenetrationMultiplier,
         WeaponSpreadRecoilMultiplier, ShotgunSpreadRecoilMultiplier,
@@ -233,7 +233,7 @@ simulated function float GetMaxAmmoMultiplier(KFPlayerReplicationInfo KFPRI, cla
     return Super.GetMaxAmmoMultiplier(KFPRI, AmmoType) * Multiplier;
 }
 
-simulated function float GetCommandoMaxAmmoMultiplier(KFPlayerReplicationInfo KFPRI, class<Ammunition> AmmoType) { return Super.GetCommandoMaxAmmoMultiplier(KFPRI, AmmoType) * CommandoMagazineAmmoMultiplier; }
+simulated function float GetCommandoMaxAmmoMultiplier(KFPlayerReplicationInfo KFPRI, class<Ammunition> AmmoType) { return Super.GetCommandoMaxAmmoMultiplier(KFPRI, AmmoType) * CommandoMaxAmmoMultiplier; }
 simulated function float GetMedicMaxAmmoMultiplier(KFPlayerReplicationInfo KFPRI, class<Ammunition> AmmoType) { return Super.GetMedicMaxAmmoMultiplier(KFPRI, AmmoType) * MedicMaxAmmoMultiplier; }
 
 simulated function float GetWeaponPenetrationMultiplier(KFPlayerReplicationInfo KFPRI, WeaponFire Other) { return Super.GetWeaponPenetrationMultiplier(KFPRI, Other) * WeaponPenetrationMultiplier; }
@@ -290,7 +290,7 @@ simulated function float GetPlayerMovementSpeedMultiplier(KFPlayerReplicationInf
 
         if (bFreezePlayersDuringWave)
         {
-            if (KFGRI != None && KFGRI.bWaveInProgress)
+            if (KFGRI != None && KFGRI.bWaveInProgress && Pawn != None)
             {
                 Multiplier *= CardCustomInfo.UpdateFreezeTagMoveSpeed(KFWeapon(Pawn.Weapon));
             }

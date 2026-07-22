@@ -299,7 +299,7 @@ function OnNextSpawnSquadGenerated(out array < class<KFMonster> > NextSpawnSquad
 {
     local int SquadIndex;
 
-    if (!HuskAmountBoostFlag.IsFlagSet() && !WeakMonsterReplacementFlag.IsFlagSet() && !ScrakeMonsterReplacementFlag.IsFlagSet() && !MonsterUpgradeFlag.IsFlagSet())
+    if (!WeakMonsterReplacementFlag.IsFlagSet() && !ScrakeMonsterReplacementFlag.IsFlagSet() && !MonsterUpgradeFlag.IsFlagSet())
     {
         return;
     }
@@ -580,7 +580,7 @@ function TemporalAnomalyFlagChanged(CardFlag Flag, bool bIsEnabled)
     {
         foreach DynamicActors(class'TemporalAnomalyActor', Actor)
         {
-            Actor.Destroyed();
+            Actor.Destroy();
         }
     }
 }
@@ -1661,7 +1661,7 @@ defaultproperties
         ModifierStackID="PlayerOnPerkDamage"
         OnModifierChanged=PlayerOnPerkDamageModifierChanged
     End Object
-    PlayerOnPerkDamageModifier=CardModifierStack'PlayerFireDamageModifierStack'
+    PlayerOnPerkDamageModifier=CardModifierStack'PlayerOnPerkDamageModifierStack'
 
     Begin Object Name=PlayerOffPerkDamageModifierStack Class=CardModifierStack
         ModifierStackID="PlayerOffPerkDamage"

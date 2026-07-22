@@ -22,7 +22,7 @@ function Initialize(Material NewMaterial, float OscillationMultiplier, TurboHUDO
         OscillationAmplitude.Pitch *= 0.5f;
         OscillationAmplitude.Yaw *= 0.5f;
         UOffset = 512.f;
-        UOffset = 1024.f;
+        VOffset = 1024.f;
     }
 }
 

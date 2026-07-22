@@ -43,7 +43,7 @@ final function SetPrecisionChainEnabled(bool bEnabled)
 {
     bPrecisionChainEnabled = bEnabled;
 
-    if (PrecisionChainActor == None)
+    if (bEnabled && PrecisionChainActor == None)
     {
         PrecisionChainActor = Spawn(class'PrecisionChainManager', Self);
     }
@@ -60,6 +60,12 @@ final function PlayerFire(TurboPlayerController Player, WeaponFire FireMode)
 {
     local TurboPlayerCardCustomInfo PlayerCardCustomInfo;
     PlayerCardCustomInfo = FindCardCustomInfo(Player);
+
+    if (PlayerCardCustomInfo == None)
+    {
+        return;
+    }
+
     PlayerCardCustomInfo.PlayerFire(Player, FireMode);
 
     if (bTossGrenadeBuff && W_Frag_Fire(FireMode) != None)
@@ -72,6 +78,7 @@ final function PlayerFireHit(TurboPlayerController Player, WeaponFire FireMode, 
 {
     local TurboPlayerCardCustomInfo CardCustomInfo;
 
+    //Do not consider precision chain headshots as player headshots.
     if (bPrecisionChainEnabled && PrecisionChainActor.bProcessingChainList)
     {
         return;
@@ -82,8 +89,7 @@ final function PlayerFireHit(TurboPlayerController Player, WeaponFire FireMode, 
         CardCustomInfo = FindCardCustomInfo(Player);
     }
 
-    //Do not consider precision chain headshots as player headshots.
-    if (bHeadshot)
+    if (bHeadshot && CardCustomInfo != None)
     {
         if (bRackEmUpEnabled)
         {

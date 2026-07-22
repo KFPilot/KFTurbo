@@ -476,7 +476,7 @@ simulated function bool ReceivedKeyEvent(Interactions.EInputKey Key, Interaction
 	switch(Key)
 	{
 		case IK_MouseWheelUp:
-			CardIndexToDisplay = (CardIndexToDisplay - 1) % ActiveCardRenderActorList.Length;
+			CardIndexToDisplay = Abs((CardIndexToDisplay - 1) % ActiveCardRenderActorList.Length);
 			return true;
 		case IK_MouseWheelDown:
 			CardIndexToDisplay = (CardIndexToDisplay + 1) % ActiveCardRenderActorList.Length;

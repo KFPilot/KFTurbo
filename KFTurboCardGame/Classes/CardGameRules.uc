@@ -599,8 +599,6 @@ function MonsterNetDamage(out float DamageMultiplier, KFMonster Injured, Pawn In
         {
             ForceFlipOver(Injured);
         }
-
-
     }
 }
 
@@ -1189,7 +1187,7 @@ final function ForceFlipOver(KFMonster Monster)
         return;
     }
 
-	if (Physics == PHYS_Falling)
+	if (Monster.Physics == PHYS_Falling)
 	{
 		Monster.SetPhysics(PHYS_Walking);
 	}

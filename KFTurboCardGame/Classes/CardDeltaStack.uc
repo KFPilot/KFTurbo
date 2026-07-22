@@ -66,7 +66,7 @@ final function AddDelta(int Delta, TurboCard Card)
         ID = Card.CardID;
     }
 
-    log(DeltaStackID$": Adding delta"@Delta@"applied by"@Card.CardID@".", 'KFTurboCardGame');
+    log(DeltaStackID$": Adding delta"@Delta@"applied by"@ID@".", 'KFTurboCardGame');
     DeltaList.Length = DeltaList.Length + 1;
     DeltaList[DeltaList.Length - 1].ID = Card.CardID;
     DeltaList[DeltaList.Length - 1].Delta = Delta;
@@ -75,8 +75,10 @@ final function AddDelta(int Delta, TurboCard Card)
 
 final function RemoveDelta(TurboCard Card)
 {
+local string ID;
     local int Index;
 
+    ID = "NONE";
     if (Card == None)
     {
         return;
@@ -84,9 +86,9 @@ final function RemoveDelta(TurboCard Card)
 
     for (Index = DeltaList.Length - 1; Index >= 0; Index--)
     {
-        if (DeltaList[Index].ID == Card.CardID)
+        if (DeltaList[Index].ID == ID)
         {
-            log(DeltaStackID$": Removing delta applied by"@Card.CardID@".", 'KFTurboCardGame');
+            log(DeltaStackID$": Removing delta applied by"@ID@".", 'KFTurboCardGame');
             DeltaList.Remove(Index, 1);
             UpdateDeltaChange();
             return;

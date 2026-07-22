@@ -64,7 +64,7 @@ function AddBosses()
     {
         Score = KFGT.ZedSpawnList[Index].RateZombieVolume(KFGT, KFGT.LastSpawningVolume, None, false, true);
         KFGT.ZedSpawnList[Index].LastFailedSpawnTime = Level.TimeSeconds;
-        
+
         if (Score < 0.f)
         {
             continue;
@@ -104,7 +104,7 @@ function AddBosses()
             break;
         }
     }
- 
+
     foreach DynamicActors(class'ZombieBoss', ZombieBoss)
     {
         if (!ZombieBoss.IsInState('MakingEntrance'))
@@ -246,7 +246,7 @@ function ForceAReload()
 {
     local TurboHumanPawn HumanPawn;
     local array<TurboHumanPawn> HumanPawnList;
-    
+
     HumanPawnList = class'TurboGameplayHelper'.static.GetPlayerPawnList(Level);
 
     if (HumanPawnList.Length == 0)
@@ -281,7 +281,7 @@ function ForceDropCash()
     {
         return;
     }
-    
+
     HumanPawn.TossCash(666);
 }
 
@@ -301,8 +301,8 @@ function KillRandomMonster()
     }
 
     MonsterTier = class'PawnHelper'.static.GetMonsterTier(SelectedMonster.Class);
-    
-    if (MonsterTier <= Special)
+
+    if (MonsterTier > Special)
     {
         return;
     }

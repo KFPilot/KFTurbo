@@ -24,7 +24,7 @@ simulated function PostBeginPlay()
     {
         return;
     }
-    
+
     SetTimer(0.1f, false);
 }
 
@@ -70,7 +70,7 @@ simulated final function float GetBorrowedTimeRemaining()
     {
         return -1.f;
     }
-    
+
     return ServerTimeActor.GetServerTimeSecondsUntil(BorrowedTimeEnd);
 }
 
@@ -78,6 +78,7 @@ function StartBorrowedTime()
 {
     BorrowedTimeStart = Level.TimeSeconds;
     BorrowedTimeEnd = BorrowedTimeStart + GetWaveBorrowedTime();
+    bHasExecutedBorrowedTime = false;
     ForceNetUpdate();
 }
 

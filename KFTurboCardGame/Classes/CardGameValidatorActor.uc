@@ -64,7 +64,6 @@ function bool RunIndividualCardValidation()
     local int PassCount, FailCount;
     local TurboCard Card;
 
-    return true;
     PassCount = 0;
     FailCount = 0;
 
