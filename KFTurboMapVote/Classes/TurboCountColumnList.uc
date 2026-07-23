@@ -5,7 +5,7 @@ var TurboVotingReplicationInfo TurboVRI;
 function InitComponent(GUIController MyController, GUIComponent MyOwner)
 {
     Super.InitComponent(MyController,MyOwner);
-	
+
 	UpdateFontScale();
 }
 
@@ -73,6 +73,26 @@ function DrawItem(Canvas Canvas, int i, float X, float Y, float W, float H, bool
 	GetCellLeftWidth( 3, CellLeft, CellWidth );
 	DrawStyle.DrawText( Canvas, MenuState, CellLeft, Y, CellWidth, H, TXTA_Left, KFVotingReplicationInfo(VRI).RepArray[VRI.MapVoteCount[SortData[i].SortItem].MapIndex], FontScale);
 }
+
+function string GetSortString( int i )
+{
+    local int GameIndex, DifficultyIndex;
+	local string ColumnData[5];
+
+	class'TurboVotingHandler'.static.Decode(VRI.MapVoteCount[i].GameConfigIndex, GameIndex, DifficultyIndex);
+	ColumnData[0] = left(Caps(VRI.GameConfig[GameIndex].GameName) $ " - " $ TurboVRI.GetDifficultyName(DifficultyIndex),15);
+	ColumnData[1] = left(Caps(VRI.MapList[VRI.MapVoteCount[i].MapIndex].MapName),20);
+	ColumnData[2] = right("0000" $ VRI.MapVoteCount[i].VoteCount,4);
+	ColumnData[3] = KFVotingReplicationInfo(VRI).RepArray[VRI.MapVoteCount[i].MapIndex];
+
+	if (Left(ColumnData[3],1) == Chr(0x1B))
+	{
+		ColumnData[3] = Mid(ColumnData[3],4); // Remove color code from sorting.
+	}
+
+	return ColumnData[SortColumn] $ ColumnData[PrevSortColumn];
+}
+
 
 defaultproperties
 {

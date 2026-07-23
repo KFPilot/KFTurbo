@@ -224,15 +224,17 @@ simulated function Render(Canvas C)
 		return;
 	}
 
+	class'TurboHUDKillingFloor'.static.ResetCanvas(C);
+
 	if (!bIsTestGameMode  && !bIsGameOver)
 	{
-		class'TurboHUDKillingFloor'.static.ResetCanvas(C);
-
 		DrawGameData(C);
 
 		class'TurboHUDKillingFloor'.static.ResetCanvas(C);
 
 		DrawWaveData(C);
+
+		class'TurboHUDKillingFloor'.static.ResetCanvas(C);
 	}
 
 	DrawKillFeed(C);
@@ -242,9 +244,9 @@ simulated function Render(Canvas C)
 	if ((BossData.BossMonster != None || BossData.PlayOutRatio > 0.f) && BossData.PlayOutRatio < 1.f)
 	{
 		DrawBossHealthBar(C);
-	}
 
-	class'TurboHUDKillingFloor'.static.ResetCanvas(C);
+		class'TurboHUDKillingFloor'.static.ResetCanvas(C);
+	}
 
 	DrawVoteInstance(C);
 

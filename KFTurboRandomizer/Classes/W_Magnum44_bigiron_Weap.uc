@@ -9,6 +9,16 @@ simulated function PostBeginPlay()
      SetBoneScale(2, 2.0f, 'Revolver');
 }
 
+function bool HandlePickupQuery( pickup Item )
+{
+	return Super(KFWeapon).HandlePickupQuery(Item);
+}
+
+simulated function bool PutDown()
+{
+	return Super(KFWeapon).PutDown();
+}
+
 defaultproperties
 {
      FireModeClass(0)=Class'KFTurboRandomizer.W_Magnum44_bigiron_Fire'

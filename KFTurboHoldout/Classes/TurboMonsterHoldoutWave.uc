@@ -54,7 +54,7 @@ function InitializeForWave(int Wave)
 
      MaxMonsters = default.MaxMonsters;
      TotalMonsters = default.TotalMonsters;
-     
+
      WaveDifficulty = default.WaveDifficulty;
      NextSquadSpawnTime = default.NextSquadSpawnTime;
 
@@ -62,7 +62,7 @@ function InitializeForWave(int Wave)
      MinMixInSquadCount = default.MinMixInSquadCount;
      MaxMixInSquadCount = default.MaxMixInSquadCount;
      BeatSize = default.BeatSize;
-     
+
      ScoreMultiplier = default.ScoreMultiplier;
 
      if (Wave == 1)
@@ -136,7 +136,7 @@ function InitializeForWave(int Wave)
      {
           MinMixInSquadCount++;
           MaxMixInSquadCount++;
-          
+
           MixInSquad[MixInInsertIndex++] = SquadList[ESquadIndex.Wave11Squad];
      }
 
@@ -153,7 +153,7 @@ function InitializeForWave(int Wave)
      {
           MinMixInSquadCount++;
           MaxMixInSquadCount++;
-          
+
           MixInSquad[MixInInsertIndex++] = SquadList[ESquadIndex.Wave11Squad];
      }
 
@@ -169,6 +169,11 @@ function InitializeForWave(int Wave)
 
 final function TryAddRegularSquad(int Wave, out int InsertIndex, int StartWave, int Interval, TurboMonsterSquad Squad)
 {
+    if (InsertIndex >= ArrayCount(RegularSquad))
+    {
+        return;
+    }
+
      if (Wave < StartWave)
      {
           return;
@@ -265,7 +270,7 @@ defaultproperties
      SquadList(6)=TurboMonsterSquad'Wave15Squad'
 
      MaxMonsters=8
-     TotalMonsters=8    
+     TotalMonsters=8
 
      WaveDifficulty=1.f
      NextSquadSpawnTime=1.f

@@ -54,7 +54,7 @@ function PerformPurchase(Pawn EventInstigator)
 	{
 		return;
 	}
-	
+
 	EventInstigator.PlayerReplicationInfo.Score -= AmmoPrice;
 	PlayerController(EventInstigator.Controller).ClientPlaySound(Sound'KF_InventorySnd.Ammo_GenericPickup');
 
@@ -63,7 +63,12 @@ function PerformPurchase(Pawn EventInstigator)
 
 simulated function Timer()
 {
-	if (TargetPawn == None || !NeedsAmmo(TargetPawn))
+    if (TargetPawn == None)
+    {
+        return;
+    }
+
+	if (!NeedsAmmo(TargetPawn))
 	{
 		SetTimer(0.5f, false);
 		return;
@@ -81,7 +86,7 @@ simulated function bool NeedsAmmo(Pawn Pawn)
 
 	KFPRI = KFPlayerReplicationInfo(Pawn.PlayerReplicationInfo);
 	Inv = Pawn.Inventory;
-	
+
 	while (Inv != None)
 	{
 		Ammo = KFAmmunition(Inv);
@@ -93,12 +98,12 @@ simulated function bool NeedsAmmo(Pawn Pawn)
 		}
 
 		MaxAmmo = Ammo.default.MaxAmmo;
-		
+
 		if (KFPRI != None && KFPRI.ClientVeteranSkill != None)
 		{
 			MaxAmmo = MaxAmmo * KFPRI.ClientVeteranSkill.static.AddExtraAmmoFor(KFPRI, Ammo.Class);
 		}
-	
+
 		if (Ammo.AmmoAmount < MaxAmmo)
 		{
 			return true;
@@ -106,7 +111,7 @@ simulated function bool NeedsAmmo(Pawn Pawn)
 
 		Inv = Inv.Inventory;
 	}
-	
+
 	return false;
 }
 
@@ -123,7 +128,7 @@ function bool GrantAmmo(Pawn Pawn)
 
 	KFPRI = KFPlayerReplicationInfo(Pawn.PlayerReplicationInfo);
 	Inv = Pawn.Inventory;
-	
+
 	while (Inv != None)
 	{
 		if (BoomStick(Inv) != None)
@@ -140,12 +145,12 @@ function bool GrantAmmo(Pawn Pawn)
 		}
 
 		MaxAmmo = Ammo.default.MaxAmmo;
-		
+
 		if (KFPRI != None && KFPRI.ClientVeteranSkill != None)
 		{
 			MaxAmmo = MaxAmmo * KFPRI.ClientVeteranSkill.static.AddExtraAmmoFor(KFPRI, Ammo.Class);
 		}
-	
+
 		if (Ammo.AmmoAmount < MaxAmmo)
 		{
 			Ammo.AmmoAmount = MaxAmmo;
@@ -154,7 +159,7 @@ function bool GrantAmmo(Pawn Pawn)
 
 		Inv = Inv.Inventory;
 	}
-	
+
 	if (bGrantedAmmo)
 	{
 		if (HuntingShotgun != None)

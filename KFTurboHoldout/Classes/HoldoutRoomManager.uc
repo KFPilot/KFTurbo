@@ -31,31 +31,43 @@ simulated function Setup()
 	}
 
 	bIsInitialized = true;
-	
-	foreach AllActors(class'HoldoutPurchaseRoomTrigger', RoomTrigger, PurchaseTriggerTag)
+
+	if (PurchaseTriggerTag != 'None')
 	{
-		PurchaseTriggerList[PurchaseTriggerList.Length] = RoomTrigger;
-		RoomTrigger.RegisterManager(Self);
+    	foreach AllActors(class'HoldoutPurchaseRoomTrigger', RoomTrigger, PurchaseTriggerTag)
+    	{
+    		PurchaseTriggerList[PurchaseTriggerList.Length] = RoomTrigger;
+    		RoomTrigger.RegisterManager(Self);
+    	}
 	}
 
-	for (Index = 0; Index < DoorTagList.Length; Index++)
-	{
-		foreach AllActors(class'HoldoutDoor', Door, DoorTagList[Index])
-		{
-			DoorList[DoorList.Length] = Door;
-		}
-	}
+   	for (Index = 0; Index < DoorTagList.Length; Index++)
+   	{
+        if (DoorTagList[Index] != 'None')
+       	{
+      		foreach AllActors(class'HoldoutDoor', Door, DoorTagList[Index])
+      		{
+     			DoorList[DoorList.Length] = Door;
+      		}
+       	}
+    }
 
-	foreach AllActors(class'HoldoutDoorPathNode', DoorNode, DoorNodeTag)
-	{
-		DoorNodeList[DoorNodeList.Length] = DoorNode;
-	}
+    if (DoorNodeTag != 'None')
+    {
+        foreach AllActors(class'HoldoutDoorPathNode', DoorNode, DoorNodeTag)
+    	{
+    		DoorNodeList[DoorNodeList.Length] = DoorNode;
+    	}
+    }
 
-	foreach AllActors(class'HoldoutZombieVolume', ZombieVolume, ZombieVolumeTag)
-	{
-		ZombieVolume.bVolumeIsEnabled = false;
-		ZombieVolumeList[ZombieVolumeList.Length] = ZombieVolume;
-	}
+    if (ZombieVolumeTag != 'None')
+    {
+        foreach AllActors(class'HoldoutZombieVolume', ZombieVolume, ZombieVolumeTag)
+    	{
+    		ZombieVolume.bVolumeIsEnabled = false;
+    		ZombieVolumeList[ZombieVolumeList.Length] = ZombieVolume;
+    	}
+    }
 }
 
 simulated function int GetPurchasePrice()
@@ -89,22 +101,22 @@ function bool PurchaseRoom(Pawn EventInstigator)
 
 	bIsPurchased = true;
 	EventInstigator.PlayerReplicationInfo.Score -= PurchasePrice;
-	
+
 	for (Index = 0; Index < PurchaseTriggerList.Length; Index++)
 	{
 		PurchaseTriggerList[Index].OnPurchase();
 	}
-	
+
 	for (Index = 0; Index < DoorList.Length; Index++)
 	{
 		DoorList[Index].DoOpen();
 	}
-	
+
 	for (Index = 0; Index < DoorNodeList.Length; Index++)
 	{
 		DoorNodeList[Index].MoverOpened();
 	}
-	
+
 	for (Index = 0; Index < ZombieVolumeList.Length; Index++)
 	{
 		ZombieVolumeList[Index].bVolumeIsEnabled = true;

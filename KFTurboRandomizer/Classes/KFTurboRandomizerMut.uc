@@ -45,7 +45,7 @@ function PreBeginPlay()
 {
 	local ShopVolume Shop;
 
-	foreach AllActors(Class'ShopVolume',Shop) 
+	foreach AllActors(Class'ShopVolume',Shop)
 	{
 		Shop.bAlwaysClosed = true;
 	}
@@ -141,7 +141,7 @@ function Timer()
 	{
 		KFTurboGameType(Level.Game).LockPerkSelection(true);
 	}
-	
+
 	InitializeRandomizer();
 }
 
@@ -179,7 +179,7 @@ Begin:
 		}
 		Sleep(0.1f);
 	}
-	
+
 	Sleep(0.1f);
 
 	if (KFGT == None)
@@ -236,7 +236,7 @@ Begin:
 			PlayerLoadoutList.Length = PlayerLoadoutList.Length - 1;
 		}
 	}
- 
+
 	GotoState('AwaitingWaveCompletion');
 }
 
@@ -247,7 +247,7 @@ Begin:
 	{
 		Sleep(0.1f);
 	}
-	
+
 	while(KFGT != None && KFGT.bWaveInProgress)
 	{
 		Sleep(0.25f);
@@ -278,7 +278,7 @@ function bool SetupLoadoutTypes()
 	local Controller C;
 	local int TotalPlayerCount, PlayerCount;
 	local array<PlayerLoadout> PendingPlayerLoadoutList;
-	
+
 	PlayerCount = 0;
 	PlayerLoadoutList.Length = 0;
 
@@ -317,7 +317,7 @@ function bool SetupWaveLoadoutTypes(int PlayerCount, int TotalPlayerCount, out a
 {
 	local int PlayerTypeCount;
 	local int RandomPlayerIndex;
-	
+
 	//If we've reached a wave with Scrakes and Fleshpounds, give us loadouts for them.
 	if (ShouldWaveHaveScrakeAndFleshpoundLoadouts())
 	{
@@ -334,7 +334,7 @@ function bool SetupWaveLoadoutTypes(int PlayerCount, int TotalPlayerCount, out a
 			PendingPlayerLoadoutList.Remove(RandomPlayerIndex, 1);
 		}
 
-		PlayerTypeCount = Round(FMin(float(TotalPlayerCount) * 0.33f, 1.f));
+		PlayerTypeCount = Round(FMin(float(TotalPlayerCount) * 0.34f, 1.f));
 		//The Max(2, <>) makes sure that in 3-player (or more) games there are at least 2 Scrake loadouts.
 		PlayerTypeCount = Min(PlayerCount, Max(2, PlayerTypeCount));
 
@@ -385,7 +385,7 @@ function bool SetupWaveLoadoutTypes(int PlayerCount, int TotalPlayerCount, out a
 		{
 			PendingPlayerLoadoutList[RandomPlayerIndex].LoadoutType = LT_FunnyLoadout;
 		}
-		
+
 		PlayerLoadoutList[PlayerLoadoutList.Length] = PendingPlayerLoadoutList[RandomPlayerIndex];
 		PendingPlayerLoadoutList.Remove(RandomPlayerIndex, 1);
 	}
@@ -397,7 +397,7 @@ function bool SetupBossLoadoutTypes(int PlayerCount, int TotalPlayerCount, out a
 {
 	local int PlayerTypeCount;
 	local int RandomPlayerIndex;
-	
+
 	PlayerTypeCount = Max(float(TotalPlayerCount) * 0.34f, 1);
 
 	while (PlayerTypeCount > 0)
@@ -440,7 +440,7 @@ function bool SelectLoadouts()
 	local int PlayerIndex;
 	local bool bAssignedLoadout;
 	bAssignedLoadout = true;
-	
+
 	for (PlayerIndex = 0; PlayerIndex < PlayerLoadoutList.Length; PlayerIndex++)
 	{
 		if (PlayerLoadoutList[PlayerIndex].Loadout != None)
@@ -494,8 +494,14 @@ static function KFWeapon CreateWeapon(KFHumanPawn HumanPawn, class<KFWeapon> Wea
 {
 	local KFWeapon Weapon;
 
+	if (WeaponClass == None)
+	{
+	    Warn("KFTurboRandomizer attempted to create weapon class that was null.");
+	    return None;
+	}
+
 	Weapon = HumanPawn.Spawn(WeaponClass,,,HumanPawn.Location);
-	
+
 	if (Weapon == None)
 	{
 		Warn("KFTurboRandomizer attempted to create weapon class"@WeaponClass@"but failed.");
@@ -542,9 +548,9 @@ function bool ApplyLoadout(out PlayerLoadout Loadout)
 	{
 		CreateWeapon(HumanPawn, RandomizerSettings.SingleWeaponClass);
 	}
-	
+
 	Weapon = CreateWeapon(HumanPawn, RandomizerSettings.FragWeaponClass);
-	if(KFPlayerReplicationInfo(Loadout.Player.PlayerReplicationInfo) != None)
+	if (Weapon != None && KFPlayerReplicationInfo(Loadout.Player.PlayerReplicationInfo) != None)
 	{
 		FillUpGrenades(Frag(Weapon), KFPlayerReplicationInfo(Loadout.Player.PlayerReplicationInfo));
 	}
@@ -553,12 +559,12 @@ function bool ApplyLoadout(out PlayerLoadout Loadout)
 	{
 		CreateWeapon(HumanPawn, RandomizerSettings.SyringeWeaponClass);
 	}
-	
+
 	if (Loadout.Loadout.bWelder)
 	{
 		CreateWeapon(HumanPawn, RandomizerSettings.WelderWeaponClass);
 	}
-	
+
 	if (Loadout.Loadout.bKnife)
 	{
 		CreateWeapon(HumanPawn, RandomizerSettings.KnifeWeaponClass);
@@ -569,6 +575,11 @@ function bool ApplyLoadout(out PlayerLoadout Loadout)
 	for (LoadoutWeaponIndex = 0; LoadoutWeaponIndex < Loadout.Loadout.WeaponList.Length; LoadoutWeaponIndex++)
 	{
 		Weapon = CreateWeapon(HumanPawn, Loadout.Loadout.WeaponList[LoadoutWeaponIndex]);
+
+		if (Weapon == None)
+		{
+		    continue;
+		}
 
 		if (LoadoutWeaponIndex != Loadout.Loadout.WeaponList.Length - 1)
 		{
@@ -586,12 +597,11 @@ function bool ApplyLoadout(out PlayerLoadout Loadout)
 
 	FillUpAmmo(HumanPawn);
 
-	for(C = Level.ControllerList; C != None; C = C.NextController)
+	for (C = Level.ControllerList; C != None; C = C.NextController)
 	{
 		KFPC = KFPlayerController(C);
-		if(KFPC != None)
+		if (KFPC != None)
 		{
-
 			for (LoadoutWeaponIndex = 0; LoadoutWeaponIndex < Loadout.Loadout.WeaponList.Length; LoadoutWeaponIndex++)
 			{
 				KFPC.ClientWeaponSpawned(Loadout.Loadout.WeaponList[LoadoutWeaponIndex], LoadoutWeaponList[LoadoutWeaponIndex]);
@@ -648,15 +658,22 @@ function ApplyVeterancy(out PlayerLoadout Loadout)
 	{
 		KFPRI.ClientVeteranSkill = Loadout.Loadout.Perk;
 		KFPRI.ClientVeteranSkillLevel = GetPlayerVeterancyLevel(Loadout);
-    	HumanPawn.VeterancyChanged();
+
+		if (HumanPawn != None)
+		{
+		    HumanPawn.VeterancyChanged();
+		}
 
     	Loadout.Player.bChangedVeterancyThisWave = true;
 	}
 
     Loadout.Player.PlayerReplicationInfo.NumLives = 2;
-    Loadout.Player.bSpawnedThisWave=true;
+    Loadout.Player.bSpawnedThisWave = true;
 
-    HumanPawn.ShieldStrength = FMax(HumanPawn.ShieldStrength, Loadout.Loadout.GetArmor(Loadout.LoadoutType));
+    if (HumanPawn != None)
+    {
+        HumanPawn.ShieldStrength = FMax(HumanPawn.ShieldStrength, Loadout.Loadout.GetArmor(Loadout.LoadoutType));
+    }
 }
 
 function FillUpAmmo(KFHumanPawn HumanPawn)
@@ -668,7 +685,7 @@ function FillUpAmmo(KFHumanPawn HumanPawn)
 	for(Inv = HumanPawn.Inventory; Inv != None; Inv = Inv.Inventory)
 	{
 		Weapon = KFWeapon(Inv);
-		
+
 		if(Weapon == None)
 		{
 			continue;
@@ -691,7 +708,7 @@ function FillUpAmmo(KFHumanPawn HumanPawn)
 static final function GetAmmoCount(KFWeapon KFW, out int MaxAmmo, out int CurAmmo)
 {
 	local float retMax, retCur;
-	
+
 	KFW.GetAmmoCount(retMax, retCur);
 
 	MaxAmmo = int(retMax);
@@ -729,6 +746,10 @@ function bool ValidateInitialization()
 	bSuccess = ValidateCollection(RandomizerSettings.MiscLoadout) && bSuccess;
 	bSuccess = ValidateCollection(RandomizerSettings.FunnyLoadout) && bSuccess;
 
+	bSuccess = ValidateCollection(RandomizerSettings.PatriarchTypeALoadout) && bSuccess;
+	bSuccess = ValidateCollection(RandomizerSettings.PatriarchTypeBLoadout) && bSuccess;
+	bSuccess = ValidateCollection(RandomizerSettings.PatriarchFunnyLoadout) && bSuccess;
+
 	if (bSuccess)
 	{
 		log("Successfully validated loadouts.", 'KFTurboRandomizer');
@@ -761,7 +782,7 @@ function bool ValidateCollection(KFTurboRandomizerLoadoutCollection Collection)
 	{
 		CollectionLoadout = Collection.LoadoutList[Index];
 		CDOLoadout = CDOList[Index];
-		
+
 		if (CDOLoadout == None || CollectionLoadout == None)
 		{
 			log("FAIL ["$Collection.Class$"] Instance at index"@Index@"was null.", 'KFTurboRandomizer');
@@ -831,7 +852,7 @@ function bool ValidateRandomLoadouts()
 			}
 			ClientWeapons $= ClientLoadout.WeaponList[WeaponIndex].default.ItemName;
 		}
-		
+
 		if (!ServerLoadout.IsIdentical(ClientLoadout))
 		{
 			log("Player"@PlayerIndex@"["$GetEnum(Enum'ELoadoutType', PlayerLoadoutList[PlayerIndex].LoadoutType)$"]"

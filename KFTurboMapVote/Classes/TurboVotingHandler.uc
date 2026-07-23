@@ -13,10 +13,10 @@ var() config array<int> DifficultyConfig;
 
 var bool bDecodeDuringSetupGameMap;
 
-//Neither of these are replicated. Defined here 
-var class<TurboMapVoteMessage> TurboMapVoteSubmitMessage; 
+//Neither of these are replicated. Defined here
+var class<TurboMapVoteMessage> TurboMapVoteSubmitMessage;
 var class<TurboMapVoteMessage> TurboMapVoteCompleteMessage;
-var class<TurboMapVoteMessage> TurboMapVoteAdminMessage; 
+var class<TurboMapVoteMessage> TurboMapVoteAdminMessage;
 
 struct VoteTallyEntry
 {
@@ -117,7 +117,7 @@ function SubmitMapVote(int MapIndex, int GameData, Actor Voter)
 	{
 		return;
 	}
-	
+
 	DifficultyIndex = GetCorrectedGameDifficulty(DifficultyIndex);
 	GameData = Encode(GameIndex, DifficultyIndex); //Encode the GameData value again with a potentially corrected Game Difficulty.
 
@@ -155,7 +155,7 @@ function TallyVotes(bool bForceMapSwitch)
 	}
 
 	PerformVoteTally(bForceMapSwitch);
-	
+
 	if (bCanSpectatorsMapVote)
 	{
 		Level.Game.NumPlayers = OriginalNumPlayers;
@@ -201,6 +201,7 @@ function bool AdminForceMapChange(int MapIndex, int GameData, Actor Voter)
 		return false;
 	}
 
+	GameData *= -1;
 	Decode(GameData, GameIndex, Difficulty);
 
 	if (GameIndex >= GameConfig.Length || MapIndex < 0 || MapIndex >= MapList.Length)
@@ -249,8 +250,23 @@ function int GetVoteCount(Actor Voter)
 	{
 		VoteCount += GetAccVote(PlayerController(Voter));
 	}
-	
+
 	return Max(VoteCount, 1);
+}
+
+function bool IsEligibleToMapVote(VotingReplicationInfo VRI)
+{
+    if (VRI == None || VRI.PlayerOwner == None || VRI.PlayerOwner.PlayerReplicationInfo == None)
+    {
+        return false;
+    }
+
+    if (!bCanSpectatorsMapVote && VRI.PlayerOwner.PlayerReplicationInfo.bOnlySpectator)
+    {
+        return false;
+    }
+
+    return true;
 }
 
 //Rewritten to not use an array of size (map list * game config * difficulty).
@@ -266,7 +282,7 @@ function PerformVoteTally(bool bForceMapSwitch)
 	local int PlayersThatVoted;
 	local int TotalPossibleVoteCount, CurrentVoteCount;
 	local int HighestVoteCount, HighestVoteIndex;
-	
+
 	local int TopTallyIndex;
 	local int RankingIndex;
 	local int TieCount;
@@ -289,7 +305,7 @@ function PerformVoteTally(bool bForceMapSwitch)
 	{
 		PlayerVRI = MVRI[PlayerIndex];
 
-		if (PlayerVRI == None)
+		if (!IsEligibleToMapVote(PlayerVRI))
 		{
 			continue;
 		}
@@ -301,7 +317,7 @@ function PerformVoteTally(bool bForceMapSwitch)
 		{
 			continue;
 		}
-		
+
 		CurrentVoteCount += Votes;
 		PlayersThatVoted++;
 
@@ -484,7 +500,7 @@ function PerformVoteTally(bool bForceMapSwitch)
 
 		CurrentGameConfig = TempGameIndex;
 		CurrentDifficultyConfig = TempGameDifficulty;
-		
+
 		if (!bAutoDetectMode)
 		{
 			SaveConfig();
@@ -538,7 +554,7 @@ defaultproperties
 	bCanSpectatorsMapVote=false
 	bDefaultToCurrentDifficulty=true
 	bDecodeDuringSetupGameMap=false
-	
+
 
 	TurboMapVoteSubmitMessage=class'TurboMapVoteSubmitMessage'
 	TurboMapVoteCompleteMessage=class'TurboMapVoteCompleteMessage'

@@ -15,7 +15,7 @@ function PreBeginPlay()
     Super(KFTurboGameType).PreBeginPlay();
 
     // Close all shops! We don't use them at this difficulty.
-	foreach AllActors(Class'ShopVolume',Shop) 
+	foreach AllActors(Class'ShopVolume',Shop)
 	{
 		Shop.bAlwaysClosed = true;
         Shop.bAlwaysEnabled = false;
@@ -64,7 +64,7 @@ event BroadcastLocalizedMessage( class<LocalMessage> MessageClass, optional int 
     if (class<WaitingMessage>(MessageClass) != None)
     {
         return;
-    }    
+    }
 
     Super.BroadcastLocalizedMessage(MessageClass, Switch, RelatedPRI_1, RelatedPRI_2, OptionalObject);
 }
@@ -95,7 +95,7 @@ State MatchInProgress
 
     // Don't select shops.
     function SelectShop() {}
-    
+
     function float CalcNextSquadSpawnTime()
     {
         WaveNextSquadSpawnTime = TurboMonsterCollection.GetNextSquadSpawnTime(WaveNum, NumPlayers + NumBots);
@@ -104,7 +104,7 @@ State MatchInProgress
             WaveNextSquadSpawnTime = MIN_SPAWN_TIME;
         }
         WaveNextSquadSpawnTime /= (GameWaveSpawnRateModifier * MapWaveSpawnRateModifier* AdminSpawnRateModifier);
-        
+
         return WaveNextSquadSpawnTime;
     }
 
@@ -117,7 +117,7 @@ State MatchInProgress
     {
         bTradingDoorsOpen = false;
     }
-    
+
     function Timer()
     {
         local Controller C;
@@ -129,7 +129,7 @@ State MatchInProgress
                 if (!C.bIsPlayer && C.Pawn != None && C.Pawn.Health > 0 && KFMonster(C.Pawn) != None)
                 {
                     KFMonster(C.Pawn).LastSeenOrRelevantTime = Level.TimeSeconds;
-                }   
+                }
             }
         }
 
@@ -153,7 +153,7 @@ State MatchInProgress
     function DoWaveEnd()
     {
         local KFDoorMover KFDM;
-        
+
         RewardSurvivingPlayers();
 
         bWaveInProgress = false;
@@ -249,6 +249,7 @@ function RespawnPlayers()
 
         TPRI.bOutOfLives = false;
         TPRI.NumLives = 0;
+        TPRI.Score = FMax(TPRI.Score, 0);
 
         PlayerController.GotoState('PlayerWaiting');
         PlayerController.SetViewTarget(PlayerController);
@@ -272,9 +273,9 @@ function RespawnPlayers()
 function SetupWave()
 {
     Super.SetupWave();
-    
+
     WaveNextSquadSpawnTime = MIN_SPAWN_TIME;
-    
+
     ScoreMultiplier = TurboMonsterCollectionHoldoutImpl(TurboMonsterCollection).GetScoreMultiplier();
 }
 
@@ -437,7 +438,7 @@ function ResetPlayersReady()
         {
             continue;
         }
-        
+
         Info = class'HoldoutPlayerSparseInfo'.static.GetHoldoutInfo(PlayerList[Index].PlayerReplicationInfo);
         if (Info != None)
         {
@@ -464,7 +465,7 @@ function DropAllWeapons(HoldoutHumanPawn Pawn)
     local KFWeapon Weapon;
     local array<KFWeapon> WeaponThrowList;
     local int Index;
-    
+
     for (Inv = Pawn.Inventory; Inv != None; Inv = Inv.Inventory)
     {
         Weapon = KFWeapon(Inv);
@@ -496,7 +497,7 @@ function DropWeapon(HoldoutHumanPawn Pawn, KFWeapon Weapon)
 	local Pickup Pickup;
 	local WeaponPickup WeaponPickup;
     local float MaxAmmo,Ammo;
-    
+
     if (Weapon.PickupClass == None)
     {
         return;
@@ -521,7 +522,7 @@ function DropWeapon(HoldoutHumanPawn Pawn, KFWeapon Weapon)
         WeaponPickup.bThrown = true;
     }
 
-    Pickup.Velocity = Velocity + (VRand() * 100.f);
+    Pickup.Velocity = Pawn.Velocity + (VRand() * 100.f);
 }
 
 // Default properties for the game type

@@ -24,7 +24,7 @@ simulated function Tick(float DeltaTime)
 {
 	if (TGRI == None)
 	{
-		TGRI = TurboGameReplicationInfo(Level.GRI);
+	    InitializeGRI(TurboGameReplicationInfo(Level.GRI));
 
 		if (TGRI == None)
 		{
@@ -35,7 +35,6 @@ simulated function Tick(float DeltaTime)
 	TickReadyUpOpacity(DeltaTime);
 	TickGameState(DeltaTime);
 	TickKillFeed(DeltaTime);
-
 
 	if (CheckNextWave())
 	{
@@ -180,9 +179,6 @@ simulated function Render(Canvas C)
 		return;
 	}
 
-	DrawGameData(C);
-	class'TurboHUDKillingFloor'.static.ResetCanvas(C);
-	DrawKillFeed(C);
 	class'TurboHUDKillingFloor'.static.ResetCanvas(C);
 	DrawReadyUpStatus(C);
 	class'TurboHUDKillingFloor'.static.ResetCanvas(C);

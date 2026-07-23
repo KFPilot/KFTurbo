@@ -245,20 +245,20 @@ function ResetZombieVolumes()
 function LoadUpMonsterList()
 {
     local int Index, MonsterIndex;
-    local class<KFMonster> MonsterClass;
+    local class<KFMonster> MonsterCollectionClass;
 
     for( Index = Index; Index < MonsterCollection.default.MonsterClasses.Length; Index++ )
     {
-        MonsterClass = class<KFMonster>(DynamicLoadObject(MonsterCollection.default.MonsterClasses[Index].MClassName, Class'Class', false));
+        MonsterCollectionClass = class<KFMonster>(DynamicLoadObject(MonsterCollection.default.MonsterClasses[Index].MClassName, Class'Class', false));
 
-        if (MonsterClass == None)
+        if (MonsterCollectionClass == None)
         {
             Warn("LoadUpMonsterList failed to load class"@MonsterCollection.default.MonsterClasses[Index].MClassName$".");
             continue;
         }
 
         MonsterIndex = TurboMonsterCollection.LoadedMonsterList.Length;
-        TurboMonsterCollection.LoadedMonsterList[MonsterIndex] = MonsterClass;
+        TurboMonsterCollection.LoadedMonsterList[MonsterIndex] = MonsterCollectionClass;
         TurboMonsterCollection.LoadedMonsterList[MonsterIndex].static.PreCacheAssets(Level);
     }
 
