@@ -321,7 +321,7 @@ function bool SetupWaveLoadoutTypes(int PlayerCount, int TotalPlayerCount, out a
 	//If we've reached a wave with Scrakes and Fleshpounds, give us loadouts for them.
 	if (ShouldWaveHaveScrakeAndFleshpoundLoadouts())
 	{
-		PlayerTypeCount = Max(float(TotalPlayerCount) * 0.34f, 1);
+		PlayerTypeCount = Round(FMax(float(TotalPlayerCount) * 0.34f, 1));
 
 		while (PlayerTypeCount > 0)
 		{
@@ -334,7 +334,7 @@ function bool SetupWaveLoadoutTypes(int PlayerCount, int TotalPlayerCount, out a
 			PendingPlayerLoadoutList.Remove(RandomPlayerIndex, 1);
 		}
 
-		PlayerTypeCount = Round(FMin(float(TotalPlayerCount) * 0.34f, 1.f));
+		PlayerTypeCount = Round(FMax(float(TotalPlayerCount) * 0.34f, 1.f));
 		//The Max(2, <>) makes sure that in 3-player (or more) games there are at least 2 Scrake loadouts.
 		PlayerTypeCount = Min(PlayerCount, Max(2, PlayerTypeCount));
 
