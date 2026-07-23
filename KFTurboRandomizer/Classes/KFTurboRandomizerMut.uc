@@ -523,7 +523,6 @@ function bool ApplyLoadout(out PlayerLoadout Loadout)
 	local KFHumanPawn HumanPawn;
 	local Controller C;
 	local KFPlayerController KFPC;
-	local String LoadoutString;
 	local int LoadoutWeaponIndex;
 	local KFWeapon Weapon;
 	local array<KFWeapon> LoadoutWeaponList;
@@ -570,27 +569,9 @@ function bool ApplyLoadout(out PlayerLoadout Loadout)
 		CreateWeapon(HumanPawn, RandomizerSettings.KnifeWeaponClass);
 	}
 
-	LoadoutString = Loadout.Player.PlayerReplicationInfo.PlayerName @ "("$Loadout.Loadout.Perk.default.VeterancyName$")"@":";
-
 	for (LoadoutWeaponIndex = 0; LoadoutWeaponIndex < Loadout.Loadout.WeaponList.Length; LoadoutWeaponIndex++)
 	{
-		Weapon = CreateWeapon(HumanPawn, Loadout.Loadout.WeaponList[LoadoutWeaponIndex]);
-
-		if (Weapon == None)
-		{
-		    continue;
-		}
-
-		if (LoadoutWeaponIndex != Loadout.Loadout.WeaponList.Length - 1)
-		{
-			LoadoutString = LoadoutString @ Weapon.ItemName $ ",";
-		}
-		else
-		{
-			LoadoutString = LoadoutString @ Weapon.ItemName;
-		}
-
-		LoadoutWeaponList[LoadoutWeaponList.Length] = Weapon;
+		LoadoutWeaponList[LoadoutWeaponList.Length] = CreateWeapon(HumanPawn, Loadout.Loadout.WeaponList[LoadoutWeaponIndex]);
 	}
 
 	Level.Game.BroadcastLocalizedMessage(class'TurboRandomizerLocalMessage', Loadout.Loadout.DefaultIndex, Loadout.Player.PlayerReplicationInfo,, Loadout.Collection.Class);
@@ -604,6 +585,11 @@ function bool ApplyLoadout(out PlayerLoadout Loadout)
 		{
 			for (LoadoutWeaponIndex = 0; LoadoutWeaponIndex < Loadout.Loadout.WeaponList.Length; LoadoutWeaponIndex++)
 			{
+				if (LoadoutWeaponList[LoadoutWeaponIndex] == None)
+				{
+					continue;
+				}
+
 				KFPC.ClientWeaponSpawned(Loadout.Loadout.WeaponList[LoadoutWeaponIndex], LoadoutWeaponList[LoadoutWeaponIndex]);
 			}
 		}

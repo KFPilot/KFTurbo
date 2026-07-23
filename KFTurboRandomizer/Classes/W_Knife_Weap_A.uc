@@ -1,7 +1,7 @@
 //Killing Floor Turbo W_Knife_Weap_A
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class W_Knife_Weap_A extends Knife;
+class W_Knife_Weap_A extends W_Knife_Weap;
 
 defaultproperties
 {
