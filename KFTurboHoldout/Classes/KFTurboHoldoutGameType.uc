@@ -249,6 +249,7 @@ function RespawnPlayers()
 
         TPRI.bOutOfLives = false;
         TPRI.NumLives = 0;
+        //Clamped above 0. Not to HOLDOUT_STARTING_CASH so that we don't end up giving people dosh.
         TPRI.Score = FMax(TPRI.Score, 0);
 
         PlayerController.GotoState('PlayerWaiting');

@@ -36,6 +36,9 @@ simulated function Tick(float DeltaTime)
 	TickGameState(DeltaTime);
 	TickKillFeed(DeltaTime);
 
+	TickBossData(DeltaTime);
+	TickVoteInstance(DeltaTime);
+
 	if (CheckNextWave())
 	{
 		return;
