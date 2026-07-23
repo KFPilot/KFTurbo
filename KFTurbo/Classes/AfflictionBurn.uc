@@ -50,7 +50,7 @@ simulated function PreTick(KFMonster Monster, float DeltaTime)
 
 	if (BurnRatio >= 1.f)
 	{
-		bHasCompleted = true;
+		bHasCompleted = true; //Burn slowdown only happens once.
 	}
 
 	if (!bHasCompleted)
