@@ -44,15 +44,84 @@ simulated function Tick(float DeltaTime)
 {
     class'PawnHelper'.static.PreTickAfflictionData(Self, DeltaTime, self, AfflictionData);
 
-    Super.Tick(DeltaTime);
+    if (Role == ROLE_Authority && bMovingPukeAttack)
+    {
+        if (RunAttackTimeout > 0)
+		{
+            RunAttackTimeout -= DeltaTime;
+
+            if (RunAttackTimeout <= 0)
+            {
+                RunAttackTimeout = 0;
+                bMovingPukeAttack=false;
+            }
+		}
+
+    	if (bShotAnim && !bWaitForAnim)
+    	{
+    		if (LookTarget != None)
+    		{
+    		    Acceleration = AccelRate * Normal(LookTarget.Location - Location);
+    		}
+        }
+    }
+
+    if (Level.NetMode != NM_Client && Level.NetMode != NM_Standalone)
+    {
+        if (Level.TimeSeconds - LastSeenOrRelevantTime < 1.f)
+        {
+            bForceSkelUpdate = true;
+        }
+        else
+        {
+            bForceSkelUpdate = false;
+        }
+    }
+
+    if (Level.NetMode != NM_DedicatedServer && Health <= 0 && !bPlayBileSplash && HitDamageType != class'DamTypeBleedOut')
+    {
+        TickBloatExplosion(DeltaTime);
+    }
+
+    Super(ZombieBloatBase).Tick(DeltaTime);
 
     class'PawnHelper'.static.TickAfflictionData(Self, DeltaTime, self, AfflictionData);
 
-    if(bSTUNNED && bUnstunTimeReady && UnstunTime < Level.TimeSeconds)
+    if (bSTUNNED && bUnstunTimeReady && UnstunTime < Level.TimeSeconds)
     {
         bSTUNNED = false;
         bUnstunTimeReady = false;
     }
+}
+
+simulated function TickBloatExplosion(float DeltaTime)
+{
+    local vector BileExplosionLoc;
+    local FleshHitEmitter GibBileExplosion;
+
+    if (class'GameInfo'.static.UseLowGore())
+    {
+        BileExplosionLoc = Location;
+        BileExplosionLoc.z += (CollisionHeight * 0.5);
+
+        GibBileExplosion = Spawn(class'LowGoreBileExplosion', self,, BileExplosionLoc);
+        bPlayBileSplash = true;
+        return;
+    }
+
+    BileExplosionLoc = Location;
+    BileExplosionLoc.z += (CollisionHeight * 0.5);
+
+    if (bDecapitated)
+    {
+       	GibBileExplosion = Spawn(BileExplosionHeadless, self,, BileExplosionLoc);
+    }
+    else
+    {
+   	    GibBileExplosion = Spawn(BileExplosion, self,, BileExplosionLoc);
+    }
+
+    bPlayBileSplash = true;
 }
 
 function float NumPlayersHealthModifer()
