@@ -315,7 +315,7 @@ function SetMonsterWanderEnabled(TurboPlayerController CommandInstigator, bool b
 	}
 
     KFTurboMut = class'KFTurboMut'.static.FindMutator(Level.Game);
-	KFTurboMut.bSkipInitialMonsterWander = bEnabled;
+	KFTurboMut.bSkipInitialMonsterWander = !bEnabled;
 
 	BroadcastCommand(CommandInstigator, EncodeBool(AC_SetMonsterWanderEnabled, bEnabled));
 }
