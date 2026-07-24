@@ -197,7 +197,7 @@ simulated function HurtRadius( float DamageAmount, float DamageRadius, class<Dam
 		}
 	}
 
-	bWasAltFire = FlockIndex == 0;
+	bWasAltFire = FlockIndex != 0;
 
 	//Do impact damage.
 	if (LastTouchedOverride != None)
