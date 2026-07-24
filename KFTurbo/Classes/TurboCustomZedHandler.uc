@@ -25,6 +25,7 @@ struct MonsterReplacement
 var array<MonsterReplacement> ReplacementList; //List of KFMonster parent classes, their replacement, and individual chance to be applied.
 var bool bRandomizeProgressAtWaveStart;
 var float ReplacementRateMultiplier;
+var float BaseReplacementRateMultiplier; //ReplacementRateMultiplier after difficulty adjustment; used to rescale ReplacementRateMultiplier externally.
 
 var bool bDebugReplacement;
 var bool bAllowRandomness;
@@ -48,6 +49,8 @@ function PostBeginPlay()
     {
         ReplacementRateMultiplier *= 0.5f;
     }
+
+    BaseReplacementRateMultiplier = ReplacementRateMultiplier;
 }
 
 function WaveStarted(KFTurboGameType GameType, int StartedWave)
