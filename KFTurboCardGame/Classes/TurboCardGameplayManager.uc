@@ -363,7 +363,7 @@ function TotalMonstersModifierChanged(CardModifierStack ModifiedStack, float Mod
 
 function SpecialVariantSpawnModifierChanged(CardModifierStack ModifiedStack, float Modifier)
 {
-    TurboMutator.CustomZedHandler.ReplacementRateMultiplier = Modifier;
+    TurboMutator.CustomZedHandler.ReplacementRateMultiplier = TurboMutator.CustomZedHandler.BaseReplacementRateMultiplier * Modifier;
 }
 
 function ShortTermRewardCardFlagChanged(CardFlag Flag, bool bIsEnabled) {}
@@ -464,8 +464,22 @@ function RandomTraderChangeFlagChanged(CardFlag Flag, bool bIsEnabled)
 
 function MarkedForDeathFlagChanged(CardFlag Flag, bool bIsEnabled)
 {
+    local TurboPlayerCardCustomInfo CardCustomInfo;
+
     if (!bIsEnabled)
     {
+        if (MarkedForDeathController != None)
+        {
+            CardCustomInfo = TurboPlayerCardCustomInfo(class'TurboPlayerCardCustomInfo'.static.FindCustomInfo(TurboPlayerReplicationInfo(MarkedForDeathController.PlayerReplicationInfo)));
+
+            if (CardCustomInfo != None)
+            {
+                CardCustomInfo.SetMarkedForDeath(false);
+            }
+
+            MarkedForDeathController = None;
+        }
+
         CardGameRules.MarkedForDeathPawn = None;
     }
 }
