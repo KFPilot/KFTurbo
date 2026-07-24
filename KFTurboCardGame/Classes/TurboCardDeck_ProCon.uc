@@ -114,7 +114,7 @@ function ActivatePrecisionExplosives(TurboCardGameplayManager GameplayManager, T
 {
     if (bActivate)
     {
-        GameplayManager.PlayerExplosiveDamageModifier.AddModifier(1.05f, Card);
+        GameplayManager.PlayerExplosiveDamageModifier.AddModifier(1.1f, Card);
         GameplayManager.PlayerExplosiveRadiusModifier.AddModifier(0.75f, Card);
     }
     else
@@ -936,10 +936,10 @@ defaultproperties
         CardName(0)="More Game"
         CardName(1)="To Play"
         CardDescriptionList(0)="Increases max"
-        CardDescriptionList(1)="weapon ammo by"
-        CardDescriptionList(2)="and damage by"
-        CardDescriptionList(3)="5% but wave size"
-        CardDescriptionList(4)="is increased by 10%."
+        CardDescriptionList(1)="weapon ammo and"
+        CardDescriptionList(2)="damage by 5%"
+        CardDescriptionList(3)="but wave size is"
+        CardDescriptionList(4)="increased by 10%."
         OnActivateCard=ActivateMoreToPlay
         CardID="PROCON_MOREGAMETOPLAY"
     End Object
