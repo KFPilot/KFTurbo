@@ -39,6 +39,8 @@
 | Evil | Sacrificial Card | Removes a random Super card. |
 | Evil | Unfortunate Upgrade | Non-elites have a 5% chance to be replaced with a special zed. Special zeds have a 5% chance to be replaced with an elite zed. |
 | Evil | Curse of RA | ??? |
+| Evil | Regenerative Strain | Zeds regenerate 1% health per second after 5 seconds of not taking damage. |
+| Evil | Rationing | Reduces max ammo for all weapons by 15%. |
 
 
 ### Good Deck
@@ -80,6 +82,9 @@
 | Good | Large Quantity Low Quality | Increases good card selection by 1. |
 | Good | Broader Gamble | Increases pro/con card selection by 1. |
 | Good | Slayer Of El Diablo | Increases damage dealt to the Patriarch by 10%. |
+| Good | Window Shopping | Increases trader time by 15%. |
+| Good | Closing Time | The last 10 zeds of each wave take 25% more damage. |
+| Good | A Pound Of Flesh | Melee damage heals players for 1% of damage dealt. |
 
 
 ### ProCon Deck
@@ -118,6 +123,7 @@
 | ProCon | Short Hop | Increases player speed by 10% but reduces jump height by 50%. |
 | ProCon | Charge Exchange | Increases heal recharge speed by 25% but reduces weld speed by 50%. |
 | ProCon | Risky Regen | Increases regen by 3 every 5 seconds but reduces max health by 10%. |
+| ProCon | Bloodlust | Melee damage heals players for 5% of damage dealt but zeds deal 10% more melee damage. |
 |---------|---------------------------|-------------------------------------------------------------------------------------|
 | Strange | Trade In | Removes all good cards in exchange for a random super card. |
 | Strange | A Deal With The Devil | In exchange for receiving a random Super card, receive a random Evil card as well. |
@@ -159,3 +165,4 @@
 | Super | Critical Hit | Players' 10th shots and swings deal 150% more damage. |
 | Super | Too Much For zBlock | Increases player air control significantly. |
 | Super | De-Evolution | All zeds have a chance to be replaced with weaker versions of themselves. |
+| Super | Executioner | Player damage has a 20% chance to instantly kill non-boss zeds with less than 20% health. |

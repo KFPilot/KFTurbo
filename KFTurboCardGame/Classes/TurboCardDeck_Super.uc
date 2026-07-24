@@ -626,6 +626,11 @@ static final function bool DrawSubstitute(TurboCardOverlay CardOverlay, TurboPla
     return false;
 }
 
+function ActivateExecutioner(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
+{
+    Card.UpdateFlag(GameplayManager.ExecutionerFlag, bActivate);
+}
+
 defaultproperties
 {
     Begin Object Name=Cleanse Class=TurboCard_Super
@@ -1118,4 +1123,17 @@ defaultproperties
         CardID="SUPER_WORMMAG"
     End Object
     DeckCardObjectList(39)=TurboCard'WormholeMagazine'
+
+    Begin Object Name=Executioner Class=TurboCard_Super
+        CardName(0)="Executioner"
+        CardDescriptionList(0)="Player damage has"
+        CardDescriptionList(1)="a 20% chance to"
+        CardDescriptionList(2)="instantly kill"
+        CardDescriptionList(3)="non-boss zeds"
+        CardDescriptionList(4)="with less than"
+        CardDescriptionList(5)="20% health."
+        CardID="SUPER_EXECUTIONER"
+        OnActivateCard=ActivateExecutioner
+    End Object
+    DeckCardObjectList(40)=TurboCard'Executioner'
 }

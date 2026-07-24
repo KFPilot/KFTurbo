@@ -526,6 +526,21 @@ static final function TickPanicReload(TurboCardOverlay CardOverlay, TurboPlayerC
     }
 }
 
+function ActivateWindowShopping(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
+{
+    Card.UpdateModifier(GameplayManager.TraderTimeModifier, 1.15f, bActivate);
+}
+
+function ActivateClosingTime(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
+{
+    Card.UpdateModifier(GameplayManager.PlayerFinalMonstersDamageModifier, 1.25f, bActivate);
+}
+
+function ActivatePoundOfFlesh(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
+{
+    Card.UpdateModifier(GameplayManager.PlayerMeleeLifestealModifier, 0.01f, bActivate);
+}
+
 defaultproperties
 {
     Begin Object Name=BonusCashKill Class=TurboCard_Good
@@ -1039,4 +1054,34 @@ defaultproperties
         OnActivateCard=ActivatePressurizedMagazines
     End Object
     DeckCardObjectList(47)=TurboCard'PressurizedMagazines'
+
+    Begin Object Name=WindowShopping Class=TurboCard_Good
+        CardName(0)="Window Shopping"
+        CardDescriptionList(0)="Increases trader"
+        CardDescriptionList(1)="time by 15%."
+        CardID="GOOD_WINDOWSHOP"
+        OnActivateCard=ActivateWindowShopping
+    End Object
+    DeckCardObjectList(48)=TurboCard'WindowShopping'
+
+    Begin Object Name=ClosingTime Class=TurboCard_Good
+        CardName(0)="Closing Time"
+        CardDescriptionList(0)="The last 10 zeds"
+        CardDescriptionList(1)="of each wave take"
+        CardDescriptionList(2)="25% more damage."
+        CardID="GOOD_CLOSINGTIME"
+        OnActivateCard=ActivateClosingTime
+    End Object
+    DeckCardObjectList(49)=TurboCard'ClosingTime'
+
+    Begin Object Name=PoundOfFlesh Class=TurboCard_Good
+        CardName(0)="A Pound"
+        CardName(1)="Of Flesh"
+        CardDescriptionList(0)="Melee damage"
+        CardDescriptionList(1)="heals players for"
+        CardDescriptionList(2)="1% of damage dealt."
+        CardID="GOOD_POUNDOFFLESH"
+        OnActivateCard=ActivatePoundOfFlesh
+    End Object
+    DeckCardObjectList(50)=TurboCard'PoundOfFlesh'
 }

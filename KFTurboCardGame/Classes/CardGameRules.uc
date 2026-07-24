@@ -13,6 +13,7 @@ var(Turbo) float BonusCashMultiplier;
 
 var(Turbo) bool bSuddenDeathEnabled, bPerformingSuddenDeath;
 var(Turbo) float PlayerThornsDamageMultiplier;
+var(Turbo) float PlayerMeleeLifestealMultiplier;
 
 var(Turbo) float FleshpoundDamageMultiplier;
 var(Turbo) float ScrakeDamageMultiplier;
@@ -31,6 +32,10 @@ var(Turbo) float TrashHeadshotDamageMultiplier;
 var(Turbo) float TrashDamageMultiplier;
 var(Turbo) float BossDamageMultiplier;
 var(Turbo) float MonsterFullHealthDamageMultiplier;
+
+//Bonus damage against the final few monsters of a wave.
+var(Turbo) float FinalMonstersDamageMultiplier;
+var(Turbo) int FinalMonstersCount;
 
 var(Turbo) float DamageTakenMultiplier;
 var(Turbo) float ExplosiveDamageTakenMultiplier;
@@ -53,6 +58,10 @@ var(Turbo) bool bBonusCriticalHitChanceAfterCriticalHit;
 var bool bHasPerformedCriticalHitEffect;
 
 var(Turbo) bool bCheatDeathEnabled;
+
+var(Turbo) bool bExecutionerEnabled;
+var(Turbo) float ExecutionerHealthRatio;
+var(Turbo) float ExecutionerChance;
 
 var(Turbo) bool bRussianRouletteEnabled;
 var(Turbo) Sound RussianRoulettePlayerKilledSound, RussianRouletteMonsterKilledSound;
@@ -488,6 +497,24 @@ function int NetDamage(int OriginalDamage, int Damage, Pawn Injured, Pawn Instig
         return Super.NetDamage(OriginalDamage, Damage, Injured, InstigatedBy, HitLocation, Momentum, DamageType);
     }
 
+    if (InjuredMonster != None && MutatorOwner.TurboCardGameplayManagerInfo.MonsterRegenManager != None)
+    {
+        MutatorOwner.TurboCardGameplayManagerInfo.MonsterRegenManager.NotifyMonsterDamaged(InjuredMonster);
+    }
+
+    if (InstigatorHumanPawn != None && InjuredMonster != None && PlayerMeleeLifestealMultiplier > 0.f && WeaponDamageType != None && WeaponDamageType.default.bIsMeleeDamage)
+    {
+        ApplyMeleeLifesteal(Min(Damage, InjuredMonster.Health), InstigatorHumanPawn);
+    }
+
+    if (bExecutionerEnabled && InstigatorCardInfo != None && InjuredMonster != None && (FRand() < ExecutionerChance)
+        && (Damage < InjuredMonster.Health) && float(InjuredMonster.Health) <= InjuredMonster.HealthMax * ExecutionerHealthRatio
+        && class'PawnHelper'.static.GetMonsterTier(InjuredMonster.Class) != Boss)
+    {
+        ExecuteMonster(InstigatorCardInfo, InjuredMonster);
+        return 0;
+    }
+
     if (InstigatorMonster != None && InjuredHumanPawn != None)
     {
         ApplyThornsDamage(Damage, InjuredHumanPawn, InstigatorMonster);
@@ -556,6 +583,11 @@ function MonsterNetDamage(out float DamageMultiplier, KFMonster Injured, Pawn In
     else if (MonsterTier == Trash)
     {
         DamageMultiplier *= TrashDamageMultiplier;
+    }
+
+    if (FinalMonstersDamageMultiplier != 1.f && MonsterTier != Boss && GetRemainingMonsterCount() <= FinalMonstersCount)
+    {
+        DamageMultiplier *= FinalMonstersDamageMultiplier;
     }
 
     if ((Injured.Health - Injured.HealthMax) > -1.f)
@@ -662,6 +694,28 @@ function AttemptCriticalHit(out float DamageMultiplier, Pawn InstigatedBy, Turbo
     DamageMultiplier *= CriticalHitDamageMultiplier * float(NumCriticalHits);
 }
 
+function ExecuteMonster(TurboPlayerCardCustomInfo InstigatorCardInfo, KFMonster Monster)
+{
+    local Pawn ExecutionPawn;
+    local Vector ExecutionPosition;
+    local Vector ExecutionDirection;
+
+    Monster.Died(InstigatorCardInfo.GetOwnerController(), class'Execute_DT', Monster.Location);
+
+    ExecutionPawn = InstigatorCardInfo.GetOwnerPawn();
+
+    if (ExecutionPawn == None)
+    {
+        return;
+    }
+
+    ExecutionPosition = Monster.Location;
+    ExecutionPosition.Z += Monster.CollisionHeight;
+    ExecutionDirection = (ExecutionPawn.Location) - Monster.Location;
+    ExecutionDirection.Z = 0;
+    InstigatorCardInfo.SendClientExecute(ExecutionPosition, Normal(ExecutionDirection), class'PawnHelper'.static.GetMonsterTier(Monster.Class) > Special);
+}
+
 function ApplyThornsDamage(int DamageTaken, KFHumanPawn Injured, KFMonster InstigatedBy)
 {
     if (PlayerThornsDamageMultiplier <= 1.f)
@@ -670,6 +724,29 @@ function ApplyThornsDamage(int DamageTaken, KFHumanPawn Injured, KFMonster Insti
     }
 
     InstigatedBy.TakeDamage(float(DamageTaken) * (PlayerThornsDamageMultiplier - 1.f), Injured, Injured.Location, vect(0, 0, 0), class'PlayerThornsDamage_DT');
+}
+
+function ApplyMeleeLifesteal(int DamageDealt, KFHumanPawn Instigator)
+{
+    if (PlayerMeleeLifestealMultiplier <= 0.f)
+    {
+        return;
+    }
+
+    Instigator.Health = Min(Instigator.Health + Max(1, Round(float(DamageDealt) * PlayerMeleeLifestealMultiplier)), Instigator.HealthMax);
+}
+
+final function int GetRemainingMonsterCount()
+{
+    local KFGameType KFGameType;
+    KFGameType = KFGameType(Level.Game);
+
+    if (KFGameType == None)
+    {
+        return MaxInt;
+    }
+
+    return KFGameType.TotalMaxMonsters + KFGameType.NumMonsters;
 }
 
 function PerformRussianRouletteEffect(Pawn KilledPawn, bool bWasPlayer)
@@ -1238,7 +1315,11 @@ defaultproperties
     bKillsGiveShield=false
     bZedDamageDropsWeapon=false
     bCheatDeathEnabled=false
+    bExecutionerEnabled=false
+    ExecutionerHealthRatio=0.20f
+    ExecutionerChance=0.20f
     PlayerThornsDamageMultiplier=1.f
+    PlayerMeleeLifestealMultiplier=0.f
 
     FleshpoundDamageMultiplier=1.f
     ScrakeDamageMultiplier=1.f
@@ -1257,6 +1338,9 @@ defaultproperties
     TrashDamageMultiplier=1.f
     BossDamageMultiplier=1.f
     MonsterFullHealthDamageMultiplier=1.f
+
+    FinalMonstersDamageMultiplier=1.f
+    FinalMonstersCount=10
 
     DamageTakenMultiplier=1.f
     ExplosiveDamageTakenMultiplier=1.f

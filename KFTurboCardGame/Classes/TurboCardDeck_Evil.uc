@@ -518,6 +518,16 @@ static final function TickTemporalAnomaly(TurboCardOverlay CardOverlay, TurboPla
     }
 }
 
+function ActivateRegenerativeStrain(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
+{
+    Card.UpdateFlag(GameplayManager.MonsterRegenFlag, bActivate);
+}
+
+function ActivateRationing(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
+{
+    Card.UpdateModifier(GameplayManager.PlayerMaxAmmoModifier, 0.85f, bActivate);
+}
+
 defaultproperties
 {
     Begin Object Name=Doorless Class=TurboCard_Evil
@@ -998,4 +1008,27 @@ defaultproperties
         OnStatusIconDraw=DrawTemporalAnomaly
     End Object
     DeckCardObjectList(37)=TurboCard'TemporalAnomaly'
+
+    Begin Object Name=RegenerativeStrain Class=TurboCard_Evil
+        CardName(0)="Regenerative"
+        CardName(1)="Strain"
+        CardDescriptionList(0)="Zeds regenerate"
+        CardDescriptionList(1)="1% health per"
+        CardDescriptionList(2)="second after not"
+        CardDescriptionList(3)="taking damage"
+        CardDescriptionList(4)="for 10 seconds."
+        CardID="EVIL_REGENSTRAIN"
+        OnActivateCard=ActivateRegenerativeStrain
+    End Object
+    DeckCardObjectList(38)=TurboCard'RegenerativeStrain'
+
+    Begin Object Name=Rationing Class=TurboCard_Evil
+        CardName(0)="Rationing"
+        CardDescriptionList(0)="Reduces max ammo"
+        CardDescriptionList(1)="for all weapons"
+        CardDescriptionList(2)="by 15%."
+        CardID="EVIL_RATIONING"
+        OnActivateCard=ActivateRationing
+    End Object
+    DeckCardObjectList(39)=TurboCard'Rationing'
 }

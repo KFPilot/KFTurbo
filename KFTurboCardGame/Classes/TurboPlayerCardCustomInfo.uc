@@ -71,7 +71,7 @@ replication
 		SubstituteDamageCount, BleedCount, NextBleedTime, PerpetualCriticalHitStartTime, PlayerFlags;
 
 	reliable if (Role == ROLE_Authority)
-        ClientCriticalHit;
+        ClientCriticalHit, ClientExecute;
 }
 
 simulated function PostBeginPlay()
@@ -406,6 +406,23 @@ simulated function ClientCriticalHit(Vector Location, int CriticalHitCount)
     }
 
     Spawn(HitEffectList[Min(CriticalHitCount - 1, ArrayCount(HitEffectList) - 1)], PlayerTPRI.Owner,, Location);
+}
+
+final function SendClientExecute(Vector Location, Vector Direction, bool bIsElite)
+{
+    ClientExecute(Location, Direction, bIsElite);
+}
+
+simulated function ClientExecute(Vector Location, Vector Direction, bool bIsElite)
+{
+    if (bIsElite)
+    {
+        Spawn(class'ExecuteMedium', PlayerTPRI.Owner,, Location, rotator(Direction));
+    }
+    else
+    {
+        Spawn(class'ExecuteSmall', PlayerTPRI.Owner,, Location, rotator(Direction));
+    }
 }
 
 final function bool AttemptStunningHit(float MonsterStunChance, KFMonster HitMonster)

@@ -53,6 +53,8 @@ var CardModifierAdditiveStack FriendlyFireModifier;
 //DAMAGE
 var CardFlag BleedDamageFlag;
 var PlayerBleedActor BleedManager;
+var CardFlag MonsterRegenFlag;
+var MonsterRegenActor MonsterRegenManager;
 var CardFlag NoRestForTheWickedFlag;
 var PlayerNoRestForTheWickedActor NoRestForTheWickedManager;
 
@@ -116,6 +118,8 @@ var CardModifierStack WeldStrengthModifier;
 var CardModifierAdditiveStack CriticalHitChanceModifier;
 var CardFlag CriticalShotFlag;
 var CardFlag CriticalHitsGrantCriticalHitChanceFlag;
+
+var CardModifierStack PlayerFinalMonstersDamageModifier;
 
 //DAMAGE RECEIVED
 var CardModifierStack PlayerArmorStrengthModifier;
@@ -192,6 +196,8 @@ var CardFlag PlayerLowHealthSlowsFlag;
 var CardModifierStack PlayerThornsModifier;
 
 //SPECIAL
+var CardModifierStack PlayerMeleeLifestealModifier;
+var CardFlag ExecutionerFlag;
 var CardFlag PlayerGrenadeThrowBuff;
 var CardFlag PlayerHealBoostBuff;
 var CardFlag PlayerHeadshotsIncreaseHeadshotDamage;
@@ -575,6 +581,11 @@ function ButterFingersFlagChanged(CardFlag Flag, bool bIsEnabled)
     CardGameRules.bZedDamageDropsWeapon = bIsEnabled;
 }
 
+function ExecutionerFlagChanged(CardFlag Flag, bool bIsEnabled)
+{
+    CardGameRules.bExecutionerEnabled = bIsEnabled;
+}
+
 function TemporalAnomalyFlagChanged(CardFlag Flag, bool bIsEnabled)
 {
     local TemporalAnomalyActor Actor;
@@ -624,6 +635,24 @@ function BleedDamageFlagChanged(CardFlag Flag, bool bIsEnabled)
         if (BleedManager != None)
         {
             BleedManager.Destroy();
+        }
+    }
+}
+
+function MonsterRegenFlagChanged(CardFlag Flag, bool bIsEnabled)
+{
+    if (bIsEnabled)
+    {
+        if (MonsterRegenManager == None)
+        {
+            MonsterRegenManager = Spawn(class'MonsterRegenActor', Self);
+        }
+    }
+    else
+    {
+        if (MonsterRegenManager != None)
+        {
+            MonsterRegenManager.Destroy();
         }
     }
 }
@@ -1224,10 +1253,19 @@ function PlayerLowHealthSlowsFlagChanged(Cardflag Flag, bool bIsEnabled)
     CardGameModifier.ForceNetUpdate();
 }
 
-//THORNS
 function PlayerThornsModifierChanged(CardModifierStack ModifiedStack, float Modifier)
 {
     CardGameRules.PlayerThornsDamageMultiplier = Modifier;
+}
+
+function PlayerFinalMonstersDamageModifierChanged(CardModifierStack ModifiedStack, float Modifier)
+{
+    CardGameRules.FinalMonstersDamageMultiplier = Modifier;
+}
+
+function PlayerMeleeLifestealModifierChanged(CardModifierStack ModifiedStack, float Modifier)
+{
+    CardGameRules.PlayerMeleeLifestealMultiplier = Modifier;
 }
 
 function PlayerGrenadeThrowBuffFlagChanged(Cardflag Flag, bool bIsEnabled)
@@ -1527,6 +1565,18 @@ defaultproperties
         OnFlagSetChanged=BleedDamageFlagChanged
     End Object
     BleedDamageFlag=CardFlag'BleedDamageCardFlag'
+
+    Begin Object Name=MonsterRegenCardFlag Class=CardFlag
+        FlagID="MonsterRegen"
+        OnFlagSetChanged=MonsterRegenFlagChanged
+    End Object
+    MonsterRegenFlag=CardFlag'MonsterRegenCardFlag'
+
+    Begin Object Name=ExecutionerCardFlag Class=CardFlag
+        FlagID="Executioner"
+        OnFlagSetChanged=ExecutionerFlagChanged
+    End Object
+    ExecutionerFlag=CardFlag'ExecutionerCardFlag'
 
     Begin Object Name=NoRestForTheWickedCardFlag Class=CardFlag
         FlagID="NoRestForTheWicked"
@@ -2065,6 +2115,18 @@ defaultproperties
         OnModifierChanged=PlayerThornsModifierChanged
     End Object
     PlayerThornsModifier=CardModifierStack'PlayerThornsModifierStack'
+
+    Begin Object Name=PlayerFinalMonstersDamageModifierStack Class=CardModifierStack
+        ModifierStackID="PlayerFinalMonstersDamage"
+        OnModifierChanged=PlayerFinalMonstersDamageModifierChanged
+    End Object
+    PlayerFinalMonstersDamageModifier=CardModifierStack'PlayerFinalMonstersDamageModifierStack'
+
+    Begin Object Name=PlayerMeleeLifestealModifierStack Class=CardModifierAdditiveStack
+        ModifierStackID="PlayerMeleeLifesteal"
+        OnModifierChanged=PlayerMeleeLifestealModifierChanged
+    End Object
+    PlayerMeleeLifestealModifier=CardModifierAdditiveStack'PlayerMeleeLifestealModifierStack'
 
 //SPECIAL
     Begin Object Name=PlayerGrenadeThrowBuffCardFlag Class=CardFlag

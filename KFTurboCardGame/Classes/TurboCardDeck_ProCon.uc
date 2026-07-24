@@ -588,6 +588,12 @@ function ActivateHealthAndTaxes(TurboCardGameplayManager GameplayManager, TurboC
     Card.UpdateModifier(GameplayManager.PlayerMaxHealthModifier, 1.05f, bActivate);
 }
 
+function ActivateBloodlust(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
+{
+    Card.UpdateModifier(GameplayManager.PlayerMeleeLifestealModifier, 0.05f, bActivate);
+    Card.UpdateModifier(GameplayManager.MonsterMeleeDamageModifier, 1.1f, bActivate);
+}
+
 defaultproperties
 {
     Begin Object Name=TradeIn Class=TurboCard_ProConStrange
@@ -1161,4 +1167,16 @@ defaultproperties
         OnActivateCard=ActivateHealthAndTaxes
     End Object
     DeckCardObjectList(45)=TurboCard'HealthAndTaxes'
+
+    Begin Object Name=Bloodlust Class=TurboCard_ProCon
+        CardName(0)="Bloodlust"
+        CardDescriptionList(0)="Melee damage"
+        CardDescriptionList(1)="heals players for"
+        CardDescriptionList(2)="5% of damage dealt"
+        CardDescriptionList(3)="but zeds deal 10%"
+        CardDescriptionList(4)="more melee damage."
+        CardID="PROCON_BLOODLUST"
+        OnActivateCard=ActivateBloodlust
+    End Object
+    DeckCardObjectList(46)=TurboCard'Bloodlust'
 }
