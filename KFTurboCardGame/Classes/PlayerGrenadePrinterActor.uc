@@ -3,8 +3,8 @@
 //For more information see https://github.com/KFPilot/KFTurbo.
 class PlayerGrenadePrinterActor extends Engine.Info;
 
-var float GrantInterval;
-var float TimeUntilNextGrant;
+var int GrantInterval;
+var int TimeUntilNextGrant;
 
 function PostBeginPlay()
 {
@@ -27,7 +27,7 @@ function Timer()
         return;
     }
 
-    TimeUntilNextGrant -= 1.f;
+    TimeUntilNextGrant -= 1;
 
     if (TimeUntilNextGrant > 0.f)
     {
@@ -37,7 +37,6 @@ function Timer()
     TimeUntilNextGrant = GrantInterval;
 
     PawnList = class'TurboGameplayHelper'.static.GetPlayerPawnList(Level);
-
     for (Index = PawnList.Length - 1; Index >= 0; Index--)
     {
         FragWeapon = Weapon(PawnList[Index].FindInventoryType(class'Frag'));
@@ -51,5 +50,5 @@ function Timer()
 
 defaultproperties
 {
-    GrantInterval=30.f
+    GrantInterval=30
 }
