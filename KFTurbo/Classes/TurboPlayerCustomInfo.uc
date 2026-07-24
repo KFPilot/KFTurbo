@@ -20,6 +20,16 @@ simulated final function bool IsLocallyOwned()
 	return PlayerTPRI != None && PlayerController(PlayerTPRI.Owner) != None && Viewport(PlayerController(PlayerTPRI.Owner).Player) != None;
 }
 
+simulated final function Controller GetOwnerController()
+{
+    if (PlayerTPRI == None)
+    {
+        return None;
+    }
+
+    return Controller(PlayerTPRI.Owner);
+}
+
 simulated final function Pawn GetOwnerPawn()
 {
     if (PlayerTPRI != None && PlayerController(PlayerTPRI.Owner) != None)
