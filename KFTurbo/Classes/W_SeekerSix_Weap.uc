@@ -18,13 +18,18 @@ function Projectile SpawnProjectile(Vector Start, Rotator Dir)
 
     if (bLockedOn && SeekTarget != None)
     {
-        SeekingRocket = Spawn(class'W_SeekerSix_Seeking_Proj',,, Start, Dir);
-        SeekingRocket.Seeking = SeekTarget;
+        SeekingRocket = Spawn(class'W_SeekerSix_Seeking_Proj', Self,, Start, Dir);
+
+        if (SeekingRocket != None)
+        {
+            SeekingRocket.Seeking = SeekTarget;
+        }
+
         return SeekingRocket;
     }
     else
     {
-        Rocket = Spawn(class'W_SeekerSix_Proj',,, Start, Dir);
+        Rocket = Spawn(class'W_SeekerSix_Proj', Self,, Start, Dir);
         return Rocket;
     }
 }

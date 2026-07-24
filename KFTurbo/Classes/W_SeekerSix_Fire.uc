@@ -11,7 +11,22 @@ function DoFireEffect()
 
 function Projectile SpawnProjectile(Vector Start, Rotator Dir)
 {
-    return class'WeaponHelper'.static.SpawnProjectile(Self, Start, Dir);
+    local Projectile SpawnedProjectile;
+
+    SpawnedProjectile = W_SeekerSix_Weap(Weapon).SpawnProjectile(Start, Dir);
+
+    if (SpawnedProjectile == None)
+    {
+        SpawnedProjectile = ForceSpawnProjectile(Start, Dir);
+    }
+
+    if (SpawnedProjectile == None)
+    {
+        return None;
+    }
+
+    PostSpawnProjectile(SpawnedProjectile);
+    return SpawnedProjectile;
 }
 
 function Projectile ForceSpawnProjectile(Vector Start, Rotator Dir)
