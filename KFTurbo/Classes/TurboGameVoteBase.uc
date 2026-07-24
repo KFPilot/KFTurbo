@@ -365,7 +365,7 @@ function PlayerVote(TurboPlayerReplicationInfo TPRI, optional string VoteString)
         return;
     }
 
-    switch(VoteString)
+    switch(Caps(VoteString))
     {
         case "YES":
             PlayerVote = EVote.Yes;
@@ -379,7 +379,7 @@ function PlayerVote(TurboPlayerReplicationInfo TPRI, optional string VoteString)
 
     if (PlayerVote == EVote.Unset)
     {
-        if (VoteString == GetVoteID())
+        if (VoteString ~= GetVoteID())
         {
             PlayerVote = EVote.Yes;
         }
