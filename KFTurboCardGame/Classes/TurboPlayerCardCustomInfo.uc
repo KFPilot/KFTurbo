@@ -68,7 +68,7 @@ replication
 {
     reliable if (Role == ROLE_Authority)
         GrenadeThrowTime, HealBoostTime, RackEmUpHeadshotCount, RackEmUpHeadshotStackExpireTime, CheatDeathWave,
-		SubstituteDamageCount, BleedCount, NextBleedTime, PlayerFlags;
+		SubstituteDamageCount, BleedCount, NextBleedTime, PerpetualCriticalHitStartTime, PlayerFlags;
 
 	reliable if (Role == ROLE_Authority)
         ClientCriticalHit;
