@@ -170,7 +170,7 @@ function ActivateBigHeadMode(TurboCardGameplayManager GameplayManager, TurboCard
 {
     if (bActivate)
     {
-        GameplayManager.MonsterHeadSizeModifier.AddModifier(1.5f, Card);
+        GameplayManager.MonsterHeadSizeModifier.AddModifier(1.5f, Card); //It's not actually 2x head size.
     }
     else
     {
@@ -656,7 +656,7 @@ defaultproperties
         CardDescriptionList(0)="Increases"
         CardDescriptionList(1)="Commando on-perk"
         CardDescriptionList(2)="weapon magazine"
-        CardDescriptionList(3)="size by 200%,"
+        CardDescriptionList(3)="size by 100%,"
         CardDescriptionList(4)="reload speed by"
         CardDescriptionList(5)="20% and max"
         CardDescriptionList(6)="ammo by 20%."
@@ -681,10 +681,10 @@ defaultproperties
         CardDescriptionList(0)="Increases Field"
         CardDescriptionList(1)="Medic grenade"
         CardDescriptionList(2)="damage by 900%,"
-        CardDescriptionList(3)="on-perk weapon"
-        CardDescriptionList(4)="magazine size by"
-        CardDescriptionList(5)="100%, and heal"
-        CardDescriptionList(6)="potency by 50%."
+        CardDescriptionList(3)="on-perk magazine"
+        CardDescriptionList(4)="size by 100%, max"
+        CardDescriptionList(5)="ammo by 25%, and"
+        CardDescriptionList(6)="heal potency by 50%."
         OnActivateCard=ActivateUberMedic
         CardID="SUPER_UBERMEDIC"
     End Object
@@ -834,6 +834,7 @@ defaultproperties
 
     Begin Object Name=MaximumPayne Class=TurboCard_Super
         CardName(0)="Maximum Payne"
+        //Comment is not accurate (referring to firerate and reload speed) but is the simplest way to describe the card's effect.
         CardDescriptionList(0)="Increases dual"
         CardDescriptionList(1)="pistol's magazine"
         CardDescriptionList(2)="size by 50% and"
