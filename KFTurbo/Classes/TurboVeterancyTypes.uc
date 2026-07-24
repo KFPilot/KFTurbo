@@ -90,7 +90,7 @@ static function float GetHealPotency(KFPlayerReplicationInfo KFPRI)
 
 static function float GetWeldSpeedModifier(KFPlayerReplicationInfo KFPRI)
 {
-	return 1.f;
+	return TurboGameReplicationInfo(KFPRI.Level.GRI).GetWeldSpeedModifier(KFPRI);
 }
 
 static function ApplyAdjustedDamageMultiplier(KFPlayerReplicationInfo KFPRI, KFMonster Injured, KFPawn Instigator, out int InDamage, class<DamageType> DamageType)
