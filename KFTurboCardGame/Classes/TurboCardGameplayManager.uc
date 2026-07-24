@@ -55,6 +55,8 @@ var CardFlag BleedDamageFlag;
 var PlayerBleedActor BleedManager;
 var CardFlag MonsterRegenFlag;
 var MonsterRegenActor MonsterRegenManager;
+var CardFlag GrenadePrinterFlag;
+var PlayerGrenadePrinterActor GrenadePrinterManager;
 var CardFlag NoRestForTheWickedFlag;
 var PlayerNoRestForTheWickedActor NoRestForTheWickedManager;
 
@@ -653,6 +655,24 @@ function MonsterRegenFlagChanged(CardFlag Flag, bool bIsEnabled)
         if (MonsterRegenManager != None)
         {
             MonsterRegenManager.Destroy();
+        }
+    }
+}
+
+function GrenadePrinterFlagChanged(CardFlag Flag, bool bIsEnabled)
+{
+    if (bIsEnabled)
+    {
+        if (GrenadePrinterManager == None)
+        {
+            GrenadePrinterManager = Spawn(class'PlayerGrenadePrinterActor', Self);
+        }
+    }
+    else
+    {
+        if (GrenadePrinterManager != None)
+        {
+            GrenadePrinterManager.Destroy();
         }
     }
 }
@@ -1577,6 +1597,12 @@ defaultproperties
         OnFlagSetChanged=ExecutionerFlagChanged
     End Object
     ExecutionerFlag=CardFlag'ExecutionerCardFlag'
+
+    Begin Object Name=GrenadePrinterCardFlag Class=CardFlag
+        FlagID="GrenadePrinter"
+        OnFlagSetChanged=GrenadePrinterFlagChanged
+    End Object
+    GrenadePrinterFlag=CardFlag'GrenadePrinterCardFlag'
 
     Begin Object Name=NoRestForTheWickedCardFlag Class=CardFlag
         FlagID="NoRestForTheWicked"

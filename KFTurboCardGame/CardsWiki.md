@@ -124,6 +124,7 @@
 | ProCon | Charge Exchange | Increases heal recharge speed by 25% but reduces weld speed by 50%. |
 | ProCon | Risky Regen | Increases regen by 3 every 5 seconds but reduces max health by 10%. |
 | ProCon | Bloodlust | Melee damage heals players for 5% of damage dealt but zeds deal 10% more melee damage. |
+| ProCon | Grenade Printer | Reduces grenade capacity by 50% but players gain a grenade every 30 seconds during waves. |
 |---------|---------------------------|-------------------------------------------------------------------------------------|
 | Strange | Trade In | Removes all good cards in exchange for a random super card. |
 | Strange | A Deal With The Devil | In exchange for receiving a random Super card, receive a random Evil card as well. |

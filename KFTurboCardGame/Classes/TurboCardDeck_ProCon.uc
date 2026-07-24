@@ -594,6 +594,12 @@ function ActivateBloodlust(TurboCardGameplayManager GameplayManager, TurboCard C
     Card.UpdateModifier(GameplayManager.MonsterMeleeDamageModifier, 1.1f, bActivate);
 }
 
+function ActivateGrenadePrinter(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
+{
+    Card.UpdateModifier(GameplayManager.PlayerGrenadeMaxAmmoModifier, 0.5f, bActivate);
+    Card.UpdateFlag(GameplayManager.GrenadePrinterFlag, bActivate);
+}
+
 defaultproperties
 {
     Begin Object Name=TradeIn Class=TurboCard_ProConStrange
@@ -1179,4 +1185,17 @@ defaultproperties
         OnActivateCard=ActivateBloodlust
     End Object
     DeckCardObjectList(46)=TurboCard'Bloodlust'
+
+    Begin Object Name=GrenadePrinter Class=TurboCard_ProCon
+        CardName(0)="Grenade Printer"
+        CardDescriptionList(0)="Reduces grenade"
+        CardDescriptionList(1)="capacity by 50%"
+        CardDescriptionList(2)="but players gain a"
+        CardDescriptionList(3)="grenade every 30"
+        CardDescriptionList(4)="seconds during"
+        CardDescriptionList(5)="waves."
+        CardID="PROCON_GRENADEPRINTER"
+        OnActivateCard=ActivateGrenadePrinter
+    End Object
+    DeckCardObjectList(47)=TurboCard'GrenadePrinter'
 }
