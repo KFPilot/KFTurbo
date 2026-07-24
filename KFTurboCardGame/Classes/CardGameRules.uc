@@ -513,7 +513,7 @@ function int NetDamage(int OriginalDamage, int Damage, Pawn Injured, Pawn Instig
         }
     }
 
-    if (InjuredHumanPawn != None && InjuredCardInfo != None && bZedDamageDropsWeapon)
+    if (InstigatorMonster != None && InjuredHumanPawn != None && InjuredCardInfo != None && bZedDamageDropsWeapon)
     {
         PlayerDropWeapon(InjuredHumanPawn, InjuredCardInfo);
     }
@@ -577,7 +577,7 @@ function MonsterNetDamage(out float DamageMultiplier, KFMonster Injured, Pawn In
 
         if (bWasHeadshot)
         {
-            if(MonsterTier == Trash)
+            if(MonsterTier == Trash || MonsterTier == Special)
             {
                 DamageMultiplier *= TrashHeadshotDamageMultiplier;
             }

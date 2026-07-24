@@ -111,11 +111,11 @@
 | ProCon | Concentrated Healing | Increases heal potency by 15% but reduces heal charge rate by 15%. |
 | ProCon | Dropping Ballast | Increases max ammo by 10% but reduces grenade max ammo by 20%. |
 | ProCon | With A Bit More Kick | Increases shotgun pellet count by 20% but increases shotgun recoil and kickback by 25%. |
-| ProCon | More Game To Play | Increases max weapon ammo by 15% and damage by 5% but wave size is increased by 20%. |
+| ProCon | More Game To Play | Increases max weapon ammo by 5% and damage by 5% but wave size is increased by 10%. |
 | ProCon | Collateral Damage | Increases explosive damage by 10% but increases friendly fire damage by 5%. |
 | ProCon | More Healing More Hurting | Increases heal potency by 20% but increases friendly fire damage by 5%. |
 | ProCon | Oversized Pipebombs | Increases Pipebomb damage by 50% and radius by 25% but reduces Pipebomb max ammo by 50%. |
-| ProCon | Short Hop | Increases player speed by 10% but reduces jump height by 75%. |
+| ProCon | Short Hop | Increases player speed by 10% but reduces jump height by 50%. |
 | ProCon | Charge Exchange | Increases heal recharge speed by 25% but reduces weld speed by 50%. |
 | ProCon | Risky Regen | Increases regen by 3 every 5 seconds but reduces max health by 10%. |
 |---------|---------------------------|-------------------------------------------------------------------------------------|
@@ -132,7 +132,7 @@
 | Super | Fist of the North London | Increases Berserker on-perk melee weapon firerate by 200%. |
 | Super | Commando Firing Extension | Increases Commando on-perk weapon magazine size by 200%, reload speed by 20% and max ammo by 20%. |
 | Super | Fire Hazard | Increases Firebug on-perk weapon fire damage by 50% and firerate by 100%. |
-| Super | Uber Medic | Increases Field Medic grenade damage by 900%, on-perk weapon magazine size by 100%, and heal potency by 50%. |
+| Super | Uber Medic | Increases Field Medic grenade damage by 900%, on-perk weapon magazine size by 100%, max ammo by 25%, and heal potency by 50%. |
 | Super | Weakened Fleshpounds | Increases damage dealt to Fleshpounds by 50%. |
 | Super | Anti-Chainsaw Coalition | Increases damage dealt to Scrakes by 50%. |
 | Super | Super Grenades | Increases grenade carry capacity by 100% and increases power of all grenades by 100%. |
@@ -146,7 +146,7 @@
 | Super | Hypersonic Ammunition | All weapon bullet penetration is doubled. |
 | Super | Strong Arm | Increases max carry weight by 3 for all players. |
 | Super | Diazepam | Reduces spread and recoil for all players by 80%. |
-| Super | Maximum Payne | Increases dual pistol's magazine size by 50% and firerate/reload speed during zed time by 100%. |
+| Super | Maximum Payne | Increases dual pistol's magazine size by 50%. During zed time, duals fire 2x faster, reload/swap 10x faster, and kills extend zed time. |
 | Super | Packed Shells | Increases shotgun pellet count by 50%. |
 | Super | Substitute | Negates the first 10 times a player receives damage each wave. |
 | Super | The Deepest of Ammo Pockets | Increases max ammo by 35%. |
