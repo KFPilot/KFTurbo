@@ -87,7 +87,7 @@ protected simulated function bool AttemptRegister()
 }
 
 //Called by Destroyed(). Should remove this actor from its sparse replication info list.
-private simulated function Unregister()
+protected simulated function Unregister()
 {
     if (!SparseOwningActor.bDeleteMe)
     {

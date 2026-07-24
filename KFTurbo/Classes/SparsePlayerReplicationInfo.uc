@@ -60,8 +60,10 @@ protected simulated function bool AttemptRegister()
     return true;
 }
 
-simulated function Unregister()
+protected simulated function Unregister()
 {
+    Super.Unregister();
+
     if (OwningPRI == None)
     {
         return;

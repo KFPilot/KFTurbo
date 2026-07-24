@@ -52,6 +52,8 @@ protected simulated function bool AttemptRegister()
 
 protected simulated function Unregister()
 {
+    Super.Unregister();
+
     if (OwningGRI == None)
     {
         return;
