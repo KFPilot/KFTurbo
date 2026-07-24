@@ -89,7 +89,7 @@ static function int AddCarryMaxWeight(KFPlayerReplicationInfo KFPRI)
 
 static function float GetWeldSpeedModifier(KFPlayerReplicationInfo KFPRI)
 {
-	return LerpStat(KFPRI, 1.f, 2.5f);
+	return Super.GetWeldSpeedModifier(KFPRI) * LerpStat(KFPRI, 1.f, 2.5f);
 }
 
 static function float AddExtraAmmoFor(KFPlayerReplicationInfo KFPRI, Class<Ammunition> AmmoType)
