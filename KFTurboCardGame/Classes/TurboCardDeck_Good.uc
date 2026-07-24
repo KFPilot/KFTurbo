@@ -541,6 +541,11 @@ function ActivatePoundOfFlesh(TurboCardGameplayManager GameplayManager, TurboCar
     Card.UpdateModifier(GameplayManager.PlayerMeleeLifestealModifier, 0.01f, bActivate);
 }
 
+function ActivateScorchedEarth(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
+{
+    Card.UpdateFlag(GameplayManager.ScorchedEarthFlag, bActivate);
+}
+
 defaultproperties
 {
     Begin Object Name=BonusCashKill Class=TurboCard_Good
@@ -1084,4 +1089,14 @@ defaultproperties
         OnActivateCard=ActivatePoundOfFlesh
     End Object
     DeckCardObjectList(50)=TurboCard'PoundOfFlesh'
+
+    Begin Object Name=ScorchedEarth Class=TurboCard_Good
+        CardName(0)="Scorched Earth"
+        CardDescriptionList(0)="Zeds that die"
+        CardDescriptionList(1)="while burning"
+        CardDescriptionList(2)="ignite nearby zeds."
+        CardID="GOOD_SCORCHEDEARTH"
+        OnActivateCard=ActivateScorchedEarth
+    End Object
+    DeckCardObjectList(51)=TurboCard'ScorchedEarth'
 }

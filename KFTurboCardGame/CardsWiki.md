@@ -85,6 +85,7 @@
 | Good | Window Shopping | Increases trader time by 15%. |
 | Good | Closing Time | The last 10 zeds of each wave take 25% more damage. |
 | Good | A Pound Of Flesh | Melee damage heals players for 1% of damage dealt. |
+| Good | Scorched Earth | Zeds that die while burning ignite nearby zeds. |
 
 
 ### ProCon Deck
@@ -167,3 +168,4 @@
 | Super | Too Much For zBlock | Increases player air control significantly. |
 | Super | De-Evolution | All zeds have a chance to be replaced with weaker versions of themselves. |
 | Super | Executioner | Player damage has a 20% chance to instantly kill non-boss zeds with less than 20% health. |
+| Super | Taser Rounds | Hits have a 10% chance to zap zeds, briefly stunning them. |

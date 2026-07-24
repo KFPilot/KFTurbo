@@ -631,6 +631,11 @@ function ActivateExecutioner(TurboCardGameplayManager GameplayManager, TurboCard
     Card.UpdateFlag(GameplayManager.ExecutionerFlag, bActivate);
 }
 
+function ActivateTaserRounds(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
+{
+    Card.UpdateModifier(GameplayManager.PlayerZapChanceModifier, 0.1f, bActivate);
+}
+
 defaultproperties
 {
     Begin Object Name=Cleanse Class=TurboCard_Super
@@ -1136,4 +1141,14 @@ defaultproperties
         OnActivateCard=ActivateExecutioner
     End Object
     DeckCardObjectList(40)=TurboCard'Executioner'
+
+    Begin Object Name=TaserRounds Class=TurboCard_Super
+        CardName(0)="Lighting Rounds"
+        CardDescriptionList(0)="Player damage has"
+        CardDescriptionList(1)="a 10% chance to"
+        CardDescriptionList(2)="zap zeds."
+        CardID="SUPER_TASERROUNDS"
+        OnActivateCard=ActivateTaserRounds
+    End Object
+    DeckCardObjectList(41)=TurboCard'TaserRounds'
 }

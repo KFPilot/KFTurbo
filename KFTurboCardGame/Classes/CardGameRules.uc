@@ -14,6 +14,7 @@ var(Turbo) float BonusCashMultiplier;
 var(Turbo) bool bSuddenDeathEnabled, bPerformingSuddenDeath;
 var(Turbo) float PlayerThornsDamageMultiplier;
 var(Turbo) float PlayerMeleeLifestealMultiplier;
+var(Turbo) float PlayerZapChance;
 
 var(Turbo) float FleshpoundDamageMultiplier;
 var(Turbo) float ScrakeDamageMultiplier;
@@ -515,6 +516,11 @@ function int NetDamage(int OriginalDamage, int Damage, Pawn Injured, Pawn Instig
         return 0;
     }
 
+    if (PlayerZapChance > 0.f && InstigatorCardInfo != None && InjuredMonster != None && FRand() < PlayerZapChance)
+    {
+        InjuredMonster.SetZapped(InjuredMonster.ZapThreshold, InstigatedBy);
+    }
+
     if (InstigatorMonster != None && InjuredHumanPawn != None)
     {
         ApplyThornsDamage(Damage, InjuredHumanPawn, InstigatorMonster);
@@ -792,11 +798,15 @@ function ScoreKill(Controller Killer, Controller Killed)
 
 function Killed(Controller Killer, Controller Killed, Pawn KilledPawn, class<DamageType> DamageType)
 {
+    local KFMonster KilledMonster;
+
     if (Killed == None)
     {
         Super.Killed(Killer, Killed, KilledPawn, DamageType);
         return;
     }
+
+    KilledMonster = KFMonster(KilledPawn);
 
     if (bSuddenDeathEnabled && PlayerController(Killed) != None && KFHumanPawn(Killed.Pawn) != None && Killed.PlayerReplicationInfo != None)
     {
@@ -806,17 +816,22 @@ function Killed(Controller Killer, Controller Killed, Pawn KilledPawn, class<Dam
         }
     }
 
-    if (bMassDetonationEnabled && FRand() < 0.25f && KFMonster(KilledPawn) != None && PlayerController(Killer) != None)
+    if (bMassDetonationEnabled && FRand() < 0.25f && KilledMonster != None && PlayerController(Killer) != None)
     {
         if (class<KFWeaponDamageType>(DamageType) != None && class<KFWeaponDamageType>(DamageType).default.bIsExplosive)
         {
-            AddMassDetonationEntry(KFMonster(KilledPawn), PlayerController(Killer));
+            AddMassDetonationEntry(KilledMonster, PlayerController(Killer));
         }
     }
 
-    if (bKillsGiveShield && KFMonster(KilledPawn) != None && PlayerController(Killer) != None)
+    if (bKillsGiveShield && KilledMonster != None && PlayerController(Killer) != None)
     {
-        GrantShieldOnKill(KFMonster(KilledPawn), PlayerController(Killer));
+        GrantShieldOnKill(KilledMonster, PlayerController(Killer));
+    }
+
+    if (KilledMonster != None && KilledMonster.BurnDown > 0 && MutatorOwner.TurboCardGameplayManagerInfo.ScorchedEarthManager != None)
+    {
+        MutatorOwner.TurboCardGameplayManagerInfo.ScorchedEarthManager.NotifyBurningMonsterDied(KilledMonster, Killer);
     }
 
     Super.Killed(Killer, Killed, KilledPawn, DamageType);
@@ -1320,6 +1335,7 @@ defaultproperties
     ExecutionerChance=0.20f
     PlayerThornsDamageMultiplier=1.f
     PlayerMeleeLifestealMultiplier=0.f
+    PlayerZapChance=0.f
 
     FleshpoundDamageMultiplier=1.f
     ScrakeDamageMultiplier=1.f

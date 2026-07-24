@@ -57,6 +57,8 @@ var CardFlag MonsterRegenFlag;
 var MonsterRegenActor MonsterRegenManager;
 var CardFlag GrenadePrinterFlag;
 var PlayerGrenadePrinterActor GrenadePrinterManager;
+var CardFlag ScorchedEarthFlag;
+var ScorchedEarthActor ScorchedEarthManager;
 var CardFlag NoRestForTheWickedFlag;
 var PlayerNoRestForTheWickedActor NoRestForTheWickedManager;
 
@@ -199,6 +201,7 @@ var CardModifierStack PlayerThornsModifier;
 
 //SPECIAL
 var CardModifierStack PlayerMeleeLifestealModifier;
+var CardModifierAdditiveStack PlayerZapChanceModifier;
 var CardFlag ExecutionerFlag;
 var CardFlag PlayerGrenadeThrowBuff;
 var CardFlag PlayerHealBoostBuff;
@@ -673,6 +676,24 @@ function GrenadePrinterFlagChanged(CardFlag Flag, bool bIsEnabled)
         if (GrenadePrinterManager != None)
         {
             GrenadePrinterManager.Destroy();
+        }
+    }
+}
+
+function ScorchedEarthFlagChanged(CardFlag Flag, bool bIsEnabled)
+{
+    if (bIsEnabled)
+    {
+        if (ScorchedEarthManager == None)
+        {
+            ScorchedEarthManager = Spawn(class'ScorchedEarthActor', Self);
+        }
+    }
+    else
+    {
+        if (ScorchedEarthManager != None)
+        {
+            ScorchedEarthManager.Destroy();
         }
     }
 }
@@ -1288,6 +1309,11 @@ function PlayerMeleeLifestealModifierChanged(CardModifierStack ModifiedStack, fl
     CardGameRules.PlayerMeleeLifestealMultiplier = Modifier;
 }
 
+function PlayerZapChanceModifierChanged(CardModifierStack ModifiedStack, float Modifier)
+{
+    CardGameRules.PlayerZapChance = Modifier;
+}
+
 function PlayerGrenadeThrowBuffFlagChanged(Cardflag Flag, bool bIsEnabled)
 {
     PlayerCardEventHandler.bTossGrenadeBuff = bIsEnabled;
@@ -1603,6 +1629,12 @@ defaultproperties
         OnFlagSetChanged=GrenadePrinterFlagChanged
     End Object
     GrenadePrinterFlag=CardFlag'GrenadePrinterCardFlag'
+
+    Begin Object Name=ScorchedEarthCardFlag Class=CardFlag
+        FlagID="ScorchedEarth"
+        OnFlagSetChanged=ScorchedEarthFlagChanged
+    End Object
+    ScorchedEarthFlag=CardFlag'ScorchedEarthCardFlag'
 
     Begin Object Name=NoRestForTheWickedCardFlag Class=CardFlag
         FlagID="NoRestForTheWicked"
@@ -2153,6 +2185,12 @@ defaultproperties
         OnModifierChanged=PlayerMeleeLifestealModifierChanged
     End Object
     PlayerMeleeLifestealModifier=CardModifierAdditiveStack'PlayerMeleeLifestealModifierStack'
+
+    Begin Object Name=PlayerZapChanceModifierStack Class=CardModifierAdditiveStack
+        ModifierStackID="PlayerZapChance"
+        OnModifierChanged=PlayerZapChanceModifierChanged
+    End Object
+    PlayerZapChanceModifier=CardModifierAdditiveStack'PlayerZapChanceModifierStack'
 
 //SPECIAL
     Begin Object Name=PlayerGrenadeThrowBuffCardFlag Class=CardFlag
