@@ -51,6 +51,7 @@ simulated function PostBeginPlay()
 function Destroyed()
 {
     CoreKFGameType(Level.Game).RevokeZedTimeDisable(self);
+    SetTimeDilation(1.f); //Make sure we don't leave an anomaly's time dilation applied forever.
 
     Super.Destroyed();
 }
