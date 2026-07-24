@@ -22,4 +22,5 @@ function Projectile ForceSpawnProjectile(Vector Start, Rotator Dir)
 defaultproperties
 {
     AmmoClass=Class'KFTurbo.W_Crossbow_Ammo'
+    ProjectileClass=Class'KFTurbo.W_Crossbow_Proj'
 }
