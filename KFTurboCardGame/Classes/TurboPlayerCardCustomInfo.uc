@@ -455,14 +455,18 @@ final function UpdateBleedCounter(int Count, float Time)
 
 simulated function PostNetReceive()
 {
+    local TurboCardOverlay CardOverlay;
+
 	Super.PostNetReceive();
 
-	if (!IsLocallyOwned() || GetTurboCardOverlay() == None)
+	CardOverlay = GetTurboCardOverlay();
+
+	if (CardOverlay == None)
 	{
 		return;
 	}
 
-	GetTurboCardOverlay().OnPlayerCardInfoUpdate();
+	CardOverlay.OnPlayerCardInfoUpdate();
 }
 
 static final function SetupOffset(float DrawX, float DrawY, float IconX, out float OffsetX, out float OffsetY, out int Index)

@@ -1267,6 +1267,11 @@ simulated function OnPlayerCardInfoUpdate()
 	local int Index;
 	local TurboCard Card;
 
+	if (PlayerCardCustomInfo == None)
+	{
+	    return;
+	}
+
 	for (Index = 0; Index < ArrayCount(TCRI.ActiveCardInstanceList); Index++)
 	{
 		Card = TCRI.ActiveCardInstanceList[Index];
@@ -1280,18 +1285,6 @@ simulated function OnPlayerCardInfoUpdate()
 		{
 			Card.OnStatusPostNetReceive(self, PlayerCardCustomInfo, Card);
 		}
-	}
-
-	if (PlayerCardCustomInfo.GrenadeThrowTime > LastKnownGrenadeThrowTime)
-	{
-		GrenadeBoostStatus.Ratio = 1.f;
-		LastKnownGrenadeThrowTime = PlayerCardCustomInfo.GrenadeThrowTime;
-	}
-
-	if (PlayerCardCustomInfo.HealBoostTime > LastKnownHealBoostTime)
-	{
-		HealBoostStatus.Ratio = 1.f;
-		LastKnownHealBoostTime = PlayerCardCustomInfo.HealBoostTime;
 	}
 }
 
