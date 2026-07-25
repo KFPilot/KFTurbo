@@ -106,7 +106,7 @@ function ActivateBriskPace(TurboCardGameplayManager GameplayManager, TurboCard C
 
 function ActivateSpecialization(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
-    Card.UpdateModifier(GameplayManager.PlayerOnPerkDamageModifier, 1.05f, bActivate);
+    Card.UpdateModifier(GameplayManager.PlayerOnPerkDamageModifier, 1.1f, bActivate);
     Card.UpdateModifier(GameplayManager.PlayerOffPerkDamageModifier, 0.85f, bActivate);
 }
 
@@ -690,7 +690,7 @@ defaultproperties
         CardName(0)="Specialization"
         CardDescriptionList(0)="Increases on-perk"
         CardDescriptionList(1)="weapon damage by"
-        CardDescriptionList(2)="5% but reduces"
+        CardDescriptionList(2)="10% but reduces"
         CardDescriptionList(3)="off-perk damage"
         CardDescriptionList(4)="by 15%."
         OnActivateCard=ActivateSpecialization

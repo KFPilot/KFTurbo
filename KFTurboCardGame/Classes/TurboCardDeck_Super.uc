@@ -410,7 +410,7 @@ function ActivatePrecisionChain(TurboCardGameplayManager GameplayManager, TurboC
 
 function ActivateWormeholeMagazine(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
-    Card.UpdateModifier(GameplayManager.PlayerKillsReloadMagazineModifier, 0.10f, bActivate);
+    Card.UpdateModifier(GameplayManager.PlayerKillsReloadMagazineModifier, 0.5f, bActivate);
 }
 
 //========================
@@ -1120,7 +1120,7 @@ defaultproperties
     Begin Object Name=WormholeMagazine Class=TurboCard_Super
         CardName(0)="Wormhole"
         CardName(1)="Magazines"
-        CardDescriptionList(0)="Kills have a 10%"
+        CardDescriptionList(0)="Kills have a 50%"
         CardDescriptionList(1)="chance to instantly"
         CardDescriptionList(2)="reload the current"
         CardDescriptionList(3)="weapon's magazine."
