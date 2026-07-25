@@ -1162,7 +1162,8 @@ defaultproperties
     DeckCardObjectList(44)=TurboCard'Hoarder'
 
     Begin Object Name=HealthAndTaxes Class=TurboCard_ProCon
-        CardName(0)="Health and Taxes"
+        CardName(0)="Health"
+        CardName(1)="and Taxes"
         CardDescriptionList(0)="Increases player"
         CardDescriptionList(1)="health by 5% but"
         CardDescriptionList(2)="players lose 15%"
@@ -1187,7 +1188,8 @@ defaultproperties
     DeckCardObjectList(46)=TurboCard'Bloodlust'
 
     Begin Object Name=GrenadePrinter Class=TurboCard_ProCon
-        CardName(0)="Grenade Printer"
+        CardName(0)="Grenade"
+        CardName(1)="Printer"
         CardDescriptionList(0)="Reduces grenade"
         CardDescriptionList(1)="capacity by 50%"
         CardDescriptionList(2)="but players gain a"

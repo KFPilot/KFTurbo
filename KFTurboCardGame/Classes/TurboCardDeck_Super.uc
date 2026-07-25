@@ -1143,7 +1143,8 @@ defaultproperties
     DeckCardObjectList(40)=TurboCard'Executioner'
 
     Begin Object Name=TaserRounds Class=TurboCard_Super
-        CardName(0)="Lighting Rounds"
+        CardName(0)="Lighting"
+        CardName(1)="Rounds"
         CardDescriptionList(0)="Player damage has"
         CardDescriptionList(1)="a 10% chance to"
         CardDescriptionList(2)="zap zeds."

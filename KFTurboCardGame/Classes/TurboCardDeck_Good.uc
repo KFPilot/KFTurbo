@@ -1091,7 +1091,8 @@ defaultproperties
     DeckCardObjectList(50)=TurboCard'PoundOfFlesh'
 
     Begin Object Name=ScorchedEarth Class=TurboCard_Good
-        CardName(0)="Scorched Earth"
+        CardName(0)="Scorched"
+        CardName(1)="Earth"
         CardDescriptionList(0)="Zeds that die"
         CardDescriptionList(1)="while burning"
         CardDescriptionList(2)="ignite nearby zeds."
