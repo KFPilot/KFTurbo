@@ -48,7 +48,7 @@ delegate SetPerkSwitchEnabled(bool bEnable);
 simulated function PostBeginPlay()
 {
 	Super.PostBeginPlay();
-	
+
 	//Make sure CommonCore is added to server packages.
 	//AddToPackageMap("CommonCore");
 
@@ -58,7 +58,7 @@ simulated function PostBeginPlay()
 	AddToPackageMap("KFTurboFontsCY");
 	AddToPackageMap("KFTurboFontsKR");
 	AddToPackageMap("KFTurboFontsTH");
-	
+
 	//Make sure GUI is also added to server packages.
 	AddToPackageMap("KFTurboGUI");
 
@@ -111,7 +111,7 @@ simulated function PostBeginPlay()
 	{
 		Spawn(class'TurboVersionTcpLink', Self);
 	}
-	
+
 	class'TurboHealRewardEventHandler'.static.CreateHandler(Self);
 }
 
@@ -219,7 +219,7 @@ function bool CheckReplacement(Actor Other, out byte bSuperRelevant)
 	{
 		Other.NetPriority = FMax(Other.NetPriority, 1.5f);
 	}
- 
+
 	return true;
 }
 
@@ -258,12 +258,12 @@ function ApplyHealthModification(Pawn Pawn)
 	{
 		return;
 	}
-	
+
 	HealthMultiplier = TurboGameReplicationInfo(Level.GRI).GetPlayerMaxHealthMultiplier(Pawn);
 
 	Pawn.HealthMax = Round(Pawn.HealthMax * HealthMultiplier);
 	Pawn.Health = Round(Pawn.Health * HealthMultiplier);
-	
+
 	Pawn.HealthMax = FMax(Pawn.HealthMax, 1.f);
 	Pawn.Health = FMax(Pawn.Health, 1.f);
 }
@@ -274,7 +274,7 @@ function ApplySpeedModification(Pawn Pawn)
 	{
 		return;
 	}
-	
+
 	Pawn.AccelRate = Pawn.default.AccelRate * FMax(0.f, TurboGameReplicationInfo(Level.GRI).GetPlayerMovementAccelMultiplier(KFPlayerReplicationInfo(Pawn.PlayerReplicationInfo), TurboGameReplicationInfo(Level.GRI)));
 }
 
@@ -314,7 +314,7 @@ static final function int GetLatestAheadAmount(string Current, string Latest)
 	{
 		Current = "0";
 	}
-	
+
 	if (Latest == "")
 	{
 		Latest = "0";
@@ -368,7 +368,7 @@ simulated function String GetHumanReadableName()
 final function string GetSessionID()
 {
     if (SessionID == "")
-	{	
+	{
 		SessionID = GenerateSessionID();
 	}
 
@@ -454,7 +454,7 @@ function OnWaveEnd()
 function ServerTraveling(string URL, bool bItems)
 {
 	Super.ServerTraveling(URL, bItems);
-	
+
 	SetPerkSwitchEnabled = None;
 
 	if (StatsTcpLink == None)
@@ -482,7 +482,7 @@ defaultproperties
 	bDebugClientPerkRepLink=false
 
 	bCheckLatestTurboVersion=true
-	TurboVersion="7.1.0"
+	TurboVersion="7.1.1"
 	bHasVersionUpdate=false
 
 	bRequireAdminForDifficultyCommands=true
@@ -493,6 +493,6 @@ defaultproperties
 
 	bPreventImmediateCashRegrab=false
 	bFixPlayerNameEncoding=false
-	
+
 	MaxPlayersOverride=0
 }
