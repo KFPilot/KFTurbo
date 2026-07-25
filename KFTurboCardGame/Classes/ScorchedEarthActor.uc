@@ -38,7 +38,7 @@ function NotifyBurningMonsterDied(KFMonster Monster, Controller Killer)
     PendingIgniteList[PendingIgniteList.Length - 1].IgniteLocation = Monster.Location;
     PendingIgniteList[PendingIgniteList.Length - 1].BurnDamageType = BurnDamageType;
     PendingIgniteList[PendingIgniteList.Length - 1].KillerController = Killer;
-    PendingIgniteList[PendingIgniteList.Length - 1].IgniteTime = Level.TimeSeconds + IgniteDelay;
+    PendingIgniteList[PendingIgniteList.Length - 1].IgniteTime = Level.TimeSeconds + IgniteDelay + (FRand() * 0.1f);
 }
 
 function Tick(float DeltaTime)
@@ -62,16 +62,25 @@ function Tick(float DeltaTime)
 
         foreach CollidingActors(class'KFMonster', Monster, IgniteRadius, PendingIgniteList[Index].IgniteLocation)
         {
-            if (Monster.Health <= 0)
+            if (Monster.Health > 0 && Monster.BurnDown <= 0)
             {
-                continue;
+                IgniteMonster(Monster, PendingIgniteList[Index].BurnDamageType, InstigatorPawn);
             }
-
-            Monster.TakeDamage(IgniteDamage, InstigatorPawn, Monster.Location, vect(0, 0, 0), PendingIgniteList[Index].BurnDamageType);
         }
 
         PendingIgniteList.Remove(Index, 1);
     }
+}
+
+function IgniteMonster(KFMonster Monster, class<DamageType> BurnDamageType, Pawn InstigatorPawn)
+{
+    Monster.LastBurnDamage = IgniteDamage;
+    Monster.FireDamageClass = BurnDamageType;
+    Monster.bBurnified = true;
+    Monster.BurnDown = 10;
+    Monster.BurnInstigator = InstigatorPawn;
+    Monster.SetTimer(1.f, false);
+    Monster.SetBurningBehavior();
 }
 
 defaultproperties
