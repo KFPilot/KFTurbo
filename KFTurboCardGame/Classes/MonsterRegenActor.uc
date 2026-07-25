@@ -29,6 +29,11 @@ function NotifyMonsterDamaged(KFMonster Monster)
         return;
     }
 
+    if (class'PawnHelper'.static.GetMonsterTier(Monster.Class) > Elite)
+    {
+        return;
+    }
+
     for (Index = 0; Index < MonsterList.Length; Index++)
     {
         if (MonsterList[Index].Monster == Monster)
