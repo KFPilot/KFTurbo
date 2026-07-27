@@ -99,11 +99,9 @@ static function float GetHeadShotDamMulti(KFPlayerReplicationInfo KFPRI, KFPawn 
 		break;
 	case class'W_Magnum44_DT' :
 	case class'W_Dual44_DT' :
-		Multiplier *= LerpStat(KFPRI, 1.05f, 1.45f);
-		break;
+		return Multiplier * LerpStat(KFPRI, 1.05f, 1.45f);
 	case class'DamTypeDualies' :
-		Multiplier *= LerpStat(KFPRI, 1.05f, 1.4f);
-		break;
+		return Multiplier * LerpStat(KFPRI, 1.05f, 1.4f);
 	}
 
 	return Multiplier * LerpStat(KFPRI, 1.1f, 1.5f);

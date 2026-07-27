@@ -8,13 +8,16 @@ var protected bool bDisplayCollision;
 simulated function ModifyMonster(KFMonster Monster)
 {
     Super.ModifyMonster(Monster);
-    
+
     if (Monster.Health <= 0)
     {
         return;
     }
 
-    ApplyCollisionDebug(Monster);
+    if (bDisplayCollision)
+    {
+        ApplyCollisionDebug(Monster);
+    }
 }
 
 simulated function SetDisplayCollision(bool bEnabled)
@@ -33,7 +36,7 @@ simulated function SetDisplayCollision(bool bEnabled)
         {
             if (Monster.Health <= 0)
             {
-                continue;    
+                continue;
             }
 
             ApplyCollisionDebug(Monster);
