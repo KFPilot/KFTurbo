@@ -49,8 +49,8 @@ defaultproperties
     VoteFailedVoteString="%kVote%d to %kset max players%d to %k%i%d has %nkfailed%d."
     VoteExpiredVoteString="%kVote%d to %kset max players%d to %k%i%d has %akexpired%d."
 
-    VoteTitleString="%ix Max Players"
+    VoteTitleString="%i Max Players"
     VoteDescriptionString="Accepting this vote will change max players for the rest of the game."
-    
+
 	CommandHint=(Command="Vote MaxPlayers",Hint="Starts a vote to modify max players.",ParameterType=Integer,DefaultValue="6")
 }
