@@ -124,7 +124,19 @@ final function ReloadWeapon(Pawn PlayerPawn)
         return;
     }
 
+    if (Weapon.MagAmmoRemaining >= Weapon.MagCapacity)
+    {
+        return;
+    }
+
     Weapon.AddReloadedAmmo();
+
+    if (Weapon.MagAmmoRemaining > Weapon.AmmoAmount(0))
+    {
+        Weapon.MagAmmoRemaining = FMin(Weapon.MagAmmoRemaining, Weapon.AmmoAmount(0));
+    }
+
+    Weapon.ClientForceKFAmmoUpdate(Weapon.MagAmmoRemaining, Weapon.AmmoAmount(0));
 }
 
 defaultproperties
