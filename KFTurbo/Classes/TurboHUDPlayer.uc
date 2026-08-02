@@ -70,6 +70,11 @@ var float CurrentMagazineAmmo;
 var float CurrentLoadedAmmo; //Used to help with CurrentSpareAmmo calculation.
 var float CurrentSpareAmmo;
 
+var float DebouncedSpareAmmo;
+var float PendingSpareAmmo;
+var float PendingSpareAmmoTime;
+var float SpareAmmoDebounceDelay;
+
 var bool bIsMeleeGun;
 var bool bIsWelderOrSyringe;
 var bool bIsSingleShotWeapon;
@@ -210,6 +215,7 @@ simulated function Tick(float DeltaTime)
 		ReloadFade = 0.f;
 		bIsOutOfAmmo = false;
 		OutOfAmmoFade = 0.f;
+		ResetSpareAmmoDebounce();
 		CurrentPlayerCash = -1.f;
 		CurrentHealingRatio = 0.f;
 		CurrentPulseRatio = 0.f;
@@ -539,6 +545,7 @@ simulated function WeaponUpdate(float DeltaTime, KFWeapon Weapon)
 		LastKnownWeapon = Weapon;
 		OutOfAmmoFade = 0.f;
 		LastReloadingTime = Level.TimeSeconds; //Force an ammo update.
+		ResetSpareAmmoDebounce();
 	}
 
 	bIsReloading = Weapon.bIsReloading;
@@ -639,40 +646,59 @@ simulated function WeaponUpdate(float DeltaTime, KFWeapon Weapon)
 
 simulated function MagazineAmmoUpdate(KFWeapon Weapon)
 {
-	local float MaxAmmo;
+	local float MaxAmmo, SpareAmmo;
 
-	Weapon.GetAmmoCount(MaxAmmo, CurrentSpareAmmo);
+	Weapon.GetAmmoCount(MaxAmmo, SpareAmmo);
 
-	if (Weapon.MagAmmoRemaining < CurrentLoadedAmmo)
-	{
-		CurrentLoadedAmmo = Weapon.MagAmmoRemaining;
-	}
-	else
-	{
-		if (bIsReloading)
-		{
-			LastReloadingTime = Level.TimeSeconds;
-			CurrentLoadedAmmo = Weapon.MagAmmoRemaining;
-		}
-		else if (Level.TimeSeconds < LastReloadingTime + 0.2f)
-		{
-			CurrentLoadedAmmo = Weapon.MagAmmoRemaining;
-		}
-	}
+	CurrentLoadedAmmo = Weapon.MagAmmoRemaining;
+
+	SpareAmmo = DebounceSpareAmmo(SpareAmmo - CurrentLoadedAmmo);
 
 	//Large capacity magazines need to do this. We only support two digits!
 	if (bIsLargeCapacityMagazine)
 	{
-		CurrentSpareAmmo = ((CurrentSpareAmmo - CurrentLoadedAmmo) / float(Weapon.MagCapacity)) * 100.f;
+		CurrentSpareAmmo = (SpareAmmo / float(Weapon.MagCapacity)) * 100.f;
 		CurrentLoadedAmmo = (CurrentLoadedAmmo / float(Weapon.MagCapacity)) * 999.f;
 	}
 	else
 	{
-		CurrentSpareAmmo = CurrentSpareAmmo - CurrentLoadedAmmo;
+		CurrentSpareAmmo = SpareAmmo;
 	}
 
 	bIsOutOfAmmo = CurrentSpareAmmo <= 0;
 	CurrentMagazineAmmo = Weapon.MagAmmoRemaining;
+}
+
+simulated final function float DebounceSpareAmmo(float SpareAmmo)
+{
+	if (SpareAmmo <= DebouncedSpareAmmo)
+	{
+		DebouncedSpareAmmo = SpareAmmo;
+		PendingSpareAmmo = -1.f;
+		return SpareAmmo;
+	}
+
+	if (SpareAmmo != PendingSpareAmmo)
+	{
+		PendingSpareAmmo = SpareAmmo;
+		PendingSpareAmmoTime = Level.TimeSeconds;
+		return DebouncedSpareAmmo;
+	}
+
+	if (Level.TimeSeconds >= PendingSpareAmmoTime + SpareAmmoDebounceDelay)
+	{
+		DebouncedSpareAmmo = SpareAmmo;
+		PendingSpareAmmo = -1.f;
+		return SpareAmmo;
+	}
+
+	return DebouncedSpareAmmo;
+}
+
+simulated final function ResetSpareAmmoDebounce()
+{
+	DebouncedSpareAmmo = 999999.f;
+	PendingSpareAmmo = -1.f;
 }
 
 simulated function HuskGunUpdate(HuskGun HuskGun)
@@ -1464,6 +1490,10 @@ defaultproperties
 
 	ReloadFadeRate=6.f
 	OutOfAmmoFadeRate=3.f
+
+	DebouncedSpareAmmo=999999.f
+	PendingSpareAmmo=-1.f
+	SpareAmmoDebounceDelay=0.15f
 
 	SyringeIcon=Texture'KFTurbo.Ammo.SyringeIcon_D'
 	GrenadeIcon=Texture'KFTurbo.Ammo.NadeIcon_D'
