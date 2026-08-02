@@ -43,13 +43,13 @@ Arguments = ArgumentParser.parse_args()
 BuildType = EBuildType.ALL
 
 #Files KFTurbo compiles.
-TurboFiles = ["KFTurboMapVote.u", "KFTurboEmbeddable.u", #Turbo-agnostic packages.
+TurboFiles = ["KFTurboMapVote.u", "KFTurboServerPerks.u", "KFTurboEmbeddable.u", #Turbo-agnostic packages.
             "KFTurboGUI.u", "KFTurboFonts.u", "KFTurboFontsJP.u", "KFTurboFontsCY.u", "KFTurboFontsKR.u", "KFTurboFontsTH.u", #Asset packages.
             "KFTurbo.u", "KFTurboServer.u", "KFTurboCommon.u", #Turbo Core packages.
             "KFTurboHoldout.u", "KFTurboRandomizer.u", "KFTurboCardGame.u", "KFTurboTestMut.u"] #Special gamemode packages.
 
 #Files needed for Turbo deployments.
-TurboStagingFiles = [ "KFTurbo.ucl", "KFTurboServer.ucl",
+TurboStagingFiles = [ "KFTurbo.ucl", "KFTurboServer.ucl", "KFTurboServerPerks.ucl",
             "KFTurboHoldout.ucl", "KFTurboRandomizer.ucl", "KFTurboCardGame.ucl", "KFTurboTestMut.ucl",
             "ServerPerks.ini" ]
 
@@ -82,7 +82,7 @@ def UpdateBuildType():
     if Arguments.achievements:
         TurboFiles.append(["KFTurboServerAchievements.u"])
         TurboFiles.append(["KFTurboServerAchievements.ucl"])
-    
+
 UpdateBuildType()
 
 StageFiles = Arguments.stagefiles
@@ -367,7 +367,7 @@ def PerformCompile():
         PrintError(f"{Error}")
         FoundAllFiles = False
     print("... expected file check complete.")
-    
+
     if StageFiles and FoundAllFiles:
         PrintTask("Staging files...")
         CopyTurboFilesToDeployments()
