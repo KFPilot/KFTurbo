@@ -94,6 +94,8 @@ var(Turbo) float SirenScreamDamageMultiplier;
 var(Turbo) float SirenScreamRangeModifier;
 var array<P_Siren> SirenPawnList;
 
+var(Turbo) float BileDamageMultiplier;
+
 var(Turbo) float ScrakeRageThresholdModifier;
 var array<P_Scrake> ScrakePawnList;
 
@@ -372,6 +374,11 @@ function int NetDamage(int OriginalDamage, int Damage, Pawn Injured, Pawn Instig
     if (class<SirenScreamDamage>(DamageType) != None)
     {
         DamageMultiplier *= SirenScreamDamageMultiplier;
+    }
+
+    if (class<DamTypeVomit>(DamageType) != None)
+    {
+        DamageMultiplier *= BileDamageMultiplier;
     }
 
     WeaponDamageType = class<KFWeaponDamageType>(DamageType);
@@ -1381,6 +1388,7 @@ defaultproperties
     PlayerAirControlMultiplier=1.f
 
     SirenScreamDamageMultiplier=1.f
+    BileDamageMultiplier=1.f
 
     ClotMovementSpeedModifier=1.f
 

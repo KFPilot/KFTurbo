@@ -137,33 +137,9 @@ function ActivateReloadSpeed(TurboCardGameplayManager GameplayManager, TurboCard
     }
 }
 
-function ActivateSirenScreemNullify(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
-{
-    if (bActivate)
-    {
-        GameplayManager.MonsterSirenScreamDamageModifier.AddModifier(0.f, Card);
-    }
-    else
-    {
-        GameplayManager.MonsterSirenScreamDamageModifier.RemoveModifier(Card);
-    }
-}
-
 function ActivateCheatDeath(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
 {
     Card.UpdateFlag(GameplayManager.CheatDeathFlag, bActivate);
-}
-
-function ActivateUnshakeable(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
-{
-    if (bActivate)
-    {
-        GameplayManager.PlayerExplosiveDamageTakenModifier.AddModifier(0.f, Card);
-    }
-    else
-    {
-        GameplayManager.PlayerExplosiveDamageTakenModifier.RemoveModifier(Card);
-    }
 }
 
 function ActivateBigHeadMode(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
@@ -766,14 +742,16 @@ defaultproperties
     End Object
     DeckCardObjectList(9)=TurboCard'ReloadSpeed'
 
-    Begin Object Name=SirenScreemNullify Class=TurboCard_Super
-        CardName(0)="Earplugs"
-        CardDescriptionList(0)="Completely nullify"
-        CardDescriptionList(1)="scream damage."
-        OnActivateCard=ActivateSirenScreemNullify
-        CardID="SUPER_EARPLUGS"
+    Begin Object Name=TaserRounds Class=TurboCard_Super
+        CardName(0)="Lighting"
+        CardName(1)="Rounds"
+        CardDescriptionList(0)="Player damage has"
+        CardDescriptionList(1)="a 10% chance to"
+        CardDescriptionList(2)="zap zeds."
+        CardID="SUPER_TASERROUNDS"
+        OnActivateCard=ActivateTaserRounds
     End Object
-    DeckCardObjectList(10)=TurboCard'SirenScreemNullify'
+    DeckCardObjectList(10)=TurboCard'TaserRounds'
 
     Begin Object Name=CheatDeath Class=TurboCard_Super
         CardName(0)="Cheating Death"
@@ -790,15 +768,18 @@ defaultproperties
     End Object
     DeckCardObjectList(11)=TurboCard'CheatDeath'
 
-    Begin Object Name=Unshakeable Class=TurboCard_Super
-        CardName(0)="Unshakeable"
-        CardDescriptionList(0)="Explosive damage"
-        CardDescriptionList(1)="nullified for"
-        CardDescriptionList(2)="all players."
-        OnActivateCard=ActivateUnshakeable
-        CardID="SUPER_UNSHAKEABLE"
+    Begin Object Name=Executioner Class=TurboCard_Super
+        CardName(0)="Executioner"
+        CardDescriptionList(0)="Player damage has"
+        CardDescriptionList(1)="a 20% chance to"
+        CardDescriptionList(2)="instantly kill"
+        CardDescriptionList(3)="non-boss zeds"
+        CardDescriptionList(4)="with less than"
+        CardDescriptionList(5)="20% health."
+        CardID="SUPER_EXECUTIONER"
+        OnActivateCard=ActivateExecutioner
     End Object
-    DeckCardObjectList(12)=TurboCard'Unshakeable'
+    DeckCardObjectList(12)=TurboCard'Executioner'
 
     Begin Object Name=BigHeadMode Class=TurboCard_Super
         CardName(0)="Big Head Mode"
@@ -1128,28 +1109,4 @@ defaultproperties
         CardID="SUPER_WORMMAG"
     End Object
     DeckCardObjectList(39)=TurboCard'WormholeMagazine'
-
-    Begin Object Name=Executioner Class=TurboCard_Super
-        CardName(0)="Executioner"
-        CardDescriptionList(0)="Player damage has"
-        CardDescriptionList(1)="a 20% chance to"
-        CardDescriptionList(2)="instantly kill"
-        CardDescriptionList(3)="non-boss zeds"
-        CardDescriptionList(4)="with less than"
-        CardDescriptionList(5)="20% health."
-        CardID="SUPER_EXECUTIONER"
-        OnActivateCard=ActivateExecutioner
-    End Object
-    DeckCardObjectList(40)=TurboCard'Executioner'
-
-    Begin Object Name=TaserRounds Class=TurboCard_Super
-        CardName(0)="Lighting"
-        CardName(1)="Rounds"
-        CardDescriptionList(0)="Player damage has"
-        CardDescriptionList(1)="a 10% chance to"
-        CardDescriptionList(2)="zap zeds."
-        CardID="SUPER_TASERROUNDS"
-        OnActivateCard=ActivateTaserRounds
-    End Object
-    DeckCardObjectList(41)=TurboCard'TaserRounds'
 }

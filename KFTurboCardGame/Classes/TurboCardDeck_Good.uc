@@ -546,6 +546,21 @@ function ActivateScorchedEarth(TurboCardGameplayManager GameplayManager, TurboCa
     Card.UpdateFlag(GameplayManager.ScorchedEarthFlag, bActivate);
 }
 
+function ActivateHazmatSuits(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
+{
+    Card.UpdateModifier(GameplayManager.MonsterBileDamageModifier, 0.5f, bActivate);
+}
+
+function ActivateEarplugs(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
+{
+    Card.UpdateModifier(GameplayManager.MonsterSirenScreamDamageModifier, 0.5f, bActivate);
+}
+
+function ActivateUnshakeable(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
+{
+    Card.UpdateModifier(GameplayManager.PlayerExplosiveDamageTakenModifier, 0.5f, bActivate);
+}
+
 defaultproperties
 {
     Begin Object Name=BonusCashKill Class=TurboCard_Good
@@ -1100,4 +1115,34 @@ defaultproperties
         OnActivateCard=ActivateScorchedEarth
     End Object
     DeckCardObjectList(51)=TurboCard'ScorchedEarth'
+
+    Begin Object Name=HazmatSuits Class=TurboCard_Good
+        CardName(0)="Hazmat Suits"
+        CardDescriptionList(0)="Decreases bile"
+        CardDescriptionList(1)="damage taken"
+        CardDescriptionList(2)="by 50%."
+        CardID="GOOD_HAZMATSUITS"
+        OnActivateCard=ActivateHazmatSuits
+    End Object
+    DeckCardObjectList(52)=TurboCard'HazmatSuits'
+
+    Begin Object Name=Earplugs Class=TurboCard_Good
+        CardName(0)="Earplugs"
+        CardDescriptionList(0)="Decreases siren"
+        CardDescriptionList(1)="scream damage"
+        CardDescriptionList(2)="taken by 50%."
+        CardID="GOOD_EARPLUGS"
+        OnActivateCard=ActivateEarplugs
+    End Object
+    DeckCardObjectList(53)=TurboCard'Earplugs'
+
+    Begin Object Name=Unshakeable Class=TurboCard_Good
+        CardName(0)="Unshakeable"
+        CardDescriptionList(0)="Decreases explosive"
+        CardDescriptionList(1)="damage taken"
+        CardDescriptionList(2)="by 50%."
+        CardID="GOOD_UNSHAKEABLE"
+        OnActivateCard=ActivateUnshakeable
+    End Object
+    DeckCardObjectList(54)=TurboCard'Unshakeable'
 }

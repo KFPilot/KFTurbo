@@ -41,6 +41,7 @@
 | Evil | Curse of RA | ??? |
 | Evil | Regenerative Strain | Zeds regenerate 1% health per second after 5 seconds of not taking damage. |
 | Evil | Rationing | Reduces max ammo for all weapons by 15%. |
+| Evil | Pinheads | Reduces the size of zeds' heads by 30%. |
 
 
 ### Good Deck
@@ -86,6 +87,9 @@
 | Good | Closing Time | The last 10 zeds of each wave take 25% more damage. |
 | Good | A Pound Of Flesh | Melee damage heals players for 1% of damage dealt. |
 | Good | Scorched Earth | Zeds that die while burning ignite nearby zeds. |
+| Good | Hazmat Suits | Decreases bile damage taken by 50%. |
+| Good | Earplugs | Decreases siren scream damage taken by 50%. |
+| Good | Unshakeable | Decreases explosive damage taken by 50%. |
 
 
 ### ProCon Deck
@@ -147,9 +151,7 @@
 | Super | Overheal | Increase max health for all players by 100%. |
 | Super | Adrenaline | Increases player movement speed for all players by 30%. |
 | Super | Strategic Reload | Increases all weapon reload speed by 50%. |
-| Super | Earplugs | Completely nullify scream damage. |
 | Super | Cheating Death | All players can cheat death once. |
-| Super | Unshakeable | Explosive damage nullified for all players. |
 | Super | Big Head Mode | Increases the size of zeds' heads by 100%. |
 | Super | Hypersonic Ammunition | All weapon bullet penetration is doubled. |
 | Super | Strong Arm | Increases max carry weight by 3 for all players. |

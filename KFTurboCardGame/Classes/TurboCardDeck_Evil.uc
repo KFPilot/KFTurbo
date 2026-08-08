@@ -528,6 +528,11 @@ function ActivateRationing(TurboCardGameplayManager GameplayManager, TurboCard C
     Card.UpdateModifier(GameplayManager.PlayerMaxAmmoModifier, 0.85f, bActivate);
 }
 
+function ActivatePinheads(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
+{
+    Card.UpdateModifier(GameplayManager.MonsterHeadSizeModifier, 0.7f, bActivate);
+}
+
 defaultproperties
 {
     Begin Object Name=Doorless Class=TurboCard_Evil
@@ -1024,11 +1029,21 @@ defaultproperties
 
     Begin Object Name=Rationing Class=TurboCard_Evil
         CardName(0)="Rationing"
-        CardDescriptionList(0)="Reduces max ammo"
-        CardDescriptionList(1)="for all weapons"
-        CardDescriptionList(2)="by 15%."
+        CardDescriptionList(0)="Reduces max"
+        CardDescriptionList(1)="ammo for all"
+        CardDescriptionList(2)="weapons by 15%."
         CardID="EVIL_RATIONING"
         OnActivateCard=ActivateRationing
     End Object
     DeckCardObjectList(39)=TurboCard'Rationing'
+
+    Begin Object Name=Pinheads Class=TurboCard_Evil
+        CardName(0)="Pinheads"
+        CardDescriptionList(0)="Decreases the"
+        CardDescriptionList(1)="size of zeds"
+        CardDescriptionList(2)="heads by 30%."
+        CardID="EVIL_PINHEADS"
+        OnActivateCard=ActivatePinheads
+    End Object
+    DeckCardObjectList(40)=TurboCard'Pinheads'
 }

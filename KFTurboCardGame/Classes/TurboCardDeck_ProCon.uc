@@ -370,7 +370,7 @@ function ActivateDroppingBallast(TurboCardGameplayManager GameplayManager, Turbo
 {
     if (bActivate)
     {
-        GameplayManager.PlayerGrenadeMaxAmmoModifier.AddModifier(0.8f, Card);
+        GameplayManager.PlayerGrenadeMaxAmmoModifier.AddModifier(0.5f, Card);
         GameplayManager.PlayerMaxAmmoModifier.AddModifier(1.1f, Card);
     }
     else
@@ -925,7 +925,7 @@ defaultproperties
         CardDescriptionList(0)="Increases max"
         CardDescriptionList(1)="ammo by 10% but"
         CardDescriptionList(2)="reduces grenade"
-        CardDescriptionList(3)="max ammo by 20%."
+        CardDescriptionList(3)="max ammo by 50%."
         OnActivateCard=ActivateDroppingBallast
         CardID="PROCON_DROPBALLAST"
     End Object
