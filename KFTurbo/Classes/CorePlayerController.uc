@@ -47,7 +47,7 @@ function BecomeActivePlayer()
 		bWasSpectatingWave = false;
 		PlayerReplicationInfo.bOutOfLives = false;
 		PlayerReplicationInfo.NumLives = 0;
-		
+
 		if (!CoreKFGameType(Level.Game).bWaveInProgress)
 		{
 			SetViewTarget(Self);
@@ -55,7 +55,7 @@ function BecomeActivePlayer()
 			bBehindView = False;
 			ClientSetViewTarget(Pawn); //TWI calls this for some reason but pawn would be None at this point...
 
-			ServerReStartPlayer();	
+			ServerReStartPlayer();
 		}
 	}
 }
