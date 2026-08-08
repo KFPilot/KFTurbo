@@ -604,10 +604,10 @@ defaultproperties
 {
     Begin Object Name=TradeIn Class=TurboCard_ProConStrange
         CardName(0)="Trade In"
-        CardDescriptionList(0)="Removes all good"
-        CardDescriptionList(1)="cards in exchange"
-        CardDescriptionList(2)="for a random"
-        CardDescriptionList(3)="super card."
+        CardDescriptionList(0)="Removes all active"
+        CardDescriptionList(1)="good cards in"
+        CardDescriptionList(2)="exchange for a"
+        CardDescriptionList(3)="random super card."
         OnActivateCard=ActivateTradeIn
         CardID="PROCON_TRADEIN"
     End Object

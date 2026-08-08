@@ -561,6 +561,11 @@ function ActivateUnshakeable(TurboCardGameplayManager GameplayManager, TurboCard
     Card.UpdateModifier(GameplayManager.PlayerExplosiveDamageTakenModifier, 0.5f, bActivate);
 }
 
+function ActivateBracedStance(TurboCardGameplayManager GameplayManager, TurboCard Card, bool bActivate)
+{
+    Card.UpdateModifier(GameplayManager.PlayerBracedSpreadRecoilModifier, 0.6f, bActivate);
+}
+
 defaultproperties
 {
     Begin Object Name=BonusCashKill Class=TurboCard_Good
@@ -1145,4 +1150,15 @@ defaultproperties
         OnActivateCard=ActivateUnshakeable
     End Object
     DeckCardObjectList(54)=TurboCard'Unshakeable'
+
+    Begin Object Name=BracedStance Class=TurboCard_Good
+        CardName(0)="Braced Stance"
+        CardDescriptionList(0)="Decreases spread"
+        CardDescriptionList(1)="and recoil by 40%"
+        CardDescriptionList(2)="while standing"
+        CardDescriptionList(3)="still."
+        CardID="GOOD_BRACEDSTANCE"
+        OnActivateCard=ActivateBracedStance
+    End Object
+    DeckCardObjectList(55)=TurboCard'BracedStance'
 }

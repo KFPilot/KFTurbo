@@ -90,6 +90,7 @@
 | Good | Hazmat Suits | Decreases bile damage taken by 50%. |
 | Good | Earplugs | Decreases siren scream damage taken by 50%. |
 | Good | Unshakeable | Decreases explosive damage taken by 50%. |
+| Good | Braced Stance | Decreases spread and recoil by 40% while standing still. |
 
 
 ### ProCon Deck

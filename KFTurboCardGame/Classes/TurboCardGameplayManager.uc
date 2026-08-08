@@ -166,6 +166,7 @@ var CardModifierStack PlayerGrenadeMaxAmmoModifier;
 
 //SPREAD AND RECOIL
 var CardModifierStack PlayerSpreadRecoilModifier;
+var CardModifierStack PlayerBracedSpreadRecoilModifier;
 var CardModifierStack PlayerShotgunSpreadRecoilModifier;
 
 //PENETRATION
@@ -1154,6 +1155,12 @@ function PlayerSpreadRecoilModifierChanged(CardModifierStack ModifiedStack, floa
     CardGameModifier.ForceNetUpdate();
 }
 
+function PlayerBracedSpreadRecoilModifierChanged(CardModifierStack ModifiedStack, float Modifier)
+{
+    CardGameModifier.BracedSpreadRecoilMultiplier = Modifier;
+    CardGameModifier.ForceNetUpdate();
+}
+
 function PlayerShotgunSpreadRecoilModifierChanged(CardModifierStack ModifiedStack, float Modifier)
 {
     CardGameModifier.ShotgunSpreadRecoilMultiplier = Modifier;
@@ -2053,6 +2060,12 @@ defaultproperties
         OnModifierChanged=PlayerSpreadRecoilModifierChanged
     End Object
     PlayerSpreadRecoilModifier=CardModifierStack'PlayerSpreadRecoilModifierStack'
+
+    Begin Object Name=PlayerBracedSpreadRecoilModifierStack Class=CardModifierStack
+        ModifierStackID="PlayerBracedSpreadRecoil"
+        OnModifierChanged=PlayerBracedSpreadRecoilModifierChanged
+    End Object
+    PlayerBracedSpreadRecoilModifier=CardModifierStack'PlayerBracedSpreadRecoilModifierStack'
 
     Begin Object Name=PlayerShotgunSpreadRecoilModifierStack Class=CardModifierStack
         ModifierStackID="PlayerShotgunSpreadRecoil"

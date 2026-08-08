@@ -29,6 +29,7 @@ var(Turbo) float GrenadeMaxAmmoMultiplier;
 
 var(Turbo) float WeaponPenetrationMultiplier;
 var(Turbo) float WeaponSpreadRecoilMultiplier;
+var(Turbo) float BracedSpreadRecoilMultiplier; //Applied on top of WeaponSpreadRecoilMultiplier while the player is standing still.
 
 var(Turbo) float ShotgunPelletCountMultiplier;
 var(Turbo) float ShotgunSpreadRecoilMultiplier;
@@ -76,7 +77,7 @@ replication
         MagazineAmmoMultiplier, DualWeaponMagazineAmmoMultiplier, CommandoMagazineAmmoMultiplier, MedicMagazineAmmoMultiplier,
         MaxAmmoMultiplier, CommandoMaxAmmoMultiplier, MedicMaxAmmoMultiplier, GrenadeMaxAmmoMultiplier,
         WeaponPenetrationMultiplier,
-        WeaponSpreadRecoilMultiplier, ShotgunSpreadRecoilMultiplier,
+        WeaponSpreadRecoilMultiplier, BracedSpreadRecoilMultiplier, ShotgunSpreadRecoilMultiplier,
         TraderCostMultiplier, TraderGrenadeCostMultiplier, bDisableArmorPurchase,
         PlayerMovementSpeedMultiplier, PlayerMovementAccelMultiplier, PlayerMovementLowWeightMultiplier,
         bFreezePlayersDuringWave, bMoneySlowsPlayers, bMissingHealthStronglySlows,
@@ -245,6 +246,12 @@ simulated function float GetWeaponSpreadRecoilMultiplier(KFPlayerReplicationInfo
     if (ShotgunSpreadRecoilMultiplier != 1.f && ShotgunFire(Other) != None && ShotgunFire(Other).default.ProjPerFire > 1)
     {
         Multiplier *= ShotgunSpreadRecoilMultiplier;
+    }
+
+    if (BracedSpreadRecoilMultiplier != 1.f && Other != None && Other.Instigator != None
+        && Other.Instigator.Physics == PHYS_Walking && VSizeSquared(Other.Instigator.Velocity) < 100.f)
+    {
+        Multiplier *= BracedSpreadRecoilMultiplier;
     }
 
     return Multiplier;
@@ -484,6 +491,7 @@ defaultproperties
 
     WeaponPenetrationMultiplier=1.f
     WeaponSpreadRecoilMultiplier=1.f
+    BracedSpreadRecoilMultiplier=1.f
     ShotgunPelletCountMultiplier=1.f
     ShotgunSpreadRecoilMultiplier=1.f
     ShotgunKickBackMultiplier=1.f
