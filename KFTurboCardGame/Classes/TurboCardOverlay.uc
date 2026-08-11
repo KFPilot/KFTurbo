@@ -125,6 +125,28 @@ var CardStatus PoorlyOiledMachineStatus;
 var CardStatusProgress GreedBegetsSlowSpeedStatus;
 var CardStatusProgress TemporalAnomalyStatus;
 
+var TurboCardDrawnActor VinylPlayerActor;
+var TurboCardDrawnActor VinylActor;
+var StaticMesh VinylPlayerMesh;
+var StaticMesh VinylMesh;
+
+enum EDrawActorAxis
+{
+	DAA_PositiveX,
+	DAA_NegativeX,
+	DAA_PositiveY,
+	DAA_NegativeY,
+	DAA_PositiveZ,
+	DAA_NegativeZ
+};
+
+var EDrawActorAxis DrawActorAxis;
+var Rotator DrawActorRotation;
+var Rotator DrawActorOscillation; //Oscillation amplitude - actor swings this far to either side.
+var float DrawActorOscillationRate; //Oscillations per second.
+var float DrawActorDistance;
+var float DrawActorSize; //Size of the draw region as a ratio of screen height.
+
 static final function TurboCardOverlay FindCardOverlay(PlayerController PlayerController)
 {
 	local int Index;
@@ -566,6 +588,95 @@ simulated function Render(Canvas C)
 		DrawCardEffects(C);
 		class'TurboHUDKillingFloor'.static.ResetCanvas(C);
 	}
+
+	DrawBottomLeftActor(C);
+}
+
+simulated function DrawBottomLeftActor(Canvas C)
+{
+	local Vector CameraLocation, DrawLocation, X, Y, Z;
+	local Rotator CameraRotation, BaseRotation;
+	local float DrawSize, Margin;
+
+	if (VinylPlayerActor == None)
+	{
+		VinylPlayerActor = Spawn(class'TurboCardDrawnActor', Self);
+		VinylPlayerActor.SetStaticMesh(VinylPlayerMesh);
+	}
+
+	C.GetCameraLocation(CameraLocation, CameraRotation);
+	GetAxes(CameraRotation, X, Y, Z);
+
+	//Drawn centered ahead of the camera to remove projection distortion.
+	DrawLocation = CameraLocation + (X * DrawActorDistance);
+	BaseRotation = GetDrawnActorRotation(X, Y, Z);
+
+	VinylPlayerActor.SetLocation(DrawLocation);
+	VinylPlayerActor.SetRotation(ComposeRotations(BaseRotation, DrawActorOscillation * Sin(Level.TimeSeconds * DrawActorOscillationRate * (PI * 2.f))));
+
+	DrawSize = C.ClipY * DrawActorSize;
+	Margin = C.ClipY * 0.02f;
+
+	VinylPlayerActor.bHidden = false;
+	C.DrawActorClipped(VinylPlayerActor, false, Margin, C.ClipY - (DrawSize + Margin), DrawSize, DrawSize, true, 30.f);
+	VinylPlayerActor.bHidden = true;
+}
+
+//Applies LocalRotation within the frame described by BaseRotation.
+simulated static final function Rotator ComposeRotations(Rotator BaseRotation, Rotator LocalRotation)
+{
+	local Vector BaseX, BaseY, BaseZ;
+	local Vector LocalX, LocalY, LocalZ;
+
+	GetAxes(BaseRotation, BaseX, BaseY, BaseZ);
+	GetAxes(LocalRotation, LocalX, LocalY, LocalZ);
+
+	return OrthoRotation(
+		(LocalX.X * BaseX) + (LocalX.Y * BaseY) + (LocalX.Z * BaseZ),
+		(LocalY.X * BaseX) + (LocalY.Y * BaseY) + (LocalY.Z * BaseZ),
+		(LocalZ.X * BaseX) + (LocalZ.Y * BaseY) + (LocalZ.Z * BaseZ));
+}
+
+//Builds a basis pointing the configured mesh axis at the camera, then applies DrawActorRotation within that basis.
+simulated function Rotator GetDrawnActorRotation(Vector CameraX, Vector CameraY, Vector CameraZ)
+{
+	local Vector FaceX, FaceY, FaceZ;
+
+	switch (DrawActorAxis)
+	{
+		case DAA_PositiveX:
+			FaceX = -CameraX;
+			FaceY = -CameraY;
+			FaceZ = CameraZ;
+			break;
+		case DAA_NegativeX:
+			FaceX = CameraX;
+			FaceY = CameraY;
+			FaceZ = CameraZ;
+			break;
+		case DAA_PositiveY:
+			FaceX = CameraY;
+			FaceY = -CameraX;
+			FaceZ = CameraZ;
+			break;
+		case DAA_NegativeY:
+			FaceX = -CameraY;
+			FaceY = CameraX;
+			FaceZ = CameraZ;
+			break;
+		case DAA_PositiveZ:
+			FaceX = CameraZ;
+			FaceY = CameraY;
+			FaceZ = -CameraX;
+			break;
+		case DAA_NegativeZ:
+			FaceX = -CameraZ;
+			FaceY = CameraY;
+			FaceZ = CameraX;
+			break;
+	}
+
+	return ComposeRotations(OrthoRotation(FaceX, FaceY, FaceZ), DrawActorRotation);
 }
 
 static final function SetupOffset(float DrawX, float DrawY, float IconX, out float OffsetX, out float OffsetY, int Index)
@@ -1293,6 +1404,16 @@ defaultproperties
 	VotedCardIndex=-1
 	CardIndexToDisplay=-1
 	VoteMenuScale=1.f
+
+	DrawActorAxis=DAA_PositiveZ
+	DrawActorRotation=(Yaw=-16384,Roll=4096)
+	DrawActorOscillation=(Pitch=8192)
+	DrawActorOscillationRate=0.025f
+	DrawActorDistance=200.f
+	DrawActorSize=0.3f
+
+	VinylPlayerMesh=StaticMesh'KFTurboCardGame.Song.VinylPlayer'
+	VinylMesh=StaticMesh'KFTurboCardGame.Song.Vinyl'
 
 	FadeInAndUpRate=4.f
 	FanOutRate=2.f
