@@ -1091,8 +1091,8 @@ defaultproperties
         CardName(0)="Precision Chain"
         CardDescriptionList(0)="Headshots have"
         CardDescriptionList(1)="a 25% chance to"
-        CardDescriptionList(2)="ricochet a nearby"
-        CardDescriptionList(3)="zed with a headshot."
+        CardDescriptionList(2)="ricochet to"
+        CardDescriptionList(3)="a nearby zed."
         OnActivateCard=ActivatePrecisionChain
         CardID="SUPER_PRECISIONCHAIN"
     End Object
