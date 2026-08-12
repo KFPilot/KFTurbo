@@ -146,6 +146,7 @@ var Rotator DrawActorOscillation; //Oscillation amplitude - actor swings this fa
 var float DrawActorOscillationRate; //Oscillations per second.
 var float DrawActorDistance;
 var float DrawActorSize; //Size of the draw region as a ratio of screen height.
+var float VinylSpinRate; //Vinyl spin about its local Z axis in rotator units per second.
 
 static final function TurboCardOverlay FindCardOverlay(PlayerController PlayerController)
 {
@@ -595,13 +596,19 @@ simulated function Render(Canvas C)
 simulated function DrawBottomLeftActor(Canvas C)
 {
 	local Vector CameraLocation, DrawLocation, X, Y, Z;
-	local Rotator CameraRotation, BaseRotation;
-	local float DrawSize, Margin;
+	local Rotator CameraRotation, BaseRotation, PlayerRotation, VinylSpin;
+	local float DrawSize;
 
 	if (VinylPlayerActor == None)
 	{
 		VinylPlayerActor = Spawn(class'TurboCardDrawnActor', Self);
 		VinylPlayerActor.SetStaticMesh(VinylPlayerMesh);
+	}
+
+	if (VinylActor == None)
+	{
+		VinylActor = Spawn(class'TurboCardDrawnActor', Self);
+		VinylActor.SetStaticMesh(VinylMesh);
 	}
 
 	C.GetCameraLocation(CameraLocation, CameraRotation);
@@ -610,16 +617,25 @@ simulated function DrawBottomLeftActor(Canvas C)
 	//Drawn centered ahead of the camera to remove projection distortion.
 	DrawLocation = CameraLocation + (X * DrawActorDistance);
 	BaseRotation = GetDrawnActorRotation(X, Y, Z);
+	PlayerRotation = ComposeRotations(BaseRotation, DrawActorOscillation * Sin(Level.TimeSeconds * DrawActorOscillationRate * (PI * 2.f)));
 
 	VinylPlayerActor.SetLocation(DrawLocation);
-	VinylPlayerActor.SetRotation(ComposeRotations(BaseRotation, DrawActorOscillation * Sin(Level.TimeSeconds * DrawActorOscillationRate * (PI * 2.f))));
+	VinylPlayerActor.SetRotation(PlayerRotation);
 
-	DrawSize = C.ClipY * DrawActorSize;
-	Margin = C.ClipY * 0.02f;
+	//Vinyl follows the player's transform, spinning about the mesh's positive Z axis.
+	VinylSpin.Yaw = int(VinylSpinRate * Level.TimeSeconds);
+	VinylActor.SetLocation(DrawLocation);
+	VinylActor.SetRotation(ComposeRotations(PlayerRotation, VinylSpin));
+
+	//Keep the draw region on-screen - DrawActorClipped won't render into a rect starting above the viewport.
+	DrawSize = FMin(C.ClipY * DrawActorSize, C.ClipY);
 
 	VinylPlayerActor.bHidden = false;
-	C.DrawActorClipped(VinylPlayerActor, false, Margin, C.ClipY - (DrawSize + Margin), DrawSize, DrawSize, true, 30.f);
+	VinylActor.bHidden = false;
+	C.DrawActorClipped(VinylPlayerActor, false, 0.f, C.ClipY - DrawSize, DrawSize, DrawSize, true, 30.f);
+	C.DrawActorClipped(VinylActor, false, 0.f, C.ClipY - DrawSize, DrawSize, DrawSize, false, 30.f);
 	VinylPlayerActor.bHidden = true;
+	VinylActor.bHidden = true;
 }
 
 //Applies LocalRotation within the frame described by BaseRotation.
@@ -1410,7 +1426,8 @@ defaultproperties
 	DrawActorOscillation=(Pitch=8192)
 	DrawActorOscillationRate=0.025f
 	DrawActorDistance=200.f
-	DrawActorSize=0.3f
+	DrawActorSize=0.35f
+	VinylSpinRate=4096.f
 
 	VinylPlayerMesh=StaticMesh'KFTurboCardGame.Song.VinylPlayer'
 	VinylMesh=StaticMesh'KFTurboCardGame.Song.Vinyl'
