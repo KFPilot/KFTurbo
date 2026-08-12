@@ -128,7 +128,31 @@ var CardStatusProgress TemporalAnomalyStatus;
 var TurboCardDrawnActor VinylPlayerActor;
 var TurboCardDrawnActor VinylActor;
 var StaticMesh VinylPlayerMesh;
-var StaticMesh VinylMesh;
+
+//Vinyl change animation - scale up, eject the old vinyl, insert the new one from the top, scale back down.
+enum EVinylChangeState
+{
+	VCS_None,
+	VCS_ScaleUp,
+	VCS_Eject,
+	VCS_Insert,
+	VCS_ScaleDown
+};
+
+var EVinylChangeState VinylChangeState;
+var float VinylChangeOffset; //Current eject/insert offset, eased toward its target.
+var float VinylChangeRate; //Ease rate of the vinyl eject/insert movement.
+var float VinylChangeScale; //Current draw region scale, eased toward its target.
+var float VinylChangeScaleRate; //Ease rate of the draw region scale.
+var float VinylChangeScaleBoost; //How much the draw region grows during a vinyl change.
+var float VinylChangeDistance; //How far the vinyl travels when ejected/inserted.
+var Vector VinylChangeDirection; //Eject/insert travel direction in the vinyl player's local space - keep it in the disk's plane (X/Y) to avoid clipping through the player.
+
+var TurboVinyl LastKnownVinyl; //Vinyl currently seated in the drawn vinyl player.
+var TurboVinyl PendingVinyl;
+
+var localized string VinylCostString;
+var localized string VinylPurchaseHintString;
 
 enum EDrawActorAxis
 {
@@ -146,6 +170,9 @@ var Rotator DrawActorOscillation; //Oscillation amplitude - actor swings this fa
 var float DrawActorOscillationRate; //Oscillations per second.
 var float DrawActorDistance;
 var float DrawActorSize; //Size of the draw region as a ratio of screen height.
+var float DrawActorFOV; //FOV the drawn actors are rendered with.
+var float DrawRegionPadding; //Widens the draw region by this factor (FOV-compensated) so animating actors don't clip its right edge.
+var float DrawActorHorizontalOffset; //Shifts the drawn actors sideways within the draw region (world units along the camera's right axis).
 var float VinylSpinRate; //Vinyl spin about its local Z axis in rotator units per second.
 
 static final function TurboCardOverlay FindCardOverlay(PlayerController PlayerController)
@@ -305,6 +332,8 @@ simulated function Tick(float DeltaTime)
 	{
 		TickSelectableCards(DeltaTime);
 	}
+
+	TickVinylChange(DeltaTime);
 
 	if (!HUD(Owner).bShowScoreboard)
 	{
@@ -591,13 +620,17 @@ simulated function Render(Canvas C)
 	}
 
 	DrawBottomLeftActor(C);
+	class'TurboHUDKillingFloor'.static.ResetCanvas(C);
+	DrawTouchedVinylInfo(C);
 }
 
 simulated function DrawBottomLeftActor(Canvas C)
 {
 	local Vector CameraLocation, DrawLocation, X, Y, Z;
+	local Vector PlayerX, PlayerY, PlayerZ, VinylOffsetDirection;
 	local Rotator CameraRotation, BaseRotation, PlayerRotation, VinylSpin;
-	local float DrawSize;
+	local float BaseSize, DrawSizeX, DrawSizeY;
+	local float TanHalfFOV, DrawFOV, PixelsPerUnit, TargetPixelX, HorizontalOffset;
 
 	if (VinylPlayerActor == None)
 	{
@@ -608,34 +641,234 @@ simulated function DrawBottomLeftActor(Canvas C)
 	if (VinylActor == None)
 	{
 		VinylActor = Spawn(class'TurboCardDrawnActor', Self);
-		VinylActor.SetStaticMesh(VinylMesh);
 	}
 
 	C.GetCameraLocation(CameraLocation, CameraRotation);
 	GetAxes(CameraRotation, X, Y, Z);
 
+	BaseSize = C.ClipY * DrawActorSize;
+
+	//Keep the draw region on-screen - DrawActorClipped won't render into a rect starting above the viewport.
+	DrawSizeY = FMin(BaseSize * VinylChangeScale, C.ClipY);
+	//Pad the region's width so the actor has room to animate without clipping the region's edge.
+	DrawSizeX = DrawSizeY * DrawRegionPadding;
+
+	//The FOV spans the region's width - widen it to match the padding so the drawn scale is unchanged.
+	TanHalfFOV = Tan(DrawActorFOV * PI / 360.f);
+	DrawFOV = Atan(TanHalfFOV * DrawRegionPadding, 1.f) * (360.f / PI);
+
+	//Pin the actor's on-screen position so the padding and vinyl change scale don't push it sideways.
+	PixelsPerUnit = DrawSizeY / (2.f * DrawActorDistance * TanHalfFOV);
+	TargetPixelX = (BaseSize * 0.5f) + (DrawActorHorizontalOffset * (BaseSize / (2.f * DrawActorDistance * TanHalfFOV)));
+	HorizontalOffset = (TargetPixelX - (DrawSizeX * 0.5f)) / PixelsPerUnit;
+
 	//Drawn centered ahead of the camera to remove projection distortion.
-	DrawLocation = CameraLocation + (X * DrawActorDistance);
+	DrawLocation = CameraLocation + (X * DrawActorDistance) + (Y * HorizontalOffset);
 	BaseRotation = GetDrawnActorRotation(X, Y, Z);
 	PlayerRotation = ComposeRotations(BaseRotation, DrawActorOscillation * Sin(Level.TimeSeconds * DrawActorOscillationRate * (PI * 2.f)));
 
 	VinylPlayerActor.SetLocation(DrawLocation);
 	VinylPlayerActor.SetRotation(PlayerRotation);
 
+	VinylPlayerActor.bHidden = false;
+	C.DrawActorClipped(VinylPlayerActor, false, 0.f, C.ClipY - DrawSizeY, DrawSizeX, DrawSizeY, true, DrawFOV);
+	VinylPlayerActor.bHidden = true;
+
+	if (LastKnownVinyl == None)
+	{
+		return;
+	}
+
 	//Vinyl follows the player's transform, spinning about the mesh's positive Z axis.
+	//Eject/insert slides it within the player's rotated frame so it never clips through the player mesh.
+	GetAxes(PlayerRotation, PlayerX, PlayerY, PlayerZ);
+	VinylOffsetDirection = (PlayerX * VinylChangeDirection.X) + (PlayerY * VinylChangeDirection.Y) + (PlayerZ * VinylChangeDirection.Z);
+
 	VinylSpin.Yaw = int(VinylSpinRate * Level.TimeSeconds);
-	VinylActor.SetLocation(DrawLocation);
+	VinylActor.SetLocation(DrawLocation + (VinylOffsetDirection * VinylChangeOffset));
 	VinylActor.SetRotation(ComposeRotations(PlayerRotation, VinylSpin));
 
-	//Keep the draw region on-screen - DrawActorClipped won't render into a rect starting above the viewport.
-	DrawSize = FMin(C.ClipY * DrawActorSize, C.ClipY);
-
-	VinylPlayerActor.bHidden = false;
 	VinylActor.bHidden = false;
-	C.DrawActorClipped(VinylPlayerActor, false, 0.f, C.ClipY - DrawSize, DrawSize, DrawSize, true, 30.f);
-	C.DrawActorClipped(VinylActor, false, 0.f, C.ClipY - DrawSize, DrawSize, DrawSize, false, 30.f);
-	VinylPlayerActor.bHidden = true;
+	C.DrawActorClipped(VinylActor, false, 0.f, C.ClipY - DrawSizeY, DrawSizeX, DrawSizeY, false, DrawFOV);
 	VinylActor.bHidden = true;
+}
+
+simulated function TickVinylChange(float DeltaTime)
+{
+	local TurboVinyl CurrentVinyl;
+	local float TargetScale;
+
+	if (VinylChangeState == VCS_None)
+	{
+		if (PlayerCardCustomInfo != None)
+		{
+			CurrentVinyl = PlayerCardCustomInfo.GetVinyl();
+
+			if (CurrentVinyl != LastKnownVinyl)
+			{
+				PendingVinyl = CurrentVinyl;
+				VinylChangeState = VCS_ScaleUp;
+			}
+		}
+
+		return;
+	}
+
+	//Ease the draw region scale toward its target.
+	TargetScale = GetVinylChangeTargetScale();
+
+	if (VinylChangeScale < TargetScale)
+	{
+		VinylChangeScale = FMin(Lerp(DeltaTime * VinylChangeScaleRate, VinylChangeScale, TargetScale), TargetScale);
+	}
+	else
+	{
+		VinylChangeScale = FMax(Lerp(DeltaTime * VinylChangeScaleRate, VinylChangeScale, TargetScale), TargetScale);
+	}
+
+	switch (VinylChangeState)
+	{
+		case VCS_ScaleUp:
+			//Start the disk swap once the scale up is 80% of the way there - the scale continues easing to its target during the swap.
+			if (VinylChangeScale >= Lerp(0.8f, 1.f, VinylChangeScaleBoost))
+			{
+				if (LastKnownVinyl != None)
+				{
+					VinylChangeState = VCS_Eject;
+				}
+				else
+				{
+					ApplyPendingVinyl();
+					VinylChangeOffset = VinylChangeDistance;
+					VinylChangeState = VCS_Insert;
+				}
+			}
+			break;
+		case VCS_Eject:
+			VinylChangeOffset = FMin(Lerp(DeltaTime * VinylChangeRate, VinylChangeOffset, VinylChangeDistance), VinylChangeDistance);
+
+			//The vinyl is off screen well before reaching its target - complete early.
+			if (Abs(VinylChangeOffset - VinylChangeDistance) < VinylChangeDistance * 0.05f)
+			{
+				ApplyPendingVinyl();
+				VinylChangeOffset = VinylChangeDistance;
+				VinylChangeState = VCS_Insert;
+			}
+			break;
+		case VCS_Insert:
+			VinylChangeOffset = FMax(Lerp(DeltaTime * VinylChangeRate, VinylChangeOffset, 0.f), 0.f);
+
+			if (VinylChangeOffset < 0.05f)
+			{
+				VinylChangeOffset = 0.f;
+				VinylChangeState = VCS_ScaleDown;
+			}
+			break;
+		case VCS_ScaleDown:
+			if (Abs(VinylChangeScale - 1.f) < 0.001f)
+			{
+				VinylChangeScale = 1.f;
+				VinylChangeState = VCS_None;
+			}
+			break;
+	}
+}
+
+simulated function float GetVinylChangeTargetScale()
+{
+	switch (VinylChangeState)
+	{
+		case VCS_ScaleUp:
+		case VCS_Eject:
+		case VCS_Insert:
+			return VinylChangeScaleBoost;
+	}
+
+	return 1.f;
+}
+
+simulated function ApplyPendingVinyl()
+{
+	LastKnownVinyl = PendingVinyl;
+
+	if (LastKnownVinyl != None)
+	{
+		class'CardGameVinylLabel'.static.ConfigureDrawnActor(LastKnownVinyl, VinylActor);
+	}
+}
+
+//Draws the name, description and price of the vinyl the local player is standing on.
+simulated function DrawTouchedVinylInfo(Canvas C)
+{
+	local CardGameVinylActor WorldVinyl;
+	local TurboVinyl TouchedVinyl;
+	local array<string> DescriptionLineList;
+	local float DrawX, DrawY, TextSizeX, TextSizeY;
+	local int Index;
+
+	if (TurboHUD.PawnOwner == None || TurboHUD.PawnOwner.Health <= 0)
+	{
+		return;
+	}
+
+	foreach TurboHUD.PawnOwner.TouchingActors(class'CardGameVinylActor', WorldVinyl)
+	{
+		if (WorldVinyl.Vinyl != None)
+		{
+			TouchedVinyl = WorldVinyl.Vinyl;
+			break;
+		}
+	}
+
+	if (TouchedVinyl == None)
+	{
+		return;
+	}
+
+	DrawX = C.ClipX * 0.015f;
+	DrawY = C.ClipY * 0.4f;
+
+	C.FontScaleX = 1.f;
+	C.FontScaleY = 1.f;
+
+	C.Font = TurboHUD.LoadBoldFont(BaseFontSize);
+	C.TextSize(TouchedVinyl.VinylName, TextSizeX, TextSizeY);
+	DrawShadowedText(C, TouchedVinyl.VinylName, DrawX, DrawY, MakeColor(255, 255, 255, 255));
+	DrawY += TextSizeY;
+
+	C.Font = TurboHUD.LoadBoldFont(BaseFontSize + 2);
+	C.WrapStringToArray(TouchedVinyl.VinylDescription, DescriptionLineList, C.ClipX * 0.25f);
+
+	for (Index = 0; Index < DescriptionLineList.Length; Index++)
+	{
+		C.TextSize(DescriptionLineList[Index], TextSizeX, TextSizeY);
+		DrawShadowedText(C, DescriptionLineList[Index], DrawX, DrawY, MakeColor(255, 255, 255, 255));
+		DrawY += TextSizeY;
+	}
+
+	C.TextSize(VinylCostString @ TouchedVinyl.VinylPrice, TextSizeX, TextSizeY);
+
+	if (TurboHUD.PlayerOwner.PlayerReplicationInfo != None && int(TurboHUD.PlayerOwner.PlayerReplicationInfo.Score) >= TouchedVinyl.VinylPrice)
+	{
+		DrawShadowedText(C, VinylCostString @ TouchedVinyl.VinylPrice, DrawX, DrawY, MakeColor(100, 255, 100, 255));
+		DrawY += TextSizeY;
+		DrawShadowedText(C, VinylPurchaseHintString, DrawX, DrawY, MakeColor(255, 255, 255, 255));
+	}
+	else
+	{
+		DrawShadowedText(C, VinylCostString @ TouchedVinyl.VinylPrice, DrawX, DrawY, MakeColor(255, 100, 100, 255));
+	}
+}
+
+simulated static final function DrawShadowedText(Canvas C, coerce string Text, float DrawX, float DrawY, Color TextColor)
+{
+	C.DrawColor = MakeColor(0, 0, 0, 120);
+	C.SetPos(DrawX + 2.f, DrawY + 2.f);
+	C.DrawText(Text);
+
+	C.DrawColor = TextColor;
+	C.SetPos(DrawX, DrawY);
+	C.DrawText(Text);
 }
 
 //Applies LocalRotation within the frame described by BaseRotation.
@@ -1423,14 +1656,26 @@ defaultproperties
 
 	DrawActorAxis=DAA_PositiveZ
 	DrawActorRotation=(Yaw=-16384,Roll=4096)
-	DrawActorOscillation=(Pitch=8192)
+	DrawActorOscillation=(Pitch=4096)
 	DrawActorOscillationRate=0.025f
 	DrawActorDistance=200.f
-	DrawActorSize=0.35f
+	DrawActorSize=0.2f
+	DrawActorFOV=30.f
+	DrawRegionPadding=1.5f
+	DrawActorHorizontalOffset=20.f
 	VinylSpinRate=4096.f
 
 	VinylPlayerMesh=StaticMesh'KFTurboCardGame.Song.VinylPlayer'
-	VinylMesh=StaticMesh'KFTurboCardGame.Song.Vinyl'
+
+	VinylChangeRate=6.f
+	VinylChangeScale=1.f
+	VinylChangeScaleRate=6.f
+	VinylChangeScaleBoost=2.f
+	VinylChangeDistance=150.f
+	VinylChangeDirection=(X=1.25f)
+
+	VinylCostString="Cost:"
+	VinylPurchaseHintString="Press USE to purchase!"
 
 	FadeInAndUpRate=4.f
 	FanOutRate=2.f

@@ -1,7 +1,8 @@
 //Killing Floor Turbo TurboPlayerCardCustomInfo
 //Contains per-player info for KFTurbo's Card Game.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class TurboPlayerCardCustomInfo extends TurboPlayerCustomInfo;
+class TurboPlayerCardCustomInfo extends TurboPlayerCustomInfo
+	dependson(CardGameVinylLabel);
 
 var ServerTimeActor ServerTimeActor;
 var int FireCounter;
@@ -64,11 +65,27 @@ const MARKED_FOR_DEATH = 1;
 const NO_REST_FOR_THE_WICKED = 2;
 var int PlayerFlags; //Pack binary states in here.
 
+//Replicated VinylReference of the vinyl this player currently possesses (kept as raw fields - foreign struct types can't be used in var declarations).
+var class<CardGameVinylLabel> VinylLabel;
+var int VinylIndex;
+var TurboVinyl AuthVinyl; //Server-side vinyl instance - needed to execute the activation delegate.
+var VinylAugmentReplicationInfo AuthAugmentInfo; //Server-side augment actor spawned for the possessed vinyl.
+
+//Cooldown between vinyl purchases so rapid buys can't race the activation/augment swap.
+var float LastVinylPurchaseTime;
+var const float VinylPurchaseCooldown;
+
+//Sparse replication info registry for vinyl augments. A player has at most one augment at a time -
+//the newest registration wins, and an unregistering augment can only vacate its own slot. This keeps
+//the contract intact on clients, where the old augment's destruction can arrive after its replacement.
+var VinylAugmentReplicationInfo AugmentInfo;
+delegate OnReceiveAugmentReplicationInfo(TurboPlayerCardCustomInfo CardInfo, VinylAugmentReplicationInfo ReplicationInfo);
+
 replication
 {
     reliable if (Role == ROLE_Authority)
         GrenadeThrowTime, HealBoostTime, RackEmUpHeadshotCount, RackEmUpHeadshotStackExpireTime, CheatDeathWave,
-		SubstituteDamageCount, BleedCount, NextBleedTime, PerpetualCriticalHitStartTime, PlayerFlags;
+		SubstituteDamageCount, BleedCount, NextBleedTime, PerpetualCriticalHitStartTime, PlayerFlags, VinylLabel, VinylIndex;
 
 	reliable if (Role == ROLE_Authority)
         ClientCriticalHit, ClientExecute;
@@ -244,6 +261,100 @@ final simulated function SetCheatDeathWave(int Wave)
 	CheatDeathWave = Wave;
     CheatDeathTime = Level.TimeSeconds + CheatDeathGracePeriod;
 	ForceNetUpdate();
+}
+
+final function SetVinyl(TurboVinyl NewVinyl)
+{
+	local CardGameVinylLabel.VinylReference Reference;
+
+	if (AuthVinyl == NewVinyl)
+	{
+		return;
+	}
+
+	if (AuthVinyl != None)
+	{
+		AuthVinyl.OnActivateVinyl(Self, AuthVinyl, false);
+	}
+
+	if (AuthAugmentInfo != None)
+	{
+		AuthAugmentInfo.Destroy();
+		AuthAugmentInfo = None;
+	}
+
+	AuthVinyl = NewVinyl;
+	Reference = class'CardGameVinylLabel'.static.MakeVinylReference(NewVinyl);
+	VinylLabel = Reference.Label;
+	VinylIndex = Reference.VinylIndex;
+
+	//Spawn the augment before activating so the activation delegate can initialize its state.
+	if (AuthVinyl != None && AuthVinyl.AugmentInfoClass != None)
+	{
+		AuthAugmentInfo = Spawn(AuthVinyl.AugmentInfoClass, Self);
+	}
+
+	if (AuthVinyl != None)
+	{
+		AuthVinyl.OnActivateVinyl(Self, AuthVinyl, true);
+	}
+
+	ForceNetUpdate();
+}
+
+simulated final function VinylAugmentReplicationInfo GetAugmentInfo(class<VinylAugmentReplicationInfo> AugmentClass)
+{
+	if (AugmentInfo != None && ClassIsChildOf(AugmentInfo.Class, AugmentClass))
+	{
+		return AugmentInfo;
+	}
+
+	return None;
+}
+
+simulated function RegisterAugmentInfo(VinylAugmentReplicationInfo Augment)
+{
+	AugmentInfo = Augment;
+	OnReceiveAugmentReplicationInfo(Self, Augment);
+}
+
+simulated function UnregisterAugmentInfo(VinylAugmentReplicationInfo Augment)
+{
+	//Only vacate the slot if it is still ours - a replacement augment may have already registered.
+	if (AugmentInfo == Augment)
+	{
+		AugmentInfo = None;
+	}
+}
+
+simulated function Destroyed()
+{
+	if (AugmentInfo != None)
+	{
+		AugmentInfo.OnOwnerDestroyed();
+	}
+
+	Super.Destroyed();
+}
+
+final function bool CanPurchaseVinyl()
+{
+	return Level.TimeSeconds - LastVinylPurchaseTime >= VinylPurchaseCooldown;
+}
+
+final function MarkVinylPurchased()
+{
+	LastVinylPurchaseTime = Level.TimeSeconds;
+}
+
+//Resolves the possessed vinyl for display. Clients get label CDO objects.
+simulated final function TurboVinyl GetVinyl()
+{
+	local CardGameVinylLabel.VinylReference Reference;
+
+	Reference.Label = VinylLabel;
+	Reference.VinylIndex = VinylIndex;
+	return class'CardGameVinylLabel'.static.ResolveVinyl(Reference);
 }
 
 final function SetMarkedForDeath(bool bEnable)
@@ -650,6 +761,9 @@ final simulated function bool IsPanicReloadActive()
 
 defaultproperties
 {
+	VinylIndex=-1
+	VinylPurchaseCooldown=2.f
+
 	CheatDeathWave=-1
 	CheatDeathTime=-1.f
 	CheatDeathGracePeriod=5.f

@@ -132,10 +132,10 @@ simulated function float GetFireRateMultiplier(KFPlayerReplicationInfo KFPRI, We
         Multiplier *= GetHighAmmoFireRateMultiplier(KFWeapon(Other));
     }
 
-    return Multiplier * GetCardCustomInfoFireRateMultiplier(GetPlayerCustomInfo(KFPRI));
+    return Multiplier * GetCardCustomInfoFireRateMultiplier(GetPlayerCustomInfo(KFPRI), KFWeapon(Other));
 }
 
-final simulated function float GetCardCustomInfoFireRateMultiplier(TurboPlayerCardCustomInfo CardCustomInfo)
+final simulated function float GetCardCustomInfoFireRateMultiplier(TurboPlayerCardCustomInfo CardCustomInfo, KFWeapon Weapon)
 {
     if (CardCustomInfo == None)
     {
@@ -173,10 +173,10 @@ simulated function float GetReloadRateMultiplier(KFPlayerReplicationInfo KFPRI, 
         Multiplier *= LowAmmoReloadRateMultiplier;
     }
 
-    return Multiplier * GetCardCustomInfoReloadRateMultiplier(GetPlayerCustomInfo(KFPRI));
+    return Multiplier * GetCardCustomInfoReloadRateMultiplier(GetPlayerCustomInfo(KFPRI), KFWeapon(Other));
 }
 
-final simulated function float GetCardCustomInfoReloadRateMultiplier(TurboPlayerCardCustomInfo CardCustomInfo)
+final simulated function float GetCardCustomInfoReloadRateMultiplier(TurboPlayerCardCustomInfo CardCustomInfo, KFWeapon Weapon)
 {
     local float Multiplier;
 

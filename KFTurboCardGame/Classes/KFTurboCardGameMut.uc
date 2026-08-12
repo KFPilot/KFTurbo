@@ -17,6 +17,12 @@ var TurboCardStatsTcpLink TurboCardStatsTcpLink;
 
 var array<TurboPlayerReplicationInfo> PendingPlayerReplicationInfoList;
 
+var array< class<CardGameVinylLabel> > VinylLabelList; //Labels vinyls are selected from.
+var array<CardGameVinylLabel> VinylLabelInstanceList; //Spawned label instances - their vinyls have activation delegates bound.
+var int VinylSpawnCount; //Number of vinyls offered outside the trader during trader time.
+var float VinylSpawnSearchRadius; //Radius around the shop to search for fallback path node spawn locations.
+var array<CardGameVinylActor> ActiveVinylList;
+
 var const bool bPerformValidation;
 
 function PostBeginPlay()
@@ -269,6 +275,154 @@ function TurboCardGameplayManager CreateCardGameplayManager()
 	return Spawn(class'TurboCardGameplayManager', Self);
 }
 
+function InitializeVinylLabels()
+{
+	local CardGameVinylLabel Label;
+	local int Index;
+
+	if (VinylLabelInstanceList.Length != 0)
+	{
+		return;
+	}
+
+	for (Index = 0; Index < VinylLabelList.Length; Index++)
+	{
+		Label = Spawn(VinylLabelList[Index], Self);
+
+		if (Label == None)
+		{
+			continue;
+		}
+
+		Label.InitializeLabel();
+		VinylLabelInstanceList[VinylLabelInstanceList.Length] = Label;
+	}
+}
+
+//Spawns purchasable vinyls just outside the currently open trader.
+//A random label is selected for each vinyl, then each label decides which vinyl it gives.
+function SpawnVinyls()
+{
+	local KFGameReplicationInfo KFGRI;
+	local array<Vector> SpawnLocationList;
+	local CardGameVinylLabel VinylLabel;
+	local TurboVinyl Vinyl;
+	local CardGameVinylActor VinylActor;
+	local int Index;
+
+	DestroyVinyls();
+	InitializeVinylLabels();
+
+	if (VinylLabelInstanceList.Length == 0)
+	{
+		return;
+	}
+
+	KFGRI = KFGameReplicationInfo(Level.GRI);
+
+	if (KFGRI == None || KFGRI.CurrentShop == None)
+	{
+		return;
+	}
+
+	GatherVinylSpawnLocations(KFGRI.CurrentShop, SpawnLocationList);
+
+	for (Index = 0; Index < SpawnLocationList.Length; Index++)
+	{
+		VinylLabel = VinylLabelInstanceList[Rand(VinylLabelInstanceList.Length)];
+		Vinyl = VinylLabel.GetRandomVinyl();
+
+		if (Vinyl == None)
+		{
+			continue;
+		}
+
+		VinylActor = Spawn(class'CardGameVinylActor', Self,, SpawnLocationList[Index]);
+
+		if (VinylActor != None)
+		{
+			VinylActor.SetVinyl(Vinyl);
+			ActiveVinylList[ActiveVinylList.Length] = VinylActor;
+		}
+	}
+}
+
+//Prefers a row in front of the shop's first exit teleporter. Falls back to path nodes near the shop.
+function GatherVinylSpawnLocations(ShopVolume Shop, out array<Vector> SpawnLocationList)
+{
+	local Vector X, Y, Z;
+	local int Index;
+
+	Shop.InitTeleports();
+
+	if (Shop.TelList.Length > 0 && Shop.TelList[0] != None)
+	{
+		GetAxes(Shop.TelList[0].Rotation, X, Y, Z);
+
+		for (Index = 0; Index < VinylSpawnCount; Index++)
+		{
+			SpawnLocationList[SpawnLocationList.Length] = Shop.TelList[0].Location + (X * 100.f) + (Y * ((float(Index) - (float(VinylSpawnCount - 1) * 0.5f)) * 120.f));
+		}
+
+		return;
+	}
+
+	GatherPathNodeSpawnLocations(Shop, SpawnLocationList);
+}
+
+//Fallback - use the path nodes closest to the shop that aren't inside of it.
+function GatherPathNodeSpawnLocations(ShopVolume Shop, out array<Vector> SpawnLocationList)
+{
+	local PathNode PathNode;
+	local array<PathNode> NodeList;
+	local array<float> NodeDistanceList;
+	local float Distance;
+	local int Index;
+
+	foreach RadiusActors(class'PathNode', PathNode, VinylSpawnSearchRadius, Shop.Location)
+	{
+		if (Shop.Encompasses(PathNode))
+		{
+			continue;
+		}
+
+		Distance = VSize(PathNode.Location - Shop.Location);
+
+		for (Index = 0; Index < NodeList.Length; Index++)
+		{
+			if (Distance < NodeDistanceList[Index])
+			{
+				break;
+			}
+		}
+
+		NodeList.Insert(Index, 1);
+		NodeList[Index] = PathNode;
+		NodeDistanceList.Insert(Index, 1);
+		NodeDistanceList[Index] = Distance;
+	}
+
+	for (Index = 0; Index < Min(NodeList.Length, VinylSpawnCount); Index++)
+	{
+		SpawnLocationList[SpawnLocationList.Length] = NodeList[Index].Location;
+	}
+}
+
+function DestroyVinyls()
+{
+	local int Index;
+
+	for (Index = 0; Index < ActiveVinylList.Length; Index++)
+	{
+		if (ActiveVinylList[Index] != None)
+		{
+			ActiveVinylList[Index].Destroy();
+		}
+	}
+
+	ActiveVinylList.Length = 0;
+}
+
 function bool CheckReplacement(Actor Other, out byte bSuperRelevant)
 {
 	if (TurboPlayerReplicationInfo(Other) != None)
@@ -370,6 +524,12 @@ simulated function String GetHumanReadableName()
 
 defaultproperties
 {
+	VinylLabelList(0)=class'VinylLabelAdvancedGenetics'
+	VinylLabelList(1)=class'VinylLabelClassic'
+	VinylLabelList(2)=class'VinylLabelHorzine'
+	VinylSpawnCount=3
+	VinylSpawnSearchRadius=1200.f
+
 	bPerformValidation=false
 	bAddToServerPackages=True
 	GroupName="KF-KFTurboMode"
