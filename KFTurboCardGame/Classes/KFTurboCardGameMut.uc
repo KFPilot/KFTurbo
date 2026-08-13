@@ -300,10 +300,39 @@ function InitializeVinylLabels()
 }
 
 //Spawns purchasable vinyls just outside the currently open trader.
-//A random label is selected for each vinyl, then each label decides which vinyl it gives.
 function SpawnVinyls()
 {
 	local KFGameReplicationInfo KFGRI;
+
+	KFGRI = KFGameReplicationInfo(Level.GRI);
+
+	if (KFGRI == None || KFGRI.CurrentShop == None)
+	{
+		return;
+	}
+
+	SpawnVinylsAtShop(KFGRI.CurrentShop);
+}
+
+//Prototype - offers vinyls at a random trader when the game starts so the first vote round has disks.
+//Remove the call in CardGameWaveEventHandler.GameStarted to disable.
+function SpawnVinylsAtGameStart()
+{
+	local KFGameType KFGameType;
+
+	KFGameType = KFGameType(Level.Game);
+
+	if (KFGameType == None || KFGameType.ShopList.Length == 0)
+	{
+		return;
+	}
+
+	SpawnVinylsAtShop(KFGameType.ShopList[Rand(KFGameType.ShopList.Length)]);
+}
+
+//A random label is selected for each vinyl, then each label decides which vinyl it gives.
+function SpawnVinylsAtShop(ShopVolume Shop)
+{
 	local array<Vector> SpawnLocationList;
 	local CardGameVinylLabel VinylLabel;
 	local TurboVinyl Vinyl;
@@ -313,19 +342,12 @@ function SpawnVinyls()
 	DestroyVinyls();
 	InitializeVinylLabels();
 
-	if (VinylLabelInstanceList.Length == 0)
+	if (VinylLabelInstanceList.Length == 0 || Shop == None)
 	{
 		return;
 	}
 
-	KFGRI = KFGameReplicationInfo(Level.GRI);
-
-	if (KFGRI == None || KFGRI.CurrentShop == None)
-	{
-		return;
-	}
-
-	GatherVinylSpawnLocations(KFGRI.CurrentShop, SpawnLocationList);
+	GatherVinylSpawnLocations(Shop, SpawnLocationList);
 
 	for (Index = 0; Index < SpawnLocationList.Length; Index++)
 	{
