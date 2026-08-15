@@ -118,7 +118,8 @@ function UsedBy(Pawn User)
 function AttemptPurchase(Pawn User)
 {
 	local TurboPlayerCardCustomInfo CardInfo;
-	local PlayerReplicationInfo PRI;
+	local TurboPlayerReplicationInfo PRI;
+	local float Cost;
 
 	if (bIsPurchased || Vinyl == None || User == None || User.Health <= 0 || User.PlayerReplicationInfo == None)
 	{
@@ -131,24 +132,39 @@ function AttemptPurchase(Pawn User)
 		return;
 	}
 
-	PRI = User.PlayerReplicationInfo;
-	CardInfo = TurboPlayerCardCustomInfo(class'TurboPlayerCardCustomInfo'.static.FindCustomInfo(TurboPlayerReplicationInfo(PRI)));
+	PRI = TurboPlayerReplicationInfo(User.PlayerReplicationInfo);
+	CardInfo = TurboPlayerCardCustomInfo(class'TurboPlayerCardCustomInfo'.static.FindCustomInfo(PRI));
 
 	if (CardInfo == None || CardInfo.AuthVinyl == Vinyl || !CardInfo.CanPurchaseVinyl())
 	{
 		return;
 	}
 
-	if (int(PRI.Score) < Vinyl.VinylPrice)
+    Cost = GetVinylPrice(PRI);
+
+	if (int(PRI.Score) < Cost)
 	{
 		return;
 	}
 
-	PRI.Score -= float(Vinyl.VinylPrice);
+	PRI.Score -= Cost;
 	CardInfo.SetVinyl(Vinyl);
 	CardInfo.MarkVinylPurchased();
 	bIsPurchased = true;
 	LifeSpan = 0.1f;
+}
+
+simulated function float GetVinylPrice(TurboPlayerReplicationInfo PRI)
+{
+    local float Price;
+    Price = Vinyl.VinylPrice;
+
+	if (PRI != None && PRI.ClientVeteranSkill != None)
+	{
+	    Price *= PRI.ClientVeteranSkill.static.GetCostScaling(PRI, class'CardGameVinylPickup');
+	}
+
+	return int(Price);
 }
 
 defaultproperties

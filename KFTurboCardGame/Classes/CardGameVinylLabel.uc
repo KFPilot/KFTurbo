@@ -16,6 +16,18 @@ struct VinylReference
 	var int VinylIndex; //Index within that list.
 };
 
+enum ELabelRarity
+{
+    Common,
+    Uncommon,
+    Rare,
+    Gold,
+    Platinum
+};
+const MAX_RARITY = 5;
+
+var ELabelRarity LabelRarity;
+
 var array<TurboVinyl> VinylObjectList; //General purpose vinyls - in the pool for every player.
 
 //Per-perk vinyl lists - pooled with the general list when selecting for a player of that perk.
