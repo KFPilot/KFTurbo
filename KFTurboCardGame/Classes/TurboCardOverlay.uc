@@ -805,6 +805,7 @@ simulated function DrawTouchedVinylInfo(Canvas C)
 	local array<string> DescriptionLineList;
 	local float DrawX, DrawY, TextSizeX, TextSizeY;
 	local int Index;
+	local int VinylPrice;
 
 	if (TurboHUD.PawnOwner == None || TurboHUD.PawnOwner.Health <= 0)
 	{
@@ -846,17 +847,18 @@ simulated function DrawTouchedVinylInfo(Canvas C)
 		DrawY += TextSizeY;
 	}
 
-	C.TextSize(VinylCostString @ TouchedVinyl.VinylPrice, TextSizeX, TextSizeY);
+	VinylPrice = WorldVinyl.GetVinylPrice(TurboPlayerReplicationInfo(TurboHUD.PlayerOwner.PlayerReplicationInfo));
+	C.TextSize(VinylCostString @ VinylPrice, TextSizeX, TextSizeY);
 
-	if (TurboHUD.PlayerOwner.PlayerReplicationInfo != None && int(TurboHUD.PlayerOwner.PlayerReplicationInfo.Score) >= TouchedVinyl.VinylPrice)
+	if (TurboHUD.PlayerOwner.PlayerReplicationInfo != None && int(TurboHUD.PlayerOwner.PlayerReplicationInfo.Score) >= VinylPrice)
 	{
-		DrawShadowedText(C, VinylCostString @ TouchedVinyl.VinylPrice, DrawX, DrawY, MakeColor(100, 255, 100, 255));
+		DrawShadowedText(C, VinylCostString @ VinylPrice, DrawX, DrawY, MakeColor(100, 255, 100, 255));
 		DrawY += TextSizeY;
 		DrawShadowedText(C, VinylPurchaseHintString, DrawX, DrawY, MakeColor(255, 255, 255, 255));
 	}
 	else
 	{
-		DrawShadowedText(C, VinylCostString @ TouchedVinyl.VinylPrice, DrawX, DrawY, MakeColor(255, 100, 100, 255));
+		DrawShadowedText(C, VinylCostString @ VinylPrice, DrawX, DrawY, MakeColor(255, 100, 100, 255));
 	}
 }
 

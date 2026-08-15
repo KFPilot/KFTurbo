@@ -6,56 +6,199 @@
 //For more information see https://github.com/KFPilot/KFTurbo.
 class CardGameVinylLabel extends Info;
 
+//SRVeterancyTypes convention - PerkIndex 255 means no perk. References with this index resolve to the general purpose list.
+const PERK_INDEX_NONE = 255;
+
 struct VinylReference
 {
 	var class<CardGameVinylLabel> Label;
-	var int VinylIndex;
+	var byte PerkIndex; //Which of the label's lists the vinyl lives in - PERK_INDEX_NONE is the general purpose list.
+	var int VinylIndex; //Index within that list.
 };
 
-var array<TurboVinyl> VinylObjectList;
+var array<TurboVinyl> VinylObjectList; //General purpose vinyls - in the pool for every player.
+
+//Per-perk vinyl lists - pooled with the general list when selecting for a player of that perk.
+var array<TurboVinyl> BerserkerVinylList;
+var array<TurboVinyl> CommandoVinylList;
+var array<TurboVinyl> DemolitionsVinylList;
+var array<TurboVinyl> FieldMedicVinylList;
+var array<TurboVinyl> FirebugVinylList;
+var array<TurboVinyl> SharpshooterVinylList;
+var array<TurboVinyl> SupportVinylList;
 
 function InitializeLabel()
 {
+	InitializeVinylList(VinylObjectList, PERK_INDEX_NONE);
+	InitializeVinylList(BerserkerVinylList, class'V_Berserker'.default.PerkIndex);
+	InitializeVinylList(CommandoVinylList, class'V_Commando'.default.PerkIndex);
+	InitializeVinylList(DemolitionsVinylList, class'V_Demolitions'.default.PerkIndex);
+	InitializeVinylList(FieldMedicVinylList, class'V_FieldMedic'.default.PerkIndex);
+	InitializeVinylList(FirebugVinylList, class'V_Firebug'.default.PerkIndex);
+	InitializeVinylList(SharpshooterVinylList, class'V_Sharpshooter'.default.PerkIndex);
+	InitializeVinylList(SupportVinylList, class'V_SupportSpec'.default.PerkIndex);
+}
+
+//Entries are object references, so stamping them sticks despite the array being passed by value.
+final function InitializeVinylList(array<TurboVinyl> List, byte PerkIndex)
+{
 	local int Index;
 
-	for (Index = 0; Index < VinylObjectList.Length; Index++)
+	for (Index = 0; Index < List.Length; Index++)
 	{
-		VinylObjectList[Index].LabelClass = Class;
-		VinylObjectList[Index].VinylIndex = Index;
+		List[Index].LabelClass = Class;
+		List[Index].PerkIndex = PerkIndex;
+		List[Index].VinylIndex = Index;
 	}
 }
 
 //Subclasses can override to define how they randomly pick a vinyl to give.
-function TurboVinyl GetRandomVinyl()
+//The pool is the general purpose list plus the list matching the player's current perk.
+function TurboVinyl GetRandomVinyl(PlayerController Player)
 {
-	if (VinylObjectList.Length == 0)
+	local array<TurboVinyl> Pool;
+	local byte PlayerPerkIndex;
+
+	AppendVinylList(VinylObjectList, Pool);
+
+	PlayerPerkIndex = GetPlayerPerkIndex(Player);
+
+	if (PlayerPerkIndex != PERK_INDEX_NONE)
+	{
+		AppendVinylList(GetVinylList(PlayerPerkIndex), Pool);
+	}
+
+	if (Pool.Length == 0)
 	{
 		return None;
 	}
 
-	return VinylObjectList[Rand(VinylObjectList.Length)];
+	return Pool[Rand(Pool.Length)];
+}
+
+static final function byte GetPlayerPerkIndex(PlayerController Player)
+{
+	local class<SRVeterancyTypes> Perk;
+
+	if (Player == None || KFPlayerReplicationInfo(Player.PlayerReplicationInfo) == None)
+	{
+		return PERK_INDEX_NONE;
+	}
+
+	Perk = class<SRVeterancyTypes>(KFPlayerReplicationInfo(Player.PlayerReplicationInfo).ClientVeteranSkill);
+
+	if (Perk == None)
+	{
+		return PERK_INDEX_NONE;
+	}
+
+	return Perk.default.PerkIndex;
+}
+
+//Returns this label instance's vinyl list for a perk index.
+simulated final function array<TurboVinyl> GetVinylList(byte PerkIndex)
+{
+	local array<TurboVinyl> EmptyList;
+
+	switch (PerkIndex)
+	{
+		case PERK_INDEX_NONE:
+			return VinylObjectList;
+		case class'V_Berserker'.default.PerkIndex:
+			return BerserkerVinylList;
+		case class'V_Commando'.default.PerkIndex:
+			return CommandoVinylList;
+		case class'V_Demolitions'.default.PerkIndex:
+			return DemolitionsVinylList;
+		case class'V_FieldMedic'.default.PerkIndex:
+			return FieldMedicVinylList;
+		case class'V_Firebug'.default.PerkIndex:
+			return FirebugVinylList;
+		case class'V_Sharpshooter'.default.PerkIndex:
+			return SharpshooterVinylList;
+		case class'V_SupportSpec'.default.PerkIndex:
+			return SupportVinylList;
+	}
+
+	return EmptyList;
+}
+
+//Returns the label CDO's vinyl list for a perk index.
+static simulated final function array<TurboVinyl> GetDefaultVinylList(byte PerkIndex)
+{
+	local array<TurboVinyl> EmptyList;
+
+	switch (PerkIndex)
+	{
+		case PERK_INDEX_NONE:
+			return default.VinylObjectList;
+		case class'V_Berserker'.default.PerkIndex:
+			return default.BerserkerVinylList;
+		case class'V_Commando'.default.PerkIndex:
+			return default.CommandoVinylList;
+		case class'V_Demolitions'.default.PerkIndex:
+			return default.DemolitionsVinylList;
+		case class'V_FieldMedic'.default.PerkIndex:
+			return default.FieldMedicVinylList;
+		case class'V_Firebug'.default.PerkIndex:
+			return default.FirebugVinylList;
+		case class'V_Sharpshooter'.default.PerkIndex:
+			return default.SharpshooterVinylList;
+		case class'V_SupportSpec'.default.PerkIndex:
+			return default.SupportVinylList;
+	}
+
+	return EmptyList;
+}
+
+static final function AppendVinylList(array<TurboVinyl> List, out array<TurboVinyl> Pool)
+{
+	local int Index;
+
+	for (Index = 0; Index < List.Length; Index++)
+	{
+		Pool[Pool.Length] = List[Index];
+	}
 }
 
 //Resolves a vinyl object from a label CDO. DO NOT CALL INSTANCE FUNCTIONS ON THESE.
 static simulated function TurboVinyl GetVinylFromReference(VinylReference Reference)
 {
-	if (Reference.Label != default.Class || Reference.VinylIndex < 0 || Reference.VinylIndex >= default.VinylObjectList.Length)
+	local array<TurboVinyl> List;
+
+	if (Reference.Label != default.Class || Reference.VinylIndex < 0)
 	{
 		return None;
 	}
 
-	return default.VinylObjectList[Reference.VinylIndex];
+	List = GetDefaultVinylList(Reference.PerkIndex);
+
+	if (Reference.VinylIndex >= List.Length)
+	{
+		return None;
+	}
+
+	return List[Reference.VinylIndex];
 }
 
 //Resolves against this label instance's vinyl objects (delegates bound). Server-side use only.
 simulated final function TurboVinyl ResolveVinylInstance(VinylReference Reference)
 {
-    if (Reference.Label != Class || Reference.VinylIndex < 0 || Reference.VinylIndex >= VinylObjectList.Length)
+	local array<TurboVinyl> List;
+
+	if (Reference.Label != Class || Reference.VinylIndex < 0)
 	{
 		return None;
 	}
 
-	return VinylObjectList[Reference.VinylIndex];
+	List = GetVinylList(Reference.PerkIndex);
+
+	if (Reference.VinylIndex >= List.Length)
+	{
+		return None;
+	}
+
+	return List[Reference.VinylIndex];
 }
 
 //Resolves a reference by dispatching to the referenced label class - GetVinylFromReference compares
@@ -77,11 +220,13 @@ static final function VinylReference MakeVinylReference(TurboVinyl Vinyl)
 	if (Vinyl == None)
 	{
 		Reference.Label = None;
+		Reference.PerkIndex = PERK_INDEX_NONE;
 		Reference.VinylIndex = -1;
 		return Reference;
 	}
 
 	Reference.Label = Vinyl.LabelClass;
+	Reference.PerkIndex = Vinyl.PerkIndex;
 	Reference.VinylIndex = Vinyl.VinylIndex;
 	return Reference;
 }

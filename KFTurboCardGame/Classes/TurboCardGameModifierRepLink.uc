@@ -36,6 +36,7 @@ var(Turbo) float ShotgunSpreadRecoilMultiplier;
 var(Turbo) float ShotgunKickBackMultiplier;
 
 var(Turbo) float TraderCostMultiplier;
+var(Turbo) float TraderVinylCostMultiplier;
 var(Turbo) float TraderGrenadeCostMultiplier;
 var(Turbo) bool bDisableArmorPurchase;
 
@@ -78,7 +79,7 @@ replication
         MaxAmmoMultiplier, CommandoMaxAmmoMultiplier, MedicMaxAmmoMultiplier, GrenadeMaxAmmoMultiplier,
         WeaponPenetrationMultiplier,
         WeaponSpreadRecoilMultiplier, BracedSpreadRecoilMultiplier, ShotgunSpreadRecoilMultiplier,
-        TraderCostMultiplier, TraderGrenadeCostMultiplier, bDisableArmorPurchase,
+        TraderCostMultiplier, TraderVinylCostMultiplier, TraderGrenadeCostMultiplier, bDisableArmorPurchase,
         PlayerMovementSpeedMultiplier, PlayerMovementAccelMultiplier, PlayerMovementLowWeightMultiplier,
         bFreezePlayersDuringWave, bMoneySlowsPlayers, bMissingHealthStronglySlows,
         PlayerMaxHealthMultiplier,
@@ -260,6 +261,12 @@ simulated function float GetWeaponSpreadRecoilMultiplier(KFPlayerReplicationInfo
 simulated function GetTraderCostMultiplier(KFPlayerReplicationInfo KFPRI, class<Pickup> Item, out float Multiplier)
 {
     Super.GetTraderCostMultiplier(KFPRI, Item, Multiplier);
+
+    if (Item == class'CardGameVinylPickup')
+    {
+        Multiplier *= TraderVinylCostMultiplier;
+        return;
+    }
 
     if (bDisableArmorPurchase && class<Vest>(Item) != None)
     {
@@ -497,6 +504,7 @@ defaultproperties
     ShotgunKickBackMultiplier=1.f
 
     TraderCostMultiplier=1.f
+    TraderVinylCostMultiplier=1.f
     TraderGrenadeCostMultiplier=1.f
     bDisableArmorPurchase=false
 

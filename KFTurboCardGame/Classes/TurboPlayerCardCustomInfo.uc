@@ -67,6 +67,7 @@ var int PlayerFlags; //Pack binary states in here.
 
 //Replicated VinylReference of the vinyl this player currently possesses (kept as raw fields - foreign struct types can't be used in var declarations).
 var class<CardGameVinylLabel> VinylLabel;
+var byte VinylPerkIndex;
 var int VinylIndex;
 var TurboVinyl AuthVinyl; //Server-side vinyl instance - needed to execute the activation delegate.
 var VinylAugmentReplicationInfo AuthAugmentInfo; //Server-side augment actor spawned for the possessed vinyl.
@@ -85,7 +86,7 @@ replication
 {
     reliable if (Role == ROLE_Authority)
         GrenadeThrowTime, HealBoostTime, RackEmUpHeadshotCount, RackEmUpHeadshotStackExpireTime, CheatDeathWave,
-		SubstituteDamageCount, BleedCount, NextBleedTime, PerpetualCriticalHitStartTime, PlayerFlags, VinylLabel, VinylIndex;
+		SubstituteDamageCount, BleedCount, NextBleedTime, PerpetualCriticalHitStartTime, PlayerFlags, VinylLabel, VinylPerkIndex, VinylIndex;
 
 	reliable if (Role == ROLE_Authority)
         ClientCriticalHit, ClientExecute;
@@ -286,6 +287,7 @@ final function SetVinyl(TurboVinyl NewVinyl)
 	AuthVinyl = NewVinyl;
 	Reference = class'CardGameVinylLabel'.static.MakeVinylReference(NewVinyl);
 	VinylLabel = Reference.Label;
+	VinylPerkIndex = Reference.PerkIndex;
 	VinylIndex = Reference.VinylIndex;
 
 	//Spawn the augment before activating so the activation delegate can initialize its state.
@@ -353,6 +355,7 @@ simulated final function TurboVinyl GetVinyl()
 	local CardGameVinylLabel.VinylReference Reference;
 
 	Reference.Label = VinylLabel;
+	Reference.PerkIndex = VinylPerkIndex;
 	Reference.VinylIndex = VinylIndex;
 	return class'CardGameVinylLabel'.static.ResolveVinyl(Reference);
 }
@@ -761,6 +764,7 @@ final simulated function bool IsPanicReloadActive()
 
 defaultproperties
 {
+	VinylPerkIndex=255
 	VinylIndex=-1
 	VinylPurchaseCooldown=2.f
 

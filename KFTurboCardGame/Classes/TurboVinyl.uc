@@ -7,24 +7,27 @@ class TurboVinyl extends Object
 
 //Set during label initialization. Used so that the server has an easier time telling clients what vinyl this is.
 var class<CardGameVinylLabel> LabelClass;
-var int VinylIndex;
+var byte PerkIndex; //Which of the label's lists this vinyl lives in - 255 is the general purpose list.
+var int VinylIndex; //Index within that list.
 
-var localized string VinylName;
-var localized string VinylDescription; //Should describe the vinyl's effect.
-var int VinylPrice;
+var const localized string VinylName;
+var const localized string VinylDescription; //Should describe the vinyl's effect.
+var const int VinylPrice;
 
-var StaticMesh VinylMesh; //Mesh used by the world actor and the UI drawn actor.
-var array<Material> SkinList; //Skins applied to the mesh.
+var const StaticMesh VinylMesh; //Mesh used by the world actor and the UI drawn actor.
+var const array<Material> SkinList; //Skins applied to the mesh.
 
 //Optional replicated-state actor spawned while a player possesses this vinyl. Abilities can find it
 //through the possessing player's TurboPlayerCardCustomInfo.
-var class<VinylAugmentReplicationInfo> AugmentInfoClass;
+var const class<VinylAugmentReplicationInfo> AugmentInfoClass;
 
 //Executed on the server when this vinyl is given to (bActivate) or taken from (!bActivate) a player.
 delegate OnActivateVinyl(TurboPlayerCardCustomInfo PlayerInfo, TurboVinyl Vinyl, bool bActivate);
 
 defaultproperties
 {
+	PerkIndex=255
+
 	VinylName="Vinyl"
 	VinylDescription="A mysterious record."
 	VinylPrice=100

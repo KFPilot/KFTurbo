@@ -22,8 +22,6 @@ final function GameStarted(KFTurboGameType GameType, int StartedWave)
 {
     GameType.WaveCountDown = Max(GameStartWaitTime, GameType.WaveCountDown);
     Mutator.TurboCardReplicationInfo.StartSelection(StartedWave);
-    //Prototype - offer vinyls at a random trader during the first vote round.
-    Mutator.SpawnVinylsAtGameStart();
 }
 
 final function GameEnded(KFTurboGameType GameType, int Result)
@@ -45,7 +43,6 @@ final function WaveStarted(KFTurboGameType GameType, int StartedWave)
     
     Mutator.TurboCardReplicationInfo.OnSelectionTimeEnd();
     Mutator.TurboCardGameplayManagerInfo.OnWaveStart(StartedWave);
-    Mutator.DestroyVinyls();
 }
 
 final function WaveEnded(KFTurboGameType GameType, int EndedWave)
@@ -62,7 +59,6 @@ final function WaveEnded(KFTurboGameType GameType, int EndedWave)
 
     Mutator.TurboCardGameplayManagerInfo.OnWaveEnd(EndedWave);
     Mutator.TurboCardReplicationInfo.StartSelection(EndedWave + 1);
-    Mutator.SpawnVinyls();
 }
 
 defaultproperties

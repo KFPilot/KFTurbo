@@ -8,6 +8,7 @@ class CardGameVinylActor extends Actor
 
 //Replicated VinylReference (kept as raw fields - foreign struct types can't be used in var declarations).
 var class<CardGameVinylLabel> VinylLabel;
+var byte VinylPerkIndex;
 var int VinylIndex;
 var TurboVinyl Vinyl; //Server holds the label instance's vinyl object; clients resolve the label CDO's from the reference.
 var bool bIsPurchased;
@@ -17,7 +18,7 @@ var float SpinRate; //Spin about the facing axis in rotator units per second.
 replication
 {
 	reliable if (bNetDirty && Role == ROLE_Authority)
-		VinylLabel, VinylIndex;
+		VinylLabel, VinylPerkIndex, VinylIndex;
 }
 
 function SetVinyl(TurboVinyl NewVinyl)
@@ -27,6 +28,7 @@ function SetVinyl(TurboVinyl NewVinyl)
 	Vinyl = NewVinyl;
 	Reference = class'CardGameVinylLabel'.static.MakeVinylReference(NewVinyl);
 	VinylLabel = Reference.Label;
+	VinylPerkIndex = Reference.PerkIndex;
 	VinylIndex = Reference.VinylIndex;
 	ApplyVinylDisplay();
 	NetUpdateTime = Level.TimeSeconds - 1.f;
@@ -40,6 +42,7 @@ simulated event PostNetReceive()
 	Super.PostNetReceive();
 
 	Reference.Label = VinylLabel;
+	Reference.PerkIndex = VinylPerkIndex;
 	Reference.VinylIndex = VinylIndex;
 	ResolvedVinyl = class'CardGameVinylLabel'.static.ResolveVinyl(Reference);
 
@@ -122,6 +125,12 @@ function AttemptPurchase(Pawn User)
 		return;
 	}
 
+	//This vinyl was offered to a specific player - only they can buy it.
+	if (User.Controller != Owner)
+	{
+		return;
+	}
+
 	PRI = User.PlayerReplicationInfo;
 	CardInfo = TurboPlayerCardCustomInfo(class'TurboPlayerCardCustomInfo'.static.FindCustomInfo(TurboPlayerReplicationInfo(PRI)));
 
@@ -144,6 +153,7 @@ function AttemptPurchase(Pawn User)
 
 defaultproperties
 {
+	VinylPerkIndex=255
 	VinylIndex=-1
 
 	DrawType=DT_StaticMesh
@@ -162,7 +172,7 @@ defaultproperties
 	CollisionHeight=48.f
 
 	RemoteRole=ROLE_SimulatedProxy
-	bAlwaysRelevant=true
+	bOnlyRelevantToOwner=true
 	bNetNotify=true
 	NetUpdateFrequency=1.f
 }

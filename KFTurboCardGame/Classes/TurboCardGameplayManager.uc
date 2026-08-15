@@ -88,6 +88,7 @@ var CardDeltaStack PlayerCarryCapacityDelta;
 
 //TRADER
 var CardModifierStack TraderPriceModifier;
+var CardModifierStack TraderVinylPriceModifier;
 var CardModifierStack TraderGrenadePriceModifier;
 
 //DAMAGE
@@ -853,6 +854,12 @@ function PlayerCarryCapacityDeltaChanged(CardDeltaStack ChangedDelta, int Delta)
 function TraderPriceModifierChanged(CardModifierStack ModifiedStack, float Modifier)
 {
     CardGameModifier.TraderCostMultiplier = Modifier;
+    CardGameModifier.ForceNetUpdate();
+}
+
+function TraderVinylPriceModifierChanged(CardModifierStack ModifiedStack, float Modifier)
+{
+    CardGameModifier.TraderVinylCostMultiplier = Modifier;
     CardGameModifier.ForceNetUpdate();
 }
 
@@ -1740,6 +1747,12 @@ defaultproperties
         OnModifierChanged=TraderPriceModifierChanged
     End Object
     TraderPriceModifier=CardModifierStack'TraderPriceModifierStack'
+
+    Begin Object Name=TraderVinylPriceModifierStack Class=CardModifierStack
+        ModifierStackID="TraderVinylPrice"
+        OnModifierChanged=TraderVinylPriceModifierChanged
+    End Object
+    TraderVinylPriceModifier=CardModifierStack'TraderVinylPriceModifierStack'
 
     Begin Object Name=TraderGrenadePriceStack Class=CardModifierStack
         ModifierStackID="TraderGrenade"
