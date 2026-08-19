@@ -798,7 +798,7 @@ simulated function ApplyPendingVinyl()
 
 	if (LastKnownVinyl != None)
 	{
-		class'CardGameVinylLabel'.static.ConfigureDrawnActor(LastKnownVinyl, VinylActor);
+		class'CardGameVinylLabel'.static.ConfigureVinylActor(LastKnownVinyl, VinylActor);
 	}
 }
 

@@ -250,21 +250,28 @@ static final function VinylReference MakeVinylReference(TurboVinyl Vinyl)
 	return Reference;
 }
 
-//Sets up a HUD drawn actor to display a vinyl.
-static simulated final function ConfigureDrawnActor(TurboVinyl Vinyl, TurboCardDrawnActor DrawnActor)
+//Sets up an actor to display a vinyl. Skins are loaded here so that the actor's Skins array is the
+//only thing holding onto the textures - they are released when the actor is destroyed.
+static simulated final function ConfigureVinylActor(TurboVinyl Vinyl, Actor VinylDisplayActor)
 {
 	local int Index;
 
-	if (Vinyl == None || DrawnActor == None)
+	if (Vinyl == None || VinylDisplayActor == None)
 	{
 		return;
 	}
 
-	DrawnActor.SetStaticMesh(Vinyl.VinylMesh);
+	VinylDisplayActor.SetStaticMesh(Vinyl.VinylMesh);
 
-	DrawnActor.Skins.Length = Vinyl.SkinList.Length;
-	for (Index = 0; Index < Vinyl.SkinList.Length; Index++)
+	VinylDisplayActor.Skins.Length = Vinyl.SkinNameList.Length;
+	for (Index = 0; Index < Vinyl.SkinNameList.Length; Index++)
 	{
-		DrawnActor.Skins[Index] = Vinyl.SkinList[Index];
+		if (Vinyl.SkinNameList[Index] == "")
+		{
+			VinylDisplayActor.Skins[Index] = None;
+			continue;
+		}
+
+		VinylDisplayActor.Skins[Index] = Material(DynamicLoadObject(Vinyl.SkinNameList[Index], class'Material'));
 	}
 }

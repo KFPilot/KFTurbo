@@ -14,7 +14,7 @@ defaultproperties
 	Begin Object Name=Commando Class=TurboVinyl
 		VinylName="Advanced Genetics: Commando"
 		VinylDescription="A mysterious record."
-		SkinList(1)=Texture'KFTurboCardGame.Song.ADVGEN_Commando'
+		SkinNameList(1)="KFTurboCardGame.Song.ADVGEN_Commando"
 		OnActivateVinyl=ActivateCommando
 	End Object
 	VinylObjectList(0)=TurboVinyl'Commando'

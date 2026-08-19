@@ -15,7 +15,9 @@ var const localized string VinylDescription; //Should describe the vinyl's effec
 var const int VinylPrice;
 
 var const StaticMesh VinylMesh; //Mesh used by the world actor and the UI drawn actor.
-var const array<Material> SkinList; //Skins applied to the mesh.
+//String references to the skins applied to the mesh. Kept as strings so vinyls never hold onto the
+//textures - only the Skins array of the actor currently displaying this vinyl references them.
+var const array<string> SkinNameList;
 
 //Optional replicated-state actor spawned while a player possesses this vinyl. Abilities can find it
 //through the possessing player's TurboPlayerCardCustomInfo.

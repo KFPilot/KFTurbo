@@ -18,7 +18,7 @@ defaultproperties
 	Begin Object Name=Sharpshooter Class=TurboVinyl
 		VinylName="Classic: Sharpshooter"
 		VinylDescription="A mysterious record."
-		SkinList(1)=Texture'KFTurboCardGame.Song.CLASSIC_Sharpshooter'
+		SkinNameList(1)="KFTurboCardGame.Song.CLASSIC_Sharpshooter"
 		OnActivateVinyl=ActivateSharpshooter
 	End Object
 	VinylObjectList(0)=TurboVinyl'Sharpshooter'

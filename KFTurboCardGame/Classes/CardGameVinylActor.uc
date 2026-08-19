@@ -55,20 +55,12 @@ simulated event PostNetReceive()
 
 simulated function ApplyVinylDisplay()
 {
-	local int Index;
-
 	if (Vinyl == None)
 	{
 		return;
 	}
 
-	SetStaticMesh(Vinyl.VinylMesh);
-
-	Skins.Length = Vinyl.SkinList.Length;
-	for (Index = 0; Index < Vinyl.SkinList.Length; Index++)
-	{
-		Skins[Index] = Vinyl.SkinList[Index];
-	}
+	class'CardGameVinylLabel'.static.ConfigureVinylActor(Vinyl, Self);
 }
 
 //Billboard toward the local player while spinning about the facing axis. Runs client-side.
