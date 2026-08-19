@@ -39,6 +39,13 @@ var array<TurboVinyl> FirebugVinylList;
 var array<TurboVinyl> SharpshooterVinylList;
 var array<TurboVinyl> SupportVinylList;
 
+function PostBeginPlay()
+{
+    Super.PostBeginPlay();
+
+    Disable('Tick');
+}
+
 function InitializeLabel()
 {
 	InitializeVinylList(VinylObjectList, PERK_INDEX_NONE);

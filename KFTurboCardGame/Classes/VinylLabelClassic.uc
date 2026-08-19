@@ -7,8 +7,14 @@ function ActivateSharpshooter(TurboPlayerCardCustomInfo PlayerInfo, TurboVinyl V
 {
 }
 
+function ActivateRackEmUp(TurboPlayerCardCustomInfo PlayerInfo, TurboVinyl Vinyl, bool bActivate)
+{
+}
+
 defaultproperties
 {
+    LabelRarity=Rare
+
 	Begin Object Name=Sharpshooter Class=TurboVinyl
 		VinylName="Classic: Sharpshooter"
 		VinylDescription="A mysterious record."
@@ -16,4 +22,12 @@ defaultproperties
 		OnActivateVinyl=ActivateSharpshooter
 	End Object
 	VinylObjectList(0)=TurboVinyl'Sharpshooter'
+
+	Begin Object Name=RackEmUp Class=TurboVinyl
+		VinylName="Classic: Rack Em Up"
+		VinylDescription="Headshots temporarily grant stacking headshot damage."
+		AugmentInfoClass=class'VinylAugmentRackEmUp'
+		OnActivateVinyl=ActivateRackEmUp
+	End Object
+	VinylObjectList(1)=TurboVinyl'RackEmUp'
 }

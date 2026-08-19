@@ -9,6 +9,8 @@ function ActivateCommando(TurboPlayerCardCustomInfo PlayerInfo, TurboVinyl Vinyl
 
 defaultproperties
 {
+    LabelRarity=Uncommon
+
 	Begin Object Name=Commando Class=TurboVinyl
 		VinylName="Advanced Genetics: Commando"
 		VinylDescription="A mysterious record."

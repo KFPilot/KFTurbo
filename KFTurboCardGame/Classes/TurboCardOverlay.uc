@@ -390,6 +390,11 @@ simulated function TickCardStatus(float DeltaTime)
 			Card.OnStatusIconTick(self, PlayerCardCustomInfo, Card, DeltaTime);
 		}
 	}
+
+	if (PlayerCardCustomInfo.AugmentInfo != None && PlayerCardCustomInfo.AugmentInfo.bWantsStatusIconTick)
+	{
+		PlayerCardCustomInfo.AugmentInfo.TickStatusIcon(Self, PlayerCardCustomInfo, DeltaTime);
+	}
 }
 
 simulated function PlayFadeInAndUpSound()
@@ -972,6 +977,17 @@ simulated function DrawCardEffects(Canvas C)
 			{
 				OffsetIndex++;
 			}
+		}
+	}
+
+	//The current vinyl augment can draw a status icon too.
+	if (PlayerCardCustomInfo.AugmentInfo != None && PlayerCardCustomInfo.AugmentInfo.bHasStatusIcon)
+	{
+		SetupOffset(DrawX, DrawY, DrawHeight, OffsetX, OffsetY, OffsetIndex);
+
+		if (PlayerCardCustomInfo.AugmentInfo.DrawStatusIcon(self, PlayerCardCustomInfo, C, OffsetX, OffsetY, DrawHeight))
+		{
+			OffsetIndex++;
 		}
 	}
 }

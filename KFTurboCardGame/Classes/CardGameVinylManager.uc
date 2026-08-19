@@ -12,6 +12,7 @@ var array< class<CardGameVinylLabel> > VinylLabelList; //Labels vinyls are selec
 struct LabelList
 {
     var array< class<CardGameVinylLabel> > LabelList;
+    var array< CardGameVinylLabel> LabelInstanceList;
 };
 const MAX_RARITY = 5;
 var LabelList LabelRarityMap[MAX_RARITY];
@@ -23,6 +24,7 @@ struct Weight
 };
 struct LabelRarityDistribution
 {
+    var float TotalWeight; //Cached total weight of RarityWeightList. Do not mutate this at runtime.
     var Weight RarityWeightList[MAX_RARITY];
 };
 const MAX_WAVE = 14;
@@ -36,7 +38,8 @@ var int VinylsDestroyedPerTick; //How many vinyls the DestroyingVinyls state des
 
 //Deferred work state.
 var ShopVolume PendingSpawnShop; //Shop the next spawn cycle uses. Set by RequestVinylSpawn, consumed by SpawningVinyls.
-var array<PlayerController> PendingSpawnPlayerList;
+var int PendingSpawnWave; //Wave the next spawn cycle selects rarities for.
+var array<TurboHumanPawn> PendingSpawnPlayerList;
 var array<Vector> SpawnLocationList;
 
 function PostBeginPlay()
@@ -48,6 +51,24 @@ function PostBeginPlay()
 	OnGameStarted = GameStarted;
 	OnWaveStarted = WaveStarted;
 	OnWaveEnded = WaveEnded;
+
+	CacheWaveRarityTotalWeights();
+	InitializeVinylLabels();
+}
+
+final function CacheWaveRarityTotalWeights()
+{
+	local int WaveIndex, RarityIndex;
+
+	for (WaveIndex = 0; WaveIndex < MAX_WAVE; WaveIndex++)
+	{
+		WaveRarityDistributionMap[WaveIndex].TotalWeight = 0.f;
+
+		for (RarityIndex = 0; RarityIndex < MAX_RARITY; RarityIndex++)
+		{
+			WaveRarityDistributionMap[WaveIndex].TotalWeight += WaveRarityDistributionMap[WaveIndex].RarityWeightList[RarityIndex].Weight;
+		}
+	}
 }
 
 //Prototype - offer vinyls at a random trader during the first vote round.
@@ -58,7 +79,7 @@ final function GameStarted(KFTurboGameType GameType, int StartedWave)
 		return;
 	}
 
-	RequestVinylSpawn(GameType.ShopList[Rand(GameType.ShopList.Length)]);
+	RequestVinylSpawn(GameType.ShopList[Rand(GameType.ShopList.Length)], StartedWave);
 }
 
 final function WaveStarted(KFTurboGameType GameType, int StartedWave)
@@ -78,11 +99,12 @@ final function WaveEnded(KFTurboGameType GameType, int EndedWave)
 		return;
 	}
 
-	RequestVinylSpawn(KFGameReplicationInfo(Level.GRI).CurrentShop);
+	//This trader time precedes the wave after the one that just ended.
+	RequestVinylSpawn(KFGameReplicationInfo(Level.GRI).CurrentShop, EndedWave + 1);
 }
 
 //Destroys any active vinyls, then spawns a fresh set for every alive player at the given shop.
-function RequestVinylSpawn(ShopVolume Shop)
+function RequestVinylSpawn(ShopVolume Shop, int Wave)
 {
 	if (Shop == None)
 	{
@@ -90,6 +112,7 @@ function RequestVinylSpawn(ShopVolume Shop)
 	}
 
 	PendingSpawnShop = Shop;
+	PendingSpawnWave = Clamp(Wave, 0, MAX_WAVE - 1);
 	GotoState('DestroyingVinyls');
 }
 
@@ -103,6 +126,7 @@ function RequestVinylDestroy()
 function InitializeVinylLabels()
 {
 	local CardGameVinylLabel Label;
+	local CardGameVinylLabel.ELabelRarity Rarity;
 	local int Index;
 
 	if (VinylLabelInstanceList.Length != 0)
@@ -121,17 +145,54 @@ function InitializeVinylLabels()
 
 		Label.InitializeLabel();
 		VinylLabelInstanceList[VinylLabelInstanceList.Length] = Label;
+
+		//Sort the label into the rarity map.
+		Rarity = VinylLabelList[Index].default.LabelRarity;
+		LabelRarityMap[Rarity].LabelList[LabelRarityMap[Rarity].LabelList.Length] = VinylLabelList[Index];
+		LabelRarityMap[Rarity].LabelInstanceList[LabelRarityMap[Rarity].LabelInstanceList.Length] = Label;
 	}
 }
 
-//Spawns the vinyl set for one player per tick until the collected player list is empty.
+function bool SelectVinylRarity(int Wave, out CardGameVinylLabel.ELabelRarity OutRarity)
+{
+	local float Roll;
+	local int RarityIndex;
+	local bool bFoundWeightedRarity;
+
+	Wave = Clamp(Wave, 0, MAX_WAVE - 1);
+
+	if (WaveRarityDistributionMap[Wave].TotalWeight <= 0.f)
+	{
+		return false;
+	}
+
+	Roll = FRand() * WaveRarityDistributionMap[Wave].TotalWeight;
+
+	for (RarityIndex = 0; RarityIndex < MAX_RARITY; RarityIndex++)
+	{
+		if (WaveRarityDistributionMap[Wave].RarityWeightList[RarityIndex].Weight <= 0.f)
+		{
+			continue;
+		}
+
+		OutRarity = ELabelRarity(RarityIndex);
+		bFoundWeightedRarity = true;
+
+		Roll -= WaveRarityDistributionMap[Wave].RarityWeightList[RarityIndex].Weight;
+
+		if (Roll < 0.f)
+		{
+			return true;
+		}
+	}
+
+	return bFoundWeightedRarity;
+}
+
 state SpawningVinyls
 {
 	function BeginState()
 	{
-		local Controller Controller;
-		local PlayerController Player;
-
 		InitializeVinylLabels();
 
 		SpawnLocationList.Length = 0;
@@ -149,17 +210,7 @@ state SpawningVinyls
 			return;
 		}
 
-		for (Controller = Level.ControllerList; Controller != None; Controller = Controller.NextController)
-		{
-			Player = PlayerController(Controller);
-
-			if (Player == None || Player.Pawn == None || Player.Pawn.Health <= 0)
-			{
-				continue;
-			}
-
-			PendingSpawnPlayerList[PendingSpawnPlayerList.Length] = Player;
-		}
+		PendingSpawnPlayerList = class'TurboGameplayHelper'.static.GetPlayerPawnList(Level);
 
 		if (PendingSpawnPlayerList.Length == 0)
 		{
@@ -178,15 +229,15 @@ state SpawningVinyls
 
 	function Tick(float DeltaTime)
 	{
-		local PlayerController Player;
+		local TurboHumanPawn Player;
 
 		Player = PendingSpawnPlayerList[PendingSpawnPlayerList.Length - 1];
 		PendingSpawnPlayerList.Length = PendingSpawnPlayerList.Length - 1;
 
 		//Skip players that died or left after being collected.
-		if (Player != None && Player.Pawn != None && Player.Pawn.Health > 0)
+		if (Player != None && Player.Health > 0)
 		{
-			SpawnVinylsForPlayer(Player);
+			SpawnVinylsForPlayer(PlayerController(Player.Controller));
 		}
 
 		if (PendingSpawnPlayerList.Length == 0)
@@ -239,18 +290,35 @@ state DestroyingVinyls
 	}
 }
 
-//A random label is selected for each vinyl, then each label decides which vinyl it gives.
 function SpawnVinylsForPlayer(PlayerController Player)
 {
-	local CardGameVinylLabel VinylLabel;
+	local array<CardGameVinylLabel> LabelList;
+	local CardGameVinylLabel.ELabelRarity Rarity;
 	local TurboVinyl Vinyl;
 	local CardGameVinylActor VinylActor;
-	local int Index;
+	local int Index, LabelIndex;
 
 	for (Index = 0; Index < SpawnLocationList.Length; Index++)
 	{
-		VinylLabel = VinylLabelInstanceList[Rand(VinylLabelInstanceList.Length)];
-		Vinyl = VinylLabel.GetRandomVinyl(Player);
+		if (!SelectVinylRarity(PendingSpawnWave, Rarity))
+		{
+			continue;
+		}
+
+		LabelList = LabelRarityMap[Rarity].LabelInstanceList;
+		Vinyl = None;
+
+		while (Vinyl == None && LabelList.Length > 0)
+		{
+			LabelIndex = Rand(LabelList.Length);
+
+			if (LabelList[LabelIndex] != None)
+			{
+				Vinyl = LabelList[LabelIndex].GetRandomVinyl(Player);
+			}
+
+			LabelList.Remove(LabelIndex, 1);
+		}
 
 		if (Vinyl == None)
 		{
@@ -334,6 +402,10 @@ defaultproperties
 	VinylLabelList(0)=class'VinylLabelAdvancedGenetics'
 	VinylLabelList(1)=class'VinylLabelClassic'
 	VinylLabelList(2)=class'VinylLabelHorzine'
+	VinylLabelList(3)=class'VinylLabelBedlam'
+	VinylLabelList(4)=class'VinylLabelSirensBelch'
+	VinylLabelList(5)=class'VinylLabelWestLondon'
+	VinylLabelList(6)=class'VinylLabelBiohazard'
 	VinylSpawnCount=3
 	VinylSpawnSearchRadius=1200.f
 	VinylsDestroyedPerTick=3

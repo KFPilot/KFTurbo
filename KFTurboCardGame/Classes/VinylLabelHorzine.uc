@@ -9,6 +9,8 @@ function ActivateFieldMedic(TurboPlayerCardCustomInfo PlayerInfo, TurboVinyl Vin
 
 defaultproperties
 {
+    LabelRarity=Uncommon
+
 	Begin Object Name=FieldMedic Class=TurboVinyl
 		VinylName="Horzine: Field Medic"
 		VinylDescription="A mysterious record."

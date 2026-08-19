@@ -113,9 +113,26 @@ simulated final function float GetHighAmmoFireRateMultiplier(KFWeapon Weapon)
     return Lerp((AmmoPercent - 0.75f) / 0.25f, 1.f, HighAmmoFireRateMultiplier);
 }
 
+//Resolves the vinyl augment of a player (if they have one).
+static simulated final function VinylAugmentReplicationInfo GetPlayerAugmentInfo(KFPlayerReplicationInfo KFPRI)
+{
+    local TurboPlayerCardCustomInfo CardCustomInfo;
+
+    CardCustomInfo = GetPlayerCustomInfo(KFPRI);
+
+    if (CardCustomInfo == None)
+    {
+        return None;
+    }
+
+    return CardCustomInfo.AugmentInfo;
+}
+
 simulated function float GetFireRateMultiplier(KFPlayerReplicationInfo KFPRI, Weapon Other)
 {
     local float Multiplier;
+    local TurboPlayerCardCustomInfo CardCustomInfo;
+
     Multiplier = Super.GetFireRateMultiplier(KFPRI, Other);
     Multiplier *= FireRateMultiplier;
 
@@ -133,7 +150,15 @@ simulated function float GetFireRateMultiplier(KFPlayerReplicationInfo KFPRI, We
         Multiplier *= GetHighAmmoFireRateMultiplier(KFWeapon(Other));
     }
 
-    return Multiplier * GetCardCustomInfoFireRateMultiplier(GetPlayerCustomInfo(KFPRI), KFWeapon(Other));
+    CardCustomInfo = GetPlayerCustomInfo(KFPRI);
+    Multiplier *= GetCardCustomInfoFireRateMultiplier(CardCustomInfo, KFWeapon(Other));
+
+    if (CardCustomInfo != None && CardCustomInfo.AugmentInfo != None && CardCustomInfo.AugmentInfo.bWantsFireRateMultiplier)
+    {
+        Multiplier *= CardCustomInfo.AugmentInfo.GetFireRateMultiplier(KFPRI, Other);
+    }
+
+    return Multiplier;
 }
 
 final simulated function float GetCardCustomInfoFireRateMultiplier(TurboPlayerCardCustomInfo CardCustomInfo, KFWeapon Weapon)
@@ -162,6 +187,8 @@ simulated final function bool IsLowAmmoWeapon(KFWeapon Weapon)
 simulated function float GetReloadRateMultiplier(KFPlayerReplicationInfo KFPRI, Weapon Other)
 {
     local float Multiplier;
+    local TurboPlayerCardCustomInfo CardCustomInfo;
+
     Multiplier = Super.GetReloadRateMultiplier(KFPRI, Other) * ReloadRateMultiplier;
 
     if (Level.TimeDilation < 0.8f && IsDualWeapon(KFWeapon(Other)))
@@ -174,7 +201,15 @@ simulated function float GetReloadRateMultiplier(KFPlayerReplicationInfo KFPRI, 
         Multiplier *= LowAmmoReloadRateMultiplier;
     }
 
-    return Multiplier * GetCardCustomInfoReloadRateMultiplier(GetPlayerCustomInfo(KFPRI), KFWeapon(Other));
+    CardCustomInfo = GetPlayerCustomInfo(KFPRI);
+    Multiplier *= GetCardCustomInfoReloadRateMultiplier(CardCustomInfo, KFWeapon(Other));
+
+    if (CardCustomInfo != None && CardCustomInfo.AugmentInfo != None && CardCustomInfo.AugmentInfo.bWantsReloadRateMultiplier)
+    {
+        Multiplier *= CardCustomInfo.AugmentInfo.GetReloadRateMultiplier(KFPRI, Other);
+    }
+
+    return Multiplier;
 }
 
 final simulated function float GetCardCustomInfoReloadRateMultiplier(TurboPlayerCardCustomInfo CardCustomInfo, KFWeapon Weapon)
@@ -205,11 +240,20 @@ simulated function float GetCommandoReloadRateMultiplier(KFPlayerReplicationInfo
 simulated function float GetMagazineAmmoMultiplier(KFPlayerReplicationInfo KFPRI, KFWeapon Other)
 {
     local float Multiplier;
+    local VinylAugmentReplicationInfo AugmentInfo;
+
     Multiplier = MagazineAmmoMultiplier;
 
     if (IsDualWeapon(Other))
     {
         Multiplier *= DualWeaponMagazineAmmoMultiplier;
+    }
+
+    AugmentInfo = GetPlayerAugmentInfo(KFPRI);
+
+    if (AugmentInfo != None && AugmentInfo.bWantsMagazineAmmoMultiplier)
+    {
+        Multiplier *= AugmentInfo.GetMagazineAmmoMultiplier(KFPRI, Other);
     }
 
     return Super.GetMagazineAmmoMultiplier(KFPRI, Other) * Multiplier;
@@ -221,6 +265,8 @@ simulated function float GetMedicMagazineAmmoMultiplier(KFPlayerReplicationInfo 
 simulated function float GetMaxAmmoMultiplier(KFPlayerReplicationInfo KFPRI, class<Ammunition> AmmoType)
 {
     local float Multiplier;
+    local VinylAugmentReplicationInfo AugmentInfo;
+
     Multiplier = MaxAmmoMultiplier;
     if (GrenadeMaxAmmoMultiplier != 1.f && class<FragAmmo>(AmmoType) != None)
     {
@@ -232,16 +278,41 @@ simulated function float GetMaxAmmoMultiplier(KFPlayerReplicationInfo KFPRI, cla
         Multiplier *= 0.5f;
     }
 
+    AugmentInfo = GetPlayerAugmentInfo(KFPRI);
+
+    if (AugmentInfo != None && AugmentInfo.bWantsMaxAmmoMultiplier)
+    {
+        Multiplier *= AugmentInfo.GetMaxAmmoMultiplier(KFPRI, AmmoType);
+    }
+
     return Super.GetMaxAmmoMultiplier(KFPRI, AmmoType) * Multiplier;
 }
 
 simulated function float GetCommandoMaxAmmoMultiplier(KFPlayerReplicationInfo KFPRI, class<Ammunition> AmmoType) { return Super.GetCommandoMaxAmmoMultiplier(KFPRI, AmmoType) * CommandoMaxAmmoMultiplier; }
 simulated function float GetMedicMaxAmmoMultiplier(KFPlayerReplicationInfo KFPRI, class<Ammunition> AmmoType) { return Super.GetMedicMaxAmmoMultiplier(KFPRI, AmmoType) * MedicMaxAmmoMultiplier; }
 
-simulated function float GetWeaponPenetrationMultiplier(KFPlayerReplicationInfo KFPRI, WeaponFire Other) { return Super.GetWeaponPenetrationMultiplier(KFPRI, Other) * WeaponPenetrationMultiplier; }
+simulated function float GetWeaponPenetrationMultiplier(KFPlayerReplicationInfo KFPRI, WeaponFire Other)
+{
+    local float Multiplier;
+    local VinylAugmentReplicationInfo AugmentInfo;
+
+    Multiplier = Super.GetWeaponPenetrationMultiplier(KFPRI, Other) * WeaponPenetrationMultiplier;
+
+    AugmentInfo = GetPlayerAugmentInfo(KFPRI);
+
+    if (AugmentInfo != None && AugmentInfo.bWantsWeaponPenetrationMultiplier)
+    {
+        Multiplier *= AugmentInfo.GetWeaponPenetrationMultiplier(KFPRI, Other);
+    }
+
+    return Multiplier;
+}
+
 simulated function float GetWeaponSpreadRecoilMultiplier(KFPlayerReplicationInfo KFPRI, WeaponFire Other)
 {
     local float Multiplier;
+    local VinylAugmentReplicationInfo AugmentInfo;
+
     Multiplier = Super.GetWeaponSpreadRecoilMultiplier(KFPRI, Other) * WeaponSpreadRecoilMultiplier;
 
     if (ShotgunSpreadRecoilMultiplier != 1.f && ShotgunFire(Other) != None && ShotgunFire(Other).default.ProjPerFire > 1)
@@ -253,6 +324,13 @@ simulated function float GetWeaponSpreadRecoilMultiplier(KFPlayerReplicationInfo
         && Other.Instigator.Physics == PHYS_Walking && VSizeSquared(Other.Instigator.Velocity) < 100.f)
     {
         Multiplier *= BracedSpreadRecoilMultiplier;
+    }
+
+    AugmentInfo = GetPlayerAugmentInfo(KFPRI);
+
+    if (AugmentInfo != None && AugmentInfo.bWantsWeaponSpreadRecoilMultiplier)
+    {
+        Multiplier *= AugmentInfo.GetWeaponSpreadRecoilMultiplier(KFPRI, Other);
     }
 
     return Multiplier;
@@ -345,6 +423,11 @@ simulated function float GetPlayerMovementSpeedMultiplier(KFPlayerReplicationInf
         Multiplier *= 1.15f;
     }
 
+    if (CardCustomInfo != None && CardCustomInfo.AugmentInfo != None && CardCustomInfo.AugmentInfo.bWantsPlayerMovementSpeedMultiplier)
+    {
+        Multiplier *= CardCustomInfo.AugmentInfo.GetPlayerMovementSpeedMultiplier(KFPRI, KFGRI);
+    }
+
     return Super.GetPlayerMovementSpeedMultiplier(KFPRI, KFGRI) * Multiplier;
 }
 
@@ -355,12 +438,39 @@ simulated function float GetPlayerMovementAccelMultiplier(KFPlayerReplicationInf
 
 simulated function float GetPlayerMaxHealthMultiplier(Pawn Pawn)
 {
-    return Super.GetPlayerMaxHealthMultiplier(Pawn) * PlayerMaxHealthMultiplier;
+    local float Multiplier;
+    local VinylAugmentReplicationInfo AugmentInfo;
+
+    Multiplier = Super.GetPlayerMaxHealthMultiplier(Pawn) * PlayerMaxHealthMultiplier;
+
+    if (Pawn != None)
+    {
+        AugmentInfo = GetPlayerAugmentInfo(KFPlayerReplicationInfo(Pawn.PlayerReplicationInfo));
+
+        if (AugmentInfo != None && AugmentInfo.bWantsPlayerMaxHealthMultiplier)
+        {
+            Multiplier *= AugmentInfo.GetPlayerMaxHealthMultiplier(Pawn);
+        }
+    }
+
+    return Multiplier;
 }
 
 simulated function float GetHealRechargeMultiplier(KFPlayerReplicationInfo KFPRI)
 {
-    return Super.GetHealRechargeMultiplier(KFPRI) * HealRechargeMultiplier;
+    local float Multiplier;
+    local VinylAugmentReplicationInfo AugmentInfo;
+
+    Multiplier = Super.GetHealRechargeMultiplier(KFPRI) * HealRechargeMultiplier;
+
+    AugmentInfo = GetPlayerAugmentInfo(KFPRI);
+
+    if (AugmentInfo != None && AugmentInfo.bWantsHealRechargeMultiplier)
+    {
+        Multiplier *= AugmentInfo.GetHealRechargeMultiplier(KFPRI);
+    }
+
+    return Multiplier;
 }
 
 function float GetWeldSpeedModifier(KFPlayerReplicationInfo KFPRI)
@@ -419,16 +529,19 @@ function float GetHeadshotDamageMultiplier(KFPlayerReplicationInfo KFPRI, KFPawn
 
     Multiplier = Super.GetHeadshotDamageMultiplier(KFPRI, Pawn, DamageType);
 
-    if (bPlayerHeadshotsIncreaseHeadshotDamage)
+    CardCustomInfo = GetPlayerCustomInfo(KFPRI);
+
+    if (CardCustomInfo != None)
     {
-        if (CardCustomInfo == None)
+        if (bPlayerHeadshotsIncreaseHeadshotDamage)
         {
-            CardCustomInfo = GetPlayerCustomInfo(KFPRI);
+            Multiplier *= CardCustomInfo.GetRackEmUpHeadshotBonus();
         }
 
-        if (CardCustomInfo != None)
+        //Forward to a vinyl augment that wants to take part in headshot damage.
+        if (CardCustomInfo.AugmentInfo != None && CardCustomInfo.AugmentInfo.bWantsHeadshotDamageMultiplier)
         {
-            Multiplier *= GetPlayerCustomInfo(KFPRI).GetRackEmUpHeadshotBonus();
+            Multiplier *= CardCustomInfo.AugmentInfo.GetHeadshotDamageMultiplier(KFPRI, Pawn, DamageType);
         }
     }
 
@@ -440,6 +553,8 @@ function float GetHeadshotDamageMultiplier(KFPlayerReplicationInfo KFPRI, KFPawn
 function float GetHealPotencyMultiplier(KFPlayerReplicationInfo KFPRI)
 {
     local float Multiplier;
+    local VinylAugmentReplicationInfo AugmentInfo;
+
     Multiplier = Super.GetHealPotencyMultiplier(KFPRI);
 
     if (KFPRI != None && class<V_FieldMedic>(KFPRI.ClientVeteranSkill) != None)
@@ -449,6 +564,13 @@ function float GetHealPotencyMultiplier(KFPlayerReplicationInfo KFPRI)
     else
     {
         Multiplier *= NonMedicHealPotencyMultiplier;
+    }
+
+    AugmentInfo = GetPlayerAugmentInfo(KFPRI);
+
+    if (AugmentInfo != None && AugmentInfo.bWantsHealPotencyMultiplier)
+    {
+        Multiplier *= AugmentInfo.GetHealPotencyMultiplier(KFPRI);
     }
 
     return Multiplier;

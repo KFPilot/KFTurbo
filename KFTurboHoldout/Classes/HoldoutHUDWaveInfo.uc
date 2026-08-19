@@ -32,12 +32,18 @@ simulated function Tick(float DeltaTime)
 		}
 	}
 
+	TickVoteInstance(DeltaTime);
+
+	if (Level.Pauser != None)
+	{
+	    return;
+	}
+
 	TickReadyUpOpacity(DeltaTime);
 	TickGameState(DeltaTime);
 	TickKillFeed(DeltaTime);
 
 	TickBossData(DeltaTime);
-	TickVoteInstance(DeltaTime);
 
 	if (CheckNextWave())
 	{

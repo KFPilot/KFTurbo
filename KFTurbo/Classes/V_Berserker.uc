@@ -135,6 +135,10 @@ static function int ReduceDamage(KFPlayerReplicationInfo KFPRI, KFPawn Injured, 
 	{
 		InDamage = Min(InDamage, 95); //Boss will never one-shot a player
 	}
+	else if (P_Crawler(Instigator) != None)
+	{
+	    InDamage = float(InDamage) * LerpStat(KFPRI, 1.f, 0.85f); //Extra reduction for damage from Crawlers.
+	}
 
 	return InDamage;
 }

@@ -84,7 +84,8 @@ final function PlayerFireHit(TurboPlayerController Player, WeaponFire FireMode, 
         return;
     }
 
-    if (bHeadShot && bNotifyCardCustomInfoOnHeadshot)
+    //Resolved regardless of card flags - vinyl augments may want headshot events.
+    if (bHeadShot)
     {
         CardCustomInfo = FindCardCustomInfo(Player);
     }
@@ -99,6 +100,11 @@ final function PlayerFireHit(TurboPlayerController Player, WeaponFire FireMode, 
         if (bPrecisionChainEnabled && CardCustomInfo.AttemptPrecisionChain() && FRand() < PrecisionChainChance)
         {
             PrecisionChainActor.NotifyPrecisionChain(HitMonster, HitMonster.Location, TurboPlayerReplicationInfo(Player.PlayerReplicationInfo), BaseDamage, DamageType);
+        }
+
+        if (CardCustomInfo.AugmentInfo != None && CardCustomInfo.AugmentInfo.bWantsPlayerHeadshotEvents)
+        {
+            CardCustomInfo.AugmentInfo.NotifyPlayerHeadshot(Player, HitMonster, DamageType);
         }
     }
 }
