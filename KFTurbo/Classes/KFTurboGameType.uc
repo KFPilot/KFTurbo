@@ -44,6 +44,7 @@ var MusicManager MusicManager;
 //Events that KFTurboServerMut binds to for bridging communication with ServerPerksMut.
 Delegate OnStatsAndAchievementsDisabled();
 Delegate LockPerkSelection(bool bLock);
+Delegate OnServerManuallyUnpaused(Object Unpauser);
 
 function InitGame(string Options, out string Error)
 {

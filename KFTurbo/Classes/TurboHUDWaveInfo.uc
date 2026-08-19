@@ -1,5 +1,6 @@
 //Killing Floor Turbo TurboHUDWaveInfo
 //Handles wave info-related UI such as wave number, remaining monsters/trader time, monster kill feed.
+//NOTE: This HUDOverlay ticks even when paused! This is to allow for the vote UI to tick even if the game is paused.
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
 class TurboHUDWaveInfo extends TurboHUDOverlay
@@ -194,6 +195,13 @@ simulated function Tick(float DeltaTime)
 		}
 	}
 
+	TickVoteInstance(DeltaTime);
+
+	if (Level.Pauser != None)
+	{
+	    return;
+	}
+
 	TickGameState(DeltaTime);
 	TickKillFeed(DeltaTime);
 
@@ -207,7 +215,6 @@ simulated function Tick(float DeltaTime)
 	}
 
 	TickBossData(DeltaTime);
-	TickVoteInstance(DeltaTime);
 }
 
 simulated function TickGameState(float DeltaTime)
@@ -1405,4 +1412,6 @@ defaultproperties
 
 	ActiveWaveIconColor=(R=255,G=255,B=255,A=80)
 	ActiveWaveIcon=Texture'KFTurbo.Scoreboard.ScoreboardKill_D'
+
+	bAlwaysTick=true
 }

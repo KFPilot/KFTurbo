@@ -986,6 +986,17 @@ exec simulated function EndTrader()
 	Vote(class'TurboGameVoteEndTrader'.static.GetVoteID());
 }
 
+function ServerPause()
+{
+    local bool bWasPaused;
+    bWasPaused = Level.Pauser != None;
+    Super.ServerPause();
+    if (bWasPaused && Level.Pauser == None)
+    {
+        KFTurboGameType(Level.Game).OnServerManuallyUnpaused(self);
+    }
+}
+
 exec function Vote(string VoteString)
 {
 	if (Role != ROLE_Authority)
@@ -993,14 +1004,14 @@ exec function Vote(string VoteString)
 		return;
 	}
 
-	if (NextVoteTime > Level.TimeSeconds)
+	if (NextVoteTime > Level.TimeSeconds && Level.Pauser == None)
 	{
 		return;
 	}
 
 	NextVoteTime = Level.TimeSeconds + VoteCooldownTime;
 
-	if (TurboGameReplicationInfo(Level.GRI).VoteInstance == None && NextStartVoteTime > Level.TimeSeconds)
+	if (TurboGameReplicationInfo(Level.GRI).VoteInstance == None && NextStartVoteTime > Level.TimeSeconds && Level.Pauser == None)
 	{
 		return;
 	}

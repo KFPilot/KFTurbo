@@ -1,7 +1,10 @@
 #Exclude all.
 /*
 
-#Necessary git files. 
+#Exclude specific files.
+*.ps1
+
+#Necessary git files.
 !.gitignore
 !README.md
 !changelog.md

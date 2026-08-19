@@ -270,4 +270,6 @@ defaultproperties
     VoteClassList(5)=class'TurboGameVoteMonsterSkipWander'
     VoteClassList(6)=class'TurboGameVoteDisableZedTime'
     VoteClassList(7)=class'TurboGameVoteMaxPlayers'
+    VoteClassList(8)=class'TurboGameVoteUnpause'
+    VoteClassList(9)=class'TurboGameVotePause'
 }

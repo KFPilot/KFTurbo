@@ -37,7 +37,7 @@ enum EVotingState
     Initializing, //Default state.
     Started,
     InProgress,
-    
+
     Expired,
     Succeeded,
     Failed
@@ -97,7 +97,7 @@ simulated function PostBeginPlay()
         ServerTimeActor = OwnerGRI.ServerTimeActor;
         return;
     }
-    
+
     SetTimer(0.1f, false);
 }
 
@@ -320,14 +320,14 @@ static function bool CanInitiateVote(TurboGameReplicationInfo TGRI, TurboPlayerR
 
 //Called when a vote instance is initiated by a specified player.
 function InitiateVote(TurboPlayerReplicationInfo Initiator, optional string VoteString)
-{    
+{
     SetVoteState(Initializing);
     InitiatingPlayer = Initiator;
 
     VoteList.Length = 1;
     VoteList[0].TPRI = Initiator;
     VoteList[0].Vote = EVote.Yes;
-    
+
     if (VoteDuration <= 0.f)
     {
         VoteStartTime = -1.f;
@@ -338,7 +338,7 @@ function InitiateVote(TurboPlayerReplicationInfo Initiator, optional string Vote
         VoteStartTime = Level.TimeSeconds;
         VoteEndTime = Level.TimeSeconds + VoteDuration;
     }
-    
+
     GotoState('VoteInProgress');
     EvaluateVote('ReceivedVote');
 
@@ -390,7 +390,7 @@ function PlayerVote(TurboPlayerReplicationInfo TPRI, optional string VoteString)
     }
 
     bUpdatedVote = false;
-    
+
     for (Index = VoteList.Length - 1; Index >= 0; Index--)
     {
         if (VoteList[Index].TPRI != TPRI)
@@ -430,7 +430,7 @@ function RevokePlayerVote(TurboPlayerReplicationInfo TPRI)
         bRemovedVote = true;
         break;
     }
-    
+
     if (!bRemovedVote)
     {
         return;
@@ -534,7 +534,7 @@ function EvaluateVote(Name Reason)
     {
         return;
     }
-    
+
     //If even the total vote number is not over the VotePercent threshold, don't bother checking.
     if (Reason != 'Expired' && AdminOverrideVote == EVote.Unset && (float(TotalVoteCount) / float(TotalVoterCount)) < VotePercent)
     {
@@ -633,4 +633,6 @@ defaultproperties
     bBroadcastFailed=true
     bBroadcastExpired=true
     TurboVoteLocalMessage=class'TurboVoteLocalMessage'
+
+    bAlwaysTick=true
 }

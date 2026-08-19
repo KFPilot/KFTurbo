@@ -2,9 +2,11 @@
 //Server-only mutator. Needed for interactions with server-only code in ServerPerksMut.
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
-class KFTurboServerMut extends Mutator;
+class KFTurboServerMut extends Mutator
+    config(KFTurboServer);
 
-var globalconfig bool bAutoRestartEmptyIdleServer; //Server will restart after 1 hour of being empty and idle.\
+var globalconfig bool bAutoRestartEmptyIdleServer; //Server will restart after 1 hour of being empty and idle.
+var globalconfig bool bPauseServerDuringNetworkSaturation; //Server will pause when network is saturated.
 
 var TurboRepLinkHandler RepLinkHandler;
 var TurboInfoTcpLink InfoTcpLink;
@@ -51,7 +53,7 @@ simulated function PostBeginPlay()
 	{
 		ServerPerksMutator.bNoSavingProgress = !class'KFTurboGameType'.static.StaticAreStatsAndAchievementsEnabled(Self);
 		ServerPerksMutator.bAllowAlwaysPerkChanges = ServerPerksMutator.bAllowAlwaysPerkChanges || class'KFTurboGameType'.static.StaticIsTestGameType(Self);
-		
+
 		if (!ServerPerksMutator.bEnabledEmoIcons)
 		{
 			ForceEnableEmotes(ServerPerksMutator);
@@ -65,6 +67,11 @@ simulated function PostBeginPlay()
 	if (bAutoRestartEmptyIdleServer && Level.NetMode == NM_DedicatedServer)
 	{
 		Spawn(class'TurboIdleServerHandler',  Self);
+	}
+
+	if (bPauseServerDuringNetworkSaturation && Level.NetMode == NM_DedicatedServer)
+	{
+	    Spawn(class'TurboSaturationTcpLink',  Self);
 	}
 
 	//Listen for disabling stats/achievements/perk selection.
@@ -145,7 +152,7 @@ function AddMutator(Mutator M)
 	Super.AddMutator(M);
 
 	ServerPerksMutator = ServerPerksMut(M);
-	
+
 	//Tell server perks to turn off progression saving if we're disabling them.
 	if (ServerPerksMutator != None)
 	{
@@ -175,7 +182,7 @@ function bool CheckReplacement(Actor Other, out byte bSuperRelevant)
 }
 
 function OnStatsAndAchievementsDisabled()
-{	
+{
 	local ServerPerksMut ServerPerksMut;
 
 	foreach Level.AllActors( class'ServerPerksMut', ServerPerksMut )
@@ -190,7 +197,7 @@ function OnStatsAndAchievementsDisabled()
 }
 
 function LockPerkSelection(bool bLock)
-{	
+{
 	local ServerPerksMut ServerPerksMut;
 
 	foreach Level.AllActors( class'ServerPerksMut', ServerPerksMut )
@@ -209,8 +216,6 @@ simulated function String GetHumanReadableName()
 	return FriendlyName;
 }
 
-
-
 function ServerTraveling(string URL, bool bItems)
 {
 	Super.ServerTraveling(URL, bItems);
@@ -224,8 +229,9 @@ function ServerTraveling(string URL, bool bItems)
 defaultproperties
 {
 	bAddToServerPackages=False
-	
+
 	bAutoRestartEmptyIdleServer=false
+	bPauseServerDuringNetworkSaturation=false
 
 	GroupName="KF-KFTurboServer"
 	FriendlyName="Killing Floor Turbo Server"
