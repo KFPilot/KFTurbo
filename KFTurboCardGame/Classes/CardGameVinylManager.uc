@@ -17,15 +17,16 @@ struct LabelList
 const MAX_RARITY = 5;
 var LabelList LabelRarityMap[MAX_RARITY];
 
-//Distribution of rarities for each rarity (for a given wave).
-struct Weight
-{
-    var float Weight;
-};
+//Distribution of label rarities for a given wave. Weights are named per rarity because a static
+//array nested inside a struct cannot be initialized from defaultproperties.
 struct LabelRarityDistribution
 {
-    var float TotalWeight; //Cached total weight of RarityWeightList. Do not mutate this at runtime.
-    var Weight RarityWeightList[MAX_RARITY];
+    var float CommonWeight;
+    var float UncommonWeight;
+    var float RareWeight;
+    var float GoldWeight;
+    var float PlatinumWeight;
+    var float TotalWeight; //Cached total of the weights above. Do not mutate this at runtime.
 };
 const MAX_WAVE = 14;
 var LabelRarityDistribution WaveRarityDistributionMap[MAX_WAVE];
@@ -56,6 +57,26 @@ function PostBeginPlay()
 	InitializeVinylLabels();
 }
 
+//Weights are named members rather than an array so they survive defaultproperties parsing.
+static final function float GetRarityWeight(LabelRarityDistribution Distribution, CardGameVinylLabel.ELabelRarity Rarity)
+{
+	switch (Rarity)
+	{
+		case Common:
+			return Distribution.CommonWeight;
+		case Uncommon:
+			return Distribution.UncommonWeight;
+		case Rare:
+			return Distribution.RareWeight;
+		case Gold:
+			return Distribution.GoldWeight;
+		case Platinum:
+			return Distribution.PlatinumWeight;
+	}
+
+	return 0.f;
+}
+
 final function CacheWaveRarityTotalWeights()
 {
 	local int WaveIndex, RarityIndex;
@@ -66,8 +87,10 @@ final function CacheWaveRarityTotalWeights()
 
 		for (RarityIndex = 0; RarityIndex < MAX_RARITY; RarityIndex++)
 		{
-			WaveRarityDistributionMap[WaveIndex].TotalWeight += WaveRarityDistributionMap[WaveIndex].RarityWeightList[RarityIndex].Weight;
+			WaveRarityDistributionMap[WaveIndex].TotalWeight += GetRarityWeight(WaveRarityDistributionMap[WaveIndex], ELabelRarity(RarityIndex));
 		}
+
+		log("Wave"@WaveIndex@"rarity weights:"@WaveRarityDistributionMap[WaveIndex].CommonWeight@WaveRarityDistributionMap[WaveIndex].UncommonWeight@WaveRarityDistributionMap[WaveIndex].RareWeight@WaveRarityDistributionMap[WaveIndex].GoldWeight@WaveRarityDistributionMap[WaveIndex].PlatinumWeight@"- total"@WaveRarityDistributionMap[WaveIndex].TotalWeight, 'KFTurboCardGame');
 	}
 }
 
@@ -113,6 +136,9 @@ function RequestVinylSpawn(ShopVolume Shop, int Wave)
 
 	PendingSpawnShop = Shop;
 	PendingSpawnWave = Clamp(Wave, 0, MAX_WAVE - 1);
+
+	log("Vinyl spawn requested for wave"@PendingSpawnWave@"at shop"@Shop, 'KFTurboCardGame');
+
 	GotoState('DestroyingVinyls');
 }
 
@@ -157,6 +183,7 @@ function bool SelectVinylRarity(int Wave, out CardGameVinylLabel.ELabelRarity Ou
 {
 	local float Roll;
 	local int RarityIndex;
+	local float RarityWeight;
 	local bool bFoundWeightedRarity;
 
 	Wave = Clamp(Wave, 0, MAX_WAVE - 1);
@@ -170,7 +197,9 @@ function bool SelectVinylRarity(int Wave, out CardGameVinylLabel.ELabelRarity Ou
 
 	for (RarityIndex = 0; RarityIndex < MAX_RARITY; RarityIndex++)
 	{
-		if (WaveRarityDistributionMap[Wave].RarityWeightList[RarityIndex].Weight <= 0.f)
+		RarityWeight = GetRarityWeight(WaveRarityDistributionMap[Wave], ELabelRarity(RarityIndex));
+
+		if (RarityWeight <= 0.f)
 		{
 			continue;
 		}
@@ -178,7 +207,7 @@ function bool SelectVinylRarity(int Wave, out CardGameVinylLabel.ELabelRarity Ou
 		OutRarity = ELabelRarity(RarityIndex);
 		bFoundWeightedRarity = true;
 
-		Roll -= WaveRarityDistributionMap[Wave].RarityWeightList[RarityIndex].Weight;
+		Roll -= RarityWeight;
 
 		if (Roll < 0.f)
 		{
@@ -206,6 +235,7 @@ state SpawningVinyls
 
 		if (SpawnLocationList.Length == 0)
 		{
+			log("Aborting vinyl spawn - no spawn locations found. Label count is"@VinylLabelInstanceList.Length, 'KFTurboCardGame');
 			GotoState('');
 			return;
 		}
@@ -214,9 +244,12 @@ state SpawningVinyls
 
 		if (PendingSpawnPlayerList.Length == 0)
 		{
+			log("Aborting vinyl spawn - no alive players found.", 'KFTurboCardGame');
 			GotoState('');
 			return;
 		}
+
+		log("Spawning vinyls for"@PendingSpawnPlayerList.Length@"players across"@SpawnLocationList.Length@"locations.", 'KFTurboCardGame');
 
 		Enable('Tick');
 	}
@@ -297,11 +330,15 @@ function SpawnVinylsForPlayer(PlayerController Player)
 	local TurboVinyl Vinyl;
 	local CardGameVinylActor VinylActor;
 	local int Index, LabelIndex;
+	local int SpawnedCount;
+
+	StopWatch(false);
 
 	for (Index = 0; Index < SpawnLocationList.Length; Index++)
 	{
 		if (!SelectVinylRarity(PendingSpawnWave, Rarity))
 		{
+			log("- Could not select a rarity for wave"@PendingSpawnWave, 'KFTurboCardGame');
 			continue;
 		}
 
@@ -322,6 +359,7 @@ function SpawnVinylsForPlayer(PlayerController Player)
 
 		if (Vinyl == None)
 		{
+			log("- No vinyl available from any label of rarity"@int(Rarity)@"- label count is"@LabelRarityMap[Rarity].LabelInstanceList.Length, 'KFTurboCardGame');
 			continue;
 		}
 
@@ -332,8 +370,16 @@ function SpawnVinylsForPlayer(PlayerController Player)
 		{
 			VinylActor.SetVinyl(Vinyl);
 			ActiveVinylList[ActiveVinylList.Length] = VinylActor;
+			SpawnedCount++;
+		}
+		else
+		{
+			log("- Failed to spawn vinyl actor at"@SpawnLocationList[Index], 'KFTurboCardGame');
 		}
 	}
+
+	StopWatch(true);
+	log("Spawned"@SpawnedCount@"vinyls for"@Player.PlayerReplicationInfo.PlayerName$".", 'KFTurboCardGame');
 }
 
 //Prefers a row in front of the shop's first exit teleporter. Falls back to path nodes near the shop.
@@ -410,18 +456,18 @@ defaultproperties
 	VinylSpawnSearchRadius=1200.f
 	VinylsDestroyedPerTick=3
 
-	WaveRarityDistributionMap(0)=(RarityWeightList=(Weight=1.00f,Weight=0.00f,Weight=0.00f,Weight=0.00f,Weight=0.00f))
-	WaveRarityDistributionMap(1)=(RarityWeightList=(Weight=0.80f,Weight=0.20f,Weight=0.00f,Weight=0.00f,Weight=0.00f))
-	WaveRarityDistributionMap(2)=(RarityWeightList=(Weight=0.60f,Weight=0.40f,Weight=0.00f,Weight=0.00f,Weight=0.00f))
-	WaveRarityDistributionMap(3)=(RarityWeightList=(Weight=0.40f,Weight=0.60f,Weight=0.00f,Weight=0.00f,Weight=0.00f))
-	WaveRarityDistributionMap(4)=(RarityWeightList=(Weight=0.20f,Weight=0.80f,Weight=0.00f,Weight=0.00f,Weight=0.00f))
-	WaveRarityDistributionMap(5)=(RarityWeightList=(Weight=0.00f,Weight=0.80f,Weight=0.10f,Weight=0.00f,Weight=0.00f)) //No more commons!
-	WaveRarityDistributionMap(6)=(RarityWeightList=(Weight=0.00f,Weight=0.60f,Weight=0.20f,Weight=0.00f,Weight=0.00f))
-	WaveRarityDistributionMap(7)=(RarityWeightList=(Weight=0.00f,Weight=0.40f,Weight=0.40f,Weight=0.00f,Weight=0.00f))
-	WaveRarityDistributionMap(8)=(RarityWeightList=(Weight=0.00f,Weight=0.30f,Weight=0.50f,Weight=0.02f,Weight=0.00f))
-	WaveRarityDistributionMap(9)=(RarityWeightList=(Weight=0.00f,Weight=0.20f,Weight=0.60f,Weight=0.04f,Weight=0.01f))
-	WaveRarityDistributionMap(10)=(RarityWeightList=(Weight=0.00f,Weight=0.10f,Weight=0.70f,Weight=0.08f,Weight=0.02f))
-	WaveRarityDistributionMap(11)=(RarityWeightList=(Weight=0.00f,Weight=0.05f,Weight=0.60f,Weight=0.10f,Weight=0.03f))
-	WaveRarityDistributionMap(12)=(RarityWeightList=(Weight=0.00f,Weight=0.00f,Weight=0.60f,Weight=0.12f,Weight=0.04f))
-	WaveRarityDistributionMap(13)=(RarityWeightList=(Weight=0.00f,Weight=0.00f,Weight=0.60f,Weight=0.14f,Weight=0.05f))
+	WaveRarityDistributionMap(0)=(CommonWeight=0.99f,UncommonWeight=0.01f,RareWeight=0.00f,GoldWeight=0.00f,PlatinumWeight=0.00f)
+    WaveRarityDistributionMap(1)=(CommonWeight=0.80f,UncommonWeight=0.19f,RareWeight=0.01f,GoldWeight=0.00f,PlatinumWeight=0.00f)
+    WaveRarityDistributionMap(2)=(CommonWeight=0.60f,UncommonWeight=0.39f,RareWeight=0.01f,GoldWeight=0.00f,PlatinumWeight=0.00f)
+    WaveRarityDistributionMap(3)=(CommonWeight=0.45f,UncommonWeight=0.50f,RareWeight=0.05f,GoldWeight=0.00f,PlatinumWeight=0.00f)
+    WaveRarityDistributionMap(4)=(CommonWeight=0.20f,UncommonWeight=0.70f,RareWeight=0.09f,GoldWeight=0.01f,PlatinumWeight=0.00f)
+    WaveRarityDistributionMap(5)=(CommonWeight=0.00f,UncommonWeight=0.80f,RareWeight=0.19f,GoldWeight=0.01f,PlatinumWeight=0.00f) //No more commons!
+    WaveRarityDistributionMap(6)=(CommonWeight=0.00f,UncommonWeight=0.70f,RareWeight=0.29f,GoldWeight=0.01f,PlatinumWeight=0.00f)
+    WaveRarityDistributionMap(7)=(CommonWeight=0.00f,UncommonWeight=0.50f,RareWeight=0.48f,GoldWeight=0.02f,PlatinumWeight=0.00f)
+    WaveRarityDistributionMap(8)=(CommonWeight=0.00f,UncommonWeight=0.40f,RareWeight=0.55f,GoldWeight=0.04f,PlatinumWeight=0.01f)
+    WaveRarityDistributionMap(9)=(CommonWeight=0.00f,UncommonWeight=0.30f,RareWeight=0.60f,GoldWeight=0.09f,PlatinumWeight=0.01f)
+    WaveRarityDistributionMap(10)=(CommonWeight=0.00f,UncommonWeight=0.18f,RareWeight=0.60f,GoldWeight=0.10f,PlatinumWeight=0.02f)
+    WaveRarityDistributionMap(11)=(CommonWeight=0.00f,UncommonWeight=0.10f,RareWeight=0.70f,GoldWeight=0.16f,PlatinumWeight=0.04f)
+    WaveRarityDistributionMap(12)=(CommonWeight=0.00f,UncommonWeight=0.00f,RareWeight=0.70f,GoldWeight=0.25f,PlatinumWeight=0.05f)
+    WaveRarityDistributionMap(13)=(CommonWeight=0.00f,UncommonWeight=0.00f,RareWeight=0.60f,GoldWeight=0.35f,PlatinumWeight=0.05f)
 }

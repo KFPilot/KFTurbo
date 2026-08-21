@@ -26,6 +26,7 @@ enum ELabelRarity
 };
 const MAX_RARITY = 5;
 
+var const localized string LabelName;
 var ELabelRarity LabelRarity;
 
 var array<TurboVinyl> VinylObjectList; //General purpose vinyls - in the pool for every player.
