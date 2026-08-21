@@ -60,6 +60,11 @@ simulated function ApplyVinylDisplay()
 		return;
 	}
 
+	if (Level.NetMode == NM_DedicatedServer)
+	{
+	    return;
+	}
+
 	class'CardGameVinylLabel'.static.ConfigureVinylActor(Vinyl, Self);
 }
 
