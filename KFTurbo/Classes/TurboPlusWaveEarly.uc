@@ -42,12 +42,12 @@ static final function float GetPlayerNextSquadSpawnTimeModifier(int PlayerCount)
 		case 4:
 			return 8.f;
 		case 5:
-			return 7.f;
+			return 7.5f;
 		case 6:
-			return 6.f;
+			return 7.f;
 	}
 
-	return 6.f;
+	return 7.f;
 }
 
 function float GetNextSquadSpawnTime(int PlayerCount)
