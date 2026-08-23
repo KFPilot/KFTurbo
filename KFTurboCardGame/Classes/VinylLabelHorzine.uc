@@ -17,7 +17,7 @@ defaultproperties
 		VinylName="REPLACE"
 		VinylDescription="Increases headshot damage by 5%."
 		SkinNameList(1)="KFTurboCardGame.Label.HORZINE_Default"
-		AugmentList(0)=(Type=Headshot,Multiplier=1.05f)
+		AugmentList(0)=(Type=HeadshotDamage,Multiplier=1.05f)
 	End Object
 	VinylObjectList(0)=TurboVinylBasic'Default0'
 

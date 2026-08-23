@@ -371,12 +371,12 @@ function int NetDamage(int OriginalDamage, int Damage, Pawn Injured, Pawn Instig
         DamageMultiplier *= 3.f;
     }
 
-    if (class<SirenScreamDamage>(DamageType) != None)
+    if (SirenScreamDamageMultiplier != 1.f && class<SirenScreamDamage>(DamageType) != None)
     {
         DamageMultiplier *= SirenScreamDamageMultiplier;
     }
 
-    if (class<DamTypeVomit>(DamageType) != None)
+    if (BileDamageMultiplier != 1.f && class<DamTypeVomit>(DamageType) != None)
     {
         DamageMultiplier *= BileDamageMultiplier;
     }
@@ -445,7 +445,7 @@ function int NetDamage(int OriginalDamage, int Damage, Pawn Injured, Pawn Instig
     {
         DamageMultiplier *= MonsterDamageMultiplier;
 
-        if (P_Stalker(InstigatedBy) != None)
+        if (MonsterStalkerDamageMultiplier != 1.f && P_Stalker(InstigatedBy) != None)
         {
             DamageMultiplier *= MonsterStalkerDamageMultiplier;
         }
@@ -468,12 +468,12 @@ function int NetDamage(int OriginalDamage, int Damage, Pawn Injured, Pawn Instig
             DamageMultiplier *= SlomoDamageMultiplier;
         }
 
-        if (InjuredMonster != None && P_Fleshpound(Injured) != None)
+        if (FleshpoundDamageMultiplier != 1.f && InjuredMonster != None && P_Fleshpound(Injured) != None)
         {
             DamageMultiplier *= FleshpoundDamageMultiplier;
         }
 
-        if (InjuredMonster != None && P_Scrake(Injured) != None)
+        if (ScrakeDamageMultiplier != 1.f && InjuredMonster != None && P_Scrake(Injured) != None)
         {
             DamageMultiplier *= ScrakeDamageMultiplier;
         }
@@ -495,6 +495,17 @@ function int NetDamage(int OriginalDamage, int Damage, Pawn Injured, Pawn Instig
     {
         AttemptCriticalHit(DamageMultiplier, InstigatedBy, InstigatorCardInfo, HitLocation);
         MonsterNetDamage(DamageMultiplier, InjuredMonster, InstigatedBy, InstigatorCardInfo, HitLocation, Momentum, WeaponDamageType);
+    }
+
+    //Forward to vinyl augments that want to modify damage.
+    if (InstigatorCardInfo != None && InstigatorCardInfo.AugmentInfo != None && InstigatorCardInfo.AugmentInfo.bWantsModifyDamage)
+    {
+        DamageMultiplier *= InstigatorCardInfo.AugmentInfo.ModifyDamage(Damage, Injured, InstigatedBy, HitLocation, Momentum, DamageType);
+    }
+
+    if (InjuredCardInfo != None && InjuredCardInfo.AugmentInfo != None && InjuredCardInfo.AugmentInfo.bWantsModifyDamage)
+    {
+        DamageMultiplier *= InjuredCardInfo.AugmentInfo.ModifyDamage(Damage, Injured, InstigatedBy, HitLocation, Momentum, DamageType);
     }
 
     //Apply damage multipliers all at once.

@@ -6,8 +6,13 @@ class VinylAugmentBasic extends VinylAugmentReplicationInfo;
 enum EAugmentType
 {
     Invalid,
-    Headshot,
+    //Damage
+    Damage,
+    HeadshotDamage,
+    //Fire Rate
     FireRate,
+    FireRateMelee,
+    //
     ReloadRate,
     MagazineAmmo,
     MaxAmmo,
@@ -16,7 +21,11 @@ enum EAugmentType
     MovementSpeed,
     MaxHealth,
     HealPotency,
-    HealRecharge
+    HealRecharge,
+    //Damage Resistance
+    DamageResistance,
+    DamageResistanceBloat,
+    DamageResistanceSiren
 };
 
 struct AugmentEntry
@@ -27,8 +36,11 @@ struct AugmentEntry
 
 var AugmentEntry AugmentList[3];
 
-var float HeadshotMultiplier, FireRateMultiplier, ReloadRateMultiplier, MagazineAmmoMultiplier, MaxAmmoMultiplier, PenetrationMultiplier, SpreadRecoilMultiplier;
+var float DamageMultiplier, DamageHeadshotMultiplier;
+var float FireRateMultiplier, FireRateMeleeMultiplier;
+var float ReloadRateMultiplier, MagazineAmmoMultiplier, MaxAmmoMultiplier, PenetrationMultiplier, SpreadRecoilMultiplier;
 var float MovementSpeedMultiplier, MaxHealthMultiplier, HealPotencyMultiplier, HealRechargeMultiplier;
+var float DamageResistanceMultiplier, DamageResistanceBloatMultiplier, DamageResistanceSirenMultiplier;
 
 replication
 {
@@ -40,14 +52,26 @@ final function ApplyAugmentEntry(int Index)
 {
     switch(AugmentList[Index].Type)
     {
-    case Headshot:
-        HeadshotMultiplier = AugmentList[Index].Multiplier;
+    //Damage
+    case Damage:
+        DamageMultiplier = AugmentList[Index].Multiplier;
+        bWantsDamageMultiplier = true;
+        return;
+    case HeadshotDamage:
+        DamageHeadshotMultiplier = AugmentList[Index].Multiplier;
         bWantsHeadshotDamageMultiplier = true;
         return;
+    //Fire Rate
     case FireRate:
         FireRateMultiplier = AugmentList[Index].Multiplier;
         bWantsFireRateMultiplier = true;
         return;
+    case FireRateMelee:
+        FireRateMeleeMultiplier = AugmentList[Index].Multiplier;
+        bWantsFireRateMultiplier = true;
+        bHasMeleeFireRateMultiplier = true;
+        return;
+    //
     case ReloadRate:
         ReloadRateMultiplier = AugmentList[Index].Multiplier;
         bWantsReloadRateMultiplier = true;
@@ -85,6 +109,19 @@ final function ApplyAugmentEntry(int Index)
         HealRechargeMultiplier = AugmentList[Index].Multiplier;
         bWantsHealRechargeMultiplier = true;
         return;
+    //Damage Resistance
+    case DamageResistance:
+        DamageResistanceMultiplier = AugmentList[Index].Multiplier;
+        bWantsModifyDamage = true;
+        return;
+    case DamageResistanceBloat:
+        DamageResistanceBloatMultiplier = AugmentList[Index].Multiplier;
+        bWantsModifyDamage = true;
+        return;
+    case DamageResistanceSiren:
+        DamageResistanceSirenMultiplier = AugmentList[Index].Multiplier;
+        bWantsModifyDamage = true;
+        return;
     }
 }
 
@@ -105,9 +142,15 @@ simulated function PostNetReceive()
     }
 }
 
-function float GetHeadshotDamageMultiplier(KFPlayerReplicationInfo KFPRI, KFPawn Pawn, class<DamageType> DamageType) { return HeadshotMultiplier; }
+simulated final function bool IsMeleeWeapon(KFWeapon Weapon)
+{
+    return Weapon != None && Weapon.bMeleeWeapon;
+}
 
-simulated function float GetFireRateMultiplier(KFPlayerReplicationInfo KFPRI, Weapon Other) { return FireRateMultiplier; }
+function float GetDamageMultiplier(KFPlayerReplicationInfo KFPRI, KFMonster Injured, KFPawn DamageInstigator, int InDamage, class<DamageType> DamageType) { return DamageMultiplier; }
+function float GetHeadshotDamageMultiplier(KFPlayerReplicationInfo KFPRI, KFPawn Pawn, class<DamageType> DamageType) { return DamageHeadshotMultiplier; }
+
+simulated function float GetFireRateMultiplier(KFPlayerReplicationInfo KFPRI, Weapon Other) { if (bHasMeleeFireRateMultiplier && IsMeleeWeapon(KFWeapon(Other))) { return FireRateMultiplier * FireRateMeleeMultiplier; } return FireRateMultiplier; }
 simulated function float GetReloadRateMultiplier(KFPlayerReplicationInfo KFPRI, Weapon Other) { return ReloadRateMultiplier; }
 simulated function float GetMagazineAmmoMultiplier(KFPlayerReplicationInfo KFPRI, KFWeapon Other) { return MagazineAmmoMultiplier; }
 simulated function float GetMaxAmmoMultiplier(KFPlayerReplicationInfo KFPRI, class<Ammunition> AmmoType) { return MaxAmmoMultiplier; }
@@ -118,12 +161,32 @@ simulated function float GetPlayerMaxHealthMultiplier(Pawn Pawn) { return MaxHea
 function float GetHealPotencyMultiplier(KFPlayerReplicationInfo KFPRI) { return HealPotencyMultiplier; }
 simulated function float GetHealRechargeMultiplier(KFPlayerReplicationInfo KFPRI) { return HealRechargeMultiplier; }
 
+function float ModifyDamage(int Damage, Pawn Injured, Pawn InstigatedBy, Vector HitLocation, out Vector Momentum, class<DamageType> DamageType)
+{
+    local float Multiplier;
+
+    Multiplier = DamageResistanceMultiplier;
+
+    if (DamageResistanceBloatMultiplier != 1.f && class<DamTypeVomit>(DamageType) != None)
+    {
+        Multiplier *= DamageResistanceBloatMultiplier;
+    }
+    else if (DamageResistanceSirenMultiplier != 1.f && class<SirenScreamDamage>(DamageType) != None)
+    {
+        Multiplier *= DamageResistanceSirenMultiplier;
+    }
+
+	return Multiplier;
+}
+
 defaultproperties
 {
     bNetNotify=true
 
-    HeadshotMultiplier=1.f
+    DamageMultiplier=1.f
+    DamageHeadshotMultiplier=1.f
     FireRateMultiplier=1.f
+    FireRateMeleeMultiplier=1.f
     ReloadRateMultiplier=1.f
     MagazineAmmoMultiplier=1.f
     MaxAmmoMultiplier=1.f
@@ -133,4 +196,7 @@ defaultproperties
     MaxHealthMultiplier=1.f
     HealPotencyMultiplier=1.f
     HealRechargeMultiplier=1.f
+    DamageResistanceMultiplier=1.f
+    DamageResistanceBloatMultiplier=1.f
+    DamageResistanceSirenMultiplier=1.f
 }

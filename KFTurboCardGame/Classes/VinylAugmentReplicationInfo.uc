@@ -7,14 +7,15 @@ class VinylAugmentReplicationInfo extends KFTurbo.SparseReplicationInfo;
 
 var TurboPlayerCardCustomInfo OwningCardInfo;
 
-var bool bWantsHeadshotDamageMultiplier;
+var bool bWantsDamageMultiplier, bWantsHeadshotDamageMultiplier;
 var bool bWantsPlayerHeadshotEvents;
 var bool bWantsPlayerReceivedDamageEvents;
+var bool bWantsModifyDamage;
 var bool bHasStatusIcon;
 var bool bWantsStatusIconTick;
 
 //Set these to have TurboCardGameModifierRepLink forward the matching function to this augment.
-var bool bWantsFireRateMultiplier;
+var bool bWantsFireRateMultiplier, bHasMeleeFireRateMultiplier;
 var bool bWantsReloadRateMultiplier;
 var bool bWantsMagazineAmmoMultiplier;
 var bool bWantsMaxAmmoMultiplier;
@@ -25,6 +26,7 @@ var bool bWantsPlayerMaxHealthMultiplier;
 var bool bWantsHealPotencyMultiplier;
 var bool bWantsHealRechargeMultiplier;
 
+function float GetDamageMultiplier(KFPlayerReplicationInfo KFPRI, KFMonster Injured, KFPawn DamageInstigator, int InDamage, class<DamageType> DamageType) { return 1.f; }
 function float GetHeadshotDamageMultiplier(KFPlayerReplicationInfo KFPRI, KFPawn Pawn, class<DamageType> DamageType) { return 1.f; }
 
 simulated function float GetFireRateMultiplier(KFPlayerReplicationInfo KFPRI, Weapon Other) { return 1.f; }
@@ -54,6 +56,13 @@ function NotifyPlayerHeadshot(TurboPlayerController Player, KFMonster HitMonster
 
 function NotifyPlayerReceivedDamage(TurboPlayerController Player, KFMonster DamageInstigator, int Damage, class<DamageType> DamageType)
 {
+}
+
+//Returns a multiplier folded into CardGameRules.NetDamage. Forwarded for the augment of the injured
+//player and of the instigating player - compare OwningCardInfo.GetOwnerPawn() to tell which side this is.
+function float ModifyDamage(int Damage, Pawn Injured, Pawn InstigatedBy, Vector HitLocation, out Vector Momentum, class<DamageType> DamageType)
+{
+	return 1.f;
 }
 
 static function SparseReplicationInfo Find(Actor InSparseOwningActor)

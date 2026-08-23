@@ -522,6 +522,23 @@ static final function bool IsDualWeapon(KFWeapon Weapon)
     return Weapon != None && Weapon.bDualWeapon;
 }
 
+function float GetDamageMultiplier(KFPlayerReplicationInfo KFPRI, KFMonster Injured, KFPawn DamageInstigator, int InDamage, class<DamageType> DamageType)
+{
+    local float Multiplier;
+    local VinylAugmentReplicationInfo AugmentInfo;
+
+    Multiplier = Super.GetDamageMultiplier(KFPRI, Injured, DamageInstigator, InDamage, DamageType);
+
+    AugmentInfo = GetPlayerAugmentInfo(KFPRI);
+
+    if (AugmentInfo != None && AugmentInfo.bWantsDamageMultiplier)
+    {
+        Multiplier *= AugmentInfo.GetDamageMultiplier(KFPRI, Injured, DamageInstigator, InDamage, DamageType);
+    }
+
+    return Multiplier;
+}
+
 function float GetHeadshotDamageMultiplier(KFPlayerReplicationInfo KFPRI, KFPawn Pawn, class<DamageType> DamageType)
 {
     local float Multiplier;

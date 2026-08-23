@@ -22,7 +22,7 @@ simulated final function bool WasRecentlyDamaged()
     return DamageTakenEndTime > Level.TimeSeconds;
 }
 
-function float GetHeadshotDamageMultiplier(KFPlayerReplicationInfo KFPRI, KFPawn Pawn, class<DamageType> DamageType) { if (WasRecentlyDamaged()) { return HeadshotMultiplier; } return 1.f; }
+function float GetHeadshotDamageMultiplier(KFPlayerReplicationInfo KFPRI, KFPawn Pawn, class<DamageType> DamageType) { if (WasRecentlyDamaged()) { return DamageHeadshotMultiplier; } return 1.f; }
 
 simulated function float GetFireRateMultiplier(KFPlayerReplicationInfo KFPRI, Weapon Other) { if (WasRecentlyDamaged()) { return FireRateMultiplier; } return 1.f; }
 simulated function float GetReloadRateMultiplier(KFPlayerReplicationInfo KFPRI, Weapon Other) { if (WasRecentlyDamaged()) { return ReloadRateMultiplier; } return 1.f; }

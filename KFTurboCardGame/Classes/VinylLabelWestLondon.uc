@@ -18,7 +18,7 @@ defaultproperties
 		VinylName="Long Lane Lo-fi"
 		VinylDescription="Increases headshot damage by 5%."
 		SkinNameList(1)="KFTurboCardGame.Label.WEST_Default"
-		AugmentList(0)=(Type=Headshot,Multiplier=1.05f)
+		AugmentList(0)=(Type=HeadshotDamage,Multiplier=1.05f)
 		OnActivateVinyl=ActivateBasic
 	End Object
 	VinylObjectList(0)=TurboVinylBasic'Default0'

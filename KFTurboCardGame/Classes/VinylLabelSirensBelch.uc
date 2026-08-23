@@ -1,5 +1,5 @@
 //Killing Floor Turbo VinylLabelSirensBelch
-//Common vinyls that provide buffs related to Bloat bile.
+//Common vinyls that provide buffs to help resist damage.
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
 class VinylLabelSirensBelch extends CardGameVinylLabel;
@@ -13,7 +13,7 @@ defaultproperties
 		VinylName="REPLACE"
 		VinylDescription="Increases headshot damage by 5%."
 		SkinNameList(1)="KFTurboCardGame.Label.SIRENS_Default"
-		AugmentList(0)=(Type=Headshot,Multiplier=1.05f)
+		AugmentList(0)=(Type=HeadshotDamage,Multiplier=1.05f)
 	End Object
 	VinylObjectList(0)=TurboVinylBasic'Default0'
 }

@@ -10,7 +10,7 @@ defaultproperties
 	LabelRarity=Common
 
 	Begin Object Name=Default0 Class=TurboVinylBasic
-		VinylName="Pool Party"
+		VinylName="Couch Room Cabaret"
 		VinylDescription="Increases fire rate and reload rate by 3%."
 		SkinNameList(1)="KFTurboCardGame.Label.BIOHAZARD_Default"
 		AugmentList(0)=(Type=FireRate,Multiplier=1.03f)
@@ -19,7 +19,7 @@ defaultproperties
 	VinylObjectList(0)=TurboVinylBasic'Default0'
 
 	Begin Object Name=Default1 Class=TurboVinylBasic
-		VinylName="Balcony Ball"
+		VinylName="\"U\" Room Rapsody"
 		VinylDescription="Increases magazine ammo and max ammo by 3%."
 		SkinNameList(1)="KFTurboCardGame.Label.BIOHAZARD_Default"
 		AugmentList(0)=(Type=MagazineAmmo,Multiplier=1.03f)
@@ -28,16 +28,16 @@ defaultproperties
 	VinylObjectList(1)=TurboVinylBasic'Default1'
 
 	Begin Object Name=Default2 Class=TurboVinylBasic
-		VinylName="Long Hall Days"
+		VinylName="Spawn Stairs Salsa"
 		VinylDescription="Increases headshot damage by 3% and reduces spread by 3%."
 		SkinNameList(1)="KFTurboCardGame.Label.BIOHAZARD_Default"
 		AugmentList(0)=(Type=SpreadRecoil,Multiplier=1.03f)
-		AugmentList(1)=(Type=Headshot,Multiplier=1.03f)
+		AugmentList(1)=(Type=HeadshotDamage,Multiplier=1.03f)
 	End Object
 	VinylObjectList(2)=TurboVinylBasic'Default2'
 
 	Begin Object Name=Medic0 Class=TurboVinylBasic
-		VinylName="Red Halls"
+		VinylName="Pump Room Polka"
 		VinylDescription="Increases heal potency and heal recharge rate by 6%."
 		SkinNameList(1)="KFTurboCardGame.Label.BIOHAZARD_Default"
 		AugmentList(0)=(Type=HealPotency,Multiplier=1.06f)
