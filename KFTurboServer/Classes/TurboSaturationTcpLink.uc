@@ -36,6 +36,7 @@ function Timer()
 {
     BindPort(ListenPort);
     Listen();
+    GotoState('Observing');
 }
 
 function ReceivedText(string Text)
@@ -82,6 +83,43 @@ function BroadcastMessage(TurboServerSaturationMessage.ENotificationType Switch)
     Level.Game.BroadcastLocalized(None, class'TurboServerSaturationMessage', int(Switch));
 }
 
+function bool HasGlobalPacketLost()
+{
+    local array<TurboPlayerController> PlayerList;
+    local bool bAllPacketLoss;
+    local int Index;
+
+    if (ManualUnpauseOverrideTime > 0.f && ManualUnpauseOverrideTime > Level.TimeSeconds)
+    {
+        return false;
+    }
+
+    PlayerList = class'TurboGameplayHelper'.static.GetPlayerControllerList(Level);
+
+    for (Index = 0; Index < PlayerList.Length; Index++)
+    {
+        if (TurboPlayerReplicationInfo(PlayerList[Index].PlayerReplicationInfo).GetConnectionState() < BrokenConnection)
+        {
+            return false;
+        }
+    }
+
+    return true;
+}
+
+state Observing
+{
+Begin:
+    while(true)
+    {
+        Sleep(0.25f);
+        if (HasGlobalPacketLost())
+        {
+            GotoState('PauseGame');
+        }
+    }
+}
+
 state PauseGame
 {
     function BeginState()
@@ -112,7 +150,18 @@ state PauseGame
 
         if (Level.Pauser == None || PauseTimeRemaining <= 0.f)
         {
-            GotoState('');
+            GotoState('Observing');
+            return;
+        }
+
+        if (HasGlobalPacketLost())
+        {
+            if (PauseTimeRemaining < 3.f)
+            {
+                BroadcastMessage(Restart);
+            }
+
+            PauseTimeRemaining = PauseDuration;
             return;
         }
 
@@ -159,7 +208,7 @@ state PauseGame
     function OnManuallyUnpaused(Object Unpauser)
     {
         ManualUnpauseOverrideTime = Level.TimeSeconds + float(ManualUnpauseOverrideDuration);
-        GotoState('');
+        GotoState('Observing');
     }
 }
 
