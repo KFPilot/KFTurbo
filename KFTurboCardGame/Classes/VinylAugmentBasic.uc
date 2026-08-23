@@ -24,6 +24,7 @@ enum EAugmentType
     HealRecharge,
     //Damage Resistance
     DamageResistance,
+    DamageResistanceFire,
     DamageResistanceBloat,
     DamageResistanceSiren
 };
@@ -40,7 +41,7 @@ var float DamageMultiplier, DamageHeadshotMultiplier;
 var float FireRateMultiplier, FireRateMeleeMultiplier;
 var float ReloadRateMultiplier, MagazineAmmoMultiplier, MaxAmmoMultiplier, PenetrationMultiplier, SpreadRecoilMultiplier;
 var float MovementSpeedMultiplier, MaxHealthMultiplier, HealPotencyMultiplier, HealRechargeMultiplier;
-var float DamageResistanceMultiplier, DamageResistanceBloatMultiplier, DamageResistanceSirenMultiplier;
+var float DamageResistanceMultiplier, DamageResistanceFireMultiplier, DamageResistanceBloatMultiplier, DamageResistanceSirenMultiplier;
 
 replication
 {
@@ -114,6 +115,10 @@ final function ApplyAugmentEntry(int Index)
         DamageResistanceMultiplier = AugmentList[Index].Multiplier;
         bWantsModifyDamage = true;
         return;
+    case DamageResistanceFire:
+        DamageResistanceFireMultiplier = AugmentList[Index].Multiplier;
+        bWantsModifyDamage = true;
+        return;
     case DamageResistanceBloat:
         DamageResistanceBloatMultiplier = AugmentList[Index].Multiplier;
         bWantsModifyDamage = true;
@@ -164,14 +169,26 @@ simulated function float GetHealRechargeMultiplier(KFPlayerReplicationInfo KFPRI
 function float ModifyDamage(int Damage, Pawn Injured, Pawn InstigatedBy, Vector HitLocation, out Vector Momentum, class<DamageType> DamageType)
 {
     local float Multiplier;
+    local class<KFWeaponDamageType> WeaponDamageType;
 
     Multiplier = DamageResistanceMultiplier;
 
-    if (DamageResistanceBloatMultiplier != 1.f && class<DamTypeVomit>(DamageType) != None)
+    WeaponDamageType = class<KFWeaponDamageType>(DamageType);
+
+    if (WeaponDamageType == None)
+    {
+        return Multiplier;
+    }
+
+    if (DamageResistanceFireMultiplier != 1.f && WeaponDamageType.default.bDealBurningDamage)
+    {
+        Multiplier *= DamageResistanceFireMultiplier;
+    }
+    else if (DamageResistanceBloatMultiplier != 1.f && class<DamTypeVomit>(WeaponDamageType) != None)
     {
         Multiplier *= DamageResistanceBloatMultiplier;
     }
-    else if (DamageResistanceSirenMultiplier != 1.f && class<SirenScreamDamage>(DamageType) != None)
+    else if (DamageResistanceSirenMultiplier != 1.f && class<SirenScreamDamage>(WeaponDamageType) != None)
     {
         Multiplier *= DamageResistanceSirenMultiplier;
     }
@@ -197,6 +214,7 @@ defaultproperties
     HealPotencyMultiplier=1.f
     HealRechargeMultiplier=1.f
     DamageResistanceMultiplier=1.f
+    DamageResistanceFireMultiplier=1.f
     DamageResistanceBloatMultiplier=1.f
     DamageResistanceSirenMultiplier=1.f
 }
