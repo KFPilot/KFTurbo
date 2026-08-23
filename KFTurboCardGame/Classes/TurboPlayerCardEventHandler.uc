@@ -31,6 +31,7 @@ function PostBeginPlay()
     OnPlayerFire = PlayerFire;
     OnPlayerFireHit = PlayerFireHit;
     OnPlayerKilledMonster = PlayerKilledMonster;
+    OnPlayerReceivedDamage = PlayerReceivedDamage;
 }
 
 final function SetRackEmUpEnabled(bool bEnabled)
@@ -107,6 +108,20 @@ final function PlayerFireHit(TurboPlayerController Player, WeaponFire FireMode, 
             CardCustomInfo.AugmentInfo.NotifyPlayerHeadshot(Player, HitMonster, DamageType);
         }
     }
+}
+
+final function PlayerReceivedDamage(TurboPlayerController Player, KFMonster DamageInstigator, int Damage, class<DamageType> DamageType)
+{
+    local TurboPlayerCardCustomInfo CardCustomInfo;
+
+    CardCustomInfo = FindCardCustomInfo(Player);
+
+    if (CardCustomInfo == None || CardCustomInfo.AugmentInfo == None || !CardCustomInfo.AugmentInfo.bWantsPlayerReceivedDamageEvents)
+    {
+        return;
+    }
+
+    CardCustomInfo.AugmentInfo.NotifyPlayerReceivedDamage(Player, DamageInstigator, Damage, DamageType);
 }
 
 final function PlayerKilledMonster(TurboPlayerController Player, KFMonster Target, class<DamageType> DamageType)
