@@ -1,5 +1,5 @@
 //Killing Floor Turbo VinylLabelWestLondon
-//Common vinyls that provide basic flat buffs.
+//Common vinyls that provide single flat buffs.
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
 class VinylLabelWestLondon extends CardGameVinylLabel;
@@ -68,12 +68,12 @@ defaultproperties
 	End Object
 	FieldMedicVinylList(0)=TurboVinylBasic'Medic0'
 
-	Begin Object Name=Medic0 Class=TurboVinylBasic
+	Begin Object Name=Medic1 Class=TurboVinylBasic
 		VinylName="Bus Boogie"
 		VinylDescription="Increases heal recharge rate by 10%."
 		SkinNameList(1)="KFTurboCardGame.Label.WEST_Default"
 		AugmentList(0)=(Type=HealRecharge,Multiplier=1.1f)
 		OnActivateVinyl=ActivateBasic
 	End Object
-	FieldMedicVinylList(1)=TurboVinylBasic'Medic0'
+	FieldMedicVinylList(1)=TurboVinylBasic'Medic1'
 }

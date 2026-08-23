@@ -1,4 +1,5 @@
 //Killing Floor Turbo VinylLabelAdvancedGenetics
+//Uncommon vinyls that provide odd, perk-specific, buffs.
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
 class VinylLabelAdvancedGenetics extends CardGameVinylLabel;
