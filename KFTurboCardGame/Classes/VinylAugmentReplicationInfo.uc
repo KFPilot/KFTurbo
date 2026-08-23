@@ -9,6 +9,7 @@ var TurboPlayerCardCustomInfo OwningCardInfo;
 
 var bool bWantsHeadshotDamageMultiplier;
 var bool bWantsPlayerHeadshotEvents;
+var bool bWantsPlayerReceivedDamageEvents;
 var bool bHasStatusIcon;
 var bool bWantsStatusIconTick;
 
@@ -48,6 +49,10 @@ simulated function bool DrawStatusIcon(TurboCardOverlay CardOverlay, TurboPlayer
 }
 
 function NotifyPlayerHeadshot(TurboPlayerController Player, KFMonster HitMonster, class<DamageType> DamageType)
+{
+}
+
+function NotifyPlayerReceivedDamage(TurboPlayerController Player, KFMonster DamageInstigator, int Damage, class<DamageType> DamageType)
 {
 }
 
