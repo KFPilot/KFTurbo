@@ -1,5 +1,5 @@
 //Killing Floor Turbo VinylLabelBiohazard
-//Common vinyls that provide pairs of buffs.
+//Common vinyls that provide pairs of flat buffs.
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
 class VinylLabelBiohazard extends CardGameVinylLabel;
