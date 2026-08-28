@@ -26,7 +26,7 @@ var bool bFlushPending;
 
 //JSON data that does not change over the course of a game.
 //Cached to reduce the amount of string manipulation needed to produce payloads.
-var string VersionIDJson; 
+var string VersionIDJson;
 var string SessionIDJson;
 var string GameStartPayloadCache;
 var string GameEndPayloadCache;
@@ -113,7 +113,7 @@ state AttemptResolve
         BindPort();
         Resolve(StatsDomain);
     }
-    
+
     function ResolveFailed()
     {
         SetTimer(10.f, false);
@@ -136,9 +136,9 @@ state AttemptConnection
     {
         GotoState('Connected');
     }
-    
+
 Begin:
-    log("Attempting to connect to resolved address.", 'KFTurboStatsTcp');
+    log("Stats Tcp Link Attempting to connect to resolved address.", 'KFTurboStatsTcp');
     Sleep(1.f);
     OpenNoSteam(StatsAddress);
     Sleep(10.f);
@@ -173,7 +173,7 @@ state Connected
             SendText("keepalive"$CRLF);
         }
     }
-    
+
     function FlushData()
     {
         bIsFlushing = true;
@@ -232,7 +232,7 @@ Begin:
 
 state FlushComplete
 {
-    
+
 }
 
 function SendData(string Data)

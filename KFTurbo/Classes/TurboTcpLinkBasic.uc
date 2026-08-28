@@ -67,7 +67,7 @@ state AttemptResolve
 {
     function BeginState()
     {
-        log("Attempting to resolve target domain.", 'KFTurboStatsTcp');
+        log(Class$": Attempting to resolve target domain.", 'KFTurboStatsTcp');
         SetTimer(1.f, false);
     }
 
@@ -76,7 +76,7 @@ state AttemptResolve
         BindPort();
         Resolve(TargetDomain);
     }
-    
+
     function ResolveFailed()
     {
         SetTimer(DomainResolveRetryInterval, false);
@@ -96,9 +96,9 @@ state AttemptConnection
     {
         GotoState('Connected');
     }
-    
+
 Begin:
-    log("Attempting to connect to resolved address.", 'KFTurboStatsTcp');
+    log(Class$": Attempting to connect to resolved address.", 'KFTurboStatsTcp');
     Sleep(1.f);
 
     if (bUseNoSteam)
