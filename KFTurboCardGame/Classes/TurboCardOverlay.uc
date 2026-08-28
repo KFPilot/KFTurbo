@@ -700,16 +700,16 @@ simulated function DrawBottomLeftActor(Canvas C)
 
 simulated function TickVinylChange(float DeltaTime)
 {
-	local TurboVinyl CurrentVinyl;
+	local CardGameVinylLabel.VinylReference CurrentVinyl;
 	local float TargetScale;
 
 	if (VinylChangeState == VCS_None)
 	{
 		if (PlayerCardCustomInfo != None)
 		{
-			CurrentVinyl = PlayerCardCustomInfo.GetVinyl();
+			CurrentVinyl = PlayerCardCustomInfo.GetVinylReference();
 
-			if (CurrentVinyl != LastKnownVinyl)
+			if (!class'CardGameVinylLabel'.static.AreVinylReferencesEqual(CurrentVinyl, LastKnownVinyl))
 			{
 				PendingVinyl = CurrentVinyl;
 				VinylChangeState = VCS_ScaleUp;
@@ -737,7 +737,7 @@ simulated function TickVinylChange(float DeltaTime)
 			//Start the disk swap once the scale up is 80% of the way there - the scale continues easing to its target during the swap.
 			if (VinylChangeScale >= Lerp(0.8f, 1.f, VinylChangeScaleBoost))
 			{
-				if (LastKnownVinyl != None)
+				if (class'CardGameVinylLabel'.static.IsValidVinylReference(LastKnownVinyl))
 				{
 					VinylChangeState = VCS_Eject;
 				}
@@ -796,7 +796,7 @@ simulated function ApplyPendingVinyl()
 {
 	LastKnownVinyl = PendingVinyl;
 
-	if (LastKnownVinyl != None)
+	if (class'CardGameVinylLabel'.static.IsValidVinylReference(LastKnownVinyl))
 	{
 		class'CardGameVinylLabel'.static.ConfigureVinylActor(LastKnownVinyl, VinylActor);
 	}
@@ -806,7 +806,7 @@ simulated function ApplyPendingVinyl()
 simulated function DrawTouchedVinylInfo(Canvas C)
 {
 	local CardGameVinylActor WorldVinyl;
-	local TurboVinyl TouchedVinyl;
+	local TurboVinyl TouchedVinylCDO;
 	local array<string> DescriptionLineList;
 	local float DrawX, DrawY, TextSizeX, TextSizeY;
 	local int Index;
@@ -819,14 +819,15 @@ simulated function DrawTouchedVinylInfo(Canvas C)
 
 	foreach TurboHUD.PawnOwner.TouchingActors(class'CardGameVinylActor', WorldVinyl)
 	{
-		if (WorldVinyl.Vinyl != None)
+		TouchedVinylCDO = class'CardGameVinylLabel'.static.ResolveVinyl(WorldVinyl.VinylReference);
+
+		if (TouchedVinylCDO != None)
 		{
-			TouchedVinyl = WorldVinyl.Vinyl;
 			break;
 		}
 	}
 
-	if (TouchedVinyl == None)
+	if (TouchedVinylCDO == None)
 	{
 		return;
 	}
@@ -838,12 +839,12 @@ simulated function DrawTouchedVinylInfo(Canvas C)
 	C.FontScaleY = 1.f;
 
 	C.Font = TurboHUD.LoadBoldFont(BaseFontSize);
-	C.TextSize(TouchedVinyl.VinylName, TextSizeX, TextSizeY);
-	DrawShadowedText(C, TouchedVinyl.VinylName, DrawX, DrawY, MakeColor(255, 255, 255, 255));
+	C.TextSize(TouchedVinylCDO.VinylName, TextSizeX, TextSizeY);
+	DrawShadowedText(C, TouchedVinylCDO.VinylName, DrawX, DrawY, MakeColor(255, 255, 255, 255));
 	DrawY += TextSizeY;
 
 	C.Font = TurboHUD.LoadBoldFont(BaseFontSize + 2);
-	C.WrapStringToArray(TouchedVinyl.VinylDescription, DescriptionLineList, C.ClipX * 0.25f);
+	C.WrapStringToArray(TouchedVinylCDO.VinylDescription, DescriptionLineList, C.ClipX * 0.25f);
 
 	for (Index = 0; Index < DescriptionLineList.Length; Index++)
 	{

@@ -102,7 +102,12 @@ function TurboVinyl GetRandomVinyl(PlayerController Player)
 
 static final function bool IsValidVinylReference(VinylReference VinylReference)
 {
-    return VinylReference.Label != None && VinylReference.VinylIndex > 0;
+    return VinylReference.Label != None && VinylReference.VinylIndex >= 0;
+}
+
+static final function bool AreVinylReferencesEqual(VinylReference A, VinylReference B)
+{
+    return A.Label == B.Label && A.PerkIndex == B.PerkIndex && A.VinylIndex == B.VinylIndex;
 }
 
 static final function byte GetPlayerPerkIndex(PlayerController Player)

@@ -23,7 +23,14 @@ replication
 
 function SetVinyl(TurboVinyl NewVinyl)
 {
+	VinylInstance = NewVinyl;
 	VinylReference = class'CardGameVinylLabel'.static.MakeVinylReference(NewVinyl);
+
+	if (NewVinyl != None)
+	{
+		VinylPrice = NewVinyl.VinylPrice;
+	}
+
 	NetUpdateTime = Level.TimeSeconds - 1.f;
 
 	PostNetReceive();
@@ -31,13 +38,9 @@ function SetVinyl(TurboVinyl NewVinyl)
 
 simulated event PostNetReceive()
 {
-	local TurboVinyl ResolvedVinyl;
-
 	Super.PostNetReceive();
 
-	if (VinylReference.Label == LastKnownVinylReference.Label
-	    && VinylReference.PerkIndex == LastKnownVinylReference.PerkIndex
-		&& VinylReference.VinylIndex == LastKnownVinylReference.VinylIndex)
+	if (class'CardGameVinylLabel'.static.AreVinylReferencesEqual(VinylReference, LastKnownVinylReference))
 	{
 	    return;
 	}
@@ -49,7 +52,7 @@ simulated event PostNetReceive()
 	    return;
 	}
 
-	if (Level.NetMode == NM_DedicatedServer)
+	if (Level.NetMode != NM_DedicatedServer)
 	{
 	    VinylReference.Label.static.ConfigureVinylActor(VinylReference, Self);
 	}
@@ -138,10 +141,10 @@ function AttemptPurchase(Pawn User)
 	LifeSpan = 0.1f;
 }
 
-simulated function float GetVinylPrice(TurboPlayerReplicationInfo PRI, )
+simulated function float GetVinylPrice(TurboPlayerReplicationInfo PRI)
 {
     local float Price;
-    Price = Vinyl.VinylPrice;
+    Price = VinylPrice;
 
 	if (PRI != None && PRI.ClientVeteranSkill != None)
 	{
@@ -153,8 +156,8 @@ simulated function float GetVinylPrice(TurboPlayerReplicationInfo PRI, )
 
 defaultproperties
 {
-	VinylPerkIndex=255
-	VinylIndex=-1
+	VinylReference=(PerkIndex=255,VinylIndex=-1)
+	LastKnownVinylReference=(PerkIndex=255,VinylIndex=-1)
 	VinylPrice=-1
 
 	DrawType=DT_StaticMesh

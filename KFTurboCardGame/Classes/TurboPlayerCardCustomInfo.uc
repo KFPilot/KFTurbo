@@ -65,10 +65,7 @@ const MARKED_FOR_DEATH = 1;
 const NO_REST_FOR_THE_WICKED = 2;
 var int PlayerFlags; //Pack binary states in here.
 
-//Replicated VinylReference of the vinyl this player currently possesses (kept as raw fields - foreign struct types can't be used in var declarations).
-var class<CardGameVinylLabel> VinylLabel;
-var byte VinylPerkIndex;
-var int VinylIndex;
+var CardGameVinylLabel.VinylReference VinylReference;
 var TurboVinyl AuthVinyl; //Server-side vinyl instance - needed to execute the activation delegate.
 var VinylAugmentReplicationInfo AuthAugmentInfo; //Server-side augment actor spawned for the possessed vinyl.
 
@@ -86,7 +83,7 @@ replication
 {
     reliable if (Role == ROLE_Authority)
         GrenadeThrowTime, HealBoostTime, RackEmUpHeadshotCount, RackEmUpHeadshotStackExpireTime, CheatDeathWave,
-		SubstituteDamageCount, BleedCount, NextBleedTime, PerpetualCriticalHitStartTime, PlayerFlags, VinylLabel, VinylPerkIndex, VinylIndex;
+		SubstituteDamageCount, BleedCount, NextBleedTime, PerpetualCriticalHitStartTime, PlayerFlags, VinylReference;
 
 	reliable if (Role == ROLE_Authority)
         ClientCriticalHit, ClientExecute;
@@ -266,8 +263,6 @@ final simulated function SetCheatDeathWave(int Wave)
 
 final function SetVinyl(TurboVinyl NewVinyl)
 {
-	local CardGameVinylLabel.VinylReference Reference;
-
 	if (AuthVinyl == NewVinyl)
 	{
 		return;
@@ -285,10 +280,7 @@ final function SetVinyl(TurboVinyl NewVinyl)
 	}
 
 	AuthVinyl = NewVinyl;
-	Reference = class'CardGameVinylLabel'.static.MakeVinylReference(NewVinyl);
-	VinylLabel = Reference.Label;
-	VinylPerkIndex = Reference.PerkIndex;
-	VinylIndex = Reference.VinylIndex;
+	VinylReference = class'CardGameVinylLabel'.static.MakeVinylReference(NewVinyl);
 
 	//Spawn the augment before activating so the activation delegate can initialize its state.
 	if (AuthVinyl != None && AuthVinyl.AugmentInfoClass != None)
@@ -349,15 +341,9 @@ final function MarkVinylPurchased()
 	LastVinylPurchaseTime = Level.TimeSeconds;
 }
 
-//Resolves the possessed vinyl for display. Clients get label CDO objects.
-simulated final function TurboVinyl GetVinyl()
+simulated final function CardGameVinylLabel.VinylReference GetVinylReference()
 {
-	local CardGameVinylLabel.VinylReference Reference;
-
-	Reference.Label = VinylLabel;
-	Reference.PerkIndex = VinylPerkIndex;
-	Reference.VinylIndex = VinylIndex;
-	return class'CardGameVinylLabel'.static.ResolveVinyl(Reference);
+	return VinylReference;
 }
 
 final function SetMarkedForDeath(bool bEnable)
@@ -764,8 +750,7 @@ final simulated function bool IsPanicReloadActive()
 
 defaultproperties
 {
-	VinylPerkIndex=255
-	VinylIndex=-1
+	VinylReference=(PerkIndex=255,VinylIndex=-1)
 	VinylPurchaseCooldown=2.f
 
 	CheatDeathWave=-1
