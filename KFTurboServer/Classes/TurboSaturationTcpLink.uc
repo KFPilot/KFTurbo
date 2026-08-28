@@ -144,7 +144,7 @@ state PauseGame
 {
     function BeginState()
     {
-        log("ATTEMPTING TO PAUSE");
+        log("Saturation TCP Link has paused the server.", 'TurboSaturationTcpLink');
         PauseTimeRemaining = PauseDuration;
         PauseContinueMessageTimeRemaining = float(PauseDuration) * 1.5f;
         BroadcastMessage(Start);
