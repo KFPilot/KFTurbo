@@ -86,7 +86,6 @@ function BroadcastMessage(TurboServerSaturationMessage.ENotificationType Switch)
 function bool HasGlobalPacketLost()
 {
     local array<TurboPlayerController> PlayerList;
-    local bool bAllPacketLoss;
     local int Index;
 
     if (ManualUnpauseOverrideTime > 0.f && ManualUnpauseOverrideTime > Level.TimeSeconds)
