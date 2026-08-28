@@ -464,6 +464,10 @@ defaultproperties
 	VinylLabelList(4)=class'VinylLabelSirensBelch'
 	VinylLabelList(5)=class'VinylLabelWestLondon'
 	VinylLabelList(6)=class'VinylLabelBiohazard'
+	VinylLabelList(7)=class'VinylLabelFoundry'
+	VinylLabelList(8)=class'VinylLabelWaterworks'
+	VinylLabelList(9)=class'VinylLabelDeparted'
+	VinylLabelList(10)=class'VinylLabelFrightYard'
 	VinylSpawnCount=3
 	VinylSpawnSearchRadius=1200.f
 	VinylsDestroyedPerTick=3

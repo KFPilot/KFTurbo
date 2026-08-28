@@ -113,22 +113,38 @@ simulated final function TurboCardOverlay GetTurboCardOverlay()
 
 final simulated function float GetHealthPercent()
 {
-    if (PlayerTPRI == None)
+    local TurboHumanPawn Pawn;
+    Pawn = TurboHumanPawn(GetOwnerPawn());
+
+    if (Pawn != None)
     {
-        return 0.f;
+        return Pawn.GetHealthPercent();
     }
 
-    return PlayerTPRI.GetHealthPercent();
+    if (PlayerTPRI != None)
+    {
+        return PlayerTPRI.GetHealthPercent();
+    }
+
+    return 0.f;
 }
 
 final simulated function float GetArmorPercent()
 {
-    if (PlayerTPRI == None)
+    local TurboHumanPawn Pawn;
+    Pawn = TurboHumanPawn(GetOwnerPawn());
+
+    if (Pawn != None)
     {
-        return 0.f;
+        return Pawn.GetHealthPercent();
     }
 
-    return PlayerTPRI.GetArmorPercent();
+    if (PlayerTPRI != None)
+    {
+        return PlayerTPRI.GetArmorPercent();
+    }
+
+    return 0.f;
 }
 
 final simulated function float GetLoadedAmmoPercent()

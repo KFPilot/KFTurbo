@@ -126,6 +126,15 @@ final function PlayerReceivedDamage(TurboPlayerController Player, KFMonster Dama
 
 final function PlayerKilledMonster(TurboPlayerController Player, KFMonster Target, class<DamageType> DamageType)
 {
+    local TurboPlayerCardCustomInfo CardCustomInfo;
+
+    CardCustomInfo = FindCardCustomInfo(Player);
+
+    if (CardCustomInfo != None && CardCustomInfo.AugmentInfo != None && CardCustomInfo.AugmentInfo.bWantsPlayerKilledMonsterEvents)
+    {
+        CardCustomInfo.AugmentInfo.NotifyPlayerKilledMonster(Player, Target, DamageType);
+    }
+
     if (PlayerKillsReloadMagazineChance != 0.f && Player.Pawn != None && Player.Pawn.Health > 0)
     {
         if (FRand() < PlayerKillsReloadMagazineChance)

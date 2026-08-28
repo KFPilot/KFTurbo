@@ -10,6 +10,7 @@ var TurboPlayerCardCustomInfo OwningCardInfo;
 var bool bWantsDamageMultiplier, bWantsHeadshotDamageMultiplier;
 var bool bWantsPlayerHeadshotEvents;
 var bool bWantsPlayerReceivedDamageEvents;
+var bool bWantsPlayerKilledMonsterEvents;
 var bool bWantsModifyDamage;
 var bool bHasStatusIcon;
 var bool bWantsStatusIconTick;
@@ -55,6 +56,10 @@ function NotifyPlayerHeadshot(TurboPlayerController Player, KFMonster HitMonster
 }
 
 function NotifyPlayerReceivedDamage(TurboPlayerController Player, KFMonster DamageInstigator, int Damage, class<DamageType> DamageType)
+{
+}
+
+function NotifyPlayerKilledMonster(TurboPlayerController Player, KFMonster Target, class<DamageType> DamageType)
 {
 }
 
