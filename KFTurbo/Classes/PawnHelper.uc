@@ -10,7 +10,7 @@ struct AfflictionData
 	var AfflictionBurn Burn;
 	var AfflictionZap Zap;
 	var AfflictionHarpoon Harpoon;
-	
+
 	var Pawn LastBurnDamageInstigator; //Stored here instead of within AfflictionBurn because this pointer can become garbage when in an object.
 };
 
@@ -64,7 +64,7 @@ static final simulated function bool IsPawnBurning(Pawn Pawn)
 	{
 		return Monster.bBurnified;
 	}
-	
+
 	PlayerPawn = KFPawn(Pawn);
 
 	if (PlayerPawn != None)
@@ -120,6 +120,11 @@ static final simulated function InitializePawnHelper(KFMonster Monster, out Affl
 		Data.Harpoon.Initialize(Monster);
 	}
 
+	if (Monster.LastDamagedBy == None)
+	{
+	    Monster.LastDamagedBy = Monster;
+	}
+
 	SpawnClientExtendedZCollision(Monster);
 
 	if (Monster.Level.NetMode != NM_DedicatedServer && TurboGameReplicationInfo(Monster.Level.GRI) != None)
@@ -148,7 +153,7 @@ static final simulated function SpawnClientExtendedZCollision(KFMonster KFM)
 		KFM.MyExtCollision.bHardAttach = true;
 
 		AttachPos = KFM.Location + (KFM.ColOffset >> KFM.Rotation);
-		
+
 		KFM.MyExtCollision.SetLocation(AttachPos);
 		KFM.MyExtCollision.SetPhysics(PHYS_None);
 		KFM.MyExtCollision.SetBase(KFM);
@@ -397,7 +402,7 @@ static final function TakeFireDamage(KFMonster Monster, int Damage, Pawn Instiga
 	Monster.TakeDamage(Damage, Instigator, vect(0,0,0), vect(0,0,0), Monster.FireDamageClass);
    	UnblockPlayHit(AD);
 
-	//Someone called this function but nulled this out. Their goal was likely to apply damage without a hit reaction. 
+	//Someone called this function but nulled this out. Their goal was likely to apply damage without a hit reaction.
 	if (Monster.FireDamageClass == None)
 	{
 		return;
@@ -416,7 +421,7 @@ static final function TakeFireDamage(KFMonster Monster, int Damage, Pawn Instiga
 	if ( Monster.BurnDown <= 0 )
 	{
 		Monster.bBurnified = false;
-        
+
 		Monster.SetGroundSpeed(Monster.GetOriginalGroundSpeed());
 	}
 }
@@ -559,7 +564,7 @@ static final function bool MeleeDamageTarget(KFMonster Monster, int HitDamage, v
 
 	if(Monster.Role != ROLE_Authority || Monster.Controller == None)
 	{
-		return false; 
+		return false;
 	}
 
 	ControllerTarget = Monster.Controller.Target;
@@ -589,7 +594,7 @@ static final function bool MeleeDamageTarget(KFMonster Monster, int HitDamage, v
 	{
 		return false;
 	}
-	
+
 	Monster.bBlockHitPointTraces = false;
 	HitActor = Monster.Trace(HitLocation, HitNormal, ControllerTarget.Location , Monster.Location + Monster.EyePosition(), true);
 	Monster.bBlockHitPointTraces = true;
@@ -673,7 +678,7 @@ static final function EMonsterTier GetMonsterTier(class<Monster> MonsterClass)
 		case class'P_Stalker_HAL':
 		case class'P_Stalker_SUM':
 		case class'P_Stalker_XMA':
-		
+
 		case class'P_Gorefast_STA':
 		case class'P_Gorefast_HAL':
 		case class'P_Gorefast_SUM':
@@ -684,12 +689,12 @@ static final function EMonsterTier GetMonsterTier(class<Monster> MonsterClass)
 		case class'P_Bloat_HAL':
 		case class'P_Bloat_SUM':
 		case class'P_Bloat_XMA':
-		
+
 		case class'P_Husk_STA':
 		case class'P_Husk_HAL':
 		case class'P_Husk_SUM':
 		case class'P_Husk_XMA':
-		
+
 		case class'P_Siren_STA':
 		case class'P_Siren_HAL':
 		case class'P_Siren_SUM':
@@ -700,12 +705,12 @@ static final function EMonsterTier GetMonsterTier(class<Monster> MonsterClass)
 		case class'P_Husk_Shotgun':
 		case class'P_Siren_Caroler':
 			return Special;
-		
+
 		case class'P_Scrake_STA':
 		case class'P_Scrake_HAL':
 		case class'P_Scrake_SUM':
 		case class'P_Scrake_XMA':
-		
+
 		case class'P_Fleshpound_STA':
 		case class'P_Fleshpound_HAL':
 		case class'P_Fleshpound_SUM':
@@ -713,7 +718,7 @@ static final function EMonsterTier GetMonsterTier(class<Monster> MonsterClass)
 
 		case class'P_Bloat_Fathead':
 			return Elite;
-	
+
 		case class'P_ZombieBoss_STA':
 		case class'P_ZombieBoss_HAL':
 		case class'P_ZombieBoss_SUM':
@@ -763,7 +768,7 @@ static final function EMonster GetMonsterType(class<Monster> MonsterClass)
 		case class'P_Stalker_SUM':
 		case class'P_Stalker_XMA':
 			return Stalker;
-		
+
 		case class'P_Gorefast_STA':
 		case class'P_Gorefast_HAL':
 		case class'P_Gorefast_SUM':
@@ -777,33 +782,33 @@ static final function EMonster GetMonsterType(class<Monster> MonsterClass)
 		case class'P_Bloat_XMA':
 		case class'P_Bloat_Fathead':
 			return Bloat;
-		
+
 		case class'P_Husk_STA':
 		case class'P_Husk_HAL':
 		case class'P_Husk_SUM':
 		case class'P_Husk_XMA':
 		case class'P_Husk_Shotgun':
 			return Husk;
-		
+
 		case class'P_Siren_STA':
 		case class'P_Siren_HAL':
 		case class'P_Siren_SUM':
 		case class'P_Siren_XMA':
 		case class'P_Siren_Caroler':
 			return Siren;
-		
+
 		case class'P_Scrake_STA':
 		case class'P_Scrake_HAL':
 		case class'P_Scrake_SUM':
 		case class'P_Scrake_XMA':
 			return Scrake;
-		
+
 		case class'P_Fleshpound_STA':
 		case class'P_Fleshpound_HAL':
 		case class'P_Fleshpound_SUM':
 		case class'P_Fleshpound_XMA':
 			return Fleshpound;
-	
+
 		case class'P_ZombieBoss_STA':
 		case class'P_ZombieBoss_HAL':
 		case class'P_ZombieBoss_SUM':
@@ -861,7 +866,7 @@ static final function EMonster GetMonsterType(class<Monster> MonsterClass)
 	{
 		return Boss;
 	}
-	
+
 	return Unknown;
 }
 
