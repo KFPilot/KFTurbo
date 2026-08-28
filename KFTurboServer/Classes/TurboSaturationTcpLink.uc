@@ -86,6 +86,8 @@ function BroadcastMessage(TurboServerSaturationMessage.ENotificationType Switch)
 function bool HasGlobalPacketLost()
 {
     local array<TurboPlayerController> PlayerList;
+    local TurboPlayerReplicationInfo TurboPlayerReplicationInfo;
+    local bool bHasValidPlayer;
     local int Index;
 
     if (ManualUnpauseOverrideTime > 0.f && ManualUnpauseOverrideTime > Level.TimeSeconds)
@@ -95,15 +97,34 @@ function bool HasGlobalPacketLost()
 
     PlayerList = class'TurboGameplayHelper'.static.GetPlayerControllerList(Level);
 
+    if (PlayerList.Length == 0)
+    {
+        return false;
+    }
+
     for (Index = 0; Index < PlayerList.Length; Index++)
     {
-        if (TurboPlayerReplicationInfo(PlayerList[Index].PlayerReplicationInfo).GetConnectionState() < BrokenConnection)
+        if (PlayerList[Index].Pawn == None)
+        {
+            continue;
+        }
+
+        TurboPlayerReplicationInfo = TurboPlayerReplicationInfo(PlayerList[Index].PlayerReplicationInfo);
+
+        if (TurboPlayerReplicationInfo == None)
+        {
+            continue;
+        }
+
+        bHasValidPlayer = true;
+
+        if (TurboPlayerReplicationInfo.GetConnectionState() < BrokenConnection)
         {
             return false;
         }
     }
 
-    return true;
+    return bHasValidPlayer;
 }
 
 state Observing
