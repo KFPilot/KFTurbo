@@ -1,16 +1,16 @@
 //Killing Floor Turbo CardGameVinylActor
-//Purchasable vinyl spawned outside the trader during trader time. Displays the vinyl its replicated
-//VinylReference resolves to.
+//Purchasable vinyl spawned outside the trader during trader time. Displays the vinyl its replicated VinylReference resolves to.
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
 class CardGameVinylActor extends Actor
 	dependson(CardGameVinylLabel);
 
-//Replicated VinylReference (kept as raw fields - foreign struct types can't be used in var declarations).
-var class<CardGameVinylLabel> VinylLabel;
-var byte VinylPerkIndex;
-var int VinylIndex;
-var TurboVinyl Vinyl; //Server holds the label instance's vinyl object; clients resolve the label CDO's from the reference.
+//Reference to vinyl this actor represents.
+var CardGameVinylLabel.VinylReference VinylReference, LastKnownVinylReference;
+//Server holds the label instance's vinyl object.
+var TurboVinyl VinylInstance;
+
+var int VinylPrice;
 var bool bIsPurchased;
 
 var float SpinRate; //Spin about the facing axis in rotator units per second.
@@ -18,54 +18,41 @@ var float SpinRate; //Spin about the facing axis in rotator units per second.
 replication
 {
 	reliable if (bNetDirty && Role == ROLE_Authority)
-		VinylLabel, VinylPerkIndex, VinylIndex;
+		VinylReference, VinylPrice;
 }
 
 function SetVinyl(TurboVinyl NewVinyl)
 {
-	local CardGameVinylLabel.VinylReference Reference;
-
-	Vinyl = NewVinyl;
-	Reference = class'CardGameVinylLabel'.static.MakeVinylReference(NewVinyl);
-	VinylLabel = Reference.Label;
-	VinylPerkIndex = Reference.PerkIndex;
-	VinylIndex = Reference.VinylIndex;
-	ApplyVinylDisplay();
+	VinylReference = class'CardGameVinylLabel'.static.MakeVinylReference(NewVinyl);
 	NetUpdateTime = Level.TimeSeconds - 1.f;
+
+	PostNetReceive();
 }
 
 simulated event PostNetReceive()
 {
-	local CardGameVinylLabel.VinylReference Reference;
 	local TurboVinyl ResolvedVinyl;
 
 	Super.PostNetReceive();
 
-	Reference.Label = VinylLabel;
-	Reference.PerkIndex = VinylPerkIndex;
-	Reference.VinylIndex = VinylIndex;
-	ResolvedVinyl = class'CardGameVinylLabel'.static.ResolveVinyl(Reference);
-
-	if (ResolvedVinyl != Vinyl)
-	{
-		Vinyl = ResolvedVinyl;
-		ApplyVinylDisplay();
-	}
-}
-
-simulated function ApplyVinylDisplay()
-{
-	if (Vinyl == None)
-	{
-		return;
-	}
-
-	if (Level.NetMode == NM_DedicatedServer)
+	if (VinylReference.Label == LastKnownVinylReference.Label
+	    && VinylReference.PerkIndex == LastKnownVinylReference.PerkIndex
+		&& VinylReference.VinylIndex == LastKnownVinylReference.VinylIndex)
 	{
 	    return;
 	}
 
-	class'CardGameVinylLabel'.static.ConfigureVinylActor(Vinyl, Self);
+	LastKnownVinylReference = VinylReference;
+
+	if (VinylReference.Label == None)
+	{
+	    return;
+	}
+
+	if (Level.NetMode == NM_DedicatedServer)
+	{
+	    VinylReference.Label.static.ConfigureVinylActor(VinylReference, Self);
+	}
 }
 
 //Billboard toward the local player while spinning about the facing axis. Runs client-side.
@@ -118,7 +105,7 @@ function AttemptPurchase(Pawn User)
 	local TurboPlayerReplicationInfo PRI;
 	local float Cost;
 
-	if (bIsPurchased || Vinyl == None || User == None || User.Health <= 0 || User.PlayerReplicationInfo == None)
+	if (bIsPurchased || VinylPrice == -1 || VinylInstance == None || User == None || User.Health <= 0 || User.PlayerReplicationInfo == None)
 	{
 		return;
 	}
@@ -132,7 +119,7 @@ function AttemptPurchase(Pawn User)
 	PRI = TurboPlayerReplicationInfo(User.PlayerReplicationInfo);
 	CardInfo = TurboPlayerCardCustomInfo(class'TurboPlayerCardCustomInfo'.static.FindCustomInfo(PRI));
 
-	if (CardInfo == None || CardInfo.AuthVinyl == Vinyl || !CardInfo.CanPurchaseVinyl())
+	if (CardInfo == None || CardInfo.AuthVinyl == VinylInstance || !CardInfo.CanPurchaseVinyl())
 	{
 		return;
 	}
@@ -145,13 +132,13 @@ function AttemptPurchase(Pawn User)
 	}
 
 	PRI.Score -= Cost;
-	CardInfo.SetVinyl(Vinyl);
+	CardInfo.SetVinyl(VinylInstance);
 	CardInfo.MarkVinylPurchased();
 	bIsPurchased = true;
 	LifeSpan = 0.1f;
 }
 
-simulated function float GetVinylPrice(TurboPlayerReplicationInfo PRI)
+simulated function float GetVinylPrice(TurboPlayerReplicationInfo PRI, )
 {
     local float Price;
     Price = Vinyl.VinylPrice;
@@ -168,6 +155,7 @@ defaultproperties
 {
 	VinylPerkIndex=255
 	VinylIndex=-1
+	VinylPrice=-1
 
 	DrawType=DT_StaticMesh
 	StaticMesh=StaticMesh'KFTurboCardGame.Song.Vinyl'

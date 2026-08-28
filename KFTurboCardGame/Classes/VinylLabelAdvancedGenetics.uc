@@ -18,13 +18,14 @@ defaultproperties
 		VinylDescription="Increases headshot damage by 5%."
 		SkinNameList(1)="KFTurboCardGame.Label.ADVGEN_Default"
 		AugmentList(0)=(Type=HeadshotDamage,Multiplier=1.05f)
+		OnActivateVinyl=ActivateBasic
 	End Object
 	VinylObjectList(0)=TurboVinylBasic'Default0'
 
 	Begin Object Name=Commando Class=TurboVinyl
 		VinylName="Advanced Genetics: Commando"
 		VinylDescription="A mysterious record."
-		SkinNameList(1)="KFTurboCardGame.Song.ADVGEN_Commando"
+		SkinNameList(1)="KFTurboCardGame.Label.ADVGEN_Commando"
 		OnActivateVinyl=ActivateCommando
 	End Object
 	VinylObjectList(1)=TurboVinyl'Commando'

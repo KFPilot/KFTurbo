@@ -15,6 +15,7 @@ defaultproperties
 		SkinNameList(1)="KFTurboCardGame.Label.BIOHAZARD_Default"
 		AugmentList(0)=(Type=FireRate,Multiplier=1.03f)
 		AugmentList(1)=(Type=ReloadRate,Multiplier=1.03f)
+		OnActivateVinyl=ActivateBasic
 	End Object
 	VinylObjectList(0)=TurboVinylBasic'Default0'
 
@@ -24,6 +25,7 @@ defaultproperties
 		SkinNameList(1)="KFTurboCardGame.Label.BIOHAZARD_Default"
 		AugmentList(0)=(Type=MagazineAmmo,Multiplier=1.03f)
 		AugmentList(1)=(Type=MaxAmmo,Multiplier=1.03f)
+		OnActivateVinyl=ActivateBasic
 	End Object
 	VinylObjectList(1)=TurboVinylBasic'Default1'
 
@@ -31,8 +33,9 @@ defaultproperties
 		VinylName="Spawn Stairs Salsa"
 		VinylDescription="Increases headshot damage by 3% and reduces spread by 3%."
 		SkinNameList(1)="KFTurboCardGame.Label.BIOHAZARD_Default"
-		AugmentList(0)=(Type=SpreadRecoil,Multiplier=1.03f)
+		AugmentList(0)=(Type=SpreadRecoil,Multiplier=0.97f)
 		AugmentList(1)=(Type=HeadshotDamage,Multiplier=1.03f)
+		OnActivateVinyl=ActivateBasic
 	End Object
 	VinylObjectList(2)=TurboVinylBasic'Default2'
 
@@ -42,6 +45,7 @@ defaultproperties
 		SkinNameList(1)="KFTurboCardGame.Label.BIOHAZARD_Default"
 		AugmentList(0)=(Type=HealPotency,Multiplier=1.06f)
 		AugmentList(1)=(Type=HealRecharge,Multiplier=1.06f)
+		OnActivateVinyl=ActivateBasic
 	End Object
 	FieldMedicVinylList(0)=TurboVinylBasic'Medic0'
 }

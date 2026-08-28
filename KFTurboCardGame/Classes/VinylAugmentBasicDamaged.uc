@@ -4,6 +4,7 @@
 class VinylAugmentBasicDamaged extends VinylAugmentBasic;
 
 var float DamageTakenEndTime;
+var const float DamageTakenDuration;
 
 replication
 {
@@ -13,13 +14,20 @@ replication
 
 function NotifyPlayerReceivedDamage(TurboPlayerController Player, KFMonster DamageInstigator, int Damage, class<DamageType> DamageType)
 {
-    DamageTakenEndTime = Level.TimeSeconds;
+    DamageTakenEndTime = Level.TimeSeconds + DamageTakenDuration;
     ForceNetUpdate();
 }
 
 simulated final function bool WasRecentlyDamaged()
 {
-    return DamageTakenEndTime > Level.TimeSeconds;
+    local ServerTimeActor TimeActor;
+    TimeActor = TurboGameReplicationInfo(Level.GRI).ServerTimeActor;
+    if (TimeActor == None)
+    {
+        return false;
+    }
+
+    return DamageTakenEndTime > TimeActor.GetServerTimeSeconds();
 }
 
 function float GetHeadshotDamageMultiplier(KFPlayerReplicationInfo KFPRI, KFPawn Pawn, class<DamageType> DamageType) { if (WasRecentlyDamaged()) { return DamageHeadshotMultiplier; } return 1.f; }
@@ -38,4 +46,5 @@ simulated function float GetHealRechargeMultiplier(KFPlayerReplicationInfo KFPRI
 defaultproperties
 {
     bWantsPlayerReceivedDamageEvents=true
+    DamageTakenDuration = 5.f
 }

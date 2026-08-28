@@ -325,14 +325,21 @@ state DestroyingVinyls
 
 function SpawnVinylsForPlayer(PlayerController Player)
 {
-	local array<CardGameVinylLabel> LabelList;
 	local CardGameVinylLabel.ELabelRarity Rarity;
 	local TurboVinyl Vinyl;
 	local CardGameVinylActor VinylActor;
 	local int Index, LabelIndex;
 	local int SpawnedCount;
+	local LabelList LocalLabelRarityMap[MAX_RARITY];
 
 	StopWatch(false);
+
+	//Copy in the rarity map.
+	LocalLabelRarityMap[0] = LabelRarityMap[0];
+	LocalLabelRarityMap[1] = LabelRarityMap[1];
+	LocalLabelRarityMap[2] = LabelRarityMap[2];
+	LocalLabelRarityMap[3] = LabelRarityMap[3];
+	LocalLabelRarityMap[4] = LabelRarityMap[4];
 
 	for (Index = 0; Index < SpawnLocationList.Length; Index++)
 	{
@@ -342,19 +349,24 @@ function SpawnVinylsForPlayer(PlayerController Player)
 			continue;
 		}
 
-		LabelList = LabelRarityMap[Rarity].LabelInstanceList;
 		Vinyl = None;
 
-		while (Vinyl == None && LabelList.Length > 0)
+		while (Vinyl == None && LocalLabelRarityMap[Rarity].LabelInstanceList.Length > 0)
 		{
-			LabelIndex = Rand(LabelList.Length);
-
-			if (LabelList[LabelIndex] != None)
+		    //Chance to "restock" the rarity's labels so that sometimes there are multiple vinyls from the same label.
+		    if (FRand() > 0.5f)
 			{
-				Vinyl = LabelList[LabelIndex].GetRandomVinyl(Player);
+			    LocalLabelRarityMap[Rarity] = LabelRarityMap[Rarity];
 			}
 
-			LabelList.Remove(LabelIndex, 1);
+			LabelIndex = Rand(LocalLabelRarityMap[Rarity].LabelInstanceList.Length);
+
+			if (LocalLabelRarityMap[Rarity].LabelInstanceList[LabelIndex] != None)
+			{
+				Vinyl = LocalLabelRarityMap[Rarity].LabelInstanceList[LabelIndex].GetRandomVinyl(Player);
+			}
+
+			LocalLabelRarityMap[Rarity].LabelInstanceList.Remove(LabelIndex, 1);
 		}
 
 		if (Vinyl == None)

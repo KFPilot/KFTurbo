@@ -148,8 +148,8 @@ var float VinylChangeScaleBoost; //How much the draw region grows during a vinyl
 var float VinylChangeDistance; //How far the vinyl travels when ejected/inserted.
 var Vector VinylChangeDirection; //Eject/insert travel direction in the vinyl player's local space - keep it in the disk's plane (X/Y) to avoid clipping through the player.
 
-var TurboVinyl LastKnownVinyl; //Vinyl currently seated in the drawn vinyl player.
-var TurboVinyl PendingVinyl;
+var CardGameVinylLabel.VinylReference LastKnownVinyl; //Vinyl currently seated in the drawn vinyl player.
+var CardGameVinylLabel.VinylReference PendingVinyl;
 
 var localized string VinylCostString;
 var localized string VinylPurchaseHintString;
@@ -679,7 +679,7 @@ simulated function DrawBottomLeftActor(Canvas C)
 	C.DrawActorClipped(VinylPlayerActor, false, 0.f, C.ClipY - DrawSizeY, DrawSizeX, DrawSizeY, true, DrawFOV);
 	VinylPlayerActor.bHidden = true;
 
-	if (LastKnownVinyl == None)
+	if (!class'CardGameVinylLabel'.static.IsValidVinylReference(LastKnownVinyl))
 	{
 		return;
 	}

@@ -1,19 +1,16 @@
 //Killing Floor Turbo CardGameVinylLabel
-//A record label vinyls are selected from. Works like a deck - vinyls are defined as inline objects
-//and referred to via VinylReference. The server spawns an instance of each label; clients resolve
-//references against label CDOs.
+//Actor that defines and stores vinyls. Like TurboCardDeck for TurboCard.
 //Distributed under the terms of the MIT License.
 //For more information see https://github.com/KFPilot/KFTurbo.
 class CardGameVinylLabel extends Info;
 
-//SRVeterancyTypes convention - PerkIndex 255 means no perk. References with this index resolve to the general purpose list.
 const PERK_INDEX_NONE = 255;
 
 struct VinylReference
 {
 	var class<CardGameVinylLabel> Label;
-	var byte PerkIndex; //Which of the label's lists the vinyl lives in - PERK_INDEX_NONE is the general purpose list.
-	var int VinylIndex; //Index within that list.
+	var byte PerkIndex; //Will be PERK_INDEX_NONE if vinyl is in general purpose list.
+	var int VinylIndex; //Index within the list this vinyl is in.
 };
 
 enum ELabelRarity
@@ -29,16 +26,15 @@ const MAX_RARITY = 5;
 var const localized string LabelName;
 var ELabelRarity LabelRarity;
 
-var array<TurboVinyl> VinylObjectList; //General purpose vinyls - in the pool for every player.
-
-//Per-perk vinyl lists - pooled with the general list when selecting for a player of that perk.
-var array<TurboVinyl> BerserkerVinylList;
-var array<TurboVinyl> CommandoVinylList;
-var array<TurboVinyl> DemolitionsVinylList;
-var array<TurboVinyl> FieldMedicVinylList;
-var array<TurboVinyl> FirebugVinylList;
-var array<TurboVinyl> SharpshooterVinylList;
-var array<TurboVinyl> SupportVinylList;
+//These are const because they must not be mutated at runtime so that lookups are correct.
+var const array<TurboVinyl> VinylObjectList; //General purpose vinyls.
+var const array<TurboVinyl> BerserkerVinylList;
+var const array<TurboVinyl> CommandoVinylList;
+var const array<TurboVinyl> DemolitionsVinylList;
+var const array<TurboVinyl> FieldMedicVinylList;
+var const array<TurboVinyl> FirebugVinylList;
+var const array<TurboVinyl> SharpshooterVinylList;
+var const array<TurboVinyl> SupportVinylList;
 
 function PostBeginPlay()
 {
@@ -72,6 +68,14 @@ final function InitializeVinylList(array<TurboVinyl> List, byte PerkIndex)
 	}
 }
 
+function ActivateBasic(TurboPlayerCardCustomInfo PlayerInfo, TurboVinyl Vinyl, bool bActivate)
+{
+    if (bActivate)
+    {
+        TurboVinylBasic(Vinyl).ApplyAugmentList(PlayerInfo);
+    }
+}
+
 //Subclasses can override to define how they randomly pick a vinyl to give.
 //The pool is the general purpose list plus the list matching the player's current perk.
 function TurboVinyl GetRandomVinyl(PlayerController Player)
@@ -94,6 +98,11 @@ function TurboVinyl GetRandomVinyl(PlayerController Player)
 	}
 
 	return Pool[Rand(Pool.Length)];
+}
+
+static final function bool IsValidVinylReference(VinylReference VinylReference)
+{
+    return VinylReference.Label != None && VinylReference.VinylIndex > 0;
 }
 
 static final function byte GetPlayerPerkIndex(PlayerController Player)
@@ -201,7 +210,18 @@ static simulated function TurboVinyl GetVinylFromReference(VinylReference Refere
 	return List[Reference.VinylIndex];
 }
 
-//Resolves against this label instance's vinyl objects (delegates bound). Server-side use only.
+//Resolves TurboVinyl for a given VinylReference.
+static simulated final function TurboVinyl ResolveVinyl(VinylReference Reference)
+{
+	if (Reference.Label == None || Reference.VinylIndex < 0)
+	{
+		return None;
+	}
+
+	return Reference.Label.static.GetVinylFromReference(Reference);
+}
+
+//Resolves against this label instance's vinyl objects.
 simulated final function TurboVinyl ResolveVinylInstance(VinylReference Reference)
 {
 	local array<TurboVinyl> List;
@@ -219,18 +239,6 @@ simulated final function TurboVinyl ResolveVinylInstance(VinylReference Referenc
 	}
 
 	return List[Reference.VinylIndex];
-}
-
-//Resolves a reference by dispatching to the referenced label class - GetVinylFromReference compares
-//against default.Class, so it must be called through Reference.Label for subclasses to match.
-static simulated final function TurboVinyl ResolveVinyl(VinylReference Reference)
-{
-	if (Reference.Label == None || Reference.VinylIndex < 0)
-	{
-		return None;
-	}
-
-	return Reference.Label.static.GetVinylFromReference(Reference);
 }
 
 static final function VinylReference MakeVinylReference(TurboVinyl Vinyl)
@@ -251,28 +259,29 @@ static final function VinylReference MakeVinylReference(TurboVinyl Vinyl)
 	return Reference;
 }
 
-//Sets up an actor to display a vinyl. Skins are loaded here so that the actor's Skins array is the
-//only thing holding onto the textures - they are released when the actor is destroyed.
-static simulated final function ConfigureVinylActor(TurboVinyl Vinyl, Actor VinylDisplayActor)
+//Sets up an actor to display a vinyl.
+static simulated function ConfigureVinylActor(VinylReference VinylReference, Actor VinylDisplayActor)
 {
 	local int Index;
+	local TurboVinyl VinylCDO;
+	VinylCDO = ResolveVinyl(VinylReference);
 
-	if (Vinyl == None || VinylDisplayActor == None)
+	if (VinylCDO == None || VinylDisplayActor == None)
 	{
 		return;
 	}
 
-	VinylDisplayActor.SetStaticMesh(Vinyl.VinylMesh);
+	VinylDisplayActor.SetStaticMesh(VinylCDO.VinylMesh);
 
-	VinylDisplayActor.Skins.Length = Vinyl.SkinNameList.Length;
-	for (Index = 0; Index < Vinyl.SkinNameList.Length; Index++)
+	VinylDisplayActor.Skins.Length = VinylCDO.SkinNameList.Length;
+	for (Index = 0; Index < VinylCDO.SkinNameList.Length; Index++)
 	{
-		if (Vinyl.SkinNameList[Index] == "")
+		if (VinylCDO.SkinNameList[Index] == "")
 		{
 			VinylDisplayActor.Skins[Index] = None;
 			continue;
 		}
 
-		VinylDisplayActor.Skins[Index] = Material(DynamicLoadObject(Vinyl.SkinNameList[Index], class'Material'));
+		VinylDisplayActor.Skins[Index] = Material(DynamicLoadObject(VinylCDO.SkinNameList[Index], class'Material'));
 	}
 }

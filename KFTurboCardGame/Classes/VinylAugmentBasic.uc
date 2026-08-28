@@ -23,10 +23,10 @@ enum EAugmentType
     HealPotency,
     HealRecharge,
     //Damage Resistance
-    DamageResistance,
-    DamageResistanceFire,
-    DamageResistanceBloat,
-    DamageResistanceSiren
+    DamageReceived,
+    DamageReceivedFire,
+    DamageReceivedBloat,
+    DamageReceivedSiren
 };
 
 struct AugmentEntry
@@ -111,19 +111,19 @@ final function ApplyAugmentEntry(int Index)
         bWantsHealRechargeMultiplier = true;
         return;
     //Damage Resistance
-    case DamageResistance:
+    case DamageReceived:
         DamageResistanceMultiplier = AugmentList[Index].Multiplier;
         bWantsModifyDamage = true;
         return;
-    case DamageResistanceFire:
+    case DamageReceivedFire:
         DamageResistanceFireMultiplier = AugmentList[Index].Multiplier;
         bWantsModifyDamage = true;
         return;
-    case DamageResistanceBloat:
+    case DamageReceivedBloat:
         DamageResistanceBloatMultiplier = AugmentList[Index].Multiplier;
         bWantsModifyDamage = true;
         return;
-    case DamageResistanceSiren:
+    case DamageReceivedSiren:
         DamageResistanceSirenMultiplier = AugmentList[Index].Multiplier;
         bWantsModifyDamage = true;
         return;

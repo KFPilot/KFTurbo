@@ -4,11 +4,6 @@
 //For more information see https://github.com/KFPilot/KFTurbo.
 class VinylLabelWestLondon extends CardGameVinylLabel;
 
-function ActivateBasic(TurboPlayerCardCustomInfo PlayerInfo, TurboVinyl Vinyl, bool bActivate)
-{
-    TurboVinylBasic(Vinyl).ApplyAugmentList(PlayerInfo);
-}
-
 defaultproperties
 {
     LabelName="West London"
