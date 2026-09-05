@@ -47,11 +47,11 @@ defaultproperties
 
 	Begin Object Name=Default3 Class=TurboVinylBasic
 		VinylName="Ferris Wheel Fanfare"
-		VinylDescription="Each wave, rolls increased movement speed, acceleration or max ammo."
+		VinylDescription="Each wave, rolls increased movement speed, acceleration or magazine ammo."
 		SkinNameList(1)="KFTurboCardGame.Label.ABUSEMENT_Default"
 		AugmentList(0)=(Type=MovementSpeed,Multiplier=1.1f)
 		AugmentList(1)=(Type=MovementAccel,Multiplier=1.1f)
-		AugmentList(2)=(Type=MaxAmmo,Multiplier=1.1f)
+		AugmentList(2)=(Type=MagazineAmmo,Multiplier=1.1f)
 		AugmentInfoClass=class'VinylAugmentAbusementPark'
 		OnActivateVinyl=ActivateBasic
 	End Object
