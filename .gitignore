@@ -3,6 +3,7 @@
 
 #Exclude specific files.
 *.ps1
+*.txt
 
 #Necessary git files.
 !.gitignore
