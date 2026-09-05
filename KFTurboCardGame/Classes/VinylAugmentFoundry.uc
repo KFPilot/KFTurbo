@@ -74,6 +74,16 @@ simulated function float GetPlayerMovementSpeedMultiplier(KFPlayerReplicationInf
 simulated function float GetPlayerMaxHealthMultiplier(Pawn Pawn) { return ApplyStack(Super.GetPlayerMaxHealthMultiplier(Pawn)); }
 function float GetHealPotencyMultiplier(KFPlayerReplicationInfo KFPRI) { return ApplyStack(Super.GetHealPotencyMultiplier(KFPRI)); }
 simulated function float GetHealRechargeMultiplier(KFPlayerReplicationInfo KFPRI) { return ApplyStack(Super.GetHealRechargeMultiplier(KFPRI)); }
+simulated function float GetTraderGrenadeCostMultiplier(KFPlayerReplicationInfo KFPRI, class<Pickup> Item) { return ApplyStack(Super.GetTraderGrenadeCostMultiplier(KFPRI, Item)); }
+
+simulated function GetTraderCostMultiplier(KFPlayerReplicationInfo KFPRI, class<Pickup> Item, out float Multiplier)
+{
+    local float StackedMultiplier;
+
+    StackedMultiplier = 1.f;
+    Super.GetTraderCostMultiplier(KFPRI, Item, StackedMultiplier);
+    Multiplier *= ApplyStack(StackedMultiplier);
+}
 
 function float ModifyDamage(int Damage, Pawn Injured, Pawn InstigatedBy, Vector HitLocation, out Vector Momentum, class<DamageType> DamageType)
 {

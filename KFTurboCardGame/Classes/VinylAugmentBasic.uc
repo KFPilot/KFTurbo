@@ -22,6 +22,11 @@ enum EAugmentType
     MaxHealth,
     HealPotency,
     HealRecharge,
+    //Trader Cost
+    TraderWeaponCost,
+    TraderAmmoCost,
+    TraderArmorCost,
+    TraderGrenadeCost,
     //Damage Resistance
     DamageReceived,
     DamageReceivedFire,
@@ -42,6 +47,7 @@ var float FireRateMultiplier, FireRateMeleeMultiplier;
 var float ReloadRateMultiplier, MagazineAmmoMultiplier, MaxAmmoMultiplier, PenetrationMultiplier, SpreadRecoilMultiplier;
 var float MovementSpeedMultiplier, MaxHealthMultiplier, HealPotencyMultiplier, HealRechargeMultiplier;
 var float DamageResistanceMultiplier, DamageResistanceFireMultiplier, DamageResistanceBloatMultiplier, DamageResistanceSirenMultiplier;
+var float TraderWeaponCostMultiplier, TraderAmmoCostMultiplier, TraderArmorCostMultiplier, TraderGrenadeCostMultiplier;
 
 replication
 {
@@ -110,6 +116,23 @@ final function ApplyAugmentEntry(int Index)
         HealRechargeMultiplier = AugmentList[Index].Multiplier;
         bWantsHealRechargeMultiplier = true;
         return;
+    //Trader Cost
+    case TraderWeaponCost:
+        TraderWeaponCostMultiplier = AugmentList[Index].Multiplier;
+        bWantsTraderCostMultiplier = true;
+        return;
+    case TraderAmmoCost:
+        TraderAmmoCostMultiplier = AugmentList[Index].Multiplier;
+        bWantsTraderCostMultiplier = true;
+        return;
+    case TraderArmorCost:
+        TraderArmorCostMultiplier = AugmentList[Index].Multiplier;
+        bWantsTraderCostMultiplier = true;
+        return;
+    case TraderGrenadeCost:
+        TraderGrenadeCostMultiplier = AugmentList[Index].Multiplier;
+        bWantsTraderGrenadeCostMultiplier = true;
+        return;
     //Damage Resistance
     case DamageReceived:
         DamageResistanceMultiplier = AugmentList[Index].Multiplier;
@@ -165,6 +188,27 @@ simulated function float GetPlayerMovementSpeedMultiplier(KFPlayerReplicationInf
 simulated function float GetPlayerMaxHealthMultiplier(Pawn Pawn) { return MaxHealthMultiplier; }
 function float GetHealPotencyMultiplier(KFPlayerReplicationInfo KFPRI) { return HealPotencyMultiplier; }
 simulated function float GetHealRechargeMultiplier(KFPlayerReplicationInfo KFPRI) { return HealRechargeMultiplier; }
+simulated function float GetTraderGrenadeCostMultiplier(KFPlayerReplicationInfo KFPRI, class<Pickup> Item) { return TraderGrenadeCostMultiplier; }
+
+simulated function GetTraderCostMultiplier(KFPlayerReplicationInfo KFPRI, class<Pickup> Item, out float Multiplier)
+{
+    if (class<Vest>(Item) != None)
+    {
+        Multiplier *= TraderArmorCostMultiplier;
+        return;
+    }
+
+    if (class<KFAmmoPickup>(Item) != None)
+    {
+        Multiplier *= TraderAmmoCostMultiplier;
+        return;
+    }
+
+    if (class<KFWeaponPickup>(Item) != None)
+    {
+        Multiplier *= TraderWeaponCostMultiplier;
+    }
+}
 
 function float ModifyDamage(int Damage, Pawn Injured, Pawn InstigatedBy, Vector HitLocation, out Vector Momentum, class<DamageType> DamageType)
 {
@@ -217,4 +261,8 @@ defaultproperties
     DamageResistanceFireMultiplier=1.f
     DamageResistanceBloatMultiplier=1.f
     DamageResistanceSirenMultiplier=1.f
+    TraderWeaponCostMultiplier=1.f
+    TraderAmmoCostMultiplier=1.f
+    TraderArmorCostMultiplier=1.f
+    TraderGrenadeCostMultiplier=1.f
 }

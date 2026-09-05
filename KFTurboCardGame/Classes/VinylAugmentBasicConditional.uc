@@ -23,6 +23,7 @@ simulated function float GetPlayerMovementSpeedMultiplier(KFPlayerReplicationInf
 simulated function float GetPlayerMaxHealthMultiplier(Pawn Pawn) { if (IsAugmentActive()) { return Super.GetPlayerMaxHealthMultiplier(Pawn); } return 1.f; }
 function float GetHealPotencyMultiplier(KFPlayerReplicationInfo KFPRI) { if (IsAugmentActive()) { return Super.GetHealPotencyMultiplier(KFPRI); } return 1.f; }
 simulated function float GetHealRechargeMultiplier(KFPlayerReplicationInfo KFPRI) { if (IsAugmentActive()) { return Super.GetHealRechargeMultiplier(KFPRI); } return 1.f; }
+simulated function float GetTraderGrenadeCostMultiplier(KFPlayerReplicationInfo KFPRI, class<Pickup> Item) { if (IsAugmentActive()) { return Super.GetTraderGrenadeCostMultiplier(KFPRI, Item); } return 1.f; }
 
 function float ModifyDamage(int Damage, Pawn Injured, Pawn InstigatedBy, Vector HitLocation, out Vector Momentum, class<DamageType> DamageType)
 {
@@ -32,4 +33,12 @@ function float ModifyDamage(int Damage, Pawn Injured, Pawn InstigatedBy, Vector 
     }
 
     return 1.f;
+}
+
+simulated function GetTraderCostMultiplier(KFPlayerReplicationInfo KFPRI, class<Pickup> Item, out float Multiplier)
+{
+    if (IsAugmentActive())
+    {
+        Super.GetTraderCostMultiplier(KFPRI, Item, Multiplier);
+    }
 }

@@ -468,6 +468,10 @@ defaultproperties
 	VinylLabelList(8)=class'VinylLabelWaterworks'
 	VinylLabelList(9)=class'VinylLabelDeparted'
 	VinylLabelList(10)=class'VinylLabelFrightYard'
+	VinylLabelList(11)=class'VinylLabelBioticsLab'
+	VinylLabelList(12)=class'VinylLabelFarm'
+	VinylLabelList(13)=class'VinylLabelManor'
+	VinylLabelList(14)=class'VinylLabelOffices'
 	VinylSpawnCount=3
 	VinylSpawnSearchRadius=1200.f
 	VinylsDestroyedPerTick=3

@@ -26,6 +26,8 @@ var bool bWantsPlayerMovementSpeedMultiplier;
 var bool bWantsPlayerMaxHealthMultiplier;
 var bool bWantsHealPotencyMultiplier;
 var bool bWantsHealRechargeMultiplier;
+var bool bWantsTraderCostMultiplier;
+var bool bWantsTraderGrenadeCostMultiplier;
 
 function float GetDamageMultiplier(KFPlayerReplicationInfo KFPRI, KFMonster Injured, KFPawn DamageInstigator, int InDamage, class<DamageType> DamageType) { return 1.f; }
 function float GetHeadshotDamageMultiplier(KFPlayerReplicationInfo KFPRI, KFPawn Pawn, class<DamageType> DamageType) { return 1.f; }
@@ -40,6 +42,9 @@ simulated function float GetPlayerMovementSpeedMultiplier(KFPlayerReplicationInf
 simulated function float GetPlayerMaxHealthMultiplier(Pawn Pawn) { return 1.f; }
 function float GetHealPotencyMultiplier(KFPlayerReplicationInfo KFPRI) { return 1.f; }
 simulated function float GetHealRechargeMultiplier(KFPlayerReplicationInfo KFPRI) { return 1.f; }
+
+simulated function GetTraderCostMultiplier(KFPlayerReplicationInfo KFPRI, class<Pickup> Item, out float Multiplier) {}
+simulated function float GetTraderGrenadeCostMultiplier(KFPlayerReplicationInfo KFPRI, class<Pickup> Item) { return 1.f; }
 
 simulated function TickStatusIcon(TurboCardOverlay CardOverlay, TurboPlayerCardCustomInfo PlayerCustomInfo, float DeltaTime)
 {

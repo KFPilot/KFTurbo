@@ -338,6 +338,8 @@ simulated function float GetWeaponSpreadRecoilMultiplier(KFPlayerReplicationInfo
 
 simulated function GetTraderCostMultiplier(KFPlayerReplicationInfo KFPRI, class<Pickup> Item, out float Multiplier)
 {
+    local VinylAugmentReplicationInfo AugmentInfo;
+
     Super.GetTraderCostMultiplier(KFPRI, Item, Multiplier);
 
     if (Item == class'CardGameVinylPickup')
@@ -349,13 +351,34 @@ simulated function GetTraderCostMultiplier(KFPlayerReplicationInfo KFPRI, class<
     if (bDisableArmorPurchase && class<Vest>(Item) != None)
     {
         Multiplier = -1.f;
+        return;
     }
-    else
+
+    Multiplier *= TraderCostMultiplier;
+
+    AugmentInfo = GetPlayerAugmentInfo(KFPRI);
+
+    if (AugmentInfo != None && AugmentInfo.bWantsTraderCostMultiplier)
     {
-        Multiplier *= TraderCostMultiplier;
+        AugmentInfo.GetTraderCostMultiplier(KFPRI, Item, Multiplier);
     }
 }
-simulated function float GetTraderGrenadeCostMultiplier(KFPlayerReplicationInfo KFPRI, class<Pickup> Item) { return Super.GetTraderGrenadeCostMultiplier(KFPRI, Item) * TraderGrenadeCostMultiplier; }
+simulated function float GetTraderGrenadeCostMultiplier(KFPlayerReplicationInfo KFPRI, class<Pickup> Item)
+{
+    local float Multiplier;
+    local VinylAugmentReplicationInfo AugmentInfo;
+
+    Multiplier = Super.GetTraderGrenadeCostMultiplier(KFPRI, Item) * TraderGrenadeCostMultiplier;
+
+    AugmentInfo = GetPlayerAugmentInfo(KFPRI);
+
+    if (AugmentInfo != None && AugmentInfo.bWantsTraderGrenadeCostMultiplier)
+    {
+        Multiplier *= AugmentInfo.GetTraderGrenadeCostMultiplier(KFPRI, Item);
+    }
+
+    return Multiplier;
+}
 
 simulated function float GetPlayerMovementSpeedMultiplier(KFPlayerReplicationInfo KFPRI, KFGameReplicationInfo KFGRI)
 {
