@@ -20,7 +20,9 @@ simulated function float GetMaxAmmoMultiplier(KFPlayerReplicationInfo KFPRI, cla
 simulated function float GetWeaponPenetrationMultiplier(KFPlayerReplicationInfo KFPRI, WeaponFire Other) { if (IsAugmentActive()) { return Super.GetWeaponPenetrationMultiplier(KFPRI, Other); } return 1.f; }
 simulated function float GetWeaponSpreadRecoilMultiplier(KFPlayerReplicationInfo KFPRI, WeaponFire Other) { if (IsAugmentActive()) { return Super.GetWeaponSpreadRecoilMultiplier(KFPRI, Other); } return 1.f; }
 simulated function float GetPlayerMovementSpeedMultiplier(KFPlayerReplicationInfo KFPRI, KFGameReplicationInfo KFGRI) { if (IsAugmentActive()) { return Super.GetPlayerMovementSpeedMultiplier(KFPRI, KFGRI); } return 1.f; }
+simulated function float GetPlayerMovementAccelMultiplier(KFPlayerReplicationInfo KFPRI, KFGameReplicationInfo KFGRI) { if (IsAugmentActive()) { return Super.GetPlayerMovementAccelMultiplier(KFPRI, KFGRI); } return 1.f; }
 simulated function float GetPlayerMaxHealthMultiplier(Pawn Pawn) { if (IsAugmentActive()) { return Super.GetPlayerMaxHealthMultiplier(Pawn); } return 1.f; }
+function GetPlayerCarryWeightModifier(KFPlayerReplicationInfo KFPRI, out int OutCarryWeightModifier) { if (IsAugmentActive()) { Super.GetPlayerCarryWeightModifier(KFPRI, OutCarryWeightModifier); } }
 function float GetHealPotencyMultiplier(KFPlayerReplicationInfo KFPRI) { if (IsAugmentActive()) { return Super.GetHealPotencyMultiplier(KFPRI); } return 1.f; }
 simulated function float GetHealRechargeMultiplier(KFPlayerReplicationInfo KFPRI) { if (IsAugmentActive()) { return Super.GetHealRechargeMultiplier(KFPRI); } return 1.f; }
 simulated function float GetTraderGrenadeCostMultiplier(KFPlayerReplicationInfo KFPRI, class<Pickup> Item) { if (IsAugmentActive()) { return Super.GetTraderGrenadeCostMultiplier(KFPRI, Item); } return 1.f; }

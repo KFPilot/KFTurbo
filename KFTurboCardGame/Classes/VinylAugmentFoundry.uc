@@ -71,6 +71,7 @@ simulated function float GetMaxAmmoMultiplier(KFPlayerReplicationInfo KFPRI, cla
 simulated function float GetWeaponPenetrationMultiplier(KFPlayerReplicationInfo KFPRI, WeaponFire Other) { return ApplyStack(Super.GetWeaponPenetrationMultiplier(KFPRI, Other)); }
 simulated function float GetWeaponSpreadRecoilMultiplier(KFPlayerReplicationInfo KFPRI, WeaponFire Other) { return ApplyStack(Super.GetWeaponSpreadRecoilMultiplier(KFPRI, Other)); }
 simulated function float GetPlayerMovementSpeedMultiplier(KFPlayerReplicationInfo KFPRI, KFGameReplicationInfo KFGRI) { return ApplyStack(Super.GetPlayerMovementSpeedMultiplier(KFPRI, KFGRI)); }
+simulated function float GetPlayerMovementAccelMultiplier(KFPlayerReplicationInfo KFPRI, KFGameReplicationInfo KFGRI) { return ApplyStack(Super.GetPlayerMovementAccelMultiplier(KFPRI, KFGRI)); }
 simulated function float GetPlayerMaxHealthMultiplier(Pawn Pawn) { return ApplyStack(Super.GetPlayerMaxHealthMultiplier(Pawn)); }
 function float GetHealPotencyMultiplier(KFPlayerReplicationInfo KFPRI) { return ApplyStack(Super.GetHealPotencyMultiplier(KFPRI)); }
 simulated function float GetHealRechargeMultiplier(KFPlayerReplicationInfo KFPRI) { return ApplyStack(Super.GetHealRechargeMultiplier(KFPRI)); }
@@ -83,6 +84,14 @@ simulated function GetTraderCostMultiplier(KFPlayerReplicationInfo KFPRI, class<
     StackedMultiplier = 1.f;
     Super.GetTraderCostMultiplier(KFPRI, Item, StackedMultiplier);
     Multiplier *= ApplyStack(StackedMultiplier);
+}
+
+function GetPlayerCarryWeightModifier(KFPlayerReplicationInfo KFPRI, out int OutCarryWeightModifier)
+{
+    local int StackedModifier;
+
+    Super.GetPlayerCarryWeightModifier(KFPRI, StackedModifier);
+    OutCarryWeightModifier += int(float(StackedModifier) * GetStackRatio());
 }
 
 function float ModifyDamage(int Damage, Pawn Injured, Pawn InstigatedBy, Vector HitLocation, out Vector Momentum, class<DamageType> DamageType)

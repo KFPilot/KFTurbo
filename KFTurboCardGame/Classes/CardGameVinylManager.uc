@@ -107,7 +107,27 @@ final function GameStarted(KFTurboGameType GameType, int StartedWave)
 
 final function WaveStarted(KFTurboGameType GameType, int StartedWave)
 {
+	NotifyAugmentsWaveStarted(StartedWave);
 	RequestVinylDestroy();
+}
+
+function NotifyAugmentsWaveStarted(int Wave)
+{
+	local array<TurboHumanPawn> PlayerList;
+	local TurboPlayerCardCustomInfo CardInfo;
+	local int Index;
+
+	PlayerList = class'TurboGameplayHelper'.static.GetPlayerPawnList(Level);
+
+	for (Index = 0; Index < PlayerList.Length; Index++)
+	{
+		CardInfo = TurboPlayerCardCustomInfo(class'TurboPlayerCardCustomInfo'.static.FindCustomInfo(TurboPlayerReplicationInfo(PlayerList[Index].PlayerReplicationInfo)));
+
+		if (CardInfo != None && CardInfo.AugmentInfo != None && CardInfo.AugmentInfo.bWantsWaveStartedEvents)
+		{
+			CardInfo.AugmentInfo.NotifyWaveStarted(Wave);
+		}
+	}
 }
 
 final function WaveEnded(KFTurboGameType GameType, int EndedWave)
@@ -472,6 +492,12 @@ defaultproperties
 	VinylLabelList(12)=class'VinylLabelFarm'
 	VinylLabelList(13)=class'VinylLabelManor'
 	VinylLabelList(14)=class'VinylLabelOffices'
+	VinylLabelList(15)=class'VinylLabelAbusementPark'
+	VinylLabelList(16)=class'VinylLabelHellride'
+	VinylLabelList(17)=class'VinylLabelSteamland'
+	VinylLabelList(18)=class'VinylLabelEvilSantasLair'
+	VinylLabelList(19)=class'VinylLabelIceCave'
+	VinylLabelList(20)=class'VinylLabelMoonBase'
 	VinylSpawnCount=3
 	VinylSpawnSearchRadius=1200.f
 	VinylsDestroyedPerTick=3

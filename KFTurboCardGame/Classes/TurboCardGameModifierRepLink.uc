@@ -456,7 +456,19 @@ simulated function float GetPlayerMovementSpeedMultiplier(KFPlayerReplicationInf
 
 simulated function float GetPlayerMovementAccelMultiplier(KFPlayerReplicationInfo KFPRI, KFGameReplicationInfo KFGRI)
 {
-    return Super.GetPlayerMovementAccelMultiplier(KFPRI, KFGRI) * PlayerMovementAccelMultiplier;
+    local float Multiplier;
+    local VinylAugmentReplicationInfo AugmentInfo;
+
+    Multiplier = Super.GetPlayerMovementAccelMultiplier(KFPRI, KFGRI) * PlayerMovementAccelMultiplier;
+
+    AugmentInfo = GetPlayerAugmentInfo(KFPRI);
+
+    if (AugmentInfo != None && AugmentInfo.bWantsPlayerMovementAccelMultiplier)
+    {
+        Multiplier *= AugmentInfo.GetPlayerMovementAccelMultiplier(KFPRI, KFGRI);
+    }
+
+    return Multiplier;
 }
 
 simulated function float GetPlayerMaxHealthMultiplier(Pawn Pawn)
@@ -503,7 +515,16 @@ function float GetWeldSpeedModifier(KFPlayerReplicationInfo KFPRI)
 
 function GetPlayerCarryWeightModifier(KFPlayerReplicationInfo KFPRI, out int OutCarryWeightModifier)
 {
+    local VinylAugmentReplicationInfo AugmentInfo;
+
     Super.GetPlayerCarryWeightModifier(KFPRI, OutCarryWeightModifier);
+
+    AugmentInfo = GetPlayerAugmentInfo(KFPRI);
+
+    if (AugmentInfo != None && AugmentInfo.bWantsPlayerCarryWeightModifier)
+    {
+        AugmentInfo.GetPlayerCarryWeightModifier(KFPRI, OutCarryWeightModifier);
+    }
 
     OutCarryWeightModifier += PlayerMaxCarryWeightModifier;
 }

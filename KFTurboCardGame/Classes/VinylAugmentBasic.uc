@@ -19,7 +19,9 @@ enum EAugmentType
     Penetration,
     SpreadRecoil,
     MovementSpeed,
+    MovementAccel,
     MaxHealth,
+    CarryWeight,
     HealPotency,
     HealRecharge,
     //Trader Cost
@@ -48,11 +50,40 @@ var float ReloadRateMultiplier, MagazineAmmoMultiplier, MaxAmmoMultiplier, Penet
 var float MovementSpeedMultiplier, MaxHealthMultiplier, HealPotencyMultiplier, HealRechargeMultiplier;
 var float DamageResistanceMultiplier, DamageResistanceFireMultiplier, DamageResistanceBloatMultiplier, DamageResistanceSirenMultiplier;
 var float TraderWeaponCostMultiplier, TraderAmmoCostMultiplier, TraderArmorCostMultiplier, TraderGrenadeCostMultiplier;
+var float MovementAccelMultiplier;
+var int CarryWeightModifier;
 
 replication
 {
 	reliable if (Role == ROLE_Authority)
 		AugmentList;
+}
+
+final function ResetAugmentMultipliers()
+{
+    DamageMultiplier = 1.f;
+    DamageHeadshotMultiplier = 1.f;
+    FireRateMultiplier = 1.f;
+    FireRateMeleeMultiplier = 1.f;
+    ReloadRateMultiplier = 1.f;
+    MagazineAmmoMultiplier = 1.f;
+    MaxAmmoMultiplier = 1.f;
+    PenetrationMultiplier = 1.f;
+    SpreadRecoilMultiplier = 1.f;
+    MovementSpeedMultiplier = 1.f;
+    MovementAccelMultiplier = 1.f;
+    MaxHealthMultiplier = 1.f;
+    CarryWeightModifier = 0;
+    HealPotencyMultiplier = 1.f;
+    HealRechargeMultiplier = 1.f;
+    DamageResistanceMultiplier = 1.f;
+    DamageResistanceFireMultiplier = 1.f;
+    DamageResistanceBloatMultiplier = 1.f;
+    DamageResistanceSirenMultiplier = 1.f;
+    TraderWeaponCostMultiplier = 1.f;
+    TraderAmmoCostMultiplier = 1.f;
+    TraderArmorCostMultiplier = 1.f;
+    TraderGrenadeCostMultiplier = 1.f;
 }
 
 final function ApplyAugmentEntry(int Index)
@@ -102,6 +133,14 @@ final function ApplyAugmentEntry(int Index)
     case MovementSpeed:
         MovementSpeedMultiplier = AugmentList[Index].Multiplier;
         bWantsPlayerMovementSpeedMultiplier = true;
+        return;
+    case MovementAccel:
+        MovementAccelMultiplier = AugmentList[Index].Multiplier;
+        bWantsPlayerMovementAccelMultiplier = true;
+        return;
+    case CarryWeight:
+        CarryWeightModifier = int(AugmentList[Index].Multiplier);
+        bWantsPlayerCarryWeightModifier = true;
         return;
     case MaxHealth:
         MaxHealthMultiplier = AugmentList[Index].Multiplier;
@@ -185,7 +224,9 @@ simulated function float GetMaxAmmoMultiplier(KFPlayerReplicationInfo KFPRI, cla
 simulated function float GetWeaponPenetrationMultiplier(KFPlayerReplicationInfo KFPRI, WeaponFire Other) { return PenetrationMultiplier; }
 simulated function float GetWeaponSpreadRecoilMultiplier(KFPlayerReplicationInfo KFPRI, WeaponFire Other) { return SpreadRecoilMultiplier; }
 simulated function float GetPlayerMovementSpeedMultiplier(KFPlayerReplicationInfo KFPRI, KFGameReplicationInfo KFGRI) { return MovementSpeedMultiplier; }
+simulated function float GetPlayerMovementAccelMultiplier(KFPlayerReplicationInfo KFPRI, KFGameReplicationInfo KFGRI) { return MovementAccelMultiplier; }
 simulated function float GetPlayerMaxHealthMultiplier(Pawn Pawn) { return MaxHealthMultiplier; }
+function GetPlayerCarryWeightModifier(KFPlayerReplicationInfo KFPRI, out int OutCarryWeightModifier) { OutCarryWeightModifier += CarryWeightModifier; }
 function float GetHealPotencyMultiplier(KFPlayerReplicationInfo KFPRI) { return HealPotencyMultiplier; }
 simulated function float GetHealRechargeMultiplier(KFPlayerReplicationInfo KFPRI) { return HealRechargeMultiplier; }
 simulated function float GetTraderGrenadeCostMultiplier(KFPlayerReplicationInfo KFPRI, class<Pickup> Item) { return TraderGrenadeCostMultiplier; }
@@ -265,4 +306,5 @@ defaultproperties
     TraderAmmoCostMultiplier=1.f
     TraderArmorCostMultiplier=1.f
     TraderGrenadeCostMultiplier=1.f
+    MovementAccelMultiplier=1.f
 }

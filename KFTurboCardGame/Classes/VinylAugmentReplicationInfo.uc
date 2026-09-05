@@ -11,6 +11,7 @@ var bool bWantsDamageMultiplier, bWantsHeadshotDamageMultiplier;
 var bool bWantsPlayerHeadshotEvents;
 var bool bWantsPlayerReceivedDamageEvents;
 var bool bWantsPlayerKilledMonsterEvents;
+var bool bWantsWaveStartedEvents;
 var bool bWantsModifyDamage;
 var bool bHasStatusIcon;
 var bool bWantsStatusIconTick;
@@ -23,7 +24,9 @@ var bool bWantsMaxAmmoMultiplier;
 var bool bWantsWeaponPenetrationMultiplier;
 var bool bWantsWeaponSpreadRecoilMultiplier;
 var bool bWantsPlayerMovementSpeedMultiplier;
+var bool bWantsPlayerMovementAccelMultiplier;
 var bool bWantsPlayerMaxHealthMultiplier;
+var bool bWantsPlayerCarryWeightModifier;
 var bool bWantsHealPotencyMultiplier;
 var bool bWantsHealRechargeMultiplier;
 var bool bWantsTraderCostMultiplier;
@@ -39,7 +42,9 @@ simulated function float GetMaxAmmoMultiplier(KFPlayerReplicationInfo KFPRI, cla
 simulated function float GetWeaponPenetrationMultiplier(KFPlayerReplicationInfo KFPRI, WeaponFire Other) { return 1.f; }
 simulated function float GetWeaponSpreadRecoilMultiplier(KFPlayerReplicationInfo KFPRI, WeaponFire Other) { return 1.f; }
 simulated function float GetPlayerMovementSpeedMultiplier(KFPlayerReplicationInfo KFPRI, KFGameReplicationInfo KFGRI) { return 1.f; }
+simulated function float GetPlayerMovementAccelMultiplier(KFPlayerReplicationInfo KFPRI, KFGameReplicationInfo KFGRI) { return 1.f; }
 simulated function float GetPlayerMaxHealthMultiplier(Pawn Pawn) { return 1.f; }
+function GetPlayerCarryWeightModifier(KFPlayerReplicationInfo KFPRI, out int OutCarryWeightModifier) {}
 function float GetHealPotencyMultiplier(KFPlayerReplicationInfo KFPRI) { return 1.f; }
 simulated function float GetHealRechargeMultiplier(KFPlayerReplicationInfo KFPRI) { return 1.f; }
 
@@ -65,6 +70,10 @@ function NotifyPlayerReceivedDamage(TurboPlayerController Player, KFMonster Dama
 }
 
 function NotifyPlayerKilledMonster(TurboPlayerController Player, KFMonster Target, class<DamageType> DamageType)
+{
+}
+
+function NotifyWaveStarted(int Wave)
 {
 }
 
