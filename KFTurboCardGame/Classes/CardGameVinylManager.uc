@@ -477,27 +477,48 @@ function GatherPathNodeSpawnLocations(ShopVolume Shop, out array<Vector> OutSpaw
 
 defaultproperties
 {
-	VinylLabelList(0)=class'VinylLabelAdvancedGenetics'
-	VinylLabelList(1)=class'VinylLabelClassic'
-	VinylLabelList(2)=class'VinylLabelHorzine'
-	VinylLabelList(3)=class'VinylLabelBedlam'
-	VinylLabelList(4)=class'VinylLabelSirensBelch'
-	VinylLabelList(5)=class'VinylLabelWestLondon'
-	VinylLabelList(6)=class'VinylLabelBiohazard'
-	VinylLabelList(7)=class'VinylLabelFoundry'
-	VinylLabelList(8)=class'VinylLabelWaterworks'
-	VinylLabelList(9)=class'VinylLabelDeparted'
-	VinylLabelList(10)=class'VinylLabelFrightYard'
-	VinylLabelList(11)=class'VinylLabelBioticsLab'
-	VinylLabelList(12)=class'VinylLabelFarm'
-	VinylLabelList(13)=class'VinylLabelManor'
-	VinylLabelList(14)=class'VinylLabelOffices'
-	VinylLabelList(15)=class'VinylLabelAbusementPark'
-	VinylLabelList(16)=class'VinylLabelHellride'
-	VinylLabelList(17)=class'VinylLabelSteamland'
-	VinylLabelList(18)=class'VinylLabelEvilSantasLair'
-	VinylLabelList(19)=class'VinylLabelIceCave'
-	VinylLabelList(20)=class'VinylLabelMoonBase'
+    //Common Vinyls. Named after maps.
+	VinylLabelList(0)=class'VinylLabelBedlam'
+	VinylLabelList(1)=class'VinylLabelSirensBelch'
+	VinylLabelList(2)=class'VinylLabelWestLondon'
+	VinylLabelList(3)=class'VinylLabelBiohazard'
+	VinylLabelList(4)=class'VinylLabelFoundry'
+	VinylLabelList(5)=class'VinylLabelWaterworks'
+	VinylLabelList(6)=class'VinylLabelDeparted'
+	VinylLabelList(7)=class'VinylLabelFrightYard'
+	VinylLabelList(8)=class'VinylLabelBioticsLab'
+	VinylLabelList(9)=class'VinylLabelFarm'
+	VinylLabelList(10)=class'VinylLabelManor'
+	VinylLabelList(11)=class'VinylLabelOffices'
+	VinylLabelList(12)=class'VinylLabelAbusementPark'
+	VinylLabelList(13)=class'VinylLabelHellride'
+	VinylLabelList(14)=class'VinylLabelSteamland'
+	VinylLabelList(15)=class'VinylLabelEvilSantasLair'
+	VinylLabelList(16)=class'VinylLabelIceCave'
+	VinylLabelList(17)=class'VinylLabelMoonBase'
+	VinylLabelList(18)=class'VinylLabelVagrant'
+
+	//Uncommon Vinyls. Named after companies and recognizable things from KF.
+	VinylLabelList(19)=class'VinylLabelAdvancedGenetics'
+	VinylLabelList(20)=class'VinylLabelHorzine'
+	VinylLabelList(21)=class'VinylLabelKMShipping'
+	VinylLabelList(22)=class'VinylLabelHallidays'
+	VinylLabelList(23)=class'VinylLabelLockheart'
+	VinylLabelList(24)=class'VinylLabelStFilths'
+	VinylLabelList(25)=class'VinylLabelResearchBunkerSix'
+
+	//Rare Vinyls.
+	VinylLabelList(26)=class'VinylLabelClassic'
+	VinylLabelList(27)=class'VinylLabelTurboSelects'
+
+
+	//Gold Vinyls.
+	VinylLabelList(28)=class'VinylLabelTurboClassics'
+
+
+	//Platinum Vinyls
+	VinylLabelList(29)=class'VinylLabelTurboBestHits'
+
 	VinylSpawnCount=3
 	VinylSpawnSearchRadius=1200.f
 	VinylsDestroyedPerTick=3
