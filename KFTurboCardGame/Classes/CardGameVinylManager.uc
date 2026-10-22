@@ -485,14 +485,12 @@ defaultproperties
 	VinylLabelList(4)=class'VinylLabelFoundry'
 	VinylLabelList(5)=class'VinylLabelWaterworks'
 	VinylLabelList(6)=class'VinylLabelDeparted'
-	VinylLabelList(7)=class'VinylLabelFrightYard'
 	VinylLabelList(8)=class'VinylLabelBioticsLab'
 	VinylLabelList(9)=class'VinylLabelFarm'
 	VinylLabelList(10)=class'VinylLabelManor'
 	VinylLabelList(11)=class'VinylLabelOffices'
 	VinylLabelList(12)=class'VinylLabelAbusementPark'
 	VinylLabelList(13)=class'VinylLabelHellride'
-	VinylLabelList(14)=class'VinylLabelSteamland'
 	VinylLabelList(15)=class'VinylLabelEvilSantasLair'
 	VinylLabelList(16)=class'VinylLabelIceCave'
 	VinylLabelList(17)=class'VinylLabelMoonBase'
@@ -500,24 +498,22 @@ defaultproperties
 
 	//Uncommon Vinyls. Named after companies and recognizable things from KF.
 	VinylLabelList(19)=class'VinylLabelAdvancedGenetics'
+	VinylLabelList(14)=class'VinylLabelSteamland'
+	VinylLabelList(7)=class'VinylLabelFrightYard'
 	VinylLabelList(20)=class'VinylLabelHorzine'
 	VinylLabelList(21)=class'VinylLabelKMShipping'
-	VinylLabelList(22)=class'VinylLabelHallidays'
-	VinylLabelList(23)=class'VinylLabelLockheart'
-	VinylLabelList(24)=class'VinylLabelStFilths'
-	VinylLabelList(25)=class'VinylLabelResearchBunkerSix'
+	VinylLabelList(22)=class'VinylLabelStFilths'
+	VinylLabelList(23)=class'VinylLabelResearchBunkerSix'
 
 	//Rare Vinyls.
-	VinylLabelList(26)=class'VinylLabelClassic'
-	VinylLabelList(27)=class'VinylLabelTurboSelects'
-
+	VinylLabelList(24)=class'VinylLabelClassic'
+	VinylLabelList(25)=class'VinylLabelTurboSelects'
 
 	//Gold Vinyls.
-	VinylLabelList(28)=class'VinylLabelTurboClassics'
-
+	VinylLabelList(26)=class'VinylLabelTurboClassics'
 
 	//Platinum Vinyls
-	VinylLabelList(29)=class'VinylLabelTurboBestHits'
+	VinylLabelList(27)=class'VinylLabelTurboBestHits'
 
 	VinylSpawnCount=3
 	VinylSpawnSearchRadius=1200.f
