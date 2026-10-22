@@ -6,7 +6,7 @@ class VinylLabelFrightYard extends CardGameVinylLabel;
 
 defaultproperties
 {
-	LabelName="Fright Yard"
+	LabelName="Halliday's"
 	LabelRarity=Common
 
 	Begin Object Name=Default0 Class=TurboVinylBasic

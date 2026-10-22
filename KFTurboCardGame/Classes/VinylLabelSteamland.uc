@@ -6,7 +6,7 @@ class VinylLabelSteamland extends CardGameVinylLabel;
 
 defaultproperties
 {
-	LabelName="Lockheart's Steamland"
+	LabelName="Lockheart's"
 	LabelRarity=Common
 
 	Begin Object Name=Default0 Class=TurboVinylBasic

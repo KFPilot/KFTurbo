@@ -25,7 +25,7 @@ defaultproperties
 	Begin Object Name=FieldMedic Class=TurboVinyl
 		VinylName="Field Medic"
 		VinylDescription="A mysterious record."
-		SkinNameList(1)="KFTurboCardGame.Label.HORZINE_FieldMedic"
+		SkinNameList(1)="KFTurboCardGame.Label.HORZINE_Default"
 		OnActivateVinyl=ActivateFieldMedic
 	End Object
 	VinylObjectList(1)=TurboVinyl'FieldMedic'
