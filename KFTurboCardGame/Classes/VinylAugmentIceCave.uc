@@ -13,7 +13,6 @@ var float NextAliveCountUpdateTime, NextNearbyCountUpdateTime;
 
 simulated final function float GetSquadRatio()
 {
-    //At most one scan per call so the two counters never run on the same frame.
     if (Level.TimeSeconds >= NextAliveCountUpdateTime)
     {
         UpdateAliveCount();
@@ -31,7 +30,6 @@ simulated final function float GetSquadRatio()
     return FClamp(float(CachedNearbyCount) / float(CachedAliveCount), 0.f, 1.f);
 }
 
-//PRIs always replicate, so both sides can count the living squad.
 simulated final function UpdateAliveCount()
 {
     local KFPlayerReplicationInfo PRI;
@@ -60,7 +58,6 @@ simulated final function UpdateAliveCount()
     CachedAliveCount = AliveCount;
 }
 
-//Any pawn close enough to count is relevant, so both sides can count the nearby squad.
 simulated final function UpdateNearbyCount()
 {
     local Pawn OwnerPawn;
@@ -95,7 +92,7 @@ simulated final function UpdateNearbyCount()
 
 simulated final function float ApplySquadRatio(float Multiplier)
 {
-    return Lerp(GetSquadRatio(), 1.f, Multiplier);
+    return Lerp(GetSquadRatio(), BaseMultiplier, Multiplier);
 }
 
 function float GetDamageMultiplier(KFPlayerReplicationInfo KFPRI, KFMonster Injured, KFPawn DamageInstigator, int InDamage, class<DamageType> DamageType) { return ApplySquadRatio(Super.GetDamageMultiplier(KFPRI, Injured, DamageInstigator, InDamage, DamageType)); }

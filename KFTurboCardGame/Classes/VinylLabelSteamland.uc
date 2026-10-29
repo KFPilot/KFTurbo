@@ -47,7 +47,7 @@ defaultproperties
 
 	Begin Object Name=Default4 Class=TurboVinylBasic
 		VinylName="Airship Anthem"
-		VinylDescription="Increases carry weight by 5."
+		VinylDescription="Increases carry weight by 1."
 		SkinNameList(1)="KFTurboCardGame.Label.STEAMLAND_Default"
 		AugmentList(0)=(Type=CarryWeight,Multiplier=1.f)
 		OnActivateVinyl=ActivateBasic

@@ -16,8 +16,18 @@ replication
 		KillCount, KillExpireTime;
 }
 
+function bool IsValidKill(KFMonster Target, class<DamageType> DamageType)
+{
+    return true;
+}
+
 function NotifyPlayerKilledMonster(TurboPlayerController Player, KFMonster Target, class<DamageType> DamageType)
 {
+    if (!IsValidKill(Target, DamageType))
+    {
+        return;
+    }
+
     if (HasStackExpired())
     {
         KillCount = 0;
@@ -58,7 +68,7 @@ simulated final function float GetStackRatio()
 
 simulated final function float ApplyStack(float Multiplier)
 {
-    return Lerp(GetStackRatio(), 1.f, Multiplier);
+    return Lerp(GetStackRatio(), BaseMultiplier, Multiplier);
 }
 
 function float GetDamageMultiplier(KFPlayerReplicationInfo KFPRI, KFMonster Injured, KFPawn DamageInstigator, int InDamage, class<DamageType> DamageType) { return ApplyStack(Super.GetDamageMultiplier(KFPRI, Injured, DamageInstigator, InDamage, DamageType)); }

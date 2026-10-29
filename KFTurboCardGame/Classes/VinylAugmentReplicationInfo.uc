@@ -11,12 +11,12 @@ var bool bWantsDamageMultiplier, bWantsHeadshotDamageMultiplier;
 var bool bWantsPlayerHeadshotEvents;
 var bool bWantsPlayerReceivedDamageEvents;
 var bool bWantsPlayerKilledMonsterEvents;
+var bool bWantsPlayerHealedEvents;
 var bool bWantsWaveStartedEvents;
 var bool bWantsModifyDamage;
 var bool bHasStatusIcon;
 var bool bWantsStatusIconTick;
 
-//Set these to have TurboCardGameModifierRepLink forward the matching function to this augment.
 var bool bWantsFireRateMultiplier, bHasMeleeFireRateMultiplier;
 var bool bWantsReloadRateMultiplier;
 var bool bWantsMagazineAmmoMultiplier;
@@ -73,12 +73,15 @@ function NotifyPlayerKilledMonster(TurboPlayerController Player, KFMonster Targe
 {
 }
 
+//Fired when the owning player heals or is healed by another player.
+function NotifyPlayerHealed(Pawn Instigator, Pawn Target, int HealingAmount)
+{
+}
+
 function NotifyWaveStarted(int Wave)
 {
 }
 
-//Returns a multiplier folded into CardGameRules.NetDamage. Forwarded for the augment of the injured
-//player and of the instigating player - compare OwningCardInfo.GetOwnerPawn() to tell which side this is.
 function float ModifyDamage(int Damage, Pawn Injured, Pawn InstigatedBy, Vector HitLocation, out Vector Momentum, class<DamageType> DamageType)
 {
 	return 1.f;

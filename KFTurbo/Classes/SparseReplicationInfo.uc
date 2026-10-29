@@ -67,7 +67,10 @@ state AwaitingRegister
 
     simulated function EndState()
     {
-	    Disable('Tick');
+        if (bStopTickAfterRegister)
+        {
+            Disable('Tick');
+        }
     }
 
     simulated function Tick(float DeltaTime)
@@ -118,7 +121,7 @@ simulated function Destroyed()
 	{
 		Unregister();
 	}
-	
+
 	Super.Destroyed();
 }
 
@@ -150,5 +153,5 @@ defaultproperties
 
 	//Default property replication for these.
     bOnlyDirtyReplication=true
-    bSkipActorPropertyReplication=true   
+    bSkipActorPropertyReplication=true
 }

@@ -11,7 +11,7 @@ defaultproperties
 
 	Begin Object Name=Default0 Class=TurboVinylBasic
 		VinylName="Glacier Gavotte"
-		VinylDescription="Reduces spread by up to 10% based on how much of the squad is nearby."
+		VinylDescription="Reduces spread by up to 10% based on the percent of the squad that is nearby."
 		SkinNameList(1)="KFTurboCardGame.Label.ICECAVE_Default"
 		AugmentList(0)=(Type=SpreadRecoil,Multiplier=0.9f)
 		AugmentInfoClass=class'VinylAugmentIceCave'
@@ -21,7 +21,7 @@ defaultproperties
 
 	Begin Object Name=Default1 Class=TurboVinylBasic
 		VinylName="Permafrost Prelude"
-		VinylDescription="Reduces damage taken by up to 10% based on how much of the squad is nearby."
+		VinylDescription="Reduces damage taken by up to 10% based on the percent of the squad that is nearby."
 		SkinNameList(1)="KFTurboCardGame.Label.ICECAVE_Default"
 		AugmentList(0)=(Type=DamageReceived,Multiplier=0.9f)
 		AugmentInfoClass=class'VinylAugmentIceCave'
@@ -31,7 +31,7 @@ defaultproperties
 
 	Begin Object Name=Default2 Class=TurboVinylBasic
 		VinylName="Crevasse Chorale"
-		VinylDescription="Increases headshot damage by up to 10% based on how much of the squad is nearby."
+		VinylDescription="Increases headshot damage by up to 10% based on the percent of the squad that is nearby."
 		SkinNameList(1)="KFTurboCardGame.Label.ICECAVE_Default"
 		AugmentList(0)=(Type=HeadshotDamage,Multiplier=1.1f)
 		AugmentInfoClass=class'VinylAugmentIceCave'
@@ -41,7 +41,7 @@ defaultproperties
 
 	Begin Object Name=Default3 Class=TurboVinylBasic
 		VinylName="Stalactite Stomp"
-		VinylDescription="Increases fire rate by up to 10% based on how much of the squad is nearby."
+		VinylDescription="Increases fire rate by up to 10% based on the percent of the squad that is nearby."
 		SkinNameList(1)="KFTurboCardGame.Label.ICECAVE_Default"
 		AugmentList(0)=(Type=FireRate,Multiplier=1.1f)
 		AugmentInfoClass=class'VinylAugmentIceCave'
@@ -51,7 +51,7 @@ defaultproperties
 
 	Begin Object Name=Sharpshooter0 Class=TurboVinylBasic
 		VinylName="Icicle Interlude"
-		VinylDescription="Increases weapon bullet penetration by up to 20% based on how much of the squad is nearby."
+		VinylDescription="Increases weapon bullet penetration by up to 20% based on the percent of the squad that is nearby."
 		SkinNameList(1)="KFTurboCardGame.Label.ICECAVE_Default"
 		AugmentList(0)=(Type=Penetration,Multiplier=1.2f)
 		AugmentInfoClass=class'VinylAugmentIceCave'

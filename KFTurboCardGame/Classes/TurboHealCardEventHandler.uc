@@ -4,7 +4,6 @@
 class TurboHealCardEventHandler extends TurboHealEventHandler;
 
 //If true, notify the player's TurboPlayerCardCustomInfo that they were healed.
-//This is really just an optimization to prevent unneeded lookups.
 var bool bNotifyCardCustomInfo;
 var bool bHealingBoost;
 
@@ -48,11 +47,8 @@ final function RewardHealedHealth(Pawn Instigator, Pawn Target, int HealingAmoun
     {
         ReciprocateHeal(Instigator, HealingAmount);
     }
-    
-    if (!bNotifyCardCustomInfo)
-    {
-        return;
-    }
+
+    NotifyAugmentHealed(FindCardCustomInfo(TurboPlayerReplicationInfo(Instigator.PlayerReplicationInfo)), Instigator, Target, HealingAmount);
 
     CardCustomInfo = FindCardCustomInfo(TurboPlayerReplicationInfo(Target.PlayerReplicationInfo));
 
@@ -61,10 +57,27 @@ final function RewardHealedHealth(Pawn Instigator, Pawn Target, int HealingAmoun
         return;
     }
 
+    NotifyAugmentHealed(CardCustomInfo, Instigator, Target, HealingAmount);
+
+    if (!bNotifyCardCustomInfo)
+    {
+        return;
+    }
+
     if (bHealingBoost)
     {
         CardCustomInfo.ApplyHealingBoost();
     }
+}
+
+final function NotifyAugmentHealed(TurboPlayerCardCustomInfo CardCustomInfo, Pawn Instigator, Pawn Target, int HealingAmount)
+{
+    if (CardCustomInfo == None || CardCustomInfo.AugmentInfo == None || !CardCustomInfo.AugmentInfo.bWantsPlayerHealedEvents)
+    {
+        return;
+    }
+
+    CardCustomInfo.AugmentInfo.NotifyPlayerHealed(Instigator, Target, HealingAmount);
 }
 
 final function ReciprocateHeal(Pawn Instigator, int HealingAmount)

@@ -33,7 +33,8 @@ enum EAugmentType
     DamageReceived,
     DamageReceivedFire,
     DamageReceivedBloat,
-    DamageReceivedSiren
+    DamageReceivedSiren,
+    DamageReceivedExplosive
 };
 
 struct AugmentEntry
@@ -43,12 +44,14 @@ struct AugmentEntry
 };
 
 var AugmentEntry AugmentList[3];
+//Multiplier returned while the augment is inactive. Conditional, scaled and stacked subclasses lerp from this to the entry value.
+var float BaseMultiplier;
 
 var float DamageMultiplier, DamageHeadshotMultiplier;
 var float FireRateMultiplier, FireRateMeleeMultiplier;
 var float ReloadRateMultiplier, MagazineAmmoMultiplier, MaxAmmoMultiplier, PenetrationMultiplier, SpreadRecoilMultiplier;
 var float MovementSpeedMultiplier, MaxHealthMultiplier, HealPotencyMultiplier, HealRechargeMultiplier;
-var float DamageResistanceMultiplier, DamageResistanceFireMultiplier, DamageResistanceBloatMultiplier, DamageResistanceSirenMultiplier;
+var float DamageResistanceMultiplier, DamageResistanceFireMultiplier, DamageResistanceBloatMultiplier, DamageResistanceSirenMultiplier, DamageResistanceExplosiveMultiplier;
 var float TraderWeaponCostMultiplier, TraderAmmoCostMultiplier, TraderArmorCostMultiplier, TraderGrenadeCostMultiplier;
 var float MovementAccelMultiplier;
 var int CarryWeightModifier;
@@ -56,7 +59,7 @@ var int CarryWeightModifier;
 replication
 {
 	reliable if (Role == ROLE_Authority)
-		AugmentList;
+		AugmentList, BaseMultiplier;
 }
 
 final function ResetAugmentMultipliers()
@@ -80,6 +83,7 @@ final function ResetAugmentMultipliers()
     DamageResistanceFireMultiplier = 1.f;
     DamageResistanceBloatMultiplier = 1.f;
     DamageResistanceSirenMultiplier = 1.f;
+    DamageResistanceExplosiveMultiplier = 1.f;
     TraderWeaponCostMultiplier = 1.f;
     TraderAmmoCostMultiplier = 1.f;
     TraderArmorCostMultiplier = 1.f;
@@ -189,6 +193,10 @@ final function ApplyAugmentEntry(int Index)
         DamageResistanceSirenMultiplier = AugmentList[Index].Multiplier;
         bWantsModifyDamage = true;
         return;
+    case DamageReceivedExplosive:
+        DamageResistanceExplosiveMultiplier = AugmentList[Index].Multiplier;
+        bWantsModifyDamage = true;
+        return;
     }
 }
 
@@ -256,6 +264,11 @@ function float ModifyDamage(int Damage, Pawn Injured, Pawn InstigatedBy, Vector 
     local float Multiplier;
     local class<KFWeaponDamageType> WeaponDamageType;
 
+    if (OwningCardInfo == None || Injured != OwningCardInfo.GetOwnerPawn())
+    {
+        return 1.f;
+    }
+
     Multiplier = DamageResistanceMultiplier;
 
     WeaponDamageType = class<KFWeaponDamageType>(DamageType);
@@ -268,6 +281,10 @@ function float ModifyDamage(int Damage, Pawn Injured, Pawn InstigatedBy, Vector 
     if (DamageResistanceFireMultiplier != 1.f && WeaponDamageType.default.bDealBurningDamage)
     {
         Multiplier *= DamageResistanceFireMultiplier;
+    }
+    else if (DamageResistanceExplosiveMultiplier != 1.f && WeaponDamageType.default.bIsExplosive)
+    {
+        Multiplier *= DamageResistanceExplosiveMultiplier;
     }
     else if (DamageResistanceBloatMultiplier != 1.f && class<DamTypeVomit>(WeaponDamageType) != None)
     {
@@ -284,6 +301,7 @@ function float ModifyDamage(int Damage, Pawn Injured, Pawn InstigatedBy, Vector 
 defaultproperties
 {
     bNetNotify=true
+    BaseMultiplier=1.f
 
     DamageMultiplier=1.f
     DamageHeadshotMultiplier=1.f
@@ -302,6 +320,7 @@ defaultproperties
     DamageResistanceFireMultiplier=1.f
     DamageResistanceBloatMultiplier=1.f
     DamageResistanceSirenMultiplier=1.f
+    DamageResistanceExplosiveMultiplier=1.f
     TraderWeaponCostMultiplier=1.f
     TraderAmmoCostMultiplier=1.f
     TraderArmorCostMultiplier=1.f

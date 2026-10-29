@@ -6,6 +6,7 @@ class TurboVinylBasic extends TurboVinyl
 
 var const VinylAugmentBasic.AugmentEntry AugmentList[3];
 var const VinylAugmentBasic.AugmentEntry InvalidAugment;
+var const float BaseMultiplier;
 
 function ApplyAugmentList(TurboPlayerCardCustomInfo PlayerInfo)
 {
@@ -20,6 +21,7 @@ function ApplyAugmentList(TurboPlayerCardCustomInfo PlayerInfo)
     Augment.AugmentList[0] = AugmentList[0];
     Augment.AugmentList[1] = AugmentList[1];
     Augment.AugmentList[2] = AugmentList[2];
+    Augment.BaseMultiplier = BaseMultiplier;
     Augment.PostNetReceive();
     Augment.ForceNetUpdate();
 }
@@ -37,6 +39,7 @@ function ResetAugmentList(TurboPlayerCardCustomInfo PlayerInfo)
     Augment.AugmentList[0] = InvalidAugment;
     Augment.AugmentList[1] = InvalidAugment;
     Augment.AugmentList[2] = InvalidAugment;
+    Augment.BaseMultiplier = 1.f;
     Augment.PostNetReceive();
     Augment.ForceNetUpdate();
 }
@@ -45,4 +48,5 @@ defaultproperties
 {
     AugmentInfoClass=class'VinylAugmentBasic'
     InvalidAugment=(Type=Invalid,Multiplier=1.f)
+    BaseMultiplier=1.f
 }
